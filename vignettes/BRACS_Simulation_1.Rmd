@@ -1,0 +1,69 @@
+---
+title: "BRACS_Simulation_1"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{BRACS_Simulation_1}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(parlrdev)
+```
+
+```{r}
+n1 <- 500; n2 <- 500
+K <- 2
+n1_vec <- rep(n1/K, K)
+n2_vec <- rep(n2/K, K)
+overlap_vec <- c(125, 125)
+
+
+m1 <- c(.05, .95, .05, .95, .05, .95, .05, .95, .05, .95)
+
+u1 <- c(.99, .01, .99, .01, 
+        1 - 1/30, 1/30, 1 - 1/12, 1/12, 1 - 1/15, 1/15)
+
+m2 <- c(.05, .95, .8, .2, .05, .95, .05, .95, .05, .95)
+
+u2 <- c(.99, .01, .99, .01, 
+        1 - 1/30, 1/30, 1 - 1/12, 1/12, 1 - 1/15, 1/15)
+
+m <- rbind(m1, m2)
+u <- rbind(u1, u2)
+
+levels <- c(2, 2, 2, 2, 2)
+varying_fields <- c(3, 4)
+
+iter <- 5
+S <- 200; burn <- S * .1
+m_prior <- u_prior <- rep(1, dim(m)[2])
+alpha <- beta <- 1
+EVAL.SAMPS5 <- array(NA, dim = c(iter, 3, 2))
+
+for(i in 1:iter){
+comparisons <- SimulateComparisonsLC(m, u, levels, varying_fields, n1, n2, n1_vec, n2_vec, overlap_vec)
+Ztrue <- comparisons[[5]]
+
+Zchain <- BRACS_BK(comparisons, m_prior, u_prior, alpha, beta, S, burn)
+Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
+eval <- GetEvaluations(Zhat, Ztrue, n1)
+EVAL.SAMPS5[i, ,1] <- eval
+
+Zchain <- BKSimple(comparisons, m_prior, u_prior, alpha, beta, S, burn)
+Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
+eval <- GetEvaluations(Zhat, Ztrue, n1)
+EVAL.SAMPS5[i, ,2] <- eval
+print(i)
+}
+EVAL.SAMPS5
+
+```
+
