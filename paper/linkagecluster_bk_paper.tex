@@ -306,8 +306,8 @@ structure.
 However, if we want to ensure the theoretic purity of each MCMC sample
 of the linkage structure, we can ``recouple'' \(\mathbf{Z}\) by simply
 resolving these illegal matchings. Explictly, define clusters
-\(C(i) := \{j | Z_j = i\}\), and define all clusters such that
-\(|C(i)| > 1\) as \emph{conflict clusters}. Within each cluster,
+\(R(i) := \{j | Z_j = i\}\), and define all clusters such that
+\(|R(i)| > 1\) as \emph{resolution clusters}. Within each cluster,
 resample the candidate matches according to their Fellegi-Sunter
 weights. We show this step to be computationally inexpensive and to be a
 reasonable replication of more organic one-to-one matching. This
@@ -324,10 +324,92 @@ discernment parameters \(\mathbf{u}^f\), and also the linkage
 probability parameter \(\lambda\) to vary according to certain
 attributes in the record pairs. We shall see that this set up upweights
 linkage within clusters and downweights linkage across clusters, thus
-using attribute information in way not yet explored in the literture.
+using attribute information in a way not yet explored in the literture.
 
-Assign each record in both files to a linkage cluster
-\(S_k \in \{S_1, \ldots, S_K\}\) based on some attribute in the data. We
-see that the comparison vector
+Linkage cluster assignment occurs at both at the level of the records
+and of the record pairs. Assign each record in each file an appropriate
+linkage cluster \(S_k \in \{S_1, \ldots, S_k\}\), denoting the
+membership record \(j\) in the \(k^{th}\) cluster by \(j \in S_k\). We
+assign the record pair comparison vector \(\gamma_{ij}\) to a cluster
+only when both records belong to that cluster; otherwise we assign it to
+\(S_0\). For example
+\[i \in S_1, j \in S_1 \implies \gamma_{ij} \in S_1\]
+\[i \in S_1, j \in S_2 \implies \gamma_{ij} \in S_0\] Cluster
+assignments at the record pair level are necessary for the updating the
+\(\mathbf{m}\) and \(\mathbf{u}\) parameters. We denote the reliability
+and discernment parameters assoicated with each field for each cluster
+as \(\mathbf{m}^{fk}\) and \(\mathbf{u}^{fk}\) respectively. To improve
+readability, we modify the definition of \(\mathbf{m}_{ij}\) to
+incorporate the linkage cluster assignment. Explicitly,
+\[\mathbf{m}_{ij} = \prod_{f=1}^{F}\prod_{l=1}^{L_f}\left[ \left(m^{flk}\right)^{\mathbf{1}_{\gamma_{ij} \in S_k}}\left(m^{fl0}\right)^{\mathbf{1}_{\gamma_{ij} \in S_0}}\right]^{\mathbf{1}_{\gamma_{ij}^f = l}}\]
+with an analogous definition for \(\mathbf{u}_{ij}\).
+
+Additionally, define the vector of linkage probabilities
+\(\Lambda_k = (\lambda_{k1}, \lambda_{k2}, \lambda_{k3})\), where
+\(\lambda_{k1} = P(z_{j\in S_k} \in S_k)\) is the probability that a
+record in \(\mathbf{X}_{B_k}\) has a match within its cluster in
+\(\mathbf{X}_{A_k}\), \(\lambda_{k2} = P(z_{j \in S_k} \in S_{k'})\) is
+the probability that such a record \(\mathbf{X}_{B_k}\) has a match
+outside of its cluster \(\mathbf{X}_{A_{k'}}\) for some \(k' \neq k\),
+and \(\lambda_{k3} = P(z_{j\in S_k} = n_A + 1)\) is the probability of a
+non-match. This is a multinomial distribution where we necessarily have
+\(\lambda_{k3} = 1 - \lambda_{k1} - \lambda_{k2}\). These parameters use
+linkage cluster assignment at the record level.
+
+(THIS WOULD GO IN APPENDIX) Our new model specification becomes
+
+\[P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}, \boldsymbol{\theta}) =\prod_{k=1}^K \prod_{j \in \mathbf{X}_B^k}  \left[\lambda_{k1}^{\mathbf{1}_{z_j \in S_k}}\lambda_{k2}^{\mathbf{1}_{z_j \in S_{k'}}} \lambda_{k3}^{\mathbf{1}_{z_j = n_A + 1}}\prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}\right]\]
+
+\[\mathbf{m^{fk}} \sim \text{Dirichlet}(\alpha^{f1k}, \ldots, \alpha^{fL_fk})\]
+\[\mathbf{u^{fk}} \sim \text{Dirichlet}(\beta^{f1k}, \ldots, \beta^{fL_fk})\]
+\[Z_{j \in S_k} | \Lambda_k =
+\begin{cases} 
+    \frac{1}{n_{A_k}}\lambda_{k1}  & z_j \in S_k; \\
+    \frac{1}{n_A - n_{A_k}}\lambda_{k2}  & z_j \in S_{k'}; \\
+     \lambda_{k3} & z_j = n_A + 1 \\
+\end{cases}\]
+
+\[\Lambda \sim \text{Dirichlet}(\Lambda_0)\] where
+\(\Lambda_0 = (\Lambda_{k1}, \Lambda_{k2}, \Lambda_{k3}).\)
+
+\textbf{THIS WOULD GO IN APPENDIX}: Through similar derivations, this
+yields full conditionals: The \(\mathbf{m}\) and \(\mathbf{u}\)
+parameters are updated through standard multinomial-dirichlet mechanics.
+Thus we have
+\[\mathbf{m^{fk}}|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\alpha^{f1k}(\mathbf{Z}), \ldots, \alpha^{fL_fk}(\mathbf{Z}))\]
+
+\[\mathbf{u^{fk}}|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\beta^{f1k}(\mathbf{Z}), \ldots, \beta^{fL_fk}(\mathbf{Z}))\]
+where
+\[\alpha_{flk}(\mathbf{Z})= \sum_{i,j, k} \mathbf{1}_{obs(\gamma_{ij}^f)}\mathbf{1}_{\gamma_{ij}^f = l} \mathbf{1}_{z_j = i}\mathbf{1}_{\gamma_{ij} \in S_k}\]
+
+\[\text{and } \beta_{flk}(\mathbf{Z})= \sum_{i,j, k} \mathbf{1}_{obs(\gamma_{ij}^f)}\mathbf{1}_{\gamma_{ij}^f = l} \mathbf{1}_{z_j \neq i}\mathbf{1}_{\gamma_{ij}^f = l}\]
+
+We also have straightforward posterior distritutions for the linkage
+probability vector \(\Lambda_k\):
+
+\[\Lambda_k | \mathbf{Z} \sim \text{Dirichlet}(\mathbf{D_k} + \Lambda_0)\]
+
+where \(\mathbf{D}_k = (D_{k1}, D_{k2}, D_{k3})\) with
+\[D_{k1} = \sum_{j \in \mathbf{X}_{B_k}} \mathbf{1}_{z_j \in S_k}\]
+\[D_{k2} = \sum_{j \in \mathbf{X}_{B_k}} \mathbf{1}_{z_j \in S_{k'}}\]
+\[\text{and } D_{k3} = \sum_{j \in \mathbf{X}_{B_k}} \mathbf{1}_{z_j = n_A + 1}\]
+
+Our full conditional for \(Z_j\) follows a familiar form:
+
+\[Z_{j \in S_k}^{(s+1)} | \mathbf{m}^k, \mathbf{u}^k, \Gamma, \Lambda_k =
+\begin{cases} 
+    \frac{\lambda_{k1}}{n_{A_k}} w_{ij} & z_j \in S_k; \\
+    \frac{\lambda_{k2}}{n_A - n_{A_k}} w_{ij}  & z_j \in S_{k'}; \\
+     \lambda_{k3} & z_j = n_A + 1 \\
+\end{cases}\]
+
+And after integrating over \(\Lambda_k\) and rearraning terms,
+
+\[Z_{j \in S_k}^{(s+1)} | \mathbf{m}^k, \mathbf{u}^k, \Gamma,  =
+\begin{cases} 
+    \frac{D_{k1} + \Lambda_{01}}{n_{A_k}(n_B - D_{k1} - D_{k2} + \Lambda_{03})} w_{ij} & z_j \in S_k; \\
+    \frac{D_{k2} + \Lambda_{02}}{(n_A - n_{A_k})(n_B - D_{k1} - D_{k2} + \Lambda_{03})} w_{ij}  & z_j \in S_{k'}; \\
+     1 & z_j = n_A + 1 \\
+\end{cases}\]
 
 \end{document}
