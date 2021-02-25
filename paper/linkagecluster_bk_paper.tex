@@ -184,7 +184,7 @@ also makes it explict that units of observation under this model are the
 to the likelihood over the \(n_A \times n_B\) record pairs in the
 original Fellegi Sunter model.
 
-\[P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda) =\prod_{j=1}^{n_B}  \left[\lambda^{\mathbf{1}_{z_j < n_A + 1}} (1-\lambda)^{\mathbf{1}_{z_j = n_A + 1}}\prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}\right]\]
+\[P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda) =\prod_{j=1}^{n_B}  \prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}\]
 
 \[\mathbf{m^{f}} \sim \text{Dirichlet}(\alpha^{f1}, \ldots, \alpha^{fL_f})\]
 \[\mathbf{u^{f}} \sim \text{Dirichlet}(\beta^{f1}, \ldots, \beta^{fL_f})\]
@@ -197,29 +197,24 @@ original Fellegi Sunter model.
 \[\lambda \sim \text{Beta}(\alpha_{\lambda}, \beta_{\lambda}) \] The
 prior for \(Z_j\) has equal probability of matching to all records
 \(i\in \mathbf{X}_A\), and non-matching probability governed by
-\(\lambda\). Observe two reasonable choices for \(p(Z, \lambda)\):
-
-If \(\lambda \sim \text{Beta}(1, \frac{1}{n_A})\), then the prior for
-\(Z\), integrated over \(\lambda\), becomes
-
-\[=\begin{cases} 
-    1  & z_j \leq n_A; \\
-    1 &  z_j  = n_A + 1 \\
-\end{cases}\] Thus this is a uniform prior on the labellings of \(Z\). A
-second useful prior would be \(\lambda \sim \text{Beta}(1, 1)\), which
-yields \[=\begin{cases} 
-    1  & z_j \leq n_A; \\
-    n_A &  z_j  = n_A + 1 \\
-\end{cases}\] Here, a match and a non-match are equaly likely, and among
-the matches, all records are likely to be a match. There is little
-difference between the the two priors in practice, as the data should
-overpower the prior.
+\(\lambda\). Therefore a \(\lambda \sim \text{Beta}(1, 1)\) corresponds
+to a prior belief that nonmatches and matches are equally likely, and a
+\(\lambda \sim \text{Beta}(1, \frac{1}{n_A})\) prior corresponds to a
+uniform prior on the labelling of \(\mathbf{Z}\).
 
 \hypertarget{posterior-sampling}{%
 \subsection{Posterior Sampling}\label{posterior-sampling}}
 
+We work with the following factorization of the joint distribution:
+
+\[p(\Gamma, \mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda) = p(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}) p(\mathbf{Z} | \lambda) p(\mathbf{m}, \mathbf{u}) p(\lambda)\]
+
+This factorization leads to following Gibbs Sampler:
+
+\underline{Sample $\mathbf{m}^{(s+1)}$ $\mathbf{u}^{(s+1)}|\Gamma, \mathbf{Z}^{(s)}$:}
 The \(\mathbf{m}\) and \(\mathbf{u}\) parameters are updated through
 standard multinomial-dirichlet mechanics. Thus we have
+
 \[\mathbf{m^{f}}|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\alpha^{f1}(\mathbf{Z}), \ldots, \alpha^{fL_f}(\mathbf{Z}))\]
 \[\mathbf{u^{f}}|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\beta^{f1}(\mathbf{Z}), \ldots, \beta^{fL_f}(\mathbf{Z}))\]
 where
@@ -227,31 +222,43 @@ where
 and
 \(\beta_{fl}(\mathbf{Z})= \sum_{i,j} I_{obs}(\gamma_{ij}^f)\mathbf{1}_{\gamma_{ij}^f = l} \mathbf{1}_{z_j \neq i}\).
 
-Since \(\lambda\) provides the probability that a record in
-\(\mathbf{X}_B\) has match in \(\mathbf{X}_A\), it has a full
-conditional distribution
+\underline{Sample $\lambda^{(s+1)}|\mathbf{Z}^{s}$} As a function of
+\(\lambda\), the linkage structure parameter \(\mathbf{Z}\) is sequence
+of successes and failures, and therefore
+\(p(\mathbf{Z}|\lambda) = \mathcal{L}(\lambda|\mathbf{Z})\) determined
+only by the number of dupliates
+\(D = \sum_{i=1}^{n_B}\mathbf{1}_{z_j < n_A + 1}\) encoded by
+\(\mathbf{Z}\). Thus we have
 
-\[\lambda|\mathbf{Z^{(s)}} \sim \text{Beta}(D + \alpha_{\lambda}, n_B - D + \beta_{\lambda})\]
-where \(D = \sum_1^{n_B} (Z_j < n_A + 1)\) is the number of records
-identified as matches in the previous Gibbs iteration.
+\[p(\lambda | \mathbf{Z}) \propto p(\mathbf{Z}|\lambda)p(\lambda)\]
+\[\propto \lambda^D (1-\lambda)^{n_B - D} \lambda^{\alpha_{\lambda} -1} (1-\lambda)^{\beta_{\lambda} -1}\]
+\[ \propto \lambda^{D + \alpha_{\lambda} - 1} (1-\lambda)^{n_B - D + \beta_{\lambda} -1}\]
+\[\implies \lambda^{(s+1)}|\mathbf{Z}^{(s+1)} \sim \text{Beta}(D + \alpha_{\lambda}, n_B - D + \beta_{\lambda})\]
 
-Lastly, we sample each \(Z_j\) according to these posterior
-distributions. To do so, note that as a function of \(Z_j\), the
-likelihood is a discrete distibution with probabilities proportional to
+\underline{Sample $\mathbf{Z}^{(s+1)}|\Gamma, \mathbf{m}^{(s+1)}, \mathbf{u}^{(s+1)}, \lambda^{(s+1)}$}
+Because we sample \(Z_j\) independently of all other \(Z_{j'}\), we use
+only the full conditional for an individual \(Z_j\). Let \(\Gamma_{.j}\)
+denote the set of \(n_A\) comparison vectors with \(j \in B\), and note
+that as a function of \(Z_j\), the likelihood
+\(p(\Gamma_{.j}|Z_j, \mathbf{m}, \mathbf{u})\) is a discrete
+distribution with probalities given by
+\[p(\Gamma_{.j}|Z_j = z_j, \mathbf{m}, \mathbf{u}) = \frac{\prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}}{\sum_{z_j = 1}^{n_B} \prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}} = \frac{\prod_{i=1}^{n_A}\left(\frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}}\right)^{\mathbf{1}_{z_j = i}}}{\sum_{z_j = 1}^{n_B}\prod_{i=1}^{n_A}\left(\frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}}\right)^{\mathbf{1}_{z_j = i}}} \]
+\[\propto 
+\begin{cases} 
+    w_{ij}  & z_j \leq n_A; \\
+    1 &  z_j  = n_A + 1 \\
+\end{cases}\]
 
-\[p(\Gamma_{.j}|Z_{j}) \propto \mathbf{1}_{z_j < n_A + 1}\lambda\prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}} + \mathbf{1}_{z_j = n_A + 1}(1-\lambda)\prod_{i=1}^{n_A}\mathbf{u}_{ij}\]
-\[\propto \mathbf{1}_{z_j < n_A + 1}\lambda\prod_{i=1}^{n_A}\left(\frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}}\right)^{\mathbf{1}_{z_j = i}}+ \mathbf{1}_{z_j = n_A + 1}(1-\lambda)\]
-
-\[\propto \lambda \left[\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i}\right] + (1 - \lambda)\mathbf{1}_{z_j = n_A + 1}\]
-where
+where where
 \(w_{ij} = \frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}} = \frac{P(\boldsymbol{\gamma_{ij}}|Z_j = i)}{P(\boldsymbol{\gamma_{ij}} |Z_j \neq i)}\).
 The interested reader should note that these are precisely the
 likelihood ratios used in the Fellegi-Sunter model to classify matches
 and non-matches, and we therefore refer to \(w_{ij}\) as the
 \emph{Fellegi Sunter weights}.
 
-The full conditional for \(Z_j\) is thus given by
-\[p(Z_j^{(s+1)}|\mathbf{m}, \mathbf{u}, \Gamma, \lambda, \mathbf{Z^{(s)}}) \propto p(\Gamma_{.j}|\mathbf{m}, \mathbf{u}, Z_j, \lambda)\overbrace{p(\mathbf{m}, \mathbf{u}|\mathbf{Z^{(s)}})}^{\text{proportionality}}p(Z_j | \lambda) \overbrace{p(\lambda|\mathbf{Z^{(s)}})}^{\text{proportionality}}\]
+With the likelihood in this form, we can derive the full conditional
+\[p(Z_j|\Gamma_{.j}, \mathbf{m} ,\mathbf{u}, \lambda) \propto p(\Gamma_{.j}| Z_j, \mathbf{m} ,\mathbf{u}) P(Z_j|\lambda)\]
+
 \[\propto \left(\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i} + \mathbf{1}_{z_j = n_A + 1}\right)\left(\lambda\sum_{i=1}^{n_A}\frac{1}{n_A}\mathbf{1}_{z_j = i} + (1-\lambda)\mathbf{1}_{z_j = n_A + 1}\right)\]
 \[= \frac{\lambda}{n_A}\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i} + (1-\lambda)\mathbf{1}_{z_j = n_A + 1} \]
 \[ \implies Z_j^{(s+1)} | \mathbf{m}, \mathbf{u}, \Gamma, \lambda \propto
@@ -270,8 +277,7 @@ mechanism:
      n_A \frac{n_B - D + \beta_{\lambda}}{D + \alpha_{\lambda}} &  z_j  = n_A + 1 \\
 \end{cases}\]
 
-The relationship between this sampling mechanism and that of Sadinle
-2017 warrants discussion.
+\newpage
 
 \hypertarget{bayes-estimate}{%
 \subsection{Bayes Estimate}\label{bayes-estimate}}
@@ -315,6 +321,8 @@ procedure would be most useful in cases where there are many ``near
 matches'' across files, but in most cases, we find this this step to be
 unnecessary.
 
+\newpage
+
 \hypertarget{linkage-cluster-model}{%
 \subsection{Linkage cluster model}\label{linkage-cluster-model}}
 
@@ -356,7 +364,7 @@ non-match. This is a multinomial distribution where we necessarily have
 \(\lambda_{k3} = 1 - \lambda_{k1} - \lambda_{k2}\). These parameters use
 linkage cluster assignment at the record level.
 
-(THIS WOULD GO IN APPENDIX) Our new model specification becomes
+Our new model specification becomes
 
 \[P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}, \boldsymbol{\theta}) =\prod_{k=1}^K \prod_{j \in \mathbf{X}_B^k}  \left[\lambda_{k1}^{\mathbf{1}_{z_j \in S_k}}\lambda_{k2}^{\mathbf{1}_{z_j \in S_{k'}}} \lambda_{k3}^{\mathbf{1}_{z_j = n_A + 1}}\prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}\right]\]
 
@@ -411,5 +419,81 @@ And after integrating over \(\Lambda_k\) and rearraning terms,
     \frac{D_{k2} + \Lambda_{02}}{(n_A - n_{A_k})(n_B - D_{k1} - D_{k2} + \Lambda_{03})} w_{ij}  & z_j \in S_{k'}; \\
      1 & z_j = n_A + 1 \\
 \end{cases}\]
+
+\newpage
+
+Observe two reasonable choices for \(p(Z, \lambda)\):
+
+If \(\lambda \sim \text{Beta}(1, \frac{1}{n_A})\), then the prior for
+\(Z\), integrated over \(\lambda\), becomes
+
+\[=\begin{cases} 
+    1  & z_j \leq n_A; \\
+    1 &  z_j  = n_A + 1 \\
+\end{cases}\] Thus this is a uniform prior on the labellings of \(Z\). A
+second useful prior would be \(\lambda \sim \text{Beta}(1, 1)\), which
+yields \[=\begin{cases} 
+    1  & z_j \leq n_A; \\
+    n_A &  z_j  = n_A + 1 \\
+\end{cases}\] Here, a match and a non-match are equaly likely, and among
+the matches, all records are likely to be a match. There is little
+difference between the the two priors in practice, as the data should
+overpower the prior.
+
+The \(\mathbf{m}\) and \(\mathbf{u}\) parameters are updated through
+standard multinomial-dirichlet mechanics. Thus we have
+
+\[\mathbf{m^{f}}|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\alpha^{f1}(\mathbf{Z}), \ldots, \alpha^{fL_f}(\mathbf{Z}))\]
+\[\mathbf{u^{f}}|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\beta^{f1}(\mathbf{Z}), \ldots, \beta^{fL_f}(\mathbf{Z}))\]
+where
+\(\alpha_{fl}(\mathbf{Z})= \sum_{i,j} I_{obs}(\gamma_{ij}^f)\mathbf{1}_{\gamma_{ij}^f = l} \mathbf{1}_{z_j = i}\)
+and
+\(\beta_{fl}(\mathbf{Z})= \sum_{i,j} I_{obs}(\gamma_{ij}^f)\mathbf{1}_{\gamma_{ij}^f = l} \mathbf{1}_{z_j \neq i}\).
+
+Since \(\lambda\) provides the probability that a record in
+\(\mathbf{X}_B\) has match in \(\mathbf{X}_A\), it has a full
+conditional distribution
+
+\[\lambda|\mathbf{Z^{(s)}} \sim \text{Beta}(D + \alpha_{\lambda}, n_B - D + \beta_{\lambda})\]
+where \(D = \sum_1^{n_B} (Z_j < n_A + 1)\) is the number of records
+identified as matches in the previous Gibbs iteration.
+
+Lastly, we sample each \(Z_j\) according to these posterior
+distributions. To do so, note that as a function of \(Z_j\), the
+likelihood is a discrete distibution with probabilities proportional to
+
+\[p(\Gamma_{.j}|Z_{j}) \propto \mathbf{1}_{z_j < n_A + 1}\lambda\prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}} + \mathbf{1}_{z_j = n_A + 1}(1-\lambda)\prod_{i=1}^{n_A}\mathbf{u}_{ij}\]
+\[\propto \mathbf{1}_{z_j < n_A + 1}\lambda\prod_{i=1}^{n_A}\left(\frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}}\right)^{\mathbf{1}_{z_j = i}}+ \mathbf{1}_{z_j = n_A + 1}(1-\lambda)\]
+
+\[\propto \lambda \left[\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i}\right] + (1 - \lambda)\mathbf{1}_{z_j = n_A + 1}\]
+where
+\(w_{ij} = \frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}} = \frac{P(\boldsymbol{\gamma_{ij}}|Z_j = i)}{P(\boldsymbol{\gamma_{ij}} |Z_j \neq i)}\).
+The interested reader should note that these are precisely the
+likelihood ratios used in the Fellegi-Sunter model to classify matches
+and non-matches, and we therefore refer to \(w_{ij}\) as the
+\emph{Fellegi Sunter weights}.
+
+The full conditional for \(Z_j\) is thus given by
+\[p(Z_j^{(s+1)}|\mathbf{m}, \mathbf{u}, \Gamma, \lambda, \mathbf{Z^{(s)}}) \propto p(\Gamma_{.j}|\mathbf{m}, \mathbf{u}, Z_j, \lambda)\overbrace{p(\mathbf{m}, \mathbf{u}|\mathbf{Z^{(s)}})}^{\text{proportionality}}p(Z_j | \lambda) \overbrace{p(\lambda|\mathbf{Z^{(s)}})}^{\text{proportionality}}\]
+\[\propto \left(\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i} + \mathbf{1}_{z_j = n_A + 1}\right)\left(\lambda\sum_{i=1}^{n_A}\frac{1}{n_A}\mathbf{1}_{z_j = i} + (1-\lambda)\mathbf{1}_{z_j = n_A + 1}\right)\]
+\[= \frac{\lambda}{n_A}\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i} + (1-\lambda)\mathbf{1}_{z_j = n_A + 1} \]
+\[ \implies Z_j^{(s+1)} | \mathbf{m}, \mathbf{u}, \Gamma, \lambda \propto
+\begin{cases} 
+    \frac{\lambda}{n_A}w_{ij}   & z_j \leq n_A; \\
+     1-\lambda &  z_j  = n_A + 1 \\
+\end{cases}\]
+
+Here, one should note that if we choose to integrate over the posterior
+of \(\lambda\) and rearrange terms, we produce the following sampling
+mechanism:
+
+\[Z_j^{(s+1)} | \mathbf{m}, \mathbf{u}, \mathbf{Z^{(s)}} \propto
+\begin{cases} 
+    w_{ij}  & z_j \leq n_A; \\
+     n_A \frac{n_B - D + \beta_{\lambda}}{D + \alpha_{\lambda}} &  z_j  = n_A + 1 \\
+\end{cases}\]
+
+The relationship between this sampling mechanism and that of Sadinle
+2017 warrants discussion.
 
 \end{document}
