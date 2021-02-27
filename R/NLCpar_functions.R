@@ -59,10 +59,11 @@ BKSimplePar <- function(comparisons, m_prior, u_prior,
     weights <- split(weights, ids[,2])
     offset <- n1*(n2 - L + beta)/(L+ alpha)
 
-    Z <- unname(parSapply(cl, weights, FUN = function(x){
+    system.time(
+    Z <- unlist(mclapply(weights, function(x){
       sample(c(candidates, n1 + 1), 1, prob = c(x, offset))
     }))
-
+)
     Z.temp <- sapply(Z, function(x){
       if(x < n1 + 1){
         vec <- rep(0, n1)
