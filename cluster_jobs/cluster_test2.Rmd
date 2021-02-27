@@ -1,0 +1,59 @@
+---
+title: "cluster test"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+devtools::load_all()
+library(parlrdev)
+```
+
+
+
+```{r}
+n1 <- 500; n2 <- 500
+overlap <- n2/2
+
+
+m <- c(.05, .95, .05, .95, .05, .95, .05, .95, .05, .95)
+
+u <- c(.99, .01, .99, .01, 
+        1 - 1/30, 1/30, 1 - 1/12, 1/12, 1 - 1/15, 1/15)
+
+
+levels <- c(2, 2, 2, 2, 2)
+
+iter <- 8
+S <- 100; burn <- S * .1
+m_prior <- u_prior <- rep(1, length(m))
+alpha <- beta <- 1
+
+sims <- parallel::mclapply(1:2, function(x){
+comparisons <- SimulateComparisons(m, u, levels, n1, n2,overlap)
+Ztrue <- comparisons[[5]]
+
+Zchain <- Sadinle17(comparisons, m_prior, u_prior, 
+                    alpha, beta, S, burn, show_progress = F)
+Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
+eval_sad <- GetEvaluations(Zhat, Ztrue, n1)
+
+
+Zchain <- BKSimple(comparisons, m_prior, u_prior, 
+                   alpha, beta, S, burn, show_progress = F)
+Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
+eval_bk <- GetEvaluations(Zhat, Ztrue, n1)
+rbind(eval_sad, eval_bk)
+})
+
+eval_sad <- map_df(sims, ~.x[1,])
+eval_sad$method <- "Sadinle"
+
+eval_bk <- map_df(sims, ~.x[2,])
+eval_bk$method <- "BK"
+
+eval <- rbind(eval_sad, eval_bk)
+
+saveRDS(eval, file = "../results/eval_test.rds")
+```
+
