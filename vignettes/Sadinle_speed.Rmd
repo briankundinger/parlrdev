@@ -1,6 +1,7 @@
 ---
 title: "Sadinle_speed"
 output: rmarkdown::html_vignette
+self_contained: false
 vignette: >
   %\VignetteIndexEntry{Sadinle_speed}
   %\VignetteEngine{knitr::rmarkdown}
@@ -15,13 +16,14 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+devtools::load_all()
 library(parlrdev)
 ```
 
 
-```{r}
-n1 <- 300; n2 <- 200
-overlap <- 200
+```{r cache = TRUE}
+n1 <- 100; n2 <- 100
+overlap <- n2/2
 
 
 m <- c(.05, .95, .05, .95, .05, .95, .05, .95, .05, .95)
@@ -32,7 +34,7 @@ u <- c(.99, .01, .99, .01,
 
 levels <- c(2, 2, 2, 2, 2)
 
-iter <- 10
+iter <- 5
 S <- 500; burn <- S * .1
 m_prior <- u_prior <- rep(1, length(m))
 alpha <- beta <- 1
@@ -51,8 +53,9 @@ Zchain <- BKSimple(comparisons, m_prior, u_prior, alpha, beta, S, burn)
 Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
 eval <- GetEvaluations(Zhat, Ztrue, n1)
 EVAL.SAMPS6[i, ,2] <- eval
-print(i)
+#print(i)
 }
-EVAL.SAMPS6
+#EVAL.SAMPS6
 ```
+
 
