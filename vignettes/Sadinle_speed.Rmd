@@ -20,7 +20,7 @@ library(parlrdev)
 
 
 ```{r}
-n1 <- 5000; n2 <- 5000
+n1 <- 500; n2 <- 500
 K <- 2
 n1_vec <- rep(n1/K, K)
 n2_vec <- rep(n2/K, K)
