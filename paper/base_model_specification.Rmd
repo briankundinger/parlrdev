@@ -29,25 +29,26 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Notation and Assumptions
 
-Our notation and assumptions closely follow that of Sadinle (2017). Denote two files as $\mathbf{X}_A$ and $\mathbf{X}_B$, with $n_A$ and $n_B$ records respectively, and with records indexed as $i \in \{1, \ldots, n_A\}$ in $\mathbf{X}_A$ and $j \in \{1, \ldots, n_B\}$ in $\mathbf{X}_B$. Without loss of generality, label the files such that $n_A \geq n_B$. We also assume there are no duplicates within files, only across. For each record pair under consideration, we generate a comparison vector $\boldsymbol{\gamma}_{ij} = \{\gamma_{ij}^1, \ldots, \gamma_{ij}^F\}$, where  $F$ is the number of fields used in the linkage and each takes $\gamma_{ij}^f$ takes on a value $l \in \{1, \ldots, L_f\}$ indicating level agreement between the two records on a specified field.
+Our notation and assumptions closely follow that of Sadinle (2017). Denote two files as $A$ and $B$, with $n_A$ and $n_B$ records respectively, and with records indexed as $i \in \{1, \ldots, n_A\}$ in $A$ and $j \in \{1, \ldots, n_B\}$ in $B$. Without loss of generality, label the files such that $n_A \geq n_B$. We also assume there are no duplicates within files, only across. For each record pair under consideration, we generate a comparison vector $\boldsymbol{\gamma}_{ij} = \{\gamma_{ij}^1, \ldots, \gamma_{ij}^F\}$, where  $F$ is the number of fields used in the linkage and each $\gamma_{ij}^f$ takes on a value $l \in \{1, \ldots, L_f\}$ indicating level agreement between the two records on a specified field.
 
-Following the Fellegi Sunter framework, we define $m^{fl}:= P(\gamma_{ij}^f = l |Z_j = i)$ to be the probability of observing agreement level $l$ in field $f$ for records $i$ and $j$ given that the records are a match, and similarly define $u^{fl}:= P(\gamma_{ij}^f = l |Z_j \neq i)$, for non-matches. We denote $\lambda$ to be the (marginal) probability that some record $j \in \mathbf{X}_B$ has a match in $\mathbf{X}_A$. 
-
-Lastly, we adopt from Sadinle 2017 the matching labelling $\mathbf{Z} = (Z_1, \ldots, Z_{n_A})$, defined as
+To indicate matching status, we adopt the *linkage structure parameter* $\mathbf{Z} = (Z_1, \ldots, Z_{n_A})$ from Sadinle 2017, defined as
 $$Z_j=\begin{cases} 
-    i,  & \text{if records } i\in \mathbf{X}_A \text{ and } j\in \mathbf{X}_B \text{ refer to the same entity}; \\
-    n_A + 1,  & \text{if record } j\in \mathbf{X}_B \text{ does not have a match in file} \mathbf{X}_B; \\
+    i,  & \text{if records } i\in A \text{ and } j\in B \text{ refer to the same entity}; \\
+    n_A + 1,  & \text{if record } j\in B \text{ does not have a match in file } A; \\
 \end{cases}$$
+This provides more memory efficient storage for the linkage information than a $n_A \times n_B$ sparse matrix of indicators.
 
-Wherever possible, we reserve superscripts for denoting field, level, and linkage cluster, and reserve subscripts for record indices. For example, $\mathbf{m}^f = (m^{f1}, \ldots, m^{fL_f})$ is the probability distribution governing field $f$ for matching records, and $\mathbf{m}_{ij}= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(m^{fl}\right)^{\mathbf{1}_{\gamma_{ij}^f = l}} = P(\boldsymbol{\gamma}_{ij}|Z_j = i)$ is product of the relevant of the appropriate $\mathbf{m}$ parameters for record pair $(i,j)$. We hope that these conventions avoid overloaded notation in the likelihood and subsequent derivations. 
+Following the Fellegi Sunter framework, we define $m^{fl}:= P(\gamma_{ij}^f = l |Z_j = i)$ to be the probability of observing agreement level $l$ in field $f$ for records $i$ and $j$ given that the records are a match, and similarly define $u^{fl}:= P(\gamma_{ij}^f = l |Z_j \neq i)$, for non-matches. We denote $\lambda$ to be the (marginal) probability that some record $j \in B$ has a match in $A$. 
+
+Wherever possible, we reserve superscripts for denoting field and level, while reserving subscripts for record indices. For example, $\mathbf{m}^f = (m^{f1}, \ldots, m^{fL_f})$ is the probability distribution governing field $f$ for matching records, and $\mathbf{m}_{ij}= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(m^{fl}\right)^{\mathbf{1}_{\gamma_{ij}^f = l}} = P(\boldsymbol{\gamma}_{ij}|Z_j = i)$ is product of the relevant of the appropriate $\mathbf{m}$ parameters for record pair $(i,j)$. We hope that these conventions avoid overloaded notation in the likelihood and subsequent derivations. 
 
 # Model Specification
 
-Additionally, our model differs from that of Sadinle 2017 through its explicit dependence on a beta random variable $\lambda$ that models the rate of matching across records. Sadinle marginalizes over such a random variable in his derivations of  the "beta prior for bipartite matching," but here we provide derivations without marginalizing in order to specify differing rates of matching for different linkage clusters. 
+Our model differs from that of Sadinle 2017 through its explicit dependence on a beta random variable $\lambda$ that models the rate of matching across records. Sadinle marginalizes over such a random variable in his derivations of  the "beta prior for bipartite matching," but here we provide derivations without marginalizing in order to specify differing rates of matching for different linkage clusters. 
 
 ## Prior Distributions and Likelihood
 
-For fields $f \in \{1, \ldots, F\}$ and levels $l\in \{1, \ldots, L_f\}$ we adopt the following likelihood and prior distributions. Note that likelihood is related to that of Sadinle (2017), but includes dependence on the $\lambda$ random variable. It also makes it explict that units of observation under this model are the $n_B$ records in $\mathbf{X}_B$, a crucial distinction when compared to the likelihood over the $n_A \times n_B$ record pairs in the original Fellegi Sunter model.
+For fields $f \in \{1, \ldots, F\}$ and levels $l\in \{1, \ldots, L_f\}$ we adopt the following likelihood and prior distributions. 
 
 $$P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda) =\prod_{j=1}^{n_B}  \prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}$$
 
@@ -60,7 +61,7 @@ $$Z_j | \lambda =
 \end{cases}$$
 
 $$\lambda \sim \text{Beta}(\alpha_{\lambda}, \beta_{\lambda}) $$
-The prior for $Z_j$ has equal probability of matching to all records $i\in \mathbf{X}_A$, and non-matching probability governed by $\lambda$. Therefore a  $\lambda \sim \text{Beta}(1, 1)$ corresponds to a prior belief that nonmatches and matches are equally likely, and a $\lambda \sim \text{Beta}(1, \frac{1}{n_A})$ prior corresponds to a uniform prior on the labelling of $\mathbf{Z}$. 
+The prior for $Z_j$ has equal probability of matching to all records $i\in A$, and non-matching probability governed by $\lambda$. Therefore a  $\lambda \sim \text{Beta}(1, 1)$ corresponds to a prior belief that nonmatches and matches are equally likely, and a $\lambda \sim \text{Beta}(1, \frac{1}{n_A})$ prior corresponds to a uniform prior on the labelling of $\mathbf{Z}$. 
 
 
 ## Posterior Sampling
@@ -73,20 +74,20 @@ This factorization leads to following Gibbs Sampler:
 
 \underline{Sample $\mathbf{m}^{(s+1)}$ $\mathbf{u}^{(s+1)}|\Gamma, \mathbf{Z}^{(s)}$:} The $\mathbf{m}$ and $\mathbf{u}$ parameters are updated through standard multinomial-dirichlet mechanics. Thus we have 
 
-$$\mathbf{m^{f}}|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\alpha^{f1}(\mathbf{Z}), \ldots, \alpha^{fL_f}(\mathbf{Z}))$$
-$$\mathbf{u^{f}}|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\beta^{f1}(\mathbf{Z}), \ldots, \beta^{fL_f}(\mathbf{Z}))$$
+$$\mathbf{m}^f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\alpha^{f1}(\mathbf{Z}), \ldots, \alpha^{fL_f}(\mathbf{Z}))$$
+$$\mathbf{u}^f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\beta^{f1}(\mathbf{Z}), \ldots, \beta^{fL_f}(\mathbf{Z}))$$
 where $\alpha_{fl}(\mathbf{Z})= \sum_{i,j} I_{obs}(\gamma_{ij}^f)\mathbf{1}_{\gamma_{ij}^f = l} \mathbf{1}_{z_j = i}$ and $\beta_{fl}(\mathbf{Z})= \sum_{i,j} I_{obs}(\gamma_{ij}^f)\mathbf{1}_{\gamma_{ij}^f = l} \mathbf{1}_{z_j \neq i}$.
 
-\underline{Sample $\lambda^{(s+1)}|\mathbf{Z}^{(s)}$ As a function of $\lambda$, the linkage structure parameter $\mathbf{Z}$ is sequence of successes (when $z_j < n_A + 1$) and failures (when $z_j = n_A + 1$), and therefore $p(\mathbf{Z}|\lambda) = \mathcal{L}(\lambda|\mathbf{Z})$ is  determined only by the number of dupliates $D = \sum_{i=1}^{n_B}\mathbf{1}_{z_j < n_A + 1}$ encoded by $\mathbf{Z}$. Thus we have
+\underline{Sample $\lambda^{(s+1)}|\mathbf{Z}^{(s)}$} As a function of $\lambda$, the linkage structure parameter $\mathbf{Z}$ is sequence of successes (when $z_j < n_A + 1$) and failures (when $z_j = n_A + 1$), and therefore $p(\mathbf{Z}|\lambda) = \mathcal{L}(\lambda|\mathbf{Z})$ is  determined only by the number of dupliates $D = \sum_{i=1}^{n_B}\mathbf{1}_{z_j < n_A + 1}$ encoded by $\mathbf{Z}$. Thus we have
 
 $$p(\lambda | \mathbf{Z}) \propto p(\mathbf{Z}|\lambda)p(\lambda)$$
 $$\propto \lambda^D (1-\lambda)^{n_B - D} \lambda^{\alpha_{\lambda} -1} (1-\lambda)^{\beta_{\lambda} -1}$$
 $$ \propto \lambda^{D + \alpha_{\lambda} - 1} (1-\lambda)^{n_B - D + \beta_{\lambda} -1}$$
 $$\implies \lambda^{(s+1)}|\mathbf{Z}^{(s+1)} \sim \text{Beta}(D + \alpha_{\lambda}, n_B - D + \beta_{\lambda})$$
 
-\underline{Sample $\mathbf{Z}^{(s+1)}|\Gamma, \mathbf{m}^{(s+1)}, \mathbf{u}^{(s+1)}, \lambda^{(s+1)}$} Because we sample $Z_j$ independently of all other $Z_{j'}$, we use only the full conditional for an individual $Z_j$. Let $\Gamma_{.j}$ denote the set of $n_A$ comparison vectors with $j \in B$, and note that as a function of $Z_j$, the likelihood $p(\Gamma_{.j}|Z_j, \mathbf{m}, \mathbf{u})$ is a discrete distribution with probalities proportional to 
+\underline{Sample $\mathbf{Z}^{(s+1)}|\Gamma, \mathbf{m}^{(s+1)}, \mathbf{u}^{(s+1)}, \lambda^{(s+1)}$} Because we sample $Z_j$ independently of all other $Z_{j'}$, we use only the full conditional for an individual $Z_j$. Let $\Gamma_{.j}$ denote the set of $n_A$ comparison vectors with $j \in B$, and note that as a function of $Z_j$, the likelihood $p(\Gamma_{.j}|Z_j, \mathbf{m}, \mathbf{u}) = \mathcal{L}(Z_j|\Gamma_{.j}, \mathbf{m}, \mathbf{u})$ is a discrete distribution with probalities proportional to 
 $$p(\Gamma_{.j}|Z_j = z_j, \mathbf{m}, \mathbf{u}) \propto \prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}$$
-$$\propto \prod_{i=1}^{n_A}\left(\frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}}\right)^{\mathbf{1}_{z_j = i}} \;\;\;\;\;\;\;\; \text{Divide through by} \prod_{i = 1}^{n_A}\mathbf{u}_{ij}$$
+$$\propto \prod_{i=1}^{n_A}\left(\frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}}\right)^{\mathbf{1}_{z_j = i}} \;\;\;\;\;\;\;\; \text{By dividing through by} \prod_{i = 1}^{n_A}\mathbf{u}_{ij}$$
 $$=
 \begin{cases} 
     w_{ij}  & z_j \leq n_A; \\
@@ -106,8 +107,7 @@ $$ \implies Z_j^{(s+1)} | \mathbf{m}, \mathbf{u}, \Gamma, \lambda \propto
      1-\lambda &  z_j  = n_A + 1 \\
 \end{cases}$$
 
-
-Here, one should note that if we choose to integrate over the posterior of $\lambda$ and rearrange terms, we produce the following sampling mechanism:
+Here, we integrate over the posterior of $\lambda$ and rearrange terms to produce the final full conditional:
 
 $$Z_j^{(s+1)} | \mathbf{m}, \mathbf{u}, \mathbf{Z^{(s)}} \propto
 \begin{cases} 

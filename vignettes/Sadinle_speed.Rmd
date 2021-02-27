@@ -20,12 +20,8 @@ library(parlrdev)
 
 
 ```{r}
-n1 <- 5000; n2 <- 5000
-K <- 2
-n1_vec <- rep(n1/K, K)
-n2_vec <- rep(n2/K, K)
-overlap_vec <- c(50, 50)
-overlap <- n2/2
+n1 <- 300; n2 <- 200
+overlap <- 200
 
 
 m <- c(.05, .95, .05, .95, .05, .95, .05, .95, .05, .95)
@@ -35,10 +31,9 @@ u <- c(.99, .01, .99, .01,
 
 
 levels <- c(2, 2, 2, 2, 2)
-#varying_fields <- c(3, 4)
 
-iter <- 1
-S <- 50; burn <- S * .1
+iter <- 10
+S <- 500; burn <- S * .1
 m_prior <- u_prior <- rep(1, length(m))
 alpha <- beta <- 1
 EVAL.SAMPS6 <- array(NA, dim = c(iter, 3, 2))
@@ -50,7 +45,7 @@ Ztrue <- comparisons[[5]]
 Zchain <- Sadinle17(comparisons, m_prior, u_prior, alpha, beta, S, burn)
 Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
 eval <- GetEvaluations(Zhat, Ztrue, n1)
-EVAL.SAMPS6[i, ,2] <- eval
+EVAL.SAMPS6[i, ,1] <- eval
 
 Zchain <- BKSimple(comparisons, m_prior, u_prior, alpha, beta, S, burn)
 Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
@@ -58,6 +53,6 @@ eval <- GetEvaluations(Zhat, Ztrue, n1)
 EVAL.SAMPS6[i, ,2] <- eval
 print(i)
 }
-EVAL.SAMPS5
+EVAL.SAMPS6
 ```
 
