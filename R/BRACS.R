@@ -1,5 +1,5 @@
 BRACS_BK <- function(comparisons, m_prior, u_prior,
-                       alpha, beta, S, burn){
+                       alpha, beta, S, burn, show_progress = T){
   # Implements bipartite record linkage with BK Sampling Mechanism
   #
   # Arguments
@@ -126,12 +126,13 @@ BRACS_BK <- function(comparisons, m_prior, u_prior,
     #U.SAMPS[,s] <- u
     #L.SAMPS[s] <- L
 
-    if (s %% (S / 100) == 0) {
-      flush.console()
-      cat("\r", paste("Simulation", ": ", s / (S / 100), "% complete", sep = ""))
+    if(show_progress){
+      if (s %% (S / 100) == 0) {
+        flush.console()
+        cat("\r", paste("Simulation", ": ", s / (S / 100), "% complete", sep = ""))
+      }
     }
   }
-
   Z.SAMPS <- Z.SAMPS[,-(1:burn)]
   #L.SAMPS <- L.SAMPS[-(1:burn)]
   #M.SAMPS <- M.SAMPS[,-(1:burn)]
@@ -141,7 +142,7 @@ BRACS_BK <- function(comparisons, m_prior, u_prior,
 }
 
 BRACS_Heck <- function(comparisons, m_prior, u_prior,
-                     alpha, beta, S, burn){
+                     alpha, beta, S, burn, show_progress = T){
   # Implements bipartite record linkage with BK Sampling Mechanism
   #
   # Arguments
@@ -269,12 +270,13 @@ BRACS_Heck <- function(comparisons, m_prior, u_prior,
     #U.SAMPS[,s] <- u
     #L.SAMPS[s] <- L
 
-    if (s %% (S / 100) == 0) {
-      flush.console()
-      cat("\r", paste("Simulation", ": ", s / (S / 100), "% complete", sep = ""))
+    if(show_progress){
+      if (s %% (S / 100) == 0) {
+        flush.console()
+        cat("\r", paste("Simulation", ": ", s / (S / 100), "% complete", sep = ""))
+      }
     }
   }
-
   Z.SAMPS <- Z.SAMPS[,-(1:burn)]
   #L.SAMPS <- L.SAMPS[-(1:burn)]
   #M.SAMPS <- M.SAMPS[,-(1:burn)]

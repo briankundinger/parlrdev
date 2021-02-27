@@ -92,7 +92,7 @@ EVAL.SAMPS5
 
 
 
-```{r sim2}
+```{r sim2, inlcude = FALSE}
 n1 <- 900; n2 <- 200
 K <- 4
 n1_vec <- rep(n1/K, K)

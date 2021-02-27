@@ -1,26 +1,17 @@
 ---
-title: "Sadinle_speed"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Sadinle_speed}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+title: "cluster test"
+output: html_document
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
-```
-
-```{r setup}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 devtools::load_all()
 library(parlrdev)
 ```
 
 
-```{r cache = TRUE}
+
+```{r}
 n1 <- 100; n2 <- 100
 overlap <- n2/2
 
@@ -33,7 +24,7 @@ u <- c(.99, .01, .99, .01,
 
 levels <- c(2, 2, 2, 2, 2)
 
-iter <- 1
+iter <- 5
 S <- 100; burn <- S * .1
 m_prior <- u_prior <- rep(1, length(m))
 alpha <- beta <- 1
@@ -56,17 +47,7 @@ eval <- GetEvaluations(Zhat, Ztrue, n1)
 EVAL.SAMPS6[i, ,2] <- eval
 #print(i)
 }
-EVAL.SAMPS6
-```
+saveRDS(EVAL.SAMPS6, file = "../results/eval.rds")
 
-
-```{r cache=TRUE}
-knitr::opts_current$get(c(
-  "cache",
-  "cache.path",
-  "cache.rebuild",
-  "dependson",
-  "autodep"
-))
 ```
 

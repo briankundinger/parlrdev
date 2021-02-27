@@ -1,5 +1,5 @@
 BKSimple <- function(comparisons, m_prior, u_prior,
-                     alpha, beta, S, burn){
+                     alpha, beta, S, burn, show_progress = T){
   # Implements bipartite record linkage with BK Sampling Mechanism
   #
   # Arguments
@@ -10,6 +10,7 @@ BKSimple <- function(comparisons, m_prior, u_prior,
   # beta = second parameter of prior for linkage probability
   # S = number of Gibbs iterations
   # burn = number of iterations to be discarded as burn-in
+  # show_progress = set to false to show simulation progress
 
   fields <- length(comparisons[[4]])
   n1 <- comparisons[[2]]; n2 <- comparisons[[3]]
@@ -78,13 +79,13 @@ BKSimple <- function(comparisons, m_prior, u_prior,
     #M.SAMPS[,s] <- m
     #U.SAMPS[,s] <- u
     L.SAMPS[s] <- L
-
-    if (s %% (S / 100) == 0) {
-      flush.console()
-      cat("\r", paste("Simulation", ": ", s / (S / 100), "% complete", sep = ""))
+    if(show_progress){
+      if (s %% (S / 100) == 0) {
+        flush.console()
+        cat("\r", paste("Simulation", ": ", s / (S / 100), "% complete", sep = ""))
+      }
     }
   }
-
   Z.SAMPS <- Z.SAMPS[,-(1:burn)]
   #L.SAMPS <- L.SAMPS[-(1:burn)]
   #M.SAMPS <- M.SAMPS[,-(1:burn)]
@@ -95,7 +96,7 @@ BKSimple <- function(comparisons, m_prior, u_prior,
 
 
 Sadinle17 <- function(comparisons, m_prior, uprior,
-                     alpha, beta, S, burn){
+                     alpha, beta, S, burn, show_progress = F){
   # Implements bipartite record linkage with BK Sampling Mechanism
   #
   # Arguments
@@ -183,12 +184,13 @@ Sadinle17 <- function(comparisons, m_prior, uprior,
     #U.SAMPS[,s] <- u
     L.SAMPS[s] <- L
 
-    if (s %% (S / 100) == 0) {
-      flush.console()
-      cat("\r", paste("Simulation", ": ", s / (S / 100), "% complete", sep = ""))
+    if(show_progress){
+      if (s %% (S / 100) == 0) {
+        flush.console()
+        cat("\r", paste("Simulation", ": ", s / (S / 100), "% complete", sep = ""))
+      }
     }
   }
-
   Z.SAMPS <- Z.SAMPS[,-(1:burn)]
   #L.SAMPS <- L.SAMPS[-(1:burn)]
   #M.SAMPS <- M.SAMPS[,-(1:burn)]
