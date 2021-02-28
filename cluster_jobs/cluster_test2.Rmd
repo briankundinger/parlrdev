@@ -45,17 +45,17 @@ Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
 eval_bk <- GetEvaluations(Zhat, Ztrue, n1)
 rbind(eval_sad, eval_bk)
 })
-
+saveRDS(sims, file = "../results/sims.rds")
 #slurmR::Slurm_clean(sims)
 
-eval_sad <- purrr::map_df(sims, ~.x[1,])
-eval_sad$method <- "Sadinle"
-
-eval_bk <- purrr::map_df(sims, ~.x[2,])
-eval_bk$method <- "BK"
-
-eval <- rbind(eval_sad, eval_bk)
-
-saveRDS(eval, file = "../results/eval_test.rds")
+# eval_sad <- purrr::map_df(sims, ~.x[1,])
+# eval_sad$method <- "Sadinle"
+# 
+# eval_bk <- purrr::map_df(sims, ~.x[2,])
+# eval_bk$method <- "BK"
+# 
+# eval <- rbind(eval_sad, eval_bk)
+# 
+# saveRDS(eval, file = "../results/eval_test.rds")
 ```
 
