@@ -46,7 +46,7 @@ eval_bk <- GetEvaluations(Zhat, Ztrue, n1)
 rbind(eval_sad, eval_bk)
 })
 
-slurmR::Slurm_collect(sims)
+#slurmR::Slurm_collect(sims)
 saveRDS(sims, file = "../results/sims.rds")
 # eval_sad <- purrr::map_df(sims, ~.x[1,])
 # eval_sad$method <- "Sadinle"
