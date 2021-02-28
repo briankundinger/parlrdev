@@ -24,7 +24,7 @@ u <- c(.99, .01, .99, .01,
 
 levels <- c(2, 2, 2, 2, 2)
 
-iter <- 10
+iter <- as.integer(10)
 S <- 100; burn <- S * .1
 m_prior <- u_prior <- rep(1, length(m))
 alpha <- beta <- 1
@@ -46,7 +46,7 @@ eval_bk <- GetEvaluations(Zhat, Ztrue, n1)
 rbind(eval_sad, eval_bk)
 }, njobs = iter)
 
-slurmR::Slurm_clean(sims)
+#slurmR::Slurm_clean(sims)
 
 eval_sad <- purrr::map_df(sims, ~.x[1,])
 eval_sad$method <- "Sadinle"
