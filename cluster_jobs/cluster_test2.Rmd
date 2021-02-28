@@ -24,12 +24,12 @@ u <- c(.99, .01, .99, .01,
 
 levels <- c(2, 2, 2, 2, 2)
 
-iter <- 8
-S <- 100; burn <- S * .1
+iter <- 16
+S <- 500; burn <- S * .1
 m_prior <- u_prior <- rep(1, length(m))
 alpha <- beta <- 1
 
-sims <- parallel::mclapply(1:2, function(x){
+sims <- parallel::mclapply(1:iter, function(x){
 comparisons <- SimulateComparisons(m, u, levels, n1, n2,overlap)
 Ztrue <- comparisons[[5]]
 
