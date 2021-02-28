@@ -185,6 +185,8 @@ m_prior &lt;- u_prior &lt;- rep(1, length(m))
 alpha &lt;- beta &lt;- 1
 
 sims &lt;- slurmR::Slurm_lapply(1:iter, function(x){
+  devtools::load_all()
+library(parlrdev)
 comparisons &lt;- SimulateComparisons(m, u, levels, n1, n2,overlap)
 Ztrue &lt;- comparisons[[5]]
 
@@ -201,7 +203,7 @@ eval_bk &lt;- GetEvaluations(Zhat, Ztrue, n1)
 rbind(eval_sad, eval_bk)
 })</code></pre>
 <pre><code>## Warning: `X` is not a list. The function will coerce it into one using `as.list`</code></pre>
-<pre><code>## Submitting job... jobid:1038287.</code></pre>
+<pre><code>## Submitting job... jobid:1038293.</code></pre>
 <pre class="r"><code>#slurmR::Slurm_collect(sims)
 saveRDS(sims, file = &quot;../results/sims.rds&quot;)
 # eval_sad &lt;- purrr::map_df(sims, ~.x[1,])
