@@ -30,6 +30,8 @@ m_prior <- u_prior <- rep(1, length(m))
 alpha <- beta <- 1
 
 sims <- slurmR::Slurm_lapply(1:iter, function(x){
+  devtools::load_all()
+library(parlrdev)
 comparisons <- SimulateComparisons(m, u, levels, n1, n2,overlap)
 Ztrue <- comparisons[[5]]
 
