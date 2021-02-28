@@ -167,7 +167,7 @@ pre code {
 </div>
 
 
-<pre class="r"><code>n1 &lt;- 500; n2 &lt;- 500
+<pre class="r"><code>n1 &lt;- 100; n2 &lt;- 100
 overlap &lt;- n2/2
 
 
@@ -179,12 +179,12 @@ u &lt;- c(.99, .01, .99, .01,
 
 levels &lt;- c(2, 2, 2, 2, 2)
 
-iter &lt;- 8
+iter &lt;- as.integer(2)
 S &lt;- 100; burn &lt;- S * .1
 m_prior &lt;- u_prior &lt;- rep(1, length(m))
 alpha &lt;- beta &lt;- 1
 
-sims &lt;- parallel::mclapply(1:2, function(x){
+sims &lt;- slurmR::Slurm_lapply(1:iter, function(x){
 comparisons &lt;- SimulateComparisons(m, u, levels, n1, n2,overlap)
 Ztrue &lt;- comparisons[[5]]
 
@@ -199,17 +199,21 @@ Zchain &lt;- BKSimple(comparisons, m_prior, u_prior,
 Zhat &lt;- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
 eval_bk &lt;- GetEvaluations(Zhat, Ztrue, n1)
 rbind(eval_sad, eval_bk)
-})
+})</code></pre>
+<pre><code>## Warning: `X` is not a list. The function will coerce it into one using `as.list`</code></pre>
+<pre><code>## Submitting job... jobid:1038277.</code></pre>
+<pre class="r"><code>saveRDS(sims, file = &quot;../results/sims.rds&quot;)
+#slurmR::Slurm_clean(sims)
 
-eval_sad &lt;- purrr::map_df(sims, ~.x[1,])
-eval_sad$method &lt;- &quot;Sadinle&quot;
-
-eval_bk &lt;- purrr::map_df(sims, ~.x[2,])
-eval_bk$method &lt;- &quot;BK&quot;
-
-eval &lt;- rbind(eval_sad, eval_bk)
-
-saveRDS(eval, file = &quot;../results/eval_test.rds&quot;)</code></pre>
+# eval_sad &lt;- purrr::map_df(sims, ~.x[1,])
+# eval_sad$method &lt;- &quot;Sadinle&quot;
+# 
+# eval_bk &lt;- purrr::map_df(sims, ~.x[2,])
+# eval_bk$method &lt;- &quot;BK&quot;
+# 
+# eval &lt;- rbind(eval_sad, eval_bk)
+# 
+# saveRDS(eval, file = &quot;../results/eval_test.rds&quot;)</code></pre>
 
 
 

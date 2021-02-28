@@ -1,0 +1,7 @@
+[slurmR info] Loading variables and functions... done loading variables and functions.
+[slurmR info] Loading packages ... 
+Warning: An error has ocurred while evualting the expression:
+ {
+    library(parlrdev, lib.loc = "/home/users/bak47/projects")
+} 
+ in  ARRAY_ID #  8
