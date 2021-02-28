@@ -24,7 +24,7 @@ u <- c(.99, .01, .99, .01,
 
 levels <- c(2, 2, 2, 2, 2)
 
-iter <- as.integer(10)
+iter <- as.integer(2)
 S <- 100; burn <- S * .1
 m_prior <- u_prior <- rep(1, length(m))
 alpha <- beta <- 1
@@ -44,7 +44,7 @@ Zchain <- BKSimple(comparisons, m_prior, u_prior,
 Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
 eval_bk <- GetEvaluations(Zhat, Ztrue, n1)
 rbind(eval_sad, eval_bk)
-}, njobs = iter)
+})
 
 #slurmR::Slurm_clean(sims)
 
