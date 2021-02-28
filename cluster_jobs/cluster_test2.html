@@ -201,10 +201,9 @@ eval_bk &lt;- GetEvaluations(Zhat, Ztrue, n1)
 rbind(eval_sad, eval_bk)
 })</code></pre>
 <pre><code>## Warning: `X` is not a list. The function will coerce it into one using `as.list`</code></pre>
-<pre><code>## Submitting job... jobid:1038277.</code></pre>
-<pre class="r"><code>saveRDS(sims, file = &quot;../results/sims.rds&quot;)
-#slurmR::Slurm_clean(sims)
-
+<pre><code>## Submitting job... jobid:1038287.</code></pre>
+<pre class="r"><code>#slurmR::Slurm_collect(sims)
+saveRDS(sims, file = &quot;../results/sims.rds&quot;)
 # eval_sad &lt;- purrr::map_df(sims, ~.x[1,])
 # eval_sad$method &lt;- &quot;Sadinle&quot;
 # 
