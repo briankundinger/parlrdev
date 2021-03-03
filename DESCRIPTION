@@ -15,4 +15,5 @@ Suggests:
 VignetteBuilder: knitr
 Imports: 
     MCMCpack,
-    BRL
+    BRL,
+    dplyr

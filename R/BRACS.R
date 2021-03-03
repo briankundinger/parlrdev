@@ -14,7 +14,7 @@ BRACS_BK <- function(comparisons, m_prior, u_prior,
   fields <- length(comparisons[[4]])
   n1 <- comparisons[[2]]; n2 <- comparisons[[3]]
   ids <- expand.grid(1:n1, 1:n2)
-  indicators <- comparisons[[1]]
+  indicators <- data.frame(comparisons[[1]])
 
   parameter_split <- as.vector(unlist(sapply(1:fields, function(x){
     rep(x, comparisons[[4]][x])
@@ -34,7 +34,7 @@ BRACS_BK <- function(comparisons, m_prior, u_prior,
     to_change <- which(ids[, 2] %in% n2_indices[[k]])
     linkage_cluster[to_change] <- k
   }
-
+#indicators <- data.frame(indicators, linkage_cluster)
 
   candidates <- 1:n1
   Z.SAMPS <- matrix(NA, nrow = n2, ncol = S)
@@ -50,12 +50,46 @@ BRACS_BK <- function(comparisons, m_prior, u_prior,
   # Gibbs
   for(s in 1:S){
 
-    AZ[-varying_fields, ] <- t(apply(indicators[, -varying_fields], 2, function(x){
-      sum(x == 1 & Z.temp == 1)
-    }))
-    BZ[-varying_fields, ] <- t(apply(indicators[, -varying_fields], 2, function(x){
-      sum(x == 1 & Z.temp == 0)
-    }))
+    AZ[-varying_fields, ]  <- indicators %>%
+      select(-varying_fields) %>%
+      filter(Z.temp == 1) %>%
+      colSums() %>%
+      unname()
+
+
+    BZ[-varying_fields, ]  <- indicators %>%
+      select(-varying_fields) %>%
+      filter(Z.temp == 0) %>%
+      colSums() %>%
+      unname()
+
+    # AZ[varying_fields, ] <-
+    #   indicators %>%
+    #   select(varying_fields, linkage_cluster) %>%
+    #   filter(Z.temp == 1) %>%
+    #   split(x= ., .$linkage_cluster)%>%
+    #   map(colSums)%>%
+    #   map(~.x[-length(.x)])%>%
+    #   do.call(rbind, .)
+
+    # thing <- indicators %>%
+    #   select(varying_fields, linkage_cluster) %>%
+    #   filter(Z.temp == 1) %>%
+    #   nest_by(linkage_cluster)
+    #
+    # unlist(lapply(thing$data, function(x){
+    #   counts <- colSums(x)
+    #   if(is.null(counts)) {
+    #     counts <- 0
+    #   }
+    # }))
+
+    # AZ[-varying_fields, ] <- t(apply(indicators[, -varying_fields], 2, function(x){
+    #   sum(x == 1 & Z.temp == 1)
+    # }))
+    # BZ[-varying_fields, ] <- t(apply(indicators[, -varying_fields], 2, function(x){
+    #   sum(x == 1 & Z.temp == 0)
+    # }))
 
     for(k in 1:K){
       AZ[varying_fields, k] <- apply(indicators[, varying_fields], 2, function(x){
@@ -109,7 +143,7 @@ BRACS_BK <- function(comparisons, m_prior, u_prior,
     Z <- unname(sapply(weights, function(x){
       sample(c(candidates, n1 + 1), 1, prob = c(x, offset))
     }))
-    Z.temp <- sapply(Z, function(x){
+    Z.temp <- as.vector(sapply(Z, function(x){
       if(x < n1 + 1){
         vec <- rep(0, n1)
         vec[x] <- 1
@@ -117,7 +151,7 @@ BRACS_BK <- function(comparisons, m_prior, u_prior,
       }else{
         rep(0, n1)
       }
-    })
+    }))
 
     L <- sum(Z < n1 + 1)
 
@@ -157,7 +191,7 @@ BRACS_Heck <- function(comparisons, m_prior, u_prior,
   fields <- length(comparisons[[4]])
   n1 <- comparisons[[2]]; n2 <- comparisons[[3]]
   ids <- expand.grid(1:n1, 1:n2)
-  indicators <- comparisons[[1]]
+  indicators <- data.frame(comparisons[[1]])
 
   parameter_split <- as.vector(unlist(sapply(1:fields, function(x){
     rep(x, comparisons[[4]][x])
@@ -192,13 +226,24 @@ BRACS_Heck <- function(comparisons, m_prior, u_prior,
 
   # Gibbs
   for(s in 1:S){
+    AZ[-varying_fields, ]  <- indicators %>%
+      select(-varying_fields) %>%
+      filter(Z.temp == 1) %>%
+      colSums() %>%
+      unname()
+    BZ[-varying_fields, ]  <- indicators %>%
+      select(-varying_fields) %>%
+      filter(Z.temp == 0) %>%
+      colSums() %>%
+      unname()
 
-    AZ[-varying_fields, ] <- t(apply(indicators[, -varying_fields], 2, function(x){
-      sum(x == 1 & Z.temp == 1)
-    }))
-    BZ[-varying_fields, ] <- t(apply(indicators[, -varying_fields], 2, function(x){
-      sum(x == 1 & Z.temp == 0)
-    }))
+
+    # AZ[-varying_fields, ] <- t(apply(indicators[, -varying_fields], 2, function(x){
+    #   sum(x == 1 & Z.temp == 1)
+    # }))
+    # BZ[-varying_fields, ] <- t(apply(indicators[, -varying_fields], 2, function(x){
+    #   sum(x == 1 & Z.temp == 0)
+    # }))
 
     for(k in 1:K){
       AZ[varying_fields, k] <- apply(indicators[, varying_fields], 2, function(x){

@@ -14,7 +14,7 @@ BKSimple <- function(comparisons, m_prior, u_prior,
 
   fields <- length(comparisons[[4]])
   n1 <- comparisons[[2]]; n2 <- comparisons[[3]]
-  indicators <- comparisons[[1]]
+  indicators <- data.frame(comparisons[[1]])
 
   parameter.indicators <- as.vector(unlist(sapply(1:fields, function(x){
     rep(x, comparisons[[4]][x])
@@ -32,12 +32,18 @@ BKSimple <- function(comparisons, m_prior, u_prior,
 
   # Gibbs
   for(s in 1:S){
-    aZ <- apply(indicators, 2, function(x){
-      sum(x == 1 & Z.temp == 1)
-    })
-    bZ <- apply(indicators, 2, function(x){
-      sum(x == 1 & Z.temp == 0)
-    })
+    aZ <- indicators %>%
+      filter(Z.temp == 1) %>%
+      colSums()
+    bZ <- indicators %>%
+      filter(Z.temp == 0) %>%
+      colSums()
+    # aZ <- apply(indicators, 2, function(x){
+    #   sum(x == 1 & Z.temp == 1)
+    # })
+    # bZ <- apply(indicators, 2, function(x){
+    #   sum(x == 1 & Z.temp == 0)
+    # })
 
     m.post <- m_prior + aZ
     u.post <- u_prior + bZ
@@ -64,7 +70,7 @@ BKSimple <- function(comparisons, m_prior, u_prior,
       sample(c(candidates, n1 + 1), 1, prob = c(x, offset))
     }))
 
-    Z.temp <- sapply(Z, function(x){
+    Z.temp <- as.vector(sapply(Z, function(x){
       if(x < n1 + 1){
         vec <- rep(0, n1)
         vec[x] <- 1
@@ -72,7 +78,7 @@ BKSimple <- function(comparisons, m_prior, u_prior,
       }else{
         rep(0, n1)
       }
-    })
+    }))
     L <- sum(Z < n1 + 1)
 
     Z.SAMPS[,s] <- Z
@@ -110,7 +116,7 @@ Sadinle17 <- function(comparisons, m_prior, uprior,
 
   fields <- length(comparisons[[4]])
   n1 <- comparisons[[2]]; n2 <- comparisons[[3]]
-  indicators <- comparisons[[1]]
+  indicators <- data.frame(comparisons[[1]])
 
   parameter.indicators <- as.vector(unlist(sapply(1:fields, function(x){
     rep(x, comparisons[[4]][x])
@@ -130,12 +136,19 @@ Sadinle17 <- function(comparisons, m_prior, uprior,
 
   # Gibbs
   for(s in 1:S){
-    aZ <- apply(indicators, 2, function(x){
-      sum(x == 1 & Z.temp == 1)
-    })
-    bZ <- apply(indicators, 2, function(x){
-      sum(x == 1 & Z.temp == 0)
-    })
+
+    aZ <- indicators %>%
+      filter(Z.temp == 1) %>%
+      colSums()
+    bZ <- indicators %>%
+      filter(Z.temp == 0) %>%
+      colSums()
+    # aZ <- apply(indicators, 2, function(x){
+    #   sum(x == 1 & Z.temp == 1)
+    # })
+    # bZ <- apply(indicators, 2, function(x){
+    #   sum(x == 1 & Z.temp == 0)
+    # })
 
     m.post <- m_prior + aZ
     u.post <- u_prior + bZ
@@ -152,8 +165,8 @@ Sadinle17 <- function(comparisons, m_prior, uprior,
       prob/sum(prob)
     })))
 
-    weights <- exp(rowSums(sweep(indicators, 2, log(m), "*"), na.rm = TRUE)
-                   - rowSums(sweep(indicators, 2, log(u), "*"), na.rm = TRUE))
+    system.time(weights <- exp(rowSums(sweep(indicators, 2, log(m), "*"), na.rm = TRUE)
+                   - rowSums(sweep(indicators, 2, log(u), "*"), na.rm = TRUE)))
 
     weights <- split(weights, ids[,2])
     offset <- n1*(n2 - L + beta)/(L+ alpha)

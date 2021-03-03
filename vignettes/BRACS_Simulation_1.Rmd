@@ -16,14 +16,16 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(parlrdev)
+library(knitr)
+library(kableExtra)
 ```
 
 ```{r}
-n1 <- 5000; n2 <- 5000
+n1 <- 500; n2 <- 500
 K <- 2
 n1_vec <- rep(n1/K, K)
 n2_vec <- rep(n2/K, K)
-overlap_vec <- c(50, 50)
+overlap_vec <- rep(n2/(K*2), 2)
 
 
 m1 <- c(.05, .95, .05, .95, .05, .95, .05, .95, .05, .95)
@@ -42,28 +44,51 @@ u <- rbind(u1, u2)
 levels <- c(2, 2, 2, 2, 2)
 varying_fields <- c(3, 4)
 
-iter <- 1
+iter <- 5
 S <- 200; burn <- S * .1
 m_prior <- u_prior <- rep(1, dim(m)[2])
 alpha <- beta <- 1
-EVAL.SAMPS5 <- array(NA, dim = c(iter, 3, 2))
+LC_samps <- matrix(NA, nrow = iter, ncol = 3)
+NLC_samps <- matrix(NA, nrow = iter, ncol = 3)
 
 for(i in 1:iter){
-comparisons <- SimulateComparisonsLC(m, u, levels, varying_fields, n1, n2, n1_vec, n2_vec, overlap_vec)
+comparisons <- SimulateComparisonsLC2(m, u, levels, varying_fields, n1, n2, n1_vec, n2_vec, overlap_vec)
 Ztrue <- comparisons[[5]]
 
 Zchain <- BRACS_BK(comparisons, m_prior, u_prior, alpha, beta, S, burn)
 Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
 eval <- GetEvaluations(Zhat, Ztrue, n1)
-EVAL.SAMPS5[i, ,1] <- eval
+LC_samps[i, ] <- eval
 
 Zchain <- BKSimple(comparisons, m_prior, u_prior, alpha, beta, S, burn)
 Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
 eval <- GetEvaluations(Zhat, Ztrue, n1)
-EVAL.SAMPS5[i, ,2] <- eval
+NLC_samps[i, ] <- eval
 print(i)
 }
-EVAL.SAMPS5
+```
 
+```{r}
+LC_df <- data.frame(LC_samps, "LC")
+names(LC_df) <- c("recall", "precision", "fmeasure", "method")
+NLC_df <- data.frame(NLC_samps, "NLC")
+names(NLC_df) <- c("recall", "precision", "fmeasure", "method")
+
+df <- rbind(LC_df, NLC_df)
+results_df <- df %>% 
+  pivot_longer(cols = 1:3, names_to = "metric") %>% 
+  group_by(method, metric) %>% 
+  summarize(avg = mean(value),
+            lower = quantile(value, .1),
+            upper = quantile(value, .9),
+            .groups = "drop")
+
+results_df %>% 
+  kable(digits = 3,
+        caption = "Results for Simpler Distributions") %>% 
+  kable_classic() %>% 
+  kable_styling(full_width = F) %>% 
+  as_image(file = "../notes/figures/simpletable.png")
+  
 ```
 

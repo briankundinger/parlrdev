@@ -6,11 +6,11 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
-
+  
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+collapse = TRUE,
+comment = "#>"
 )
 ```
 
@@ -22,12 +22,12 @@ n2_vec <- rep(n2/K, K)
 overlap_vec <- rep(n2/(2*K), K)
 
 m <- c(0.2632168, 0.7367832,
-        0.002939667, 0.2647100, 0.7323503,
-        0.001399841, 0.2999393, 0.6986608,
-        0.030049928, 0.1272922, 0.8426578,
-        0.00e+00, 1.297186e-02, 9.332276e-05, 9.869348e-01,
-        0.000, 0.009658905, 0.001819794, 0.988521301,
-        0.0199622862, 0.0217829508, 0.0005201899, 0.9577345731)
+       0.002939667, 0.2647100, 0.7323503,
+       0.001399841, 0.2999393, 0.6986608,
+       0.030049928, 0.1272922, 0.8426578,
+       0.00e+00, 1.297186e-02, 9.332276e-05, 9.869348e-01,
+       0.000, 0.009658905, 0.001819794, 0.988521301,
+       0.0199622862, 0.0217829508, 0.0005201899, 0.9577345731)
 
 # u <- c(0.5643826, 0.4356174,
 #        0.1110782, 0.4017335, 0.4871883,
@@ -65,89 +65,88 @@ u <- rbind(u1, u2, u3, u4)
 levels <- c(2, 3, 3, 3, 4, 4, 4, 4)
 varying_fields <- 24:27
 
-iter <- 1
+iter <- 5
 S <- 200; burn <- S * .1
 m_prior <- u_prior <- rep(1, dim(m)[2])
 alpha <- beta <- 1
-EVAL.SAMPS5 <- array(NA, dim = c(iter, 3, 2))
+LC_samps <- matrix(NA, nrow = iter, ncol = 3)
+NLC_samps <- matrix(NA, nrow = iter, ncol = 3)
 for(i in 1:iter){
   comparisons <- SimulateComparisonsLC(m, u, levels, varying_fields, 
                                        n1, n2, n1_vec, n2_vec, overlap_vec)
   Ztrue <- comparisons[[5]]
   
-  Zchain <- BRACS_BK(comparisons, m_prior, u_prior, alpha, beta, S, burn)
+  Zchain <- BRACS_BK2(comparisons, m_prior, u_prior, alpha, beta, S, burn)
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   eval_lc <- GetEvaluations(Zhat, Ztrue, n1)
-  EVAL.SAMPS5[i, , 1] <- eval_lc
+  LC_samps[i, ] <- eval_lc
   
   Zchain <- BKSimple(comparisons, m_prior, u_prior, alpha, beta, S, burn)
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   eval_nlc <- GetEvaluations(Zhat, Ztrue, n1)
-  EVAL.SAMPS5[i, , 2] <- eval_lc
+  NLC_samps[i, ] <- eval_nlc
   print(i)
 }
-EVAL.SAMPS5
+
+```
+
+```{r}
+LC_df <- data.frame(LC_samps, "LC")
+names(LC_df) <- c("recall", "precision", "fmeasure", "method")
+NLC_df <- data.frame(NLC_samps, "NLC")
+names(NLC_df) <- c("recall", "precision", "fmeasure", "method")
+
+df_jody <- rbind(LC_df, NLC_df)
+results_df <- df_jody %>% 
+  pivot_longer(cols = 1:3, names_to = "metric") %>% 
+  group_by(method, metric) %>% 
+  summarize(avg = mean(value),
+            lower = quantile(value, .1),
+            upper = quantile(value, .9),
+            .groups = "drop")
+
+current_dist_table <- results_df %>% 
+  kable(digits = 3,
+        caption = "Results for Current Distributions") %>% 
+  kable_classic() %>% 
+  kable_styling(full_width = F) %>% 
+  as_image(file = "../notes/figures/current_dist_table.png")
+
 ```
 
 
 
-
-```{r sim2, inlcude = FALSE}
-n1 <- 900; n2 <- 200
-K <- 4
+```{r}
+n1 <- 500; n2 <- 500
+K <- 2
 n1_vec <- rep(n1/K, K)
 n2_vec <- rep(n2/K, K)
-overlap_vec <- rep(n2/(2*K), K)
-
-m <- c(0.2632168, 0.7367832,
-        0.002939667, 0.2647100, 0.7323503,
-        0.001399841, 0.2999393, 0.6986608,
-        0.030049928, 0.1272922, 0.8426578,
-        0.00e+00, 1.297186e-02, 9.332276e-05, 9.869348e-01,
-        0.000, 0.009658905, 0.001819794, 0.988521301,
-        0.0199622862, 0.0217829508, 0.0005201899, 0.9577345731)
-
-u <- c(0.5643826, 0.4356174,
-       0.1110782, 0.4017335, 0.4871883,
-       0.1611171, 0.4737790, 0.3651039,
-       0.2096925, 0.4190162, 0.3712913,
-       0.3610075215, 0.0337668658, 0.0007047116, 0.6045209011,
-       0.5957447400, 0.0239889148, 0.0001713913, 0.3800949539,
-       9.695677e-01, 2.633540e-03, 1.537513e-05, 2.778341e-02)
-
-# u <- c(0.5643826, 0.4356174,
-#        0.1110782, 0.4017335, 0.4871883,
-#        0.1611171, 0.4737790, 0.3651039,
-#        0.2096925, 0.4190162, 0.3712913,
-#        9.695677e-01, 2.633540e-03, 1.537513e-05, 2.778341e-02,
-#        #9.695677e-01, 2.633540e-03, 1.537513e-05, 2.778341e-02,
-#        9.695677e-01, 2.633540e-03, 1.537513e-05, 2.778341e-02)
-
-m1 <- c(m, 0.52479436, 0.07896592, 0.07473561, 0.32150411)
-m2 <- c(m, 0.69911186, 0.04020643, 0.02820451, 0.23247720)
-m3 <- c(m, 0.60497166, 0.05499742, 0.02988150, 0.31014941)
-m4 <- c(m, 0.37962963, 0.06944444, 0.05462963, 0.49629630)
-
-u1 <- c(u, 0.9942882069, 0.0017485842, 0.0005182371, 0.0034449718)
-u2 <- c(u, 0.9975972562, 0.0010425954, 0.0001931966, 0.0011669518)
-u3 <- c(u, 0.9975994112, 0.0009873767, 0.0001657884, 0.0012474238)
-u4 <- c(u, 0.9977836722, 0.0012571011, 0.0001914907, 0.0007677359)
-
-m <- rbind(m1, m2, m3, m4)
-u <- rbind(u1, u2, u3, u4)
-
-#m <- rbind(m1, m4)
-#u <- rbind(u1, u4)
+overlap_vec <- rep(n2/(K*2), 2)
 
 
-levels <- c(2, 3, 3, 3, 4, 4, 4, 4)
-varying_fields <- 24:27
+m1 <- c(.05, .95, .05, .95, .05, .95, .05, .95, .05, .95)
+
+u1 <- c(.99, .01, .99, .01, 
+        1 - 1/30, 1/30, 1 - 1/12, 1/12, 1 - 1/15, 1/15)
+
+m2 <- c(.05, .95, .8, .2, .05, .95, .05, .95, .05, .95)
+
+u2 <- c(.99, .01, .99, .01, 
+        1 - 1/30, 1/30, 1 - 1/12, 1/12, 1 - 1/15, 1/15)
+
+m <- rbind(m1, m2)
+u <- rbind(u1, u2)
+
+levels <- c(2, 2, 2, 2, 2)
+varying_fields <- c(3, 4)
 
 iter <- 1
 S <- 200; burn <- S * .1
 m_prior <- u_prior <- rep(1, dim(m)[2])
 alpha <- beta <- 1
-EVAL.SAMPS5 <- array(NA, dim = c(iter, 3, 2))
+LC_samps <- matrix(NA, nrow = iter, ncol = 3)
+NLC_samps <- matrix(NA, nrow = iter, ncol = 3)
+
 for(i in 1:iter){
   comparisons <- SimulateComparisonsLC(m, u, levels, varying_fields, 
                                        n1, n2, n1_vec, n2_vec, overlap_vec)
@@ -155,17 +154,38 @@ for(i in 1:iter){
   
   Zchain <- BRACS_BK(comparisons, m_prior, u_prior, alpha, beta, S, burn)
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
-  eval_lc <- GetEvaluations(Zhat, Ztrue, n1)
-  EVAL.SAMPS5[i, , 1] <- eval_lc
+  eval <- GetEvaluations(Zhat, Ztrue, n1)
+  LC_samps[i, ] <- eval
   
   Zchain <- BKSimple(comparisons, m_prior, u_prior, alpha, beta, S, burn)
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
-  eval_nlc <- GetEvaluations(Zhat, Ztrue, n1)
-  EVAL.SAMPS5[i, , 2] <- eval_lc
+  eval <- GetEvaluations(Zhat, Ztrue, n1)
+  NLC_samps[i, ] <- eval
   print(i)
 }
-EVAL.SAMPS5
 ```
 
+```{r}
+LC_df <- data.frame(LC_samps, "LC")
+names(LC_df) <- c("recall", "precision", "fmeasure", "method")
+NLC_df <- data.frame(NLC_samps, "NLC")
+names(NLC_df) <- c("recall", "precision", "fmeasure", "method")
 
+df_bk <- rbind(LC_df, NLC_df)
+results_df <- df_bk %>% 
+  pivot_longer(cols = 1:3, names_to = "metric") %>% 
+  group_by(method, metric) %>% 
+  summarize(avg = mean(value),
+            lower = quantile(value, .2),
+            upper = quantile(value, .8),
+            .groups = "drop")
+
+# simple_dist_table <- results_df %>% 
+#   kable(digits = 3,
+#         caption = "Results for Simpler Distributions") %>% 
+#   kable_classic() %>% 
+#   kable_styling(full_width = F) %>% 
+#   as_image(file = "../notes/figures/simple_dist_table.png")
+
+```
 
