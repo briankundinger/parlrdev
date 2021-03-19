@@ -1,0 +1,216 @@
+---
+title: "lcmethod_bk_vig"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{lcmethod_bk_vig}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(parlrdev)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+
+
+```{r}
+n1 <- 500; n2 <- 500
+K <- 2
+n1_vec <- rep(n1/K, K)
+n2_vec <- rep(n2/K, K)
+#overlap_vec <- c(0, 125, 125)
+overlap_vec <- n2_vec/K
+
+record_cluster <- unlist(map(1:K, ~rep(.x, n2_vec[.x])))
+
+m0 <- c(.01, .99, .01, .99, .01, .99, .01, .99, .01, .99)
+
+u0 <- c(.999, .001, .99, .01, 
+        1 - 1/30, 1/30, 1 - 1/12, 1/12, 1 - 1/10, 1/10)
+
+m1 <- c(.05, .95, .05, .95, .05, .95, .05, .95, .05, .95)
+
+u1 <- c(.99, .01, .99, .01, 
+        1 - 1/30, 1/30, 1 - 1/12, 1/12, 1 - 1/10, 1/10)
+
+m2 <- c(.05, .95, .8, .2, .05, .95, .05, .95, .05, .95)
+
+u2 <- c(.99, .01, .99, .01, 
+        1 - 1/30, 1/30, 1 - 1/12, 1/12, 1 - 1/10, 1/10)
+
+m <- rbind(m1, m2)
+u <- rbind(u1, u2)
+
+# m <- rbind(m0, m1, m2)
+# u <- rbind(u0, u1, u2)
+
+m <- m[, -c(7, 8, 9, 10)]
+u <- u[, -c(7, 8, 9, 10)]
+
+#levels <- c(2, 2, 2, 2, 2)
+levels <- c(2, 2, 2)
+#varying_fields <- c(3, 4)
+varying_fields <- c(3, 4)
+
+iter <- 20
+S <- 300; burn <- S * .1
+m_prior <- u_prior <- rep(1, dim(m)[2])
+alpha <- beta <- 1
+BRACS_samps <- matrix(NA, nrow = iter, ncol = 3)
+LC_new_samps <- matrix(NA, nrow = iter, ncol = 3)
+NLC_samps <- matrix(NA, nrow = iter, ncol = 3)
+
+BRACS_samps_split <- array(NA, c(iter, 3, K))
+LC_new_samps_split <- array(NA, c(iter, 3, K))
+NLC_samps_split <- array(NA, c(iter, 3, K))
+
+BRACS_avg_prob <- matrix(NA, nrow = iter, ncol = K)
+LC_new_avg_prob <- matrix(NA, nrow = iter, ncol = K)
+NLC_avg_prob <- matrix(NA, nrow = iter, ncol = K)
+
+for(i in 1:iter){
+  #Simulate Data
+  comparisons <- SimulateComparisonsLC(m, u, levels, varying_fields, 
+                                       n1, n2, n1_vec, n2_vec, overlap_vec)
+  Ztrue <- comparisons[[5]]
+  Ztrue_split <- split(Ztrue, record_cluster)
+  
+  # # NEW Method
+  # Zchain_new <- NEW_LC_METHOD(comparisons, m_prior, u_prior, alpha, beta, S, burn)
+  # Zhat <- BRL::linkRecords(Zchain_new, n1, 1, 1, 2, Inf)
+  # eval_lc <- GetEvaluations(Zhat, Ztrue, n1)
+  # LC_new_avg_prob[i, ] <- GetAverageLinkProb(Zchain_new, record_cluster)
+  # LC_new_samps[i, ] <- eval_lc
+  # 
+  # #BRACS evaluations on subgroups
+  # Zhat_split <- split(Zhat, record_cluster)
+  # eval_lc_split <- purrr::map2(Zhat_split, Ztrue_split,
+  #                               .f = ~GetEvaluations(.x, .y, n1))
+  # for(k in 1:K){
+  #   LC_new_samps_split[i,,k] <- eval_lc_split[[k]]
+  # }
+  
+  # BRACS Method
+  Zchain_bracs <- BRACS_BK2(comparisons, m_prior, u_prior, alpha, beta, S, burn)
+  Zhat <- BRL::linkRecords(Zchain_bracs, n1, 1, 1, 2, Inf)
+  eval_bracs <- GetEvaluations(Zhat, Ztrue, n1)
+  BRACS_avg_prob[i, ] <- GetAverageLinkProb(Zchain_bracs, record_cluster)
+  BRACS_samps[i, ] <- eval_bracs
+  
+
+  
+  #BRACS evaluations on subgroups
+  Zhat_split <- split(Zhat, record_cluster)
+  eval_bracs_split <- purrr::map2(Zhat_split, Ztrue_split,
+                                .f = ~GetEvaluations(.x, .y, n1))
+  for(k in 1:K){
+    BRACS_samps_split[i,,k] <- eval_bracs_split[[k]]
+  }
+  
+  #NLC Method
+  Zchain <- BKSimple2(comparisons, m_prior, u_prior, alpha, beta, S, burn)
+  Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
+  eval_nlc <- GetEvaluations(Zhat, Ztrue, n1)
+  NLC_avg_prob[i, ] <- GetAverageLinkProb(Zchain, record_cluster)
+  NLC_samps[i, ] <- eval_nlc
+  
+  #NLC evaluations on subgroups
+  Zhat_split <- split(Zhat, record_cluster)
+  eval_nlc_split <- purrr::map2(Zhat_split, Ztrue_split,
+                                .f = ~GetEvaluations(.x, .y, n1))
+  for(k in 1:K){
+    NLC_samps_split[i,,k] <- eval_nlc_split[[k]]
+  }
+
+  print(i)
+}
+```
+
+```{r}
+diff_bracs_eval <- BRACS_samps - NLC_samps
+#diff_lc_new_eval <- LC_new_samps - NLC_samps
+colnames(diff_bracs_eval) <- c("Recall", "Precision", "Fmeasure")
+#colnames(diff_lc_new_eval) <- c("Recall", "Precision", "Fmeasure")
+
+
+diff_bracs_prob <- BRACS_avg_prob - NLC_avg_prob
+#diff_lc_new_prob <- LC_new_avg_prob - NLC_avg_prob
+colnames(diff_bracs_prob) <- c("LC1_avgmatch", "LC2_avgmatch")
+#colnames(diff_lc_new_prob) <- c("LC_1", "LC_2")
+
+eval_summary <- summary(diff_bracs_eval)
+prob_summary <- summary(diff_bracs_prob)
+
+list(`Evaluations Compared to NLC` = eval_summary,
+     `Avg Posterior Link Probs Compared to NLC` = prob_summary)
+
+df <- data.frame(diff_bracs_eval, diff_bracs_prob)
+
+df_summary <- df %>% 
+  pivot_longer(cols = 1:5, names_to = "metric") %>% 
+  group_by(metric) %>% 
+  summarize(avg = mean(value),
+            lower = quantile(value, .1),
+            upper = quantile(value, .9),
+            .groups = "drop")
+
+bracs_eval_plot <- df_summary %>% 
+  ggplot(mapping = aes(x = factor(metric, 
+                                  levels = c("Recall", "Precision","Fmeasure",
+                                             "LC1_avgmatch", "LC2_avgmatch")),
+                       y = avg, ymin = lower, ymax = upper)) +
+  geom_pointrange() + 
+  geom_hline(yintercept = 0, color = "grey") +
+  labs(title = "Difference in Evaluation Metics: BRACS and NLC",
+       subtitle = "Calculated Pairwise Across 20 Simulations",
+       x = "Evaluation Metric",
+       y = "BRACS Minus NLC") + 
+  theme_bw() + 
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5)) 
+
+ggsave(filename = "../notes/figures/bracs_eval_plot.png", 
+       plot = bracs_eval_plot)
+```
+
+
+```{r}
+LC_new_df <- data.frame(LC_new_samps, "LC_new")
+names(LC_new_df) <- c("recall", "precision", "fmeasure", "method")
+BRACS_df <- data.frame(BRACS_samps, "BRACS")
+names(BRACS_df) <- c("recall", "precision", "fmeasure", "method")
+NLC_df <- data.frame(NLC_samps, "NLC")
+names(NLC_df) <- c("recall", "precision", "fmeasure", "method")
+
+df_bk <- rbind(LC_new_df, BRACS_df, NLC_df)
+results_df <- df_bk %>% 
+  pivot_longer(cols = 1:3, names_to = "metric") %>% 
+  group_by(method, metric) %>% 
+  summarize(avg = mean(value),
+            lower = quantile(value, .2),
+            upper = quantile(value, .8),
+            .groups = "drop")
+results_df
+# simple_dist_table <- results_df %>%
+#   kable(digits = 3,
+#         caption = "Results for Simpler Distributions (Full)") %>%
+#   kable_classic() %>%
+#   kable_styling(full_width = F)
+  #as_image(file = "../notes/figures/simple_dist_table.png")
+```
+
+
+
+```{r}
+
+```
+

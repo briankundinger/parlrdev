@@ -16,4 +16,5 @@ VignetteBuilder: knitr
 Imports: 
     MCMCpack,
     BRL,
-    dplyr
+    dplyr,
+    stringr

@@ -17,22 +17,22 @@ comment = "#>"
 
 ```{r}
 require(devtools)
-load_all()
+#load_all()
 require(tidyverse)
 require(parlrdev)
+require(kableExtra)
+require(knitr)
 ```
 
 ```{r sim1}
-n1 <- 900; n2 <- 200
+n1 <- 1000; n2 <- 1000
 K <- 4
 n1_vec <- rep(n1/K, K)
 n2_vec <- rep(n2/K, K)
 overlap_vec <- rep(n2/(2*K), K)
 
-n2_breaks <- c(0, cumsum(n2_vec))
-n2_indices <- lapply(1:K, function(x){
-  (n2_breaks[x]+1):n2_breaks[x+1]
-})
+linkage_cluster <- unlist(map(1:K, ~rep(.x, n2_vec[.x])))
+
 
 m <- c(0.2632168, 0.7367832,
        0.002939667, 0.2647100, 0.7323503,
@@ -78,35 +78,46 @@ u <- rbind(u1, u2, u3, u4)
 levels <- c(2, 3, 3, 3, 4, 4, 4, 4)
 varying_fields <- 24:27
 
-iter <- 1
-S <- 200; burn <- S * .1
+iter <- 5
+S <- 300; burn <- S * .1
 m_prior <- u_prior <- rep(1, dim(m)[2])
 alpha <- beta <- 1
 LC_samps <- matrix(NA, nrow = iter, ncol = 3)
 NLC_samps <- matrix(NA, nrow = iter, ncol = 3)
+
+LC_samps_split <- array(NA, c(iter, 3, K))
+NLC_samps_split <- array(NA, c(iter, 3, K))
+
 for(i in 1:iter){
   comparisons <- SimulateComparisonsLC(m, u, levels, varying_fields, 
                                        n1, n2, n1_vec, n2_vec, overlap_vec)
   Ztrue <- comparisons[[5]]
-  Ztrue_split <- split(Ztrue, n2_indices)
+  Ztrue_split <- split(Ztrue, linkage_cluster)
   
   Zchain <- BRACS_BK2(comparisons, m_prior, u_prior, alpha, beta, S, burn)
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   eval_lc <- GetEvaluations(Zhat, Ztrue, n1)
   LC_samps[i, ] <- eval_lc
   
-  Zhat_split <- split(Zhat, n2_indices)
-  eval_nlc_split <- purrr::map2(Zhat_split, Ztrue_split, 
-                                .f = ~GetEvaluations(.x, .y, n1)) 
-  
-  Zchain <- BKSimple(comparisons, m_prior, u_prior, alpha, beta, S, burn)
+  Zhat_split <- split(Zhat, linkage_cluster)
+  eval_lc_split <- purrr::map2(Zhat_split, Ztrue_split, 
+                                .f = ~GetEvaluations(.x, .y, n1))
+  for(k in 1:K){
+    LC_samps_split[i,,k] <- eval_lc_split[[k]]
+  }
+
+  Zchain <- BKSimple2(comparisons, m_prior, u_prior, alpha, beta, S, burn)
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   eval_nlc <- GetEvaluations(Zhat, Ztrue, n1)
-  
-  Zhat_split <- split(Zhat, n2_indices)
-  eval_nlc_split <- purrr::map2(Zhat_split, Ztrue_split, 
-                                .f = ~GetEvaluations(.x, .y, n1)) 
   NLC_samps[i, ] <- eval_nlc
+  
+  Zhat_split <- split(Zhat, linkage_cluster)
+  eval_nlc_split <- purrr::map2(Zhat_split, Ztrue_split, 
+                                .f = ~GetEvaluations(.x, .y, n1))
+  for(k in 1:K){
+    NLC_samps_split[i,,k] <- eval_nlc_split[[k]]
+  }
+  
   print(i)
 }
 
@@ -119,7 +130,7 @@ NLC_df <- data.frame(NLC_samps, "NLC")
 names(NLC_df) <- c("recall", "precision", "fmeasure", "method")
 
 df_jody <- rbind(LC_df, NLC_df)
-results_df <- df_jody %>% 
+results_df_jody <- df_jody %>% 
   pivot_longer(cols = 1:3, names_to = "metric") %>% 
   group_by(method, metric) %>% 
   summarize(avg = mean(value),
@@ -127,12 +138,13 @@ results_df <- df_jody %>%
             upper = quantile(value, .9),
             .groups = "drop")
 
-current_dist_table <- results_df %>% 
-  kable(digits = 3,
-        caption = "Results for Current Distributions") %>% 
-  kable_classic() %>% 
-  kable_styling(full_width = F) %>% 
-  as_image(file = "../notes/figures/current_dist_table.png")
+results_df_jody
+# current_dist_table <- results_df_jody %>% 
+#   kable(digits = 3,
+#         caption = "Results for Current Distributions") %>% 
+#   kable_classic() %>% 
+#   kable_styling(full_width = F) %>% 
+#   as_image(file = "../notes/figures/current_dist_table.png")
 
 ```
 
@@ -145,6 +157,7 @@ n1_vec <- rep(n1/K, K)
 n2_vec <- rep(n2/K, K)
 overlap_vec <- rep(n2/(K*2), 2)
 
+linkage_cluster <- unlist(map(1:K, ~rep(.x, n2_vec[.x])))
 
 m1 <- c(.05, .95, .05, .95, .05, .95, .05, .95, .05, .95)
 
@@ -163,26 +176,51 @@ levels <- c(2, 2, 2, 2, 2)
 varying_fields <- c(3, 4)
 
 iter <- 1
-S <- 200; burn <- S * .1
+S <- 300; burn <- S * .1
 m_prior <- u_prior <- rep(1, dim(m)[2])
 alpha <- beta <- 1
 LC_samps <- matrix(NA, nrow = iter, ncol = 3)
 NLC_samps <- matrix(NA, nrow = iter, ncol = 3)
 
+
+LC_samps_split <- array(NA, c(iter, 3, K))
+NLC_samps_split <- array(NA, c(iter, 3, K))
+
 for(i in 1:iter){
+  #Simulate Data
   comparisons <- SimulateComparisonsLC(m, u, levels, varying_fields, 
                                        n1, n2, n1_vec, n2_vec, overlap_vec)
   Ztrue <- comparisons[[5]]
+  Ztrue_split <- split(Ztrue, linkage_cluster)
   
-  Zchain <- BRACS_BK(comparisons, m_prior, u_prior, alpha, beta, S, burn)
+  # BRACS Method
+  Zchain <- BRACS_BK2(comparisons, m_prior, u_prior, alpha, beta, S, burn)
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
-  eval <- GetEvaluations(Zhat, Ztrue, n1)
-  LC_samps[i, ] <- eval
+  eval_lc <- GetEvaluations(Zhat, Ztrue, n1)
+  LC_samps[i, ] <- eval_lc
   
-  Zchain <- BKSimple(comparisons, m_prior, u_prior, alpha, beta, S, burn)
+  #BRACS evaluations on subgroups
+  Zhat_split <- split(Zhat, linkage_cluster)
+  eval_lc_split <- purrr::map2(Zhat_split, Ztrue_split, 
+                                .f = ~GetEvaluations(.x, .y, n1))
+  for(k in 1:K){
+    LC_samps_split[i,,k] <- eval_lc_split[[k]]
+  }
+  
+  # NLC Method
+  Zchain <- BKSimple2(comparisons, m_prior, u_prior, alpha, beta, S, burn)
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
-  eval <- GetEvaluations(Zhat, Ztrue, n1)
-  NLC_samps[i, ] <- eval
+  eval_nlc <- GetEvaluations(Zhat, Ztrue, n1)
+  NLC_samps[i, ] <- eval_nlc
+  
+  #NLC evaluations on subgroups
+  Zhat_split <- split(Zhat, linkage_cluster)
+  eval_nlc_split <- purrr::map2(Zhat_split, Ztrue_split, 
+                                .f = ~GetEvaluations(.x, .y, n1))
+  for(k in 1:K){
+    NLC_samps_split[i,,k] <- eval_nlc_split[[k]]
+  }
+  
   print(i)
 }
 ```
@@ -201,13 +239,68 @@ results_df <- df_bk %>%
             lower = quantile(value, .2),
             upper = quantile(value, .8),
             .groups = "drop")
+results_df
+simple_dist_table <- results_df %>%
+  kable(digits = 3,
+        caption = "Results for Simpler Distributions (Full)") %>%
+  kable_classic() %>%
+  kable_styling(full_width = F) %>%
+  as_image(file = "../notes/figures/simple_dist_table.png")
 
-# simple_dist_table <- results_df %>% 
-#   kable(digits = 3,
-#         caption = "Results for Simpler Distributions") %>% 
-#   kable_classic() %>% 
-#   kable_styling(full_width = F) %>% 
-#   as_image(file = "../notes/figures/simple_dist_table.png")
+```
+
+
+
+```{r}
+LC_df <- data.frame(LC_samps_split[,,2], "LC")
+names(LC_df) <- c("recall", "precision", "fmeasure", "method")
+NLC_df <- data.frame(NLC_samps_split[,,2], "NLC")
+names(NLC_df) <- c("recall", "precision", "fmeasure", "method")
+
+df_bk <- rbind(LC_df, NLC_df)
+results_df_women <- df_bk %>% 
+  pivot_longer(cols = 1:3, names_to = "metric") %>% 
+  group_by(method, metric) %>% 
+  summarize(avg = mean(value),
+            lower = quantile(value, .2),
+            upper = quantile(value, .8),
+            .groups = "drop")
+
+results_df_women
+simple_dist_table_women <- results_df_women %>%
+  kable(digits = 3,
+        caption = "Results for Simpler Distributions (Women)") %>%
+  kable_classic() %>%
+  kable_styling(full_width = F) %>%
+  #as_image(file = "../notes/figures/simple_dist_table_women.png")
+
+```
+
+
+
+
+```{r}
+LC_df <- data.frame(LC_samps_split[,,1], "LC")
+names(LC_df) <- c("recall", "precision", "fmeasure", "method")
+NLC_df <- data.frame(NLC_samps_split[,,1], "NLC")
+names(NLC_df) <- c("recall", "precision", "fmeasure", "method")
+
+df_bk <- rbind(LC_df, NLC_df)
+results_df_men <- df_bk %>% 
+  pivot_longer(cols = 1:3, names_to = "metric") %>% 
+  group_by(method, metric) %>% 
+  summarize(avg = mean(value),
+            lower = quantile(value, .2),
+            upper = quantile(value, .8),
+            .groups = "drop")
+
+results_df_men
+simple_dist_table_women <- results_df_men %>%
+  kable(digits = 3,
+        caption = "Results for Simpler Distributions (Men)") %>%
+  kable_classic() %>%
+  kable_styling(full_width = F) %>%
+  as_image(file = "../notes/figures/simple_dist_table_men.png")
 
 ```
 
