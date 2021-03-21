@@ -20,8 +20,9 @@ library(parlrdev)
 ```
 
 
-```{r cache = TRUE}
-n1 <- 100; n2 <- 100
+```{r}
+show_progress <- T
+n1 <- 5000; n2 <- 5000
 overlap <- n2/2
 
 
@@ -49,14 +50,20 @@ Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
 eval <- GetEvaluations(Zhat, Ztrue, n1)
 EVAL.SAMPS6[i, ,1] <- eval
 
-Zchain <- BKSimple(comparisons, m_prior, u_prior, 
-                   alpha, beta, S, burn, show_progress = F)
+Zchain <- BKSimple2(comparisons, m_prior, u_prior, 
+                   alpha, beta, S, burn, show_progress = T)
 Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
 eval <- GetEvaluations(Zhat, Ztrue, n1)
 EVAL.SAMPS6[i, ,2] <- eval
 #print(i)
 }
 EVAL.SAMPS6
+
+Zchain <- BKSimple_hash(comparisons, m_prior, u_prior, 
+                   alpha, beta, S, burn, show_progress = T, fast = F)
+Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
+eval <- GetEvaluations(Zhat, Ztrue, n1)
+eval
 ```
 
 

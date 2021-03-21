@@ -25,7 +25,7 @@ require(knitr)
 ```
 
 ```{r sim1}
-n1 <- 1000; n2 <- 1000
+n1 <- 900; n2 <- 200
 K <- 4
 n1_vec <- rep(n1/K, K)
 n2_vec <- rep(n2/K, K)

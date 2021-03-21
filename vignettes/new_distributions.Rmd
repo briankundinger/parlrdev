@@ -15,6 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+library(devtools)
+load_all()
 library(parlrdev)
 library(tidyverse)
 library(knitr)
@@ -24,13 +26,13 @@ library(kableExtra)
 
 
 ```{r}
-n1 <- 500; n2 <- 500
+n1 <- 100; n2 <- 100
 K <- 2
 n1_vec <- rep(n1/K, K)
 n2_vec <- rep(n2/K, K)
 #overlap_vec <- c(0, 125, 125)
 overlap_vec <- n2_vec/K
-overlap_vec <- c(200, 200)
+#overlap_vec <- c(200, 200)
 
 record_cluster <- unlist(map(1:K, ~rep(.x, n2_vec[.x])))
 
@@ -243,5 +245,5 @@ results_df
 	maxProbOptionIsLink <- maxProbOption <= n1
 	
 	probMaxProbOption[!maxProbOptionIsLink] <- NA
-	hist(probMaxProbOption)
+	hist(probMaxProbOption[probMaxProbOption > .5])
 ```
