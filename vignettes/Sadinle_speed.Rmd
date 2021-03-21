@@ -22,7 +22,7 @@ library(parlrdev)
 
 ```{r}
 show_progress <- T
-n1 <- 5000; n2 <- 5000
+n1 <- 500; n2 <- 500
 overlap <- n2/2
 
 

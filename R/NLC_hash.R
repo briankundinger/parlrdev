@@ -28,6 +28,7 @@ BKSimple_hash <- function(comparisons, m_prior, u_prior,
   })))
 
   ids <- expand.grid(1:n1, 1:n2)
+  #rec2 <- ids[,2]
   candidates <- 1:n1
   Z.SAMPS <- matrix(NA, nrow = n2, ncol = S)
   M.SAMPS <- matrix(NA, nrow = dim(indicators_raw)[2], ncol = S)
@@ -44,6 +45,7 @@ BKSimple_hash <- function(comparisons, m_prior, u_prior,
 
   hash_id <- patterns[[1]]
   hash <- data.frame(hash_id)
+  #hash_split <- split(hash_id, ids[,2])
   unique_patterns <- patterns[[2]]
   pattern_counts <- patterns[[3]]
   P <- dim(unique_patterns)[1]
@@ -51,6 +53,8 @@ BKSimple_hash <- function(comparisons, m_prior, u_prior,
 
   # Gibbs
   for(s in 1:S){
+
+    #map2_df(hash_split, Z, ~ .x[.y])
 
     hash$Z.temp <- Z.temp
     matches <- hash %>%
@@ -92,6 +96,13 @@ BKSimple_hash <- function(comparisons, m_prior, u_prior,
 
     unique_weights <- exp(rowSums(ratio * unique_patterns, na.rm = TRUE))
     weights <- unique_weights[hash_id]
+    # hash$weight <- unique_weights[hash_id]
+    # Z <- hash %>%
+    #   group_by(rec2) %>%
+    #   summarize(zj = sample(c(candidates, n1 +1), 1, prob = c(weight, offset))) %>%
+    #   pull()
+
+
     #weights <- exp(rowSums(ratio * indicators_raw, na.rm = TRUE))
 
     weights <- split(weights, ids[,2])
