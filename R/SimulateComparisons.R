@@ -29,7 +29,11 @@ SimulateComparisons <- function(m, u, levels, n1, n2, overlap){
     rmultinom(N - overlap, 1, x)
   })
   indicators[-match_index,] <- t(do.call(rbind, gamma_nonmatch))
-  list(indicators, n1, n2, levels, Ztrue)
+  list(comparisons = indicators,
+       n1 = n1,
+       n2 = n2,
+       nDisagLevs = levels,
+       Ztrue = Ztrue)
 }
 
 SimulateComparisonsLC <- function(m, u, levels, varying_fields,

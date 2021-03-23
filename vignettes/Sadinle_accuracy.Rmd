@@ -1,0 +1,194 @@
+---
+title: "Sadinle_accuracy"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Sadinle_accuracy}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(devtools)
+#load_all()
+library(parlrdev)
+library(tidyverse)
+```
+
+
+<!-- ```{r} -->
+<!-- library(RecordLinkage) -->
+<!-- library(clue) -->
+
+<!-- # function computes agreement levels for binary comparisons, used inside for -->
+<!-- AgrLevBinComp <- function(x){ -->
+<!-- 	same <- (x[cellinds[,1]]==x[cellinds[,2]]) -->
+<!-- 	AgrLev <- 1*same -->
+<!-- 	AgrLev[!same] <- 2 -->
+<!-- 	AgrLev <- as.factor(AgrLev) -->
+<!-- 	return(AgrLev) -->
+<!-- } -->
+
+<!-- # function computes agreement levels for Levenshtein comparisons, used inside for -->
+<!-- AgrLevLevenshtein <- function(x,breaks=c(-Inf,.001,.25,.5,Inf)){ -->
+<!-- 	x <- as.character(x) -->
+<!-- 	LevenshteinSim <- 1 - levenshteinSim(x[cellinds[,1]], x[cellinds[,2]]) -->
+<!-- 	AgrLev <- cut(LevenshteinSim,breaks=breaks,labels=seq_len(length(breaks)-1)) -->
+<!-- 	return(AgrLev) -->
+<!-- # } -->
+<!-- ``` -->
+
+```{r}
+files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
+
+files <- files[c(1:25, 101:125, 201:225)]
+parlr_acc_samps <- matrix(NA, nrow = length(files), ncol = 4)
+sad_acc_samps <- matrix(NA, nrow = length(files), ncol = 4)
+
+for(i in seq_along(files)){
+  
+records <- read_csv(files[i])
+records$file <- rep(2:1, length.out = dim(records)[1])
+
+records <- records %>% 
+  janitor::clean_names() %>% 
+  mutate(rec_id = as.numeric(str_extract(rec_id, "\\d{3}")) + 1)
+
+n1 <- 500
+n2 <- 500
+overlap <- n2/2
+
+Ztrue <- rep(n1 + 1, n2)
+Ztrue[1:overlap] <- 1:overlap
+
+file1 <- records %>% 
+  filter(file ==1,
+         rec_id <= n1) %>% 
+  select(-rec_id) %>% 
+  as.matrix(.) %>% 
+  data.frame(.)
+
+file2 <- records %>% 
+  filter(file == 2,
+         rec_id %in% c(1:overlap, (n1 +1):(n1 + overlap))) %>% 
+  select(-rec_id) %>% 
+  as.matrix() %>% 
+  data.frame(.)
+
+cd <- BRL::compareRecords(file1, file2, c(2, 3, 4, 5), types = c("lv", "lv", "bi", "bi") )
+cd[[1]] <- apply(cd[[1]], 2, as.numeric)
+
+# cd[[1]] <- cd[[1]][, -c(10, 11, 13, 14)]
+# cd[[4]] <- c(4, 4, 2, 2)
+
+  #parlr method
+  ptm <- proc.time()
+  Zchain <- BKSimple_hash2(cd)
+  elapsed <- proc.time() - ptm
+  Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
+  eval <- GetEvaluations(Zhat, Ztrue, n1)
+  parlr_acc_samps[i, ] <- c(eval, elapsed[3])
+  
+  #Sadinle 2017 Method
+  ptm <- proc.time()
+  Zchain <- BRL::bipartiteGibbs(cd)
+  elapsed <- proc.time() - ptm
+  Zhat <- BRL::linkRecords(Zchain[[1]], n1, 1, 1, 2, Inf)
+  eval <- GetEvaluations(Zhat, Ztrue, n1)
+  sad_acc_samps[i,] <- c(eval, elapsed[3])
+  
+  print(i)
+}
+# list(BK = parlr_acc_samps,
+#      Sadinle = sad_acc_samps)
+
+```
+
+```{r}
+error_level <- factor(rep(1:3, each = 25))
+
+# error_level <- factor(error_level, levels = c("One Error", "Two Errors", "Three Errors"))
+
+parlr_df <- data.frame(parlr_acc_samps, error_level, "Parlr")
+names(parlr_df) <- c("Recall", "Precision", "Fmeasure", "time", "error_level", "method")
+sadinle_df <- data.frame(sad_acc_samps, error_level, "Sadinle17")
+names(sadinle_df) <- c("Recall", "Precision", "Fmeasure", "time", "error_level",  "method")
+
+df<- rbind(parlr_df, sadinle_df)
+
+results_df <- df %>%
+  pivot_longer(cols = 1:4, names_to = "metric") %>%
+  group_by(method, metric, error_level) %>%
+  summarize(avg = mean(value),
+            lower = quantile(value, .2),
+            upper = quantile(value, .8),
+            .groups = "drop") %>%
+  filter(metric != "time") %>% 
+  mutate(metric = factor(metric, c("Recall", "Precision", "Fmeasure")))
+
+acc_plot <- results_df %>% 
+  ggplot(aes(x = error_level, y = avg,
+             ymin  = lower, ymax = upper,
+             color = method)) +
+  geom_pointrange(position = position_dodge2(width = .5)) + 
+  facet_wrap(~metric) +
+  labs(x = "Error Level", 
+       y = NULL,
+       color = "Method",
+       title = "Performance Comparison in Aggregate",
+       subtitle = "25 simulated datasets at each error level, 50% Overlap") +
+  theme_bw(base_size = 14) +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5))
+
+ggsave(filename = "../notes/figures/acc_plot.png",
+       plot = acc_plot)
+  
+# simple_dist_table <- results_df %>%
+#   kable(digits = 3,
+#         caption = "Results for Simpler Distributions (Full)") %>%
+#   kable_classic() %>%
+#   kable_styling(full_width = F)
+  #as_image(file = "../notes/figures/simple_dist_table.png")
+```
+
+```{r}
+difference <- parlr_acc_samps - sad_acc_samps
+difference_df <- data.frame(difference, error_level)
+names(difference_df) <- c("Recall", "Precision", "Fmeasure", "time", "error_level")
+
+results_diff_df <- difference_df %>%
+  pivot_longer(cols = 1:4, names_to = "metric") %>%
+  group_by(metric, error_level) %>%
+  summarize(avg = mean(value),
+            lower = quantile(value, .2),
+            upper = quantile(value, .8),
+            .groups = "drop") %>%
+  filter(metric != "time") %>% 
+  mutate(metric = factor(metric, c("Recall", "Precision", "Fmeasure")))
+
+acc_plot_pairwise <- results_diff_df %>% 
+  ggplot(aes(x = error_level, y = avg,
+             ymin  = lower, ymax = upper)) +
+  geom_pointrange() + 
+  geom_hline(yintercept = 0, color = "light grey") +
+  facet_wrap(~metric) +
+  labs(x = "Error Level", 
+       y = "Parlr Minus Sadinle",
+       title = "Pairwise Performance Comparison",
+       subtitle = "25 simulated datasets at each error level, 50% Overlap") +
+  theme_bw(base_size = 14) +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5))
+
+ggsave(filename = "../notes/figures/acc_plot_pairwise.png",
+       plot = acc_plot_pairwise)
+
+```
+

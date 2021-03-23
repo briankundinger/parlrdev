@@ -112,4 +112,5 @@ BKSimple2 <- function(comparisons, m_prior, u_prior,
   #U.SAMPS <- U.SAMPS[,-(1:burn)]
 
   Z.SAMPS
+
 }
