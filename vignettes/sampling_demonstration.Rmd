@@ -1,0 +1,45 @@
+---
+title: "sampling_demonstration"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{sampling_demonstration}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(parlrdev)
+```
+
+```{r}
+nA <- 100000000
+nB <- 800
+P <- 700
+
+################# Sadinle Method ################
+
+# Sampling from MANY values with unequal weights is HARD
+Zsamp <- sapply(1:nB, function(x){
+  sample(1:nA, size = 1, replace = TRUE, prob = 1:nA)
+})
+
+################ parlr Method ###################
+
+# Sampling from FEWER values with unequal weights is EASY
+Zsamp <- sapply(1:nB, function(x){
+  sample(1:P, size = 1, replace = TRUE, prob = 1:P)
+})
+
+# Sampling from many values with EQUAL weights is EASY
+Zsamp <- sapply(1:nB, function(x){
+  sample(1:nA, size = 1, replace = TRUE, prob = NULL)
+})
+```
+

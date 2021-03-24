@@ -31,7 +31,7 @@ Together, these have made **huge** improvements on code
 
 ## Identifying Unique Patterns
 
-- Enamorado uses the following hashing function to identify unique aggreement patterns
+- Enamorado uses the following hashing function to identify unique aggreement patterns. I've also figured out how to do this efficiently in `dplyr`.
 
 $$H(i,j) = \sum_{f=1}^F \mathbf{1}_{\gamma_f (i,j) >0}2^{\gamma_f (i,j) + \mathbf{1}_{f>1} \times \sum_{a=1}^{f-1}(L_a -1)}$$
 
@@ -39,18 +39,21 @@ $$H(i,j) = \sum_{f=1}^F \mathbf{1}_{\gamma_f (i,j) >0}2^{\gamma_f (i,j) + \mathb
 
 - Define $P$ to be the number of unique agreement patterns, and note it is bounded by $\prod_{f =1}^F L_f$.
 
-## Identifying Unique Patterns
-
-- Each agreement pattern corresponds to a particular type of contribution to the posteriors of the $m$ and $u$ parameters. 
-- To update $m$, I used to sum over each variable for all $N$ record pairs. I simply identify the number of matchings in the $Z$ vector corresponding to each agreement of $P$ patterns.
-
-- The nonmatches are even easier: just substract this number from the total present in the data!
-
 ## Calculating FS weights
 
-- Again, I used to do this for each of $N$ records, but now I calculate this for the $P$ unique patterns.
+- Within a Gibbs iteration, all records with the same agreement pattern will have the same FS weight. So instead of calculating the weight for each of $n_A \times n_B$ records, I only need to do it for $P$ unique patterns.
 
-- Just these two changes sped up the code considerably. However, I thought of one other clever trick to really push this idea to the max. 
+- This step is taken directly from `fastlink`. 
+
+## Identifying Unique Patterns
+
+- `fastlink` doesn't have posterior updates for Dirichlet distributions, so I came up with this step on my own.
+
+- Each agreement pattern corresponds to a particular type of contribution to the posteriors of the $m$ and $u$ parameters. 
+
+- To update $m$, I used to sum over each variable for all $N$ record pairs. Now, I simply identify the number of matchings in the $Z$ vector corresponding to each of $P$ patterns.
+
+- The nonmatches are even easier: just substract this number from the total present in the data!
 
 ## Breaking up the Z sampler
 
@@ -62,7 +65,7 @@ $$H(i,j) = \sum_{f=1}^F \mathbf{1}_{\gamma_f (i,j) >0}2^{\gamma_f (i,j) + \mathb
   
 ## Breaking up the Z sampler
 
-- Rather than sampling $Z_j$ from $N$ many options, I instead sample it from the $P$ unique patterns, each one multiplied by its prevalance for record $j$.
+- Rather than sampling $Z_j$ sequentially from $N$ many records, I can sample it in parallel from $P$ many equivalence classes of unique patterns, each one multiplied by its prevalance for record $j$.
 
 - After sampling the unique pattern, I sample the record associated with that pattern uniformly at random. 
 
@@ -72,9 +75,9 @@ $$H(i,j) = \sum_{f=1}^F \mathbf{1}_{\gamma_f (i,j) >0}2^{\gamma_f (i,j) + \mathb
 
 - We have *almost entirely* removed dependence on $N$ from our Gibbs procedure, and replaced them with steps that depend on $P$.
 
-- Filling in the Gibbs sampler post-hoc technically depends on $N$, but its a very inexpensive step that only has to be done once
+- Only major hurdle with $N$ is calculating the comparison vectors, which is just unavoidable in the Fellegi Sunter Framework. However, whatever Ted does for `fastlink` would work here too.
 
-- Only major hurdle with $N$ is calculating the comparison vectors, which is just unavoidable in the Fellegi Sunter Framework
+- Filling in the Gibbs sampler post-hoc technically depends on $N$, but its a very inexpensive step that only has to be done once
 
 ## Speed up
 
@@ -92,6 +95,23 @@ knitr::include_graphics("figures/speed_plot.png")
 
 - If my method was programmed in C, I would expect even greater computational savings
 
+## More on Speed Up
+
+- Within the Gibbs sampler, calculations only depend on $n_B$ (the number samples I need to take to fill a $Z$ vector), and $P$ (the number of unique patterns). $n_A$ only influences the scale of the counts for the unique patterns. 
+
+- $n_A$ only comes to play in forming the comparison vectors and in back-filling the samples of $Z$ at the end of the sampler.
+
+- This suggests that the sampler should be *almost constant* in $n_A$ (ie, the Gibbs sampling for a $4000 \times 500$ problem should not be substantially longer than for a $500 \times 500$ problem)
+
+- Particularly useful for linking a smaller dataset to a much larger dataset. One example would be the DNC data in BRACS!
+
+## More on Speed Up
+
+```{r}
+knitr::include_graphics("figures/speed_plot_fixed_nB.png")
+```
+
+
 ## Accuracy
 
 ```{r}
@@ -107,6 +127,16 @@ knitr::include_graphics("figures/acc_plot_pairwise.png")
 ## Accuracy
 
 - Overal, the `parlr` method peforms comparably to Sadinle17. There is slight evidence that recall is systematically lower for `parlr` at high error levels, but it is *very* slight. I'll need to run this at different level of overlap to explore more.
+
+## Limitations
+
+- The original FS method is $O(n_A \times n_B)$ hard. With hashing methods, `fastlink` makes the problem only $O(P)$ hard, since record pairs are considered indepenently and classification is based *only* on the unique pattern. 
+
+- Hashing methods in my model make the problem $O(n_B \times P)$ hard. No matter what, I need to sample $n_B$ many times to fill a linkage vector $Z$. In this sense, `fastlink` is inherently faster than this method
+
+- However, method takes into consider much more of the dependency structure in the data, making this computational burden worthwhile
+
+- \textcolor{blue}{Note:} If this line of thinking is useful for the paper, I'll need some help making this rigorous!
 
 ## Next Steps
 

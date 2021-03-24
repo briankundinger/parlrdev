@@ -1,8 +1,8 @@
 ---
-title: "Sadinle_speed"
+title: "Sadinle_speed_fixed_nB"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Sadinle_speed}
+  %\VignetteIndexEntry{Sadinle_speed_fixed_nB}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,17 +14,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-#devtools::load_all()
-library(parlrdev)
-library(tidyverse)
-```
 
 
 ```{r}
 
-n1_vals <- c(100, 500, 1000, 2000, 3000)
-n2_vals <- c(100, 500, 1000, 2000, 3000)
+n1_vals <- c(500, 1000, 2000, 3000, 4000)
+n2_vals <- 500
 show_progress <- T
 fast = F
 
@@ -40,15 +35,15 @@ levels <- c(2, 2, 2, 2, 2)
 # S <- 1000; burn <- S * .1
 # m_prior <- u_prior <- rep(1, length(m))
 # alpha <- beta <- 1
-results_bk_samps <- matrix(NA, nrow = length(n1_vals), ncol = 4)
-results_sad_samps <- matrix(NA, nrow = length(n1_vals), ncol = 4)
+parlr_speed_samps2 <- matrix(NA, nrow = length(n1_vals), ncol = 4)
+sad_speed_samps2 <- matrix(NA, nrow = length(n1_vals), ncol = 4)
 
-for(i in seq_len(n1_vals)){
+for(i in seq_along(n1_vals)){
   
   #Simulate Data
   n1 <- n1_vals[i]
-  n2 <- n2_vals[i]
   overlap <- n2/2
+  
   cd <- SimulateComparisons(m, u, levels, n1, n2, overlap)
   Ztrue <- cd$Ztrue
   
@@ -58,7 +53,7 @@ for(i in seq_len(n1_vals)){
   elapsed <- proc.time() - ptm
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
-  results_bk_samps[i, ] <- c(eval, elapsed[3])
+  parlr_speed_samps2[i,] <- c(eval, elapsed[3])
   
   #Sadinle 2017 Method
   ptm <- proc.time()
@@ -66,40 +61,43 @@ for(i in seq_len(n1_vals)){
   elapsed <- proc.time() - ptm
   Zhat <- BRL::linkRecords(Zchain[[1]], n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
-  results_sad_samps[i,] <- c(eval, elapsed[3])
+  sad_speed_samps2[i,] <- c(eval, elapsed[3])
   
   print(i)
 }
 
-list(BK = results_bk_samps,
-     Sadinle = results_sad_samps)
+# list(BK = parlr_speed_samps2,
+#      Sadinle = sad_speed_samps2)
 ```
 
 ```{r}
 
 
 
-parlr_df <- data.frame(results_bk_samps, n2_vals, "parlr")
-names(parlr_df) <- c("recall", "precision", "fmeasure", "time", "n", "method")
-sadinle_df <- data.frame(results_sad_samps, n2_vals, "sadinle")
-names(sadinle_df) <- c("recall", "precision", "fmeasure", "time", "n",  "method")
+parlr_df <- data.frame(parlr_speed_samps2, n1_vals, "parlr")
+names(parlr_df) <- c("recall", "precision", "fmeasure", "time", "nA", "method")
+sadinle_df <- data.frame(sad_speed_samps2, n1_vals, "sadinle")
+names(sadinle_df) <- c("recall", "precision", "fmeasure", "time", "nA",  "method")
 
 df<- rbind(parlr_df, sadinle_df)
 
-speed_plot <- df %>% 
-  ggplot(aes(x = n, y = time, color = method)) +
+speed_plot_fixed_nB <- df %>% 
+  ggplot(aes(x = nA, y = time, color = method)) +
   geom_line(size = 1) +
-  labs(x = "Size of each dataset",
+  geom_point(size = 2) + 
+  labs(x = expression(n[A]),
        y = "Time (seconds)",
        color = "Method", 
        title = "Speed Comparison: parlr and Sadinle 17",
-       subtitle = "1000 Gibbs iterations") +
+       subtitle = paste0("1000 Gibbs iterations, file B size fixed")) +
   theme_bw() +
   theme(plot.title = element_text(hjust = .5),
         plot.subtitle = element_text(hjust = .5))
 
-ggsave(filename = "../notes/figures/speed_plot.png",
-       plot = speed_plot)
+ggsave(filename = "../notes/figures/speed_plot_fixed_nB.png",
+       plot = speed_plot_fixed_nB)
+
+
 # results_df <- df %>% 
 #   pivot_longer(cols = 1:4, names_to = "metric") %>% 
 #   group_by(method, metric) %>% 
@@ -115,4 +113,3 @@ ggsave(filename = "../notes/figures/speed_plot.png",
 #   kable_styling(full_width = F)
   #as_image(file = "../notes/figures/simple_dist_table.png")
 ```
-
