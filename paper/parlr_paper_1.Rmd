@@ -1,0 +1,156 @@
+---
+output:
+  pdf_document:
+    citation_package: natbib
+    fig_caption: yes
+    keep_tex: yes
+    latex_engine: pdflatex
+  html_document:
+    df_print: paged
+header-includes: \usepackage{hyperref}
+linestretch: 1
+link-citations: yes
+linkcolor: blue
+fontfamily: mathpazo
+fontsize: 12pt
+---
+\begin{flushright} 
+	\end{flushright}
+	\begin{center} \textbf{Base Model and New Linkage Cluster Model Specification}
+	
+	Brian Kundinger
+
+	\end{center}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Notation and Assumptions
+
+Our notation and assumptions closely follow that of Sadinle (2017). Denote two files as $A$ and $B$, with $n_A$ and $n_B$ records respectively, and with records indexed as $i \in \{1, \ldots, n_A\}$ in $A$ and $j \in \{1, \ldots, n_B\}$ in $B$. Without loss of generality, label the files such that $n_A \geq n_B$. We also assume there are no duplicates within files, only across. For each record pair under consideration, we generate a comparison vector $\boldsymbol{\gamma}_{ij} = \{\gamma_{ij}^1, \ldots, \gamma_{ij}^F\}$, where  $F$ is the number of fields used in the linkage and each $\gamma_{ij}^f$ takes on a value $l \in \{1, \ldots, L_f\}$ indicating level agreement between the two records on a specified field.
+
+To indicate matching status, we adopt the *linkage structure parameter* $\mathbf{Z} = (Z_1, \ldots, Z_{n_B})$ from Sadinle 2017, defined as
+$$Z_j=\begin{cases} 
+    i,  & \text{if records } i\in A \text{ and } j\in B \text{ refer to the same entity}; \\
+    n_A + 1,  & \text{if record } j\in B \text{ does not have a match in file } A; \\
+\end{cases}$$
+This provides more memory efficient storage for the linkage information than a $n_A \times n_B$ sparse matrix of indicators.
+
+Following the Fellegi Sunter framework, we define $m^{fl}:= P(\gamma_{ij}^f = l |Z_j = i)$ to be the probability of observing agreement level $l$ in field $f$ for records $i$ and $j$ given that the records are a match, and similarly define $u^{fl}:= P(\gamma_{ij}^f = l |Z_j \neq i)$, for non-matches. We denote $\lambda$ to be the (marginal) probability that some record $j \in B$ has a match in $A$. 
+
+Wherever possible, we reserve superscripts for denoting field and level, while reserving subscripts for record indices. For example, $\mathbf{m}^f = (m^{f1}, \ldots, m^{fL_f})$ is the probability distribution governing field $f$ for matching records, and $\mathbf{m}_{ij}= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(m^{fl}\right)^{\mathbf{1}_{\gamma_{ij}^f = l}} = P(\boldsymbol{\gamma}_{ij}|Z_j = i)$ is product of the relevant of the appropriate $\mathbf{m}$ parameters for record pair $(i,j)$. We hope that these conventions avoid overloaded notation in the likelihood and subsequent derivations. 
+
+# Model Specification
+
+(This will be revised to talk more expliticly about sampling $Z_j$ independently)
+
+Our model differs from that of Sadinle 2017 through its explicit dependence on a beta random variable $\lambda$ that models the rate of matching across records. Sadinle marginalizes over such a random variable in his derivations of  the "beta prior for bipartite matching," but here we provide derivations without marginalizing in order to specify differing rates of matching for different linkage clusters. 
+
+## Prior Distributions and Likelihood
+
+For fields $f \in \{1, \ldots, F\}$ and levels $l\in \{1, \ldots, L_f\}$ we adopt the following likelihood and prior distributions. 
+
+$$P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda) =\prod_{j=1}^{n_B}  \prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}$$
+
+$$\mathbf{m^{f}} \sim \text{Dirichlet}(\alpha^{f1}, \ldots, \alpha^{fL_f})$$
+$$\mathbf{u^{f}} \sim \text{Dirichlet}(\beta^{f1}, \ldots, \beta^{fL_f})$$
+$$Z_j | \lambda =
+\begin{cases} 
+    \frac{1}{n_A}\lambda  & z_j \leq n_A; \\
+     1-\lambda &  z_j  = n_A + 1 \\
+\end{cases}$$
+
+$$\lambda \sim \text{Beta}(\alpha_{\lambda}, \beta_{\lambda}) $$
+The prior for $Z_j$ has equal probability of matching to all records $i\in A$, and non-matching probability governed by $\lambda$. Therefore a  $\lambda \sim \text{Beta}(1, 1)$ corresponds to a prior belief that nonmatches and matches are equally likely, and a $\lambda \sim \text{Beta}(1, \frac{1}{n_A})$ prior corresponds to a uniform prior on the labelling of $\mathbf{Z}$. 
+
+
+## Posterior Sampling
+
+We work with the following factorization of the joint distribution:
+
+$$p(\Gamma, \mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda) = p(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}) p(\mathbf{Z} | \lambda) p(\mathbf{m}, \mathbf{u}) p(\lambda)$$
+
+This factorization leads to following Gibbs Sampler:
+
+\underline{Sample $\mathbf{m}^{(s+1)}$ $\mathbf{u}^{(s+1)}|\Gamma, \mathbf{Z}^{(s)}$:} The $\mathbf{m}$ and $\mathbf{u}$ parameters are updated through standard multinomial-dirichlet mechanics. Thus we have 
+
+$$\mathbf{m}^f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\alpha^{f1}(\mathbf{Z}), \ldots, \alpha^{fL_f}(\mathbf{Z}))$$
+$$\mathbf{u}^f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\beta^{f1}(\mathbf{Z}), \ldots, \beta^{fL_f}(\mathbf{Z}))$$
+where $\alpha_{fl}(\mathbf{Z})= \sum_{i,j} \mathbf{1}_{obs(\gamma_{ij}^f)}\mathbf{1}_{\gamma_{ij}^f = l} \mathbf{1}_{z_j = i}$ and $\beta_{fl}(\mathbf{Z})= \mathbf{1}_{obs(\gamma_{ij}^f)}\mathbf{1}_{\gamma_{ij}^f = l} \mathbf{1}_{z_j \neq i}$.
+
+\underline{Sample $\lambda^{(s+1)}|\mathbf{Z}^{(s)}$:} As a function of $\lambda$, the linkage structure parameter $\mathbf{Z}$ is sequence of successes (when $z_j < n_A + 1$) and failures (when $z_j = n_A + 1$), and therefore $p(\mathbf{Z}|\lambda) = \mathcal{L}(\lambda|\mathbf{Z})$ is  determined only by the number of dupliates $D = \sum_{i=1}^{n_B}\mathbf{1}_{z_j < n_A + 1}$ encoded by $\mathbf{Z}$. Thus we have
+
+$$p(\lambda | \mathbf{Z}) \propto p(\mathbf{Z}|\lambda)p(\lambda)$$
+$$\propto \lambda^D (1-\lambda)^{n_B - D} \lambda^{\alpha_{\lambda} -1} (1-\lambda)^{\beta_{\lambda} -1}$$
+$$ \propto \lambda^{D + \alpha_{\lambda} - 1} (1-\lambda)^{n_B - D + \beta_{\lambda} -1}$$
+$$\implies \lambda^{(s+1)}|\mathbf{Z}^{(s+1)} \sim \text{Beta}(D + \alpha_{\lambda}, n_B - D + \beta_{\lambda})$$
+
+\underline{Sample $\mathbf{Z}^{(s+1)}|\Gamma, \mathbf{m}^{(s+1)}, \mathbf{u}^{(s+1)}, \lambda^{(s+1)}$:} Because we sample $Z_j$ independently of all other $Z_{j'}$, we use only the full conditional for an individual $Z_j$. Let $\Gamma_{.j}$ denote the set of $n_A$ comparison vectors with $j \in B$, and note that as a function of $Z_j$, the likelihood $p(\Gamma_{.j}|Z_j, \mathbf{m}, \mathbf{u}) = \mathcal{L}(Z_j|\Gamma_{.j}, \mathbf{m}, \mathbf{u})$ is a discrete distribution with probalities proportional to 
+
+\begin{align*}
+p(\Gamma_{.j}|Z_j = z_j, \mathbf{m}, \mathbf{u}) &\propto \prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}\\
+&\propto \prod_{i=1}^{n_A}\left(\frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}}\right)^{\mathbf{1}_{z_j = i}} && \text{By dividing through by} \prod_{i = 1}^{n_A}\mathbf{u}_{ij}\\
+&=
+\begin{cases} 
+    w_{ij}  & z_j \leq n_A; \\
+    1 &  z_j  = n_A + 1 \\
+\end{cases}\\
+\end{align*}
+
+where $w_{ij} = \frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}} = \frac{P(\boldsymbol{\gamma_{ij}}|Z_j = i)}{P(\boldsymbol{\gamma_{ij}} |Z_j \neq i)}$. The interested reader should note that these are precisely the likelihood ratios used in the Fellegi-Sunter model to classify matches and non-matches, and we therefore refer to $w_{ij}$ as the *Fellegi Sunter weights*.
+
+With the likelihood in this form, we can derive the full conditional
+$$p(Z_j|\Gamma_{.j}, \mathbf{m} ,\mathbf{u}, \lambda) \propto p(\Gamma_{.j}| Z_j, \mathbf{m} ,\mathbf{u}) P(Z_j|\lambda)$$
+
+$$\propto \left(\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i} + \mathbf{1}_{z_j = n_A + 1}\right)\left(\lambda\sum_{i=1}^{n_A}\frac{1}{n_A}\mathbf{1}_{z_j = i} + (1-\lambda)\mathbf{1}_{z_j = n_A + 1}\right)$$
+$$= \frac{\lambda}{n_A}\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i} + (1-\lambda)\mathbf{1}_{z_j = n_A + 1} $$
+$$ \implies Z_j^{(s+1)} | \mathbf{m}, \mathbf{u}, \Gamma, \lambda \propto
+\begin{cases} 
+    \frac{\lambda}{n_A}w_{ij}   & z_j \leq n_A; \\
+     1-\lambda &  z_j  = n_A + 1 \\
+\end{cases}$$
+
+In order to make fair comparisons against the Sadinle 2017 model, we integrate over the posterior of $\lambda$ and rearrange terms to produce the final full conditoinal:
+
+$$Z_j^{(s+1)} | \mathbf{m}, \mathbf{u}, \mathbf{Z^{(s)}} \propto
+\begin{cases} 
+    w_{ij}  & z_j \leq n_A; \\
+     n_A \frac{n_B - D + \beta_{\lambda}}{D + \alpha_{\lambda}} &  z_j  = n_A + 1 \\
+\end{cases}$$
+
+
+## Bayes Estimate
+
+Our Gibbs sampler provides posterior samples of $\mathbf{Z}$ which we use to make our final decisions about the linkage structure. In the case where we false matches and missed matches contribute the same loss, we declare $(i,j)$ to be a match whenever $P(Z_j = i) > \frac{1}{2}$ according to these posterior samples. We can create more elaborate decisions by attributing different loss values to different kinds of error, and allowing pairings with middling posterior probabilities to be left unlabled by the algorithm so that the modeller can address those manually. For further discussion, see Sadinle 2017. 
+
+# Efficient Computation
+
+Broadly speakings, we increase our computational efficiency by tecognizing that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. Let $H$ be the set of unique agreement patterns in the data, let $P$ denote the total number of unique agreement patterns present in $\Gamma$, and note that $P$ is bounded above by $\prod_{f=1}^F L_f$. We index these agreement patterns by $p \in \{1, \ldots, P\}$, and say $\gamma_{ij} \in h_p$ when the $(i,j)$ pair exhibits the $p^{th}$ agreement pattern. Wherever possible, we conduct calculcations over these $P$ agreement patterns rather than the $n_A \times n_B$ record pairs.
+
+## Representation of the Data
+
+The classic Fellegi Sunter represents the $\gamma_{ij}$ comparison vector as vector of length $F$, with each component $\gamma_{ij}^f$ taking on values in  $\{0, \ldots, L_f - 1\}$. To ease computations, we instead represent the comparison as a concatenation of $F$ many binary indicators of lengths $L_f$. For example, if $L_1 = L_2 = 2$ and $L_3 = 3$, then $\gamma_{ij} = (1, 0, 2)$ under the classical framework becomes $\gamma_{ij} = (0, 1, 1, 0, 0, 0, 1)$ under our framework. This is a bijective transformive that does not change the meaning of the data, but this representation will ease calculations and posterior updates. 
+
+## Hashing
+
+In the classic Fellegi Sunter framework, $\Gamma$ is a $n_A n_B \times F$ matrix, with each row providing the comparison vector for a different $(i,j)$ pair. We however do not store these comparison vectors themselves, but instead only the a hashed value indicating the unique agreement pattern. We store this information in a nested list. For each $p$, we also calculate $|h_p|$ total instances of agreement pattern $h_p$ in the entire $\Gamma$ matrix, and then for each $j$, we also calculate $|h_p|_j$ the total instances agreement pattern for each $\Gamma_{.j}$
+
+## Updating m and u
+
+After receiving matching statuses from $\mathbf{Z}$, the Sadinle method calculates $\alpha_{fl}(\mathbf{Z})$ and $\beta_{fl}(\mathbf{Z})$ for each field and level. This constitutes $2 \times \sum L_f$ many summations over $n_A \times n_B$ quantities, and becomes computionally burdensome with large data. In contrast, we recognize that each unique agreement pattern contributes to the posterior $\alpha(\mathbf{Z})$ and $\beta(\mathbf{Z})$ vectors in the same way. In fact, if we denote $\mathbf{Z}(h_p)$ to be the number of record pairs with agreement pattern $h_p$, then the contribution of pairs of pattern $h_p$ to $\alpha(\mathbf{Z})$ is simply $\mathbf{Z}(h_p) \times h_p$. Thus our posterior update is simply $\alpha(\mathbf{Z}) = \alpha_0 + \sum_{p=1}^P \mathbf{Z}(h_p) \times h_p$. Then $\beta(\mathbf{Z}) = \beta_0 + \sum_{p=1}^P |h_p| - \left(\mathbf{Z}(h_p) \times h_p \right)$
+
+## Updating Z
+
+Sadinle uses the following full conditional for $Z_j$ in order to strictly enforce one-to-one matching. 
+
+The indicator removes previously matched records from the set of candidate records, and $L_{-j}$ updates iteratively after each matching decision, $n_B$ many times per Gibbs iteration. This process is *inherently serial* and becomes computationally burdensome for large data. By weakening the one-to-one requirement, our full conditional for $Z$ does not depend on the rest of the $\mathbf{Z}_{-j}$ vector, and thus can be computed in parallel. More importantly, since only the aggrement pattern of $Z_j$ is used for calculations within the Gibbs sampler, and not the particular record label, we can conduct this sampling only at the level of the unique agreement patterns. This boosts computation time far greater than parallelization. 
+
+To do this 
+
+
+
+
+## 
+

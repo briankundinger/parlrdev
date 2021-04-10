@@ -21,10 +21,11 @@ library(tidyverse)
 ```
 
 
-```{r}
+```{r simulation}
 
-n1_vals <- c(100, 500, 1000, 2000, 3000)
-n2_vals <- c(100, 500, 1000, 2000, 3000)
+n1_vals <- c(100, 500, 1000, 2000, 3000, 4000, 5000)
+n2_vals <- c(100, 500, 1000, 2000, 3000, 4000, 5000)
+
 show_progress <- T
 fast = F
 
@@ -42,8 +43,10 @@ levels <- c(2, 2, 2, 2, 2)
 # alpha <- beta <- 1
 results_bk_samps <- matrix(NA, nrow = length(n1_vals), ncol = 4)
 results_sad_samps <- matrix(NA, nrow = length(n1_vals), ncol = 4)
+results_bk_samps_resolved <- matrix(NA, nrow = length(n1_vals), ncol = 4)
+double_matches <- numeric(length(n1_vals))
 
-for(i in seq_len(n1_vals)){
+for(i in seq_along(n1_vals)){
   
   #Simulate Data
   n1 <- n1_vals[i]
@@ -56,9 +59,16 @@ for(i in seq_len(n1_vals)){
   ptm <- proc.time()
   Zchain <- BKSimple_hash2(cd)
   elapsed <- proc.time() - ptm
-  Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
-  eval <- GetEvaluations(Zhat, Ztrue, n1)
-  results_bk_samps[i, ] <- c(eval, elapsed[3])
+  #Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
+  Zhat <- LinkRecordsBK(Zchain, n1, 1, 1, 2, Inf)
+  eval_simple <- GetEvaluations(Zhat[[1]], Ztrue, n1)
+  results_bk_samps[i, ] <- c(eval_simple, elapsed[3])
+  double_matches[i] <- sum(duplicated(Zhat[[1]]))
+  
+  Zhat_resolved <- ResolveConflicts(Zhat)
+  eval_resolved <- GetEvaluations(Zhat_resolved, Ztrue, n1)
+  results_bk_samps_resolved[i, ] <- c(eval_resolved, elapsed[3])
+  
   
   #Sadinle 2017 Method
   ptm <- proc.time()
@@ -72,34 +82,46 @@ for(i in seq_len(n1_vals)){
 }
 
 list(BK = results_bk_samps,
+     BK_resolved = results_bk_samps_resolved,
      Sadinle = results_sad_samps)
+
+double_matches/n2_vals
 ```
 
-```{r}
+```{r speed_plot}
 
 
 
-parlr_df <- data.frame(results_bk_samps, n2_vals, "parlr")
-names(parlr_df) <- c("recall", "precision", "fmeasure", "time", "n", "method")
-sadinle_df <- data.frame(results_sad_samps, n2_vals, "sadinle")
-names(sadinle_df) <- c("recall", "precision", "fmeasure", "time", "n",  "method")
+parlr_df <- data.frame(results_bk_samps, n2_vals, "Parlr")
+names(parlr_df) <- c("Recall", "Precision", "Fmeasure", "time", "n", "method")
 
-df<- rbind(parlr_df, sadinle_df)
+parlr_resolved_df <- data.frame(results_bk_samps_resolved, n2_vals, "Parlr_resolved")
+names(parlr_resolved_df) <- c("Recall", "Precision", "Fmeasure", "time", "n", "method")
+
+sadinle_df <- data.frame(results_sad_samps, n2_vals, "Sadinle17")
+names(sadinle_df) <- c("Recall", "Precision", "Fmeasure", "time", "n",  "method")
+
+df<- rbind(parlr_df, parlr_resolved_df, sadinle_df)
 
 speed_plot <- df %>% 
+  filter(method != "Parlr_resolved") %>% 
   ggplot(aes(x = n, y = time, color = method)) +
   geom_line(size = 1) +
   labs(x = "Size of each dataset",
        y = "Time (seconds)",
        color = "Method", 
-       title = "Speed Comparison: parlr and Sadinle 17",
+       title = "Speed Comparison: Parlr and Sadinle17",
        subtitle = "1000 Gibbs iterations") +
   theme_bw() +
   theme(plot.title = element_text(hjust = .5),
-        plot.subtitle = element_text(hjust = .5))
+        plot.subtitle = element_text(hjust = .5)) +
+  scale_color_brewer(palette="Set1")
 
-ggsave(filename = "../notes/figures/speed_plot.png",
-       plot = speed_plot)
+speed_plot
+
+# ggsave(filename = "../notes/figures/sadinle_speed_plot.png",
+#        plot = speed_plot)
+
 # results_df <- df %>% 
 #   pivot_longer(cols = 1:4, names_to = "metric") %>% 
 #   group_by(method, metric) %>% 
@@ -114,5 +136,53 @@ ggsave(filename = "../notes/figures/speed_plot.png",
 #   kable_classic() %>%
 #   kable_styling(full_width = F)
   #as_image(file = "../notes/figures/simple_dist_table.png")
+```
+
+```{r accuracy_and_time}
+
+acc_plot_with_size <- df %>% 
+  pivot_longer(cols = 1:4, names_to =  "metric") %>% 
+  filter(metric != "time") %>% 
+  mutate(metric = factor(metric, levels = c("Recall", "Precision", "Fmeasure"))) %>% 
+  ggplot(aes(x = n, y = value, color = method)) +
+  geom_line() + 
+  facet_wrap(~metric) +
+  labs(title = "Conflict Resolution Improves Accuracy",
+       subtitle = "One simulation per data size",
+       y = NULL,
+       color = "Method") + 
+  theme_bw() +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5)) +
+  scale_color_brewer(palette="Set1")
+
+acc_plot_with_size
+
+ggsave(filename = "../notes/figures/acc_plot_with_size_resolved.png",
+        plot = acc_plot_with_size)
+```
+
+```{r double_matches}
+
+df <- data.frame(n1_vals, double_matches, double_matches/n1_vals)
+names(df) <- c("n", "double_matches", "rate")
+
+violations_plot <- df %>% 
+  pivot_longer(cols = 2:3, names_to = "metric") %>%  
+  ggplot(aes(x = n, y = value)) +
+  geom_line() + 
+  facet_wrap(~metric, scales = "free_y") + 
+  labs(title = "Violations of One-to-One Matching",
+       subtitle = "Violations grow with data size",
+       y = NULL,
+       x = "Size of datasets") + 
+  theme_bw() +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5)) 
+
+violations_plot
+
+ggsave(filename = "../notes/figures/violations_plot.png",
+        plot = violations_plot)
 ```
 

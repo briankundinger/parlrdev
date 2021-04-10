@@ -37,7 +37,7 @@ $$H(i,j) = \sum_{f=1}^F \mathbf{1}_{\gamma_f (i,j) >0}2^{\gamma_f (i,j) + \mathb
 
 - I identify the unique patterns, the number of each of of those patterns in the data as a whole, and the number of those patterns for each record $j \in B$.
 
-- Define $P$ to be the number of unique agreement patterns, and note it is bounded by $\prod_{f =1}^F L_f$.
+- Define $P$ to be the number of unique agreement patterns, and note it is bounded by $\prod_{f =1}^F L_f$. This *does not grow* with the size of the data.
 
 ## Calculating FS weights
 

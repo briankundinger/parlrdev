@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 library(devtools)
-#load_all()
+load_all()
 library(parlrdev)
 library(tidyverse)
 ```
@@ -47,13 +47,23 @@ library(tidyverse)
 ```{r}
 files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
 
-files <- files[c(1:25, 101:125, 201:225)]
-parlr_acc_samps <- matrix(NA, nrow = length(files), ncol = 4)
-sad_acc_samps <- matrix(NA, nrow = length(files), ncol = 4)
+#files <- files[201:220]
 
-for(i in seq_along(files)){
+overlap_vals <- c(50, 250, 450)
+# parlr_acc_samps <- matrix(NA, nrow = 3 * length(files), ncol = 5)
+# sad_acc_samps <- matrix(NA, nrow = 3 * length(files), ncol = 5)
+
+parlr_acc_samps <- array(NA, dim = c(length(files), 5, 3))
+sad_acc_samps <- array(NA, dim = c(length(files), 5, 3))
+
+for(j in seq_along(overlap_vals)){
   
+  overlap <- overlap_vals[j]
+  
+for(i in seq_along(files)){
+  suppressMessages(
 records <- read_csv(files[i])
+)
 records$file <- rep(2:1, length.out = dim(records)[1])
 
 records <- records %>% 
@@ -62,7 +72,7 @@ records <- records %>%
 
 n1 <- 500
 n2 <- 500
-overlap <- n2/2
+#overlap <- n2/2
 
 Ztrue <- rep(n1 + 1, n2)
 Ztrue[1:overlap] <- 1:overlap
@@ -76,12 +86,13 @@ file1 <- records %>%
 
 file2 <- records %>% 
   filter(file == 2,
-         rec_id %in% c(1:overlap, (n1 +1):(n1 + overlap))) %>% 
+         rec_id %in% c(1:overlap, (n1 +1):(1000 - overlap))) %>% 
   select(-rec_id) %>% 
   as.matrix() %>% 
   data.frame(.)
 
-cd <- BRL::compareRecords(file1, file2, c(2, 3, 4, 5), types = c("lv", "lv", "bi", "bi") )
+cd <- suppressMessages(BRL::compareRecords(file1, file2, c(2, 3, 4, 5), 
+                          types = c("lv", "lv", "bi", "bi") ))
 cd[[1]] <- apply(cd[[1]], 2, as.numeric)
 
 # cd[[1]] <- cd[[1]][, -c(10, 11, 13, 14)]
@@ -93,17 +104,19 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   elapsed <- proc.time() - ptm
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
-  parlr_acc_samps[i, ] <- c(eval, elapsed[3])
+  parlr_acc_samps[i, ,j] <- c(eval, elapsed[3], overlap)
   
   #Sadinle 2017 Method
   ptm <- proc.time()
-  Zchain <- BRL::bipartiteGibbs(cd)
+  Zchain <- BRL::bipartiteGibbs(cd)[[1]]
+  Zchain <- Zchain[,101:1000]
   elapsed <- proc.time() - ptm
-  Zhat <- BRL::linkRecords(Zchain[[1]], n1, 1, 1, 2, Inf)
+  Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
-  sad_acc_samps[i,] <- c(eval, elapsed[3])
+  sad_acc_samps[i, ,j] <- c(eval, elapsed[3], overlap)
   
   print(i)
+}
 }
 # list(BK = parlr_acc_samps,
 #      Sadinle = sad_acc_samps)
@@ -111,84 +124,105 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
 ```
 
 ```{r}
-error_level <- factor(rep(1:3, each = 25))
+parlr_samps <- rbind(parlr_acc_samps[,,1], parlr_acc_samps[,,2], parlr_acc_samps[,,3])
 
+sad_samps <- rbind(sad_acc_samps[,,1], sad_acc_samps[,,2], sad_acc_samps[,,3])
+error_level <- rep(rep(c("One Error", "Two Errors", "Three Errors"), each = 100), 3)
+error_level <- factor(error_level, levels = c("One Error", "Two Errors", "Three Errors"))
+#error_level <- 3
 # error_level <- factor(error_level, levels = c("One Error", "Two Errors", "Three Errors"))
 
-parlr_df <- data.frame(parlr_acc_samps, error_level, "Parlr")
-names(parlr_df) <- c("Recall", "Precision", "Fmeasure", "time", "error_level", "method")
-sadinle_df <- data.frame(sad_acc_samps, error_level, "Sadinle17")
-names(sadinle_df) <- c("Recall", "Precision", "Fmeasure", "time", "error_level",  "method")
+parlr_df <- data.frame(parlr_samps, error_level, "Parlr")
+names(parlr_df) <- c("Recall", "Precision", "Fmeasure", "time", "overlap", "error_level", "method")
+sadinle_df <- data.frame(sad_samps, error_level, "Sadinle17")
+names(sadinle_df) <- c("Recall", "Precision", "Fmeasure", "time", "overlap", "error_level",  "method")
 
 df<- rbind(parlr_df, sadinle_df)
 
 results_df <- df %>%
   pivot_longer(cols = 1:4, names_to = "metric") %>%
-  group_by(method, metric, error_level) %>%
+  group_by(method, metric, error_level, overlap) %>%
   summarize(avg = mean(value),
-            lower = quantile(value, .2),
-            upper = quantile(value, .8),
+            lower = quantile(value, .25),
+            upper = quantile(value, .975),
             .groups = "drop") %>%
   filter(metric != "time") %>% 
-  mutate(metric = factor(metric, c("Recall", "Precision", "Fmeasure")))
+  mutate(metric = factor(metric, c("Recall", "Precision", "Fmeasure")),
+         overlap = case_when(
+           overlap == 50 ~ "10% Overlap",
+           overlap == 250 ~ "50% Overlap",
+           overlap == 450 ~ "90% Overlap"
+         ))
 
 acc_plot <- results_df %>% 
-  ggplot(aes(x = error_level, y = avg,
+  ggplot(aes(x = metric, y = avg,
              ymin  = lower, ymax = upper,
              color = method)) +
   geom_pointrange(position = position_dodge2(width = .5)) + 
-  facet_wrap(~metric) +
+  facet_grid(overlap ~ error_level) +
   labs(x = "Error Level", 
        y = NULL,
        color = "Method",
-       title = "Performance Comparison in Aggregate",
-       subtitle = "25 simulated datasets at each error level, 50% Overlap") +
-  theme_bw(base_size = 14) +
+       title = "Replication of Sadinle Simulation") +
+  theme_bw(base_size = 10) +
   theme(plot.title = element_text(hjust = .5),
-        plot.subtitle = element_text(hjust = .5))
+        plot.subtitle = element_text(hjust = .5)) + 
+  scale_color_brewer(palette="Set1")
 
-ggsave(filename = "../notes/figures/acc_plot.png",
-       plot = acc_plot)
-  
+acc_plot
+
+# ggsave(filename = "../notes/figures/sadinle_sim_plot.png",
+#        plot = acc_plot)
+#   
 # simple_dist_table <- results_df %>%
 #   kable(digits = 3,
 #         caption = "Results for Simpler Distributions (Full)") %>%
 #   kable_classic() %>%
 #   kable_styling(full_width = F)
   #as_image(file = "../notes/figures/simple_dist_table.png")
+
+# simulation_samps <- list(parlr_samps, sad_samps)
+# saveRDS(simulation_samps, file = "../data/sadinle_accuracy_samps.rds")
 ```
 
 ```{r}
-difference <- parlr_acc_samps - sad_acc_samps
-difference_df <- data.frame(difference, error_level)
-names(difference_df) <- c("Recall", "Precision", "Fmeasure", "time", "error_level")
+difference <- parlr_samps[,-5] - sad_samps[,-5]
+difference_df <- data.frame(difference, parlr_samps[,5], error_level)
+names(difference_df) <- c("Recall", "Precision", "Fmeasure", "time", "overlap", "error_level")
 
 results_diff_df <- difference_df %>%
   pivot_longer(cols = 1:4, names_to = "metric") %>%
-  group_by(metric, error_level) %>%
+  group_by(metric, error_level, overlap) %>%
   summarize(avg = mean(value),
             lower = quantile(value, .2),
             upper = quantile(value, .8),
             .groups = "drop") %>%
   filter(metric != "time") %>% 
-  mutate(metric = factor(metric, c("Recall", "Precision", "Fmeasure")))
+  mutate(metric = factor(metric, c("Recall", "Precision", "Fmeasure")),
+         overlap = case_when(
+           overlap == 50 ~ "10% Overlap",
+           overlap == 250 ~ "50% Overlap",
+           overlap == 450 ~ "90% Overlap"
+         ))
 
 acc_plot_pairwise <- results_diff_df %>% 
-  ggplot(aes(x = error_level, y = avg,
+  ggplot(aes(x = metric, y = avg,
              ymin  = lower, ymax = upper)) +
   geom_pointrange() + 
   geom_hline(yintercept = 0, color = "light grey") +
-  facet_wrap(~metric) +
+  facet_grid(overlap ~ error_level) +
   labs(x = "Error Level", 
        y = "Parlr Minus Sadinle",
-       title = "Pairwise Performance Comparison",
-       subtitle = "25 simulated datasets at each error level, 50% Overlap") +
-  theme_bw(base_size = 14) +
+       title = "Replication of Sadinle Simulation",
+       subtitle = "Pairwise Comparison") +
+  theme_bw(base_size = 10) +
   theme(plot.title = element_text(hjust = .5),
         plot.subtitle = element_text(hjust = .5))
 
-ggsave(filename = "../notes/figures/acc_plot_pairwise.png",
-       plot = acc_plot_pairwise)
+acc_plot_pairwise
+
+# ggsave(filename = "../notes/figures/sadinle_pairwise_plot.png",
+#        plot = acc_plot_pairwise)
 
 ```
 
