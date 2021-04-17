@@ -1,4 +1,4 @@
-GetUniquePatterns2 <- function(cd, fast = F){
+GetUniquePatterns2 <- function(cd, fast = F, R = NULL){
 
   indicators <- cd[[1]]
   N <- dim(indicators)[1]
@@ -111,8 +111,14 @@ pattern_df <- df %>%
     append(x, list(n1 +1))
   })
 
+  if(!is.null(R)){
+    hash_to_rec1 <- lapply(hash_to_rec1, function(z){
+    map(z, ~RandomIndexing(.x, R))
+  })
+  }
 
-  patterns <- list(hash_id,
+
+  patterns <- list(#hash_id,
                    unique_patterns,
                    pattern_counts,
                    counts_by_rec,

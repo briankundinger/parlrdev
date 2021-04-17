@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#devtools::load_all()
+devtools::load_all()
 library(parlrdev)
 library(tidyverse)
 ```
@@ -28,6 +28,7 @@ n2_vals <- c(100, 500, 1000, 2000, 3000, 4000, 5000)
 
 show_progress <- T
 fast = F
+R <- 10
 
 m <- c(.05, .95, .05, .95, .05, .95, .05, .95, .05, .95)
 
@@ -57,7 +58,7 @@ for(i in seq_along(n1_vals)){
   
   #parlr method
   ptm <- proc.time()
-  Zchain <- BKSimple_hash2(cd)
+  Zchain <- BKSimple_hash2(cd, R = R)
   elapsed <- proc.time() - ptm
   #Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   Zhat <- LinkRecordsBK(Zchain, n1, 1, 1, 2, Inf)

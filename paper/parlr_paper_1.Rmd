@@ -42,7 +42,7 @@ $$Z_j=\begin{cases}
 \end{cases}$$
 This provides more memory efficient storage for the linkage information than a $n_A \times n_B$ sparse matrix of indicators.
 
-Following the Fellegi Sunter framework, we define $m^{fl}:= P(\gamma_{ij}^f = l |Z_j = i)$ to be the probability of observing agreement level $l$ in field $f$ for records $i$ and $j$ given that the records are a match, and similarly define $u^{fl}:= P(\gamma_{ij}^f = l |Z_j \neq i)$, for non-matches. We denote $\lambda$ to be the (marginal) probability that some record $j \in B$ has a match in $A$. 
+Following the Fellegi Sunter framework, we define $m^{fl}:= P(\gamma_{ij}^f = l |Z_j = i)$ to be the probability of observing agreement level $l$ in field $f$ for records $i$ and $j$ given that the records are a match, and similarly define $u^{fl}:= P(\gamma_{ij}^f = l |Z_j \neq i)$, for non-matches. We also adopt Fellegi and Sunter's conditionally independent fields assumption that the level of agreement on one field is independent of the level of agreement on another. Though this assumption is often not reasonable (for example, first name and gender are two clearly dependent fields), but it is common within the record linkage literature and generally leads to models that perform well in practice; see discussion for further remarks. Lastly, we define $\lambda$ to be the (marginal) probability that some record $j \in B$ has a match in $A$. 
 
 Wherever possible, we reserve superscripts for denoting field and level, while reserving subscripts for record indices. For example, $\mathbf{m}^f = (m^{f1}, \ldots, m^{fL_f})$ is the probability distribution governing field $f$ for matching records, and $\mathbf{m}_{ij}= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(m^{fl}\right)^{\mathbf{1}_{\gamma_{ij}^f = l}} = P(\boldsymbol{\gamma}_{ij}|Z_j = i)$ is product of the relevant of the appropriate $\mathbf{m}$ parameters for record pair $(i,j)$. We hope that these conventions avoid overloaded notation in the likelihood and subsequent derivations. 
 
@@ -147,7 +147,7 @@ Lastly, the classic Fellegi Sunter method represents the $\gamma_{ij}$ compariso
 
 ## Gibbs Sampling
 
-After receiving matching statuses from $\mathbf{Z}$, the Sadinle method calculates $\alpha_{fl}(\mathbf{Z})$ and $\beta_{fl}(\mathbf{Z})$ for each field and level. This constitutes $2 \times \sum L_f$ many summations over $n_A \times n_B$ quantities, and becomes computationally burdensome with large data. In contrast, we recognize that each unique agreement pattern contributes to the posterior $\alpha(\mathbf{Z})$ and $\beta(\mathbf{Z})$ vectors in the same way. In fact, if we denote $\mathbf{Z}(h_p) = \sum_{j=1}^{n_B} \mathbf{1}_{(Z_j, j) \in h_p}$ to be the number of matching record pairs with agreement pattern $h_p$, then the contribution of pairs of pattern $h_p$ to the $\alpha(\mathbf{Z})$ vector is simply $\mathbf{Z}(h_p) \times h_p$. Thus our posterior updates are simply $\alpha(\mathbf{Z}) = \alpha_0 + \sum_{p=1}^P \mathbf{Z}(h_p) \times h_p$ and  $\beta(\mathbf{Z}) = \beta_0 + \sum_{p=1}^P |h_p| - \left(\mathbf{Z}(h_p) \times h_p \right)$. Note that this constitutes $P$ many summations over $n_B$ quantities, and thus avoids the $n_A \times n_B$ summation from the original method. 
+After receiving matching statuses from $\mathbf{Z}$, the Sadinle method calculates $\alpha_{fl}(\mathbf{Z})$ and $\beta_{fl}(\mathbf{Z})$ for each field and level. This constitutes $2 \times \sum L_f$ many summations over $n_A \times n_B$ quantities, and becomes computationally burdensome with large data. In contrast, we recognize that each unique agreement pattern contributes to the posterior $\alpha(\mathbf{Z})$ and $\beta(\mathbf{Z})$ vectors in the same way. In fact, if we denote $|h_p^m| = \sum_{j=1}^{n_B} \mathbf{1}_{(Z_j, j) \in h_p}$ to be the number of matching record pairs with agreement pattern $h_p$, then the contribution of pairs of pattern $h_p$ to the $\alpha(\mathbf{Z})$ vector is simply $\mathbf{Z}(h_p) \times h_p$. Thus our posterior update for $\alpha$ is simply $\alpha(\mathbf{Z}) = \alpha_0 + \sum_{p=1}^P |h_p^m| \times h_p$. Then, we can easily calculate $|h_p^u|$, the number of nonmatching record pairs of agreement pattern $p$, by subtracting the number of matching pairs from the total present in the data; that is $|h_p^u| = |h_p| - |h_p^m|$. From this, we can update our $\beta$ parameter through  $\beta(\mathbf{Z}) = \beta_0 + \sum_{p=1}^P |h_p^u| \times h_p$. Note that these constitute $P$ many summations over $n_B$ quantities, and thus avoid the $n_A \times n_B$ summation from the original method. 
 
 <!-- Sadinle uses a prior for $\mathbf{Z}$ that induces the a full conditional for $Z_j$ that strictly enforces one-to-one matching, given by  -->
 
@@ -158,15 +158,17 @@ After receiving matching statuses from $\mathbf{Z}$, the Sadinle method calculat
 <!-- \end{cases}$$ -->
 
 <!-- The indicator removes previously matched records from the set of candidate records, and $D_{-j}:=\sum_{B \setminus j} $ updates iteratively after each matching decision, $n_B$ many times per Gibbs iteration. This process is *inherently serial* and becomes computationally burdensome for large data.  -->
+
 Sadinle uses a prior for $\mathbf{Z}$ that induces the a full conditional for $Z_j$ that strictly enforces one-to-one matching. Particular, this sampler removed previously matches records from the set of candidate records when sampling $Z_j$, creating a dependency that makes the sampler *inherently serial*.By weakening the one-to-one requirement, our full conditional for $Z$ does not depend on the rest of the $\mathbf{Z}_{-j}$ vector, and thus can be computed in parallel. More importantly, since only the agreement pattern of $Z_j$ is used for calculations within the Gibbs sampler, and not the particular record label, we can conduct this sampling only at the level of the unique agreement patterns. This boosts computation time far greater than parallelization. 
 
-To do this we calculate the Fellegi Sunter weight $w_{h_p}$ for each unique pattern and sample the agreement pattern  $h(Z_j)$ following the modified full conditional:
+To do this we calculate the Fellegi Sunter weight $w_{h_p}$ for each unique pattern,  sample the agreement pattern between $j$ and its potential match, and then sample the record label uniformly among viable records. More concretely, define $H(Z_j)$ to be the agreement pattern between $j$ and its potential match, and say $H(Z_j) = h_{P+1}$ when $Z_j = n_A + 1$. Then, 
 
-$$h\left(Z_j^{(s+1)}\right) | \mathbf{m}, \mathbf{u}, \mathbf{Z^{(s)}} \propto
+$$H\left(Z_j^{(s+1)}\right) | \mathbf{m}, \mathbf{u}, \mathbf{Z^{(s)}} \propto
 \begin{cases} 
     w_{h_p}\times |h_p|_j  & h(z_j) \in H; \\
      n_A \frac{n_B - D + \beta_{\lambda}}{D + \alpha_{\lambda}} &  z_j  = n_A + 1 \\
 \end{cases}$$
+<!-- $$p\left(Z_j^{(s+1)} = i\right) = \frac{1}{\left|H\left(Z_j^{(s+1)}\right)\right|}; \;\;i \text{ such that } (i, j) \in H\left(Z_j^{(s+1)}\right)$$ -->
 
 We complete the entire Gibbs procedure at the level of the $P$ agreement patterns. After, we can back-fill the records corresponding to the agreement patterns by sampling uniformly at random among candidate records stored in $\tilde{\Gamma}$. 
 
@@ -184,3 +186,7 @@ Add this
 # Data Analysis
 
 - Necessary? El Salvador data? Or perhaps needs to be a bigger dataset?
+
+# Discussion
+
+We note that this often not a reasonable assumption; for example if we know that two records differ on gender, this does not give any information on whether their year of births are the same, but it does suggest that its more likely that their first names are different. 

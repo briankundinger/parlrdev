@@ -1,5 +1,6 @@
 BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
-                          alpha = 1, beta = 1, S = 1000, burn = 100, show_progress = T, fast =F){
+                          alpha = 1, beta = 1, S = 1000, burn = 100,
+                          show_progress = T, fast = F, R = NULL){
   # Implements bipartite record linkage with BK Sampling Mechanism
   #
   # Arguments
@@ -21,7 +22,7 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
     cl <- parallel::makeCluster(numCores)
   }
 
-  patterns <- GetUniquePatterns2(comparisons, fast)
+  patterns <- GetUniquePatterns2(comparisons, fast, R)
 
   parameter_split <- as.vector(unlist(sapply(1:fields, function(x){
     rep(x, comparisons[[4]][x])
@@ -30,14 +31,14 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
   ids <- expand.grid(1:n1, 1:n2)
   #rec2 <- ids[,2]
 
-  hash_id <- patterns[[1]]
-  hash <- data.frame(hash_id)
+  #hash_id <- patterns[[1]]
+  #hash <- data.frame(hash_id)
   #hash_split <- split(hash_id, ids[,2])
-  unique_patterns <- patterns[[2]]
-  pattern_counts <- patterns[[3]]
+  unique_patterns <- patterns[[1]]
+  pattern_counts <- patterns[[2]]
   P <- dim(unique_patterns)[1]
-  counts_by_rec <- patterns[[4]]
-  hash_to_rec1 <- patterns[[5]]
+  counts_by_rec <- patterns[[3]]
+  hash_to_rec1 <- patterns[[4]]
   candidates <- 1:n1
   candidates_P <- 1:(P+1)
   Z.SAMPS <- matrix(NA, nrow = n2, ncol = S)
