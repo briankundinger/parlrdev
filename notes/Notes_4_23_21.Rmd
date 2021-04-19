@@ -66,6 +66,8 @@ library(tidyverse)
 
 - However, I can create comparison vectors for smaller chunks of the data, reduce the peices through hashing and random indexing, combining results as I go along, without ever needing to store the entire $n_A \times n_B$ matrix of comparison vectors. In fact, no matter how large $n_A$ is, we store at most $n_B \times P \times R$ record pairs.
 
+- Example in this [HRDAG post](https://hrdag.org/2013/03/07/hrdags-record-de-duplication/).
+
 - Processing these smaller chunks can be done in parallel. 
 
 - Should allow us to conduct *significantly* larger record linkage tasks. 

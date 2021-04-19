@@ -16,24 +16,31 @@ fontsize: 12pt
 ---
 \begin{flushright} 
 	\end{flushright}
-	\begin{center} \textbf{Parlr: Parallelized Record Linkage in R}
+	\begin{center} \textbf{Parlr: Parallelized Record Linkage in R} \linebreak
+	\textbf{Technical Appendix}
 	
 	Brian Kundinger
+	
+	April 23, 2021
+	
+	STA 561
 
 	\end{center}
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Introduction
+<!-- ## Introduction -->
 
 
-Most methods for conducting record linkage, the task of identifying duplicate records across datasets, are derived from the foundational article by Fellegi and Sunter in 1969. Within this family of methods, two methods have notable strengths: `fastlink`, proposed by Enamorado et al (2019), continues a is able to conduct linkage on incredibly large datasets
+<!-- Most methods for conducting record linkage, the task of identifying duplicate records across datasets, are derived from the foundational article by Fellegi and Sunter in 1969. Within this family of methods, two methods have notable strengths: `fastlink`, proposed by Enamorado et al (2019), continues a is able to conduct linkage on incredibly large datasets -->
 
 ## Notation and Assumptions
 
-Our notation and assumptions closely follow that of Sadinle (2017). Denote two files as $A$ and $B$, with $n_A$ and $n_B$ records respectively, and with records indexed as $i \in \{1, \ldots, n_A\}$ in $A$ and $j \in \{1, \ldots, n_B\}$ in $B$. Without loss of generality, label the files such that $n_A \geq n_B$. We also assume there are no duplicates within files, only across. For each record pair under consideration, we generate a comparison vector $\boldsymbol{\gamma}_{ij} = \{\gamma_{ij}^1, \ldots, \gamma_{ij}^F\}$, where  $F$ is the number of fields used in the linkage and each $\gamma_{ij}^f$ takes on a value $l \in \{1, \ldots, L_f\}$ indicating the level agreement between the two records on a specified field.
+Denote two files as $A$ and $B$, with $n_A$ and $n_B$ records respectively, with records indexed as $i \in \{1, \ldots, n_A\}$ in $A$ and $j \in \{1, \ldots, n_B\}$ in $B$. Without loss of generality, label the files such that $n_A \geq n_B$. We also assume there are no duplicates within files, only across. 
+
+For each record pair under consideration, we generate a comparison vector $\boldsymbol{\gamma}_{ij} = \{\gamma_{ij}^1, \ldots, \gamma_{ij}^F\}$, where  $F$ is the number of fields used in the linkage and each $\gamma_{ij}^f$ takes on a value $l \in \{1, \ldots, L_f\}$ indicating the level agreement between the two records on a specified field. For ease of modeling and computation, we restrict these similarity scores to be discrete, ordinal variables, and the construction of these is left to the modeler. With notation $\gamma_{ij}^f \in \{0, \ldots, L_f - 1\}$ for the number of possible agreement levels for field $f$, we use binary 0-1 variables to indicate exact matching, and 0-1-2 variables to provide an option for partial matching. For text data, we calculate similarity based on Levenstein distance or some other text similarity score, and bin these scores to integers for use in the model. 
 
 To indicate matching status, we adopt the *linkage structure parameter* $\mathbf{Z} = (Z_1, \ldots, Z_{n_B})$ from Sadinle 2017, defined as
 $$Z_j=\begin{cases} 
@@ -44,15 +51,15 @@ This provides more memory efficient storage for the linkage information than a $
 
 Following the Fellegi Sunter framework, we define $m^{fl}:= P(\gamma_{ij}^f = l |Z_j = i)$ to be the probability of observing agreement level $l$ in field $f$ for records $i$ and $j$ given that the records are a match, and similarly define $u^{fl}:= P(\gamma_{ij}^f = l |Z_j \neq i)$, for non-matches. We also adopt Fellegi and Sunter's conditionally independent fields assumption that the level of agreement on one field is independent of the level of agreement on another. Though this assumption is often not reasonable (for example, first name and gender are two clearly dependent fields), but it is common within the record linkage literature and generally leads to models that perform well in practice; see discussion for further remarks. Lastly, we define $\lambda$ to be the (marginal) probability that some record $j \in B$ has a match in $A$. 
 
-Wherever possible, we reserve superscripts for denoting field and level, while reserving subscripts for record indices. For example, $\mathbf{m}^f = (m^{f1}, \ldots, m^{fL_f})$ is the probability distribution governing field $f$ for matching records, and $\mathbf{m}_{ij}= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(m^{fl}\right)^{\mathbf{1}_{\gamma_{ij}^f = l}} = P(\boldsymbol{\gamma}_{ij}|Z_j = i)$ is product of the relevant of the appropriate $\mathbf{m}$ parameters for record pair $(i,j)$. We hope that these conventions avoid overloaded notation in the likelihood and subsequent derivations. 
+Wherever possible, we reserve superscripts for denoting field and level, while reserving subscripts for record indices. For example, $\mathbf{m}^f = (m^{f1}, \ldots, m^{fL_f})$ is the probability distribution governing field $f$ for matching records, and $\mathbf{m}_{ij}= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(m^{fl}\right)^{\mathbf{1}_{\gamma_{ij}^f = l}} = P(\boldsymbol{\gamma}_{ij}|Z_j = i)$ is the product of the appropriate $\mathbf{m}$ parameters for record pair $(i,j)$. We hope that these conventions avoid overloaded notation in the likelihood and subsequent derivations. 
 
 # Model Specification
 
-(This will be revised to talk more explicitly about sampling $Z_j$ independently)
 
-Our model differs from that of Sadinle 2017 through its explicit dependence on a beta random variable $\lambda$ that models the rate of matching across records. Sadinle marginalizes over such a random variable in his derivations of  the "beta prior for bipartite matching," but here we provide derivations without marginalizing in order to specify differing rates of matching for different linkage clusters. 
 
-## Prior Distributions and Likelihood
+<!-- Our model differs from that of Sadinle 2017 through its explicit dependence on a beta random variable $\lambda$ that models the rate of matching across records. Sadinle marginalizes over such a random variable in his derivations of  the "beta prior for bipartite matching," but here we provide derivations without marginalizing in order to specify differing rates of matching for different linkage clusters.  -->
+
+<!-- ## Prior Distributions and Likelihood -->
 
 For fields $f \in \{1, \ldots, F\}$ and levels $l\in \{1, \ldots, L_f\}$ we adopt the following likelihood and prior distributions. 
 
@@ -129,7 +136,7 @@ $$p\left(Z_j^{(s+1)}  = i| \mathbf{m}, \mathbf{u}, \mathbf{Z^{(s)}}\right) \prop
 
 Our Gibbs sampler provides posterior samples of $\mathbf{Z}$ which we use to make our final decisions about the linkage structure. In the case where we false matches and missed matches contribute the same loss, we declare $(i,j)$ to be a match whenever $P(Z_j = i) > \frac{1}{2}$ according to these posterior samples. We can create more elaborate decisions by attributing different loss values to different kinds of error, and allowing pairings with middling posterior probabilities to be left unlabeled by the algorithm so that the modeler can address those manually. For further discussion, see Sadinle 2017.
 
-Since our Gibbs procedure does not strictly enforce one-to-one matching, it is possible for the final Bayes estimate to link mulitple records in $B$ to one record in $A$. The modeller can either report both such matches (with their respective posterior match probabilities), or resolve these conflicts by accepting only the match with highest posterior probability. Rigorous proof of this resolution procedure is deferred to future work.
+Since our Gibbs procedure does not strictly enforce one-to-one matching, it is possible for the final Bayes estimate to link multiple records in $B$ to one record in $A$. The modeler can either report both such matches (with their respective posterior match probabilities), or resolve these conflicts by accepting only the match with highest posterior probability. Rigorous proof of this resolution procedure is deferred to future work.
 
 # Efficient Computation
 
@@ -161,7 +168,7 @@ After receiving matching statuses from $\mathbf{Z}$, the Sadinle method calculat
 
 <!-- The indicator removes previously matched records from the set of candidate records, and $D_{-j}:=\sum_{B \setminus j} $ updates iteratively after each matching decision, $n_B$ many times per Gibbs iteration. This process is *inherently serial* and becomes computationally burdensome for large data.  -->
 
-Sadinle uses a prior for $\mathbf{Z}$ that induces the a full conditional for $Z_j$ that strictly enforces one-to-one matching. Particular, this sampler removed previously matches records from the set of candidate records when sampling $Z_j$, creating a dependency that makes the sampler *inherently serial*.By weakening the one-to-one requirement, our full conditional for $Z$ does not depend on the rest of the $\mathbf{Z}_{-j}$ vector, and thus can be computed in parallel. More importantly, since only the agreement pattern of $Z_j$ is used for calculations within the Gibbs sampler, and not the particular record label, we can conduct this sampling only at the level of the unique agreement patterns. This boosts computation time far greater than parallelization. 
+Sadinle uses a prior for $\mathbf{Z}$ that induces the a full conditional for $Z_j$ that strictly enforces one-to-one matching. In particular, this sampler removes previously matches records from the set of candidate records when sampling $Z_j$, creating a dependency that makes the sampler *inherently serial*. By weakening the one-to-one requirement, our full conditional for $Z$ does not depend on the rest of the $\mathbf{Z}_{-j}$ vector, and thus can be computed in parallel. More importantly, since only the agreement pattern of $Z_j$ is used for calculations within the Gibbs sampler, and not the particular record label, we can conduct this sampling only at the level of the unique agreement patterns. This boosts computation time far greater than parallelization. 
 
 To do this, we calculate the Fellegi Sunter weight $w_{h_p}$ for each unique pattern,  sample the agreement pattern between $j$ and its potential match, and then sample the record label uniformly among viable records. More concretely, define $h(Z_j)$ to be the agreement pattern between $j$ and its potential match, and say $h(Z_j) = h_{P+1}$ when $Z_j = n_A + 1$. Then, 
 
@@ -176,14 +183,56 @@ We complete the entire Gibbs procedure at the level of the $P$ agreement pattern
 
 # Simulation Studies
 
-- Replicating the Sadinle Study
+In his 2017 paper, Sadinle demonstrated the strength of his method by running `BRL` on simulated pairs of files with differing levels of errors and overlap. Comparing our method against `BRL` on these same simulated datasets, we find that our method only has weakened performance in the extreme scenario of very high errors and very high overlap across files. We use the following measures of accuracy in our analysis: although using only recall and precision is common in the literature, we find it useful to have a single metric the gauge overall performance, and thus also include F measure. 
 
-- `parlr` and `BRL` speed comparison
+$$\text{Recall} = \frac{\text{Matches Correctly Identified}}{\text{True Matches in Data}}$$
+$$\text{Precision} = \frac{\text{Declared Matches}}{\text{True Matches in Data}}$$
+$$\text{F-Measure} = 2\left(\frac{\text{Recall} \times \text{Precision}}{\text{Recall} + \text{Precision}}\right)$$
 
-# Data Analysis
+```{r fig.align='center'}
+knitr::include_graphics("../notes/figures/sadinle_sim_plot.png")
+```
 
-- Necessary? El Salvador data? Or perhaps needs to be a bigger dataset?
 
-# Discussion
 
-We note that this often not a reasonable assumption; for example if we know that two records differ on gender, this does not give any information on whether their year of births are the same, but it does suggest that its more likely that their first names are different. 
+To demonstrate speed, we generate comparison vectors from pre-specified distributions so that we can easily increase the size of the linkage problem. Distributions are meant to emulate the behavior of similarity scores across first name, last name, and day, month, and and year of birth, with 1 indicating an exact match on a particular field and 0 indicating a nonmatch. We simulate these data for different values of $n_A$ and $n_B$, and compare the runtime of `parlr` against `BRL`. We see that at low data size, `BRL` outperforms, but that `parlr` is significantly faster at handling larger data. 
+
+In particular, runtime for `BRL` seems to grow quadratically while runtime for `parlr` seems to grow linearly.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+ & m & u \\ 
+  \hline
+fname\_0 & 0.05 & 0.99 \\ 
+  fname\_1 & 0.95 & 0.01 \\ 
+  lname\_0 & 0.05 & 0.99 \\ 
+  lname\_1 & 0.95 & 0.01 \\ 
+  day\_0 & 0.05 & 0.97 \\ 
+  day\_1 & 0.95 & 0.03 \\ 
+  month\_0 & 0.05 & 0.92 \\ 
+  month\_1 & 0.95 & 0.08 \\ 
+  year\_0 & 0.05 & 0.93 \\ 
+  year\_1 & 0.95 & 0.07 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+<!-- ```{r fig.align='center'} -->
+<!-- knitr::include_graphics("../notes/figures/speed_distributions.png") -->
+<!-- ``` -->
+
+```{r fig.align='center'}
+knitr::include_graphics("../notes/figures/sadinle_speed_plot.png")
+```
+
+The above discussion suggests that for fixed $n_B$, computation time should remain mostly constant with growing $n_A$. Shockingly, this seems to be true. In the plot below, fixing $n_B = 500$, we see linear growth for the runtime under `BRL` as $n_A$ increases, with much more static runtime under `parlr`. The slight increases in runtime that we do see are due primarily to the hashing step, which again can be run in parallel for large data.
+
+```{r fig.align='center'}
+knitr::include_graphics("../notes/figures/speed_plot_fixed_nB.png")
+```
+
+
+We note here that `BRL` is coded in C, which makes for unfair comparison against `parlr`, currently only built in R. Additionally, although `parlr` is amenable to parallezation, this simulation was run on a single core. Running `parlr` in C++ with paralellization for the hashing step and sampling the matching status of the record pairs should lead to even more drastic results. 

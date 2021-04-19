@@ -18,6 +18,8 @@ knitr::opts_chunk$set(
 devtools::load_all()
 library(parlrdev)
 library(tidyverse)
+library(knitr)
+library(kableExtra)
 ```
 
 
@@ -185,5 +187,17 @@ violations_plot
 
 ggsave(filename = "../notes/figures/violations_plot.png",
         plot = violations_plot)
+```
+
+```{r}
+distributions <- cbind(m, u)
+rownames(distributions) <- c("fname_0","fname_1", "lname_0", "lname_1", "day_0" , "day_1", "month_0" ,"month_1", "year_0", "year_1")
+
+distributions %>% 
+  kable(caption = "Distributions for Speed Simulation") %>% 
+  kable_styling(full_width = F) %>% 
+  as_image(file = "../notes/figures/speed_distributions.png")
+
+#xtable::xtable(distributions)
 ```
 

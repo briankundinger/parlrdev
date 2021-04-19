@@ -100,13 +100,11 @@ the comparison vector for record \(i \in A\) and record \(j \in B\),
 with \(\gamma_{ij}^f\) providing their similarity score on the
 \(f^{th}\) field. For ease of modeling and computation, we restrict
 these similarity scores to be discrete, ordinal variables, and the
-construction of these is left to the modeller. With notation
-\(\gamma_{ij}^f \in \{0, \ldots, L_f - 1\}\) for the number of possible
-agreement levels for field \(f\), we use binary 0-1 variables to
-indicate exact matching, and 0-1-2 variables to provide an option for
-partial matching. For text data, we calculate similarity based on
-Levenstein distance or some other text similarity score, and bin these
-scores to integers for use in the model.
+construction of these is left to the modeller. It is common to use use
+binary 0-1 variables to indicate exact matching, and 0-1-2 variables to
+provide an option for partial matching. For text data, we calculate
+similarity based on Levenstein distance or some other text similarity
+score, and bin these scores to integers for use in the model.
 
 Two modern adaptations of the Fellegi Sunter model are important for
 understanding \texttt{parlr} and its contribution. In 2019, Enamorado et
@@ -150,23 +148,17 @@ posterior match probability.
 
 Broadly speaking, we increase our computational efficiency by
 recognizing that record pairs contribute to posterior calculations only
-through the agreement pattern of the \(\gamma_{ij}\) vector. Let \(H\)
-be the set of unique agreement patterns in the data, let \(P\) denote
-the total number of unique agreement patterns. Note that \(P\) is
+through the agreement pattern of the \(\gamma_{ij}\) vector. Let \(P\)
+denote the total number of unique agreement patterns; note that \(P\) is
 bounded above by \(\prod_{f=1}^F L_f\), and that this bound does not
 scale with \(n_A\) or \(n_B\). We index these agreement patterns by
 \(p \in \{1, \ldots, P\}\), and say \((i,j) \in h_p\) when the \((i,j)\)
 pair exhibits the \(p^{th}\) agreement pattern. Wherever possible, we
 conduct calculations over these \(P\) agreement patterns rather than the
-\(n_A \times n_B\) record pairs.
-
-By making linkage decisions for each \(j\in B\) independently, we do not
-need to concern ourselves with the precise record label for \(j's\)
-potential pairing within the Gibbs sampler, only the agreement pattern
-of the \(\gamma\) vector. While the original Fellegi Sunter framework
-has computational complexity \(O(n_A \times n_B)\), these modifications
-completely remove dependence on \(n_A\) throughout the Gibbs sampler,
-reducing the complexity to \(O(n_B)\)
+\(n_A \times n_B\) record pairs. While the original Fellegi Sunter
+framework has computational complexity \(O(n_A \times n_B)\), these
+modifications completely remove dependence on \(n_A\) throughout the
+Gibbs sampler, reducing the complexity to \(O(n_B)\)
 
 \hypertarget{how-accurate-is-it}{%
 \subsubsection{How accurate is it?}\label{how-accurate-is-it}}
@@ -176,49 +168,36 @@ running \texttt{BRL} on simulated pairs of files with differing levels
 of errors and overlap. Comparing our method against \texttt{BRL} on
 these same simulated datasets, we find that our method only has weakend
 performance in the extreme scenario of very high errors and very high
-overlap across files.
-\[\text{Recall} = \frac{\text{Matches Correctly Identified}}{\text{True Matches in Data}}\]
-\[\text{Precision} = \frac{\text{Declared Matches}}{\text{True Matches in Data}}\]
-\[\text{F-Measure} = 2\left(\frac{\text{Recall} \times \text{Precision}}{\text{Recall} + \text{Precision}}\right)\]
-
-\begin{center}\includegraphics[width=29.17in]{../notes/figures/sadinle_sim_plot} \end{center}
+overlap across files. See plots in technical appendix.
 
 \hypertarget{how-fast-is-it}{%
 \subsubsection{How fast is it?}\label{how-fast-is-it}}
 
 We simulate \(\Gamma\) matrices of comparison vectors from multinomial
 distributions meant to emulate the behavior of similarity scores across
-first name, last name, and day, month, and and year of birth.
-Distributions provided below. We simulate these data for different
-values of \(n_A and n_B\), and compare the runtime of \texttt{parlr}
-against \texttt{BRL}. We note here that \texttt{BRL} is coded in C,
-which makes for unfair comparison against \texttt{parlr}, currently only
-built in R. We see that at low data size, \texttt{BRL} outperforms, but
-that \texttt{parlr} is significantly faster at handling larger data. In
-particular, runtime for \texttt{BRL} seems to grow quadratically while
-runtime for \texttt{parlr} seems to grow linearly. Additionally,
-although \texttt{parlr} is amenable to parallezation, this simulation
-was run on a single core. Running \texttt{parlr} in C or C++ with
-paralellization for the hashing step and sampling the matching status of
-the record pairs should lead to even more drastic results.
+first name, last name, and day, month, and and year of birth. We
+simulate these data for different values of \(n_A\) and \(n_B\), and
+compare the runtime of \texttt{parlr} against \texttt{BRL}. We see that
+at low data size, \texttt{BRL} outperforms, but that \texttt{parlr} is
+significantly faster at handling larger data. See plots in technical
+appendix.
 
-\begin{center}\includegraphics[width=23.6in]{../notes/figures/sadinle_speed_plot} \end{center}
+\hypertarget{how-fast-can-it-be}{%
+\subsubsection{How fast can it be?}\label{how-fast-can-it-be}}
 
-The above discussion suggests that for fixed \(n_B\), computation time
-should remain mostly constant with growing \(n_A\). Shockingly, this
-seems to be true. In the plot below, fixing \(n_B = 500\), we see linear
-growth for the runtime under \texttt{BRL} as \(n_A\) increases, with
-much more static runtime under \texttt{parlr}. The slight increases in
-runtime that we do see are due primarily to the hashing step, which
-again can be run in parallel for large data.
-
-\begin{center}\includegraphics[width=29.17in]{../notes/figures/speed_plot_fixed_nB} \end{center}
+We note here that \texttt{BRL} is coded in C, which makes for unfair
+comparison against \texttt{parlr}, currently only built in R.
+Additionally, although \texttt{parlr} is amenable to parallezation, our
+simulations thus far have only been run on a single core. Running
+\texttt{parlr} in C++ with paralellization for the hashing step and
+sampling the matching status of the record pairs should lead to even
+more drastic results.
 
 \hypertarget{what-about-deduplication-of-a-single-file}{%
 \subsubsection{What about deduplication of a single
 file}\label{what-about-deduplication-of-a-single-file}}
 
-At the moment, \texttt{parlr} (and its \texttt{BRL} competitor) are only
+At the moment, \texttt{parlr} (and its \texttt{BRL} competitor) is only
 able to handle bipartite matching across two files, meaning there is
 duplication across, but not within, files. Though it seems similar to
 linkage across files, deduplication within one file is suprisingly much
@@ -227,12 +206,12 @@ assumes that the linkage decision for record \(j \in B\) is independent
 from all other \(j' \in B\), allowing us to propose a prior
 \(\lambda \sim \text{Beta}(\alpha, \beta)\) for the probability of \(j\)
 having some match in \(A\), and update that prior through standard
-beta-binomial posterior updates. With only one file however, if the
-sampler decides that record \(1\) matches with record \(5\), there is no
-way to determine the linkage of record \(5\) independently; we do not
-even have \(n_B\) independent linkage decisions to work with!
-Constructing fast, scalable methods for deduplication is one avenue of
-future work.
+beta-binomial posterior updates. However, with only one file of \(n\)
+records, we do not even have \(n\) independent linkage decisions to work
+with! For example, if the sampler decides that record \(1\) matches with
+record \(5\), there is no way to determine the linkage of record \(5\)
+independently. Constructing fast, scalable methods for deduplication is
+one avenue of future work.
 
 \hypertarget{anything-else}{%
 \subsubsection{Anything else?}\label{anything-else}}
