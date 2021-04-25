@@ -55,7 +55,7 @@ for(i in seq_along(n1_vals)){
   n1 <- n1_vals[i]
   n2 <- n2_vals[i]
   overlap <- n2/2
-  cd <- SimulateComparisons(m, u, levels, n1, n2, overlap)
+  cd <- SimulateComparisonsFast(m, u, levels, n1, n2, overlap)
   Ztrue <- cd$Ztrue
   
   #parlr method

@@ -144,7 +144,7 @@ Broadly speaking, we increase our computational efficiency by recognizing that r
 
 ## Data Representation and Hashing
 
-In the classic Fellegi Sunter framework, $\Gamma$ is a $n_A n_B \times F$ matrix, with each row providing the comparison vector for a different $(i,j)$ pair. We however do not store these comparison vectors themselves, but instead only the a hashed value corresponding to the agreement pattern of the $(i, j)$ pair. Enamorado et al (2019) provided the hashing function 
+In the classic Fellegi Sunter framework, $\Gamma$ is a $n_A n_B \times F$ matrix, with each row providing the comparison vector for a different $(i,j)$ pair. We however do not store these comparison vectors themselves, but instead only a hashed value corresponding to the agreement pattern of the $(i, j)$ pair. Enamorado et al (2019) provided the hashing function 
 $$\sum_{f=1}^F \mathbf{1}_{\gamma_{(i,j)}^f >0}2^{\gamma_{(i,j)}^f + \mathbf{1}_{f>1} \times \sum_{e=1}^{f-1}(L_e-1)}$$
 to map each agreement pattern to a unique value, but packages like `dplyr` in `R` are capable of this as well. 
 

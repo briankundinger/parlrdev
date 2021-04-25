@@ -1,8 +1,8 @@
 GetUniquePatterns3 <- function(cd, fast = F, R = NULL){
 
-  indicators <- cd[[1]]
-  N <- dim(indicators)[1]
-  fields <- dim(indicators)[2]
+  gamma <- cd[[1]]
+  N <- dim(gamma)[1]
+  fields <- dim(gamma)[2]
   n1 <- cd[[2]]
   n2 <- cd[[3]]
   levels <- cd[[4]]
@@ -12,7 +12,7 @@ GetUniquePatterns3 <- function(cd, fast = F, R = NULL){
   rec1 <- ids[,1]
   rec2 <- ids[,2]
 
-  df <- data.frame(indicators, rec1, rec2)
+  df <- data.frame(gamma, rec1, rec2)
 
   pattern_df <- df %>%
     unite(pattern, 1:fields, sep = "")
@@ -31,13 +31,13 @@ GetUniquePatterns3 <- function(cd, fast = F, R = NULL){
   hash_id <- factor(hash_id)
 
 
-  temp <- data.frame(indicators, rec1, rec2, hash_id)
+  temp <- data.frame(gamma, rec1, rec2, hash_id)
   pattern_counts <- temp %>%
     group_by(hash_id) %>%
     count() %>%
     pull()
 
-  #unique_patterns <- indicators[!duplicated(hash_id),]
+  #unique_patterns <- gamma[!duplicated(hash_id),]
 
   counts_by_rec <- temp %>%
     group_by(rec2, hash_id, .drop = F) %>%

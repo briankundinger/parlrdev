@@ -6,6 +6,14 @@ FS_to_Sadinle <- function(gamma, levels){
   }, z = gamma, y = levels)))
 }
 
+FS_to_Sadinle2 <- function(gamma_f, Lf){
+  new_gamma <- matrix(0, nrow = length(gamma_f), ncol = Lf)
+  for(i in seq_along(gamma_f)){
+    new_gamma[i, gamma_f[i]+1] <- 1
+  }
+  new_gamma
+}
+
 GetPossiblePatterns <- function(levels){
   possible_values <- lapply(levels, function(x){
     seq_len(x)

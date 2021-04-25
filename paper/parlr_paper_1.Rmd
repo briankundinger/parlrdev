@@ -23,13 +23,16 @@ fontsize: 12pt
 	\end{center}
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## Introduction
+## Related Work
 
+Most record linkage techniques are derived from the seminal 1969 paper by Fellegi and Sunter: "A Theory for Record Linkage". The defining characteristic of their model was to transform the sets of records, which often contain text data that is difficult to model, into sets of comparison vectors governed by parameters that can be more easily estimated. Concretely, if files $A$ and $B$ have $n_A$ and $n_B$ records respectively, and if the files share $F$ fields in common upon which to base the linkage, the Fellegi and Sunter approach generates a $n_A n_B \times F$ matrix $\Gamma$, which contains similarity scores between each pair of records across datasets. We say $\gamma_{ij}$ is the comparison vector for record $i \in A$ and record $j \in B$, with $\gamma_{ij}^f$ providing their similarity score on the $f^{th}$ field. For ease of modeling and computation, we restrict these similarity scores to be discrete, ordinal variables, and the construction of these is left to the modeller. It is common to use use binary 0-1 variables to indicate exact matching, and 0-1-2 variables to provide an option for partial matching. For text data, we calculate similarity based on Levenstein distance or some other text similarity score, and bin these scores to integers for use in the model. 
 
-Most methods for conducting record linkage, the task of identifying duplicate records across datasets, are derived from the foundational article by Fellegi and Sunter in 1969. Within this family of methods, two methods have notable strengths: `fastlink`, proposed by Enamorado et al (2019), continues a is able to conduct linkage on incredibly large datasets
+Two modern adaptations of the Fellegi Sunter model are important for understanding `parlr` and its contribution. In 2019, Enamorado et al proposed `fastlink`, a method that closely followed the modelling assumptions of Fellegi and Sunter, but used innovating hashing techniques to greatly enhance its speed and scale. Importantly, they maintained Fellegi and Sunter's independent matching assumption, in which the matching status of any $(i,j)$ pair is made independently of the matching of any other $(i', j')$. This leads to many matchings that violate "one-to-one" considerations that are often implicit in the data, which need to be resolved in a post-processing step. In contrast, Sadinle (2017) proposed "Beta Record Linkage for Bipartite Matching" and the accompanying `BRL` package which strictly enforces one-to-one matching. Specifically, in each iteration of his Gibbs sampler, he considers each record $j\in B$, removes from consideration the records $i\in A$ that have already been matched, then samples a potential link. However, accounting for these dependencies throughout the linkage process is computionally burdensome, leaving `BRL` only suitable for small to moderate linkage problems. 
+
+Outside of the Fellegi-Sunter framework, some researchers have developed methods that model the data directly, not a derived set of comparison vectors. As an early example, Steorts et al 2016 produced `blink`, which had the advantage of a computational complexity that grew linearly with the data (as opposed to quadratically within Fellegi Sunter), but was plagued with slow mixing times and was unable to incorportate text data. Later, Steorts et al 2020 improved on this method with `dblink`, which was able to simulate text data within its Gibbs sampler by drawing from an empirical distribution, and remedied its slow mixing through a probabalistic blocking approach. However, this method remains computationally intensive and requires distributed computing to manage even moderate linkage problems in acceptable time. 
 
 ## Notation and Assumptions
 
@@ -133,19 +136,20 @@ Since our Gibbs procedure does not strictly enforce one-to-one matching, it is p
 
 # Efficient Computation
 
-Broadly speaking, we increase our computational efficiency by recognizing that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. Let $\mathcal{H}$ be the set of unique agreement patterns in the data, let $P$ denote the total number of unique agreement patterns. Note that $P$ is bounded above by $\prod_{f=1}^F L_f$, and that this bound does not scale with $n_A$ or $n_B$. We index these agreement patterns by $p \in \{1, \ldots, P\}$, and say $(i,j) \in h_p$ when the $(i,j)$ pair exhibits the $p^{th}$ agreement pattern. Wherever possible, we conduct calculations over these $P$ agreement patterns rather than the $n_A \times n_B$ record pairs.
+Broadly speaking, we increase our computational efficiency by recognizing that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. Let $\mathcal{H}$ be the set of unique agreement patterns in the data, let $P$ denote the total number of unique agreement patterns. Note that $P$ is bounded above by $\prod_{f=1}^F L_f$, and that this bound does not scale with $n_A$ or $n_B$. Prior to processing the data, we identify all $P$ patterns in $\mathcal{H}$ and enumerate them $h_1, \ldots, h_P$. When the $(i,j)$ pair exhibits the $p^{th}$ agreement pattern, we say $(i,j) \in h_p$. Wherever possible, we conduct calculations over these $P$ agreement patterns rather than the $n_A \times n_B$ record pairs.
 
-## Data Representation and Hashing
+## Data Representation, Hashing, and Storage
 
-In the classic Fellegi Sunter framework, $\Gamma$ is a $n_A n_B \times F$ matrix, with each row providing the comparison vector for a different $(i,j)$ pair. We however do not store these comparison vectors themselves, but instead only the a hashed value corresponding to the agreement pattern of the $(i, j)$ pair. Enamorado et al (2019) provided the hashing function 
-$$\sum_{f=1}^F \mathbf{1}_{\gamma_{(i,j)}^f >0}2^{\gamma_{(i,j)}^f + \mathbf{1}_{f>1} \times \sum_{e=1}^{f-1}(L_e-1)}$$
-to map each agreement pattern to a unique value, but packages like `dplyr` in `R` are capable of this as well. 
+The classic Fellegi Sunter method represents the $\gamma_{ij}$ comparison vector as vector of length $F$, with each component $\gamma_{ij}^f$ taking on values in  $\{0, \ldots, L_f - 1\}$. To ease computations, we instead represent the comparison as a concatenation of $F$ many binary indicator vectors of lengths $L_f$. For example, if $L_1 = L_2 = 2$ and $L_3 = 3$, then $\gamma_{ij} = (1, 0, 2)$ under the classical framework becomes $\gamma_{ij} = (0, 1, 1, 0, 0, 0, 1)$ under our framework. This is a bijective transformation that does not change the meaning of the data, but this representation will ease calculations and posterior updates. 
 
-We store this information in a nested list $\tilde{\Gamma}$ where the $p^{th}$ component of the $j^{th}$ list contains a vector of records in $A$ that share agreement pattern $p$ with record $j \in B$. For each $p$, we also calculate $H_p = \sum_{i=1}^{n_A}\sum_{j=1}^{n_B} \mathbf{1}_{(i,j) \in h_p}$, the total instances of agreement pattern $p$ throughout the data, and also for each $j$, we  calculate $H_{p_j} = \sum_{i=1}^{n_A} \mathbf{1}_{{(i,j) \in h_p}}$ the instances of agreement pattern $p$ among the comparison vectors between record $j \in B$ and each of the $n_A$ records in $A$. 
+In the classic Fellegi Sunter framework, $\Gamma$ is a $n_A n_B \times F$ matrix, with each row providing the comparison vector for a different $(i,j)$ pair. We however do not store these comparison vectors themselves, but instead only a hashed value corresponding to the agreement pattern of the $(i, j)$ pair. We store this information in a nested list $\tilde{\Gamma}$ where the $p^{th}$ component of the $j^{th}$ list contains a vector of records in $A$ that share agreement pattern $p$ with record $j \in B$. For each $p$, we also calculate $H_p = \sum_{i=1}^{n_A}\sum_{j=1}^{n_B} \mathbf{1}_{(i,j) \in h_p}$, the total instances of agreement pattern $p$ throughout the data, and also for each $j$, we  calculate $H_{p_j} = \sum_{i=1}^{n_A} \mathbf{1}_{{(i,j) \in h_p}}$ the instances of agreement pattern $p$ among the comparison vectors between record $j \in B$ and each of the $n_A$ records in $A$. 
 
 For large data, we can partition the two datasets $A$ and $B$ into smaller blocks $\{A_m\}$ and $\{B_m\}$ for more manageable computations. On a single machine, we can read-in data sequentially, conduct hashing, collect results, and delete the original data from memory before continuing with the next chunk of data. With multiple cores or multiple machines, this can be done in parallel. Storing this hashed information still becomes burdensome for large data, but this hashing method greatly expands the capabilities of the Fellegi-Sunter framework. 
 
-Lastly, the classic Fellegi Sunter method represents the $\gamma_{ij}$ comparison vector as vector of length $F$, with each component $\gamma_{ij}^f$ taking on values in  $\{0, \ldots, L_f - 1\}$. To ease computations, we instead represent the comparison as a concatenation of $F$ many binary indicator vectors of lengths $L_f$. For example, if $L_1 = L_2 = 2$ and $L_3 = 3$, then $\gamma_{ij} = (1, 0, 2)$ under the classical framework becomes $\gamma_{ij} = (0, 1, 1, 0, 0, 0, 1)$ under our framework. This is a bijective transformation that does not change the meaning of the data, but this representation will ease calculations and posterior updates. 
+The hashing procedure described above considerably reduces the memory needed to store the comparison information: instead of storing $n_A \times n_B$ comparison vectors, which are relatively long under either the Fellegi Sunter or our modified framework, we only store the $P$ unique vectors, and then $n_A \times n_B$ scalar quantities relating record pairs to those vectors. However, even storing these $n_A \times n_B$ scalar labels can become burdensome with large data. Worse, the overwhelming majority of these labels relate to record pairs that are clear non-matches. 
+
+To address this, we propose a new strategy called *random indexing*. In standard indexing, the modeller decides a certain criteria that they expect all true matching pairs to satisfy, and a priori label any record pairs that do not meet that criteria as non-matching. For example, one might only consider pairs with a certain similarity score on a field deemed to be important (like first name), or only pairs with exact matching on a specified number of fields. While generally chosen to be be quite loose, establishing these criteria requires knowledge of the problem and invites room for human error. We propose a method of reducing the comparison space (and reducing storage requirements) without these drawbacks. Note that all records of the same agreement pattern have the same probality when sampling $Z_j$. Therefore we know that records belonging to an $h_p$ such that $H_{p_j}$ is large are very unlikely to be sampled consistently enough to be deemed a match through the Bayes estimate, even without considering the form of the agreement pattern itself. In random indexing, rather than store all of these unlikely record labels, we choose to store only a small number $R$ of them. Posterior calculations still attribute the appropiate weight to all records through the summary statistics $H_{p_j}, H_p^m$, and $H_p^u$; this is similar to the *u-correction* concept introduced by ________. Rather than storing $n_A \times n_B$ record labels, random indexing allows us to store at most $n_B \times P \times R$, regardless of how large $n_A$ is. Coupled with the partitioning strategy for creating comparison vectors, this greatly expands the size of the linkage tasks we can undertake.
+
 
 ## Gibbs Sampling
 
@@ -161,7 +165,7 @@ After receiving matching statuses from $\mathbf{Z}$, the Sadinle method calculat
 
 <!-- The indicator removes previously matched records from the set of candidate records, and $D_{-j}:=\sum_{B \setminus j} $ updates iteratively after each matching decision, $n_B$ many times per Gibbs iteration. This process is *inherently serial* and becomes computationally burdensome for large data.  -->
 
-Sadinle uses a prior for $\mathbf{Z}$ that induces the a full conditional for $Z_j$ that strictly enforces one-to-one matching. Particular, this sampler removed previously matches records from the set of candidate records when sampling $Z_j$, creating a dependency that makes the sampler *inherently serial*.By weakening the one-to-one requirement, our full conditional for $Z$ does not depend on the rest of the $\mathbf{Z}_{-j}$ vector, and thus can be computed in parallel. More importantly, since only the agreement pattern of $Z_j$ is used for calculations within the Gibbs sampler, and not the particular record label, we can conduct this sampling only at the level of the unique agreement patterns. This boosts computation time far greater than parallelization. 
+Sadinle uses a prior for $\mathbf{Z}$ that induces the a full conditional for $Z_j$ that strictly enforces one-to-one matching. In particular, this sampler removes previously matches records from the set of candidate records when sampling $Z_j$, creating a dependency that makes the sampler *inherently serial*. By weakening the one-to-one requirement, our full conditional for $Z$ does not depend on the rest of the $\mathbf{Z}_{-j}$ vector, and thus can be computed in parallel. More importantly, since only the agreement pattern of $Z_j$ is used for calculations within the Gibbs sampler, and not the particular record label, we can conduct this sampling only at the level of the unique agreement patterns. This boosts computation time far greater than parallelization. 
 
 To do this, we calculate the Fellegi Sunter weight $w_{h_p}$ for each unique pattern,  sample the agreement pattern between $j$ and its potential match, and then sample the record label uniformly among viable records. More concretely, define $h(Z_j)$ to be the agreement pattern between $j$ and its potential match, and say $h(Z_j) = h_{P+1}$ when $Z_j = n_A + 1$. Then, 
 
@@ -172,13 +176,64 @@ $$h\left(Z_j^{(s+1)}\right) | \mathbf{m}, \mathbf{u}, \mathbf{Z^{(s)}} \propto
 \end{cases}$$
 <!-- $$p\left(Z_j^{(s+1)} = i\right) = \frac{1}{\left|H\left(Z_j^{(s+1)}\right)\right|}; \;\;i \text{ such that } (i, j) \in H\left(Z_j^{(s+1)}\right)$$ -->
 
-We complete the entire Gibbs procedure at the level of the $P$ agreement patterns. After, we can back-fill the records corresponding to the agreement patterns by sampling uniformly at random among candidate records stored in $\tilde{\Gamma}$. 
+We complete the entire Gibbs procedure at the level of the $P$ agreement patterns. After, we can back-fill the records corresponding to the agreement patterns by sampling uniformly at random among candidate records stored in $\tilde{\Gamma}$.  
 
 # Simulation Studies
 
-- Replicating the Sadinle Study
+In his 2017 paper, Sadinle demonstrated the strength of his method by running `BRL` on simulated pairs of files with differing levels of errors and overlap. Comparing our method against `BRL` on these same simulated datasets, we find that our method only has weakened performance in the extreme scenario of very high errors and very high overlap across files. We use the following measures of accuracy in our analysis: although using only recall and precision is common in the literature, we find it useful to have a single metric the gauge overall performance, and thus also include F measure. 
 
-- `parlr` and `BRL` speed comparison
+$$\text{Recall} = \frac{\text{Matches Correctly Identified}}{\text{True Matches in Data}}$$
+$$\text{Precision} = \frac{\text{Declared Matches}}{\text{True Matches in Data}}$$
+$$\text{F-Measure} = 2\left(\frac{\text{Recall} \times \text{Precision}}{\text{Recall} + \text{Precision}}\right)$$
+
+```{r fig.align='center'}
+knitr::include_graphics("../notes/figures/sadinle_sim_plot.png")
+```
+
+
+
+To demonstrate speed, we generate comparison vectors from pre-specified distributions so that we can easily increase the size of the linkage problem. Distributions are meant to emulate the behavior of similarity scores across first name, last name, and day, month, and and year of birth, with 1 indicating an exact match on a particular field and 0 indicating a nonmatch. We simulate these data for different values of $n_A$ and $n_B$, and compare the runtime of `parlr` against `BRL`. We see that at low data size, `BRL` outperforms, but that `parlr` is significantly faster at handling larger data. 
+
+In particular, runtime for `BRL` seems to grow quadratically while runtime for `parlr` seems to grow linearly.
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrr}
+  \hline
+ & m & u \\ 
+  \hline
+fname\_0 & 0.05 & 0.99 \\ 
+  fname\_1 & 0.95 & 0.01 \\ 
+  lname\_0 & 0.05 & 0.99 \\ 
+  lname\_1 & 0.95 & 0.01 \\ 
+  day\_0 & 0.05 & 0.97 \\ 
+  day\_1 & 0.95 & 0.03 \\ 
+  month\_0 & 0.05 & 0.92 \\ 
+  month\_1 & 0.95 & 0.08 \\ 
+  year\_0 & 0.05 & 0.93 \\ 
+  year\_1 & 0.95 & 0.07 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+<!-- ```{r fig.align='center'} -->
+<!-- knitr::include_graphics("../notes/figures/speed_distributions.png") -->
+<!-- ``` -->
+
+```{r fig.align='center'}
+knitr::include_graphics("../notes/figures/sadinle_speed_plot.png")
+```
+
+The above discussion suggests that for fixed $n_B$, computation time should remain mostly constant with growing $n_A$. Shockingly, this seems to be true. In the plot below, fixing $n_B = 500$, we see linear growth for the runtime under `BRL` as $n_A$ increases, with much more static runtime under `parlr`. The slight increases in runtime that we do see are due primarily to the hashing step, which again can be run in parallel for large data.
+
+```{r fig.align='center'}
+knitr::include_graphics("../notes/figures/speed_plot_fixed_nB.png")
+```
+
+
+We note here that `BRL` is coded in C, which makes for unfair comparison against `parlr`, currently only built in R. Additionally, although `parlr` is amenable to parallezation, this simulation was run on a single core. Running `parlr` in C++ with paralellization for the hashing step and sampling the matching status of the record pairs should lead to even more drastic results. 
+
 
 # Data Analysis
 

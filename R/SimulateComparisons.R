@@ -36,6 +36,46 @@ SimulateComparisons <- function(m, u, levels, n1, n2, overlap){
        Ztrue = Ztrue)
 }
 
+SimulateComparisonsFast <- function(m, u, levels, n1, n2, overlap){
+  parameter_split <- unlist(lapply(1:length(levels), function(x){
+    rep(x, levels[x])
+  }))
+
+  N <- n1 * n2
+  ids <- expand.grid(1:n1, 1:n2)
+  indicators <- matrix(NA, nrow = N, ncol = length(levels))
+
+  df1matches <- df2matches <- seq_len(overlap)
+  #pairs <- cbind(df1matches, df2matches)
+
+  Ztrue <- rep(n1 + 1, n2)
+  Ztrue[df2matches] <- df1matches
+
+  match_index <- which(ids[,1] == ids[,2])[seq_len(overlap)]
+
+  m.list <- split(m, parameter_split)
+  u.list <- split(u, parameter_split)
+
+  gamma_match <- sapply(m.list, function(x){
+    sample(seq_along(x) - 1, overlap, replace = T, x)
+  })
+
+  indicators[match_index,] <- gamma_match
+
+  gamma_nonmatch <- sapply(u.list, function(x){
+    sample(seq_along(x) - 1, N - overlap, replace = T, x)
+  })
+  indicators[-match_index,] <- gamma_nonmatch
+  Sadinle_indicators <- map2(data.frame(indicators), levels, ~FS_to_Sadinle2(.x, .y)) %>%
+    do.call(cbind, .)
+
+  list(comparisons = Sadinle_indicators,
+       n1 = n1,
+       n2 = n2,
+       nDisagLevs = levels,
+       Ztrue = Ztrue)
+}
+
 SimulateComparisonsLC <- function(m, u, levels, varying_fields,
                                    n1, n2, n1_vec, n2_vec, overlap_vec){
   parameter_split <- unlist(lapply(1:length(levels), function(x){

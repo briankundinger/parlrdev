@@ -70,7 +70,7 @@ library(tidyverse)
 
 - Processing these smaller chunks can be done in parallel. 
 
-- Should allow us to conduct *significantly* larger record linkage tasks. 
+- Should allow us to conduct **much** larger record linkage tasks. 
 
 ## Naming
 
@@ -83,3 +83,5 @@ library(tidyverse)
 - This whole concept is ready to go! I will have a (very rough) first draft ready for you by the next meeting. 
 
 - These mechanics will lay the foundation (with slight modifications) for the linkage cluster model I've been developing. This is on hold until the first `parlr` paper is done. 
+
+- Plan on meeting next week (Friday, April 30th), but two weeks of vacation after that. 
