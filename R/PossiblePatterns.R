@@ -14,7 +14,7 @@ FS_to_Sadinle2 <- function(gamma_f, Lf){
   new_gamma
 }
 
-GetPossiblePatterns <- function(levels){
+GetPossiblePatternsSad <- function(levels){
   possible_values <- lapply(levels, function(x){
     seq_len(x)
   })
@@ -27,4 +27,29 @@ GetPossiblePatterns <- function(levels){
     unite(patterns, 1:dim(.)[2], sep = "") %>%
     unlist() %>%
     unname()
+}
+
+GetPossiblePatternsSad_sep <- function(levels){
+  possible_values <- lapply(levels, function(x){
+    seq_len(x)
+  })
+  possible_patterns <- data.frame(do.call(expand.grid, possible_values))
+
+  thing <- data.frame(t(apply(possible_patterns, 1, function(x){
+    FS_to_Sadinle(x, levels)
+  })))
+  thing
+}
+
+PossiblePatternsFS <- function(levels){
+  levels %>%
+    purrr::map(seq_len) %>%
+    do.call(expand.grid, .) %>%
+    unite(patterns_FS, seq_along(levels), sep = "")
+}
+
+GetPossiblePatternsFS_sep <- function(levels){
+  levels %>%
+    purrr::map(seq_len) %>%
+    do.call(expand.grid, .)
 }

@@ -55,12 +55,14 @@ for(i in seq_along(n1_vals)){
   n1 <- n1_vals[i]
   n2 <- n2_vals[i]
   overlap <- n2/2
-  cd <- SimulateComparisonsFast(m, u, levels, n1, n2, overlap)
+  # cd <- SimulateComparisonsFast(m, u, levels, n1, n2, overlap)
+  cd <- SimulateComparisonsHash(m, u, levels, n1, n2, overlap)
   Ztrue <- cd$Ztrue
   
   #parlr method
   ptm <- proc.time()
-  Zchain <- BKSimple_hash2(cd, R = R)
+  Zchain <- BKSimple_hash2_pat(cd, R = R)
+  #Zchain <- BKSimple_hash2(cd, R = R)
   elapsed <- proc.time() - ptm
   #Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   Zhat <- LinkRecordsBK(Zchain, n1, 1, 1, 2, Inf)

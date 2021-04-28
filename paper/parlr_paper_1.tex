@@ -82,6 +82,20 @@
 
     \end{center}
 
+\hypertarget{introduction-or-abstract}{%
+\subsection{Introduction (or
+Abstract?)}\label{introduction-or-abstract}}
+
+Record linkage is the task of identifying duplicate records across
+multiple data sources. This task is straightforward when provided unique
+identifiers or highly reliable information, but becomes difficult when
+data sources are plagued with error. Additionally, record linkage is
+inherently computationally intensive, and many existing methods are not
+feasible for many applications. In this paper, we propose a Bayesian
+model for record linkage that is amenable to parallel computing, hashing
+techniques and efficient storage mechanisms, that is scalable to large
+linkage tasks.
+
 \hypertarget{related-work}{%
 \subsection{Related Work}\label{related-work}}
 
@@ -99,7 +113,7 @@ the comparison vector for record \(i \in A\) and record \(j \in B\),
 with \(\gamma_{ij}^f\) providing their similarity score on the
 \(f^{th}\) field. For ease of modeling and computation, we restrict
 these similarity scores to be discrete, ordinal variables, and the
-construction of these is left to the modeller. It is common to use use
+construction of these is left to the modeler. It is common to use use
 binary 0-1 variables to indicate exact matching, and 0-1-2 variables to
 provide an option for partial matching. For text data, we calculate
 similarity based on Levenstein distance or some other text similarity
@@ -121,9 +135,9 @@ enforces one-to-one matching. Specifically, in each iteration of his
 Gibbs sampler, he considers each record \(j\in B\), removes from
 consideration the records \(i\in A\) that have already been matched,
 then samples a potential link. However, accounting for these
-dependencies throughout the linkage process is computionally burdensome,
-leaving \texttt{BRL} only suitable for small to moderate linkage
-problems.
+dependencies throughout the linkage process is computationally
+burdensome, leaving \texttt{BRL} only suitable for small to moderate
+linkage problems.
 
 Outside of the Fellegi-Sunter framework, some researchers have developed
 methods that model the data directly, not a derived set of comparison
@@ -131,10 +145,10 @@ vectors. As an early example, Steorts et al 2016 produced
 \texttt{blink}, which had the advantage of a computational complexity
 that grew linearly with the data (as opposed to quadratically within
 Fellegi Sunter), but was plagued with slow mixing times and was unable
-to incorportate text data. Later, Steorts et al 2020 improved on this
+to incorporate text data. Later, Steorts et al 2020 improved on this
 method with \texttt{dblink}, which was able to simulate text data within
 its Gibbs sampler by drawing from an empirical distribution, and
-remedied its slow mixing through a probabalistic blocking approach.
+remedied its slow mixing through a probabilistic blocking approach.
 However, this method remains computationally intensive and requires
 distributed computing to manage even moderate linkage problems in
 acceptable time.
@@ -190,21 +204,6 @@ overloaded notation in the likelihood and subsequent derivations.
 \hypertarget{model-specification}{%
 \section{Model Specification}\label{model-specification}}
 
-(This will be revised to talk more explicitly about sampling \(Z_j\)
-independently)
-
-Our model differs from that of Sadinle 2017 through its explicit
-dependence on a beta random variable \(\lambda\) that models the rate of
-matching across records. Sadinle marginalizes over such a random
-variable in his derivations of the ``beta prior for bipartite
-matching,'' but here we provide derivations without marginalizing in
-order to specify differing rates of matching for different linkage
-clusters.
-
-\hypertarget{prior-distributions-and-likelihood}{%
-\subsection{Prior Distributions and
-Likelihood}\label{prior-distributions-and-likelihood}}
-
 For fields \(f \in \{1, \ldots, F\}\) and levels
 \(l\in \{1, \ldots, L_f\}\) we adopt the following likelihood and prior
 distributions.
@@ -226,6 +225,25 @@ Therefore a \(\lambda \sim \text{Beta}(1, 1)\) corresponds to a prior
 belief that nonmatches and matches are equally likely, and a
 \(\lambda \sim \text{Beta}(1, \frac{1}{n_A})\) prior corresponds to a
 uniform prior on the labeling of \(\mathbf{Z}\).
+
+Here the reader should the relationship between our proposed model and
+that of Sadinle 2017. In his model, Sadinle constructs a prior
+distribution on the entire \(\mathbf{Z}\) vector, which induces a Gibbs
+sampler that strictly enforces one-to-one matching. In particular, this
+sampler removes previously matches records from the set of candidate
+records when sampling \(Z_j\), creating a dependency that makes the
+sampler \emph{inherently serial}. We however use independent priors for
+each \(Z_j\), thereby weakening the one-to-one requirement; our sampler
+does ensure that each record in \(B\) can be matched to at most one
+record in \(A\), but allows for the possiblity that multiple records in
+\(B\) match to the same record in \(A\). With this change, components of
+the \(\mathbf{Z}\) vector can be computed in parallel, allowing for
+significant computational gains. More importantly, since only the
+agreement pattern of \(Z_j\) is used for calculations within the Gibbs
+sampler, and not the particular record label, we can conduct this
+sampling only at the level of the unique agreement patterns, offering
+even more computational savings. This will be explained further in
+\textcolor{red}{Section XX}.
 
 \hypertarget{posterior-sampling}{%
 \subsection{Posterior Sampling}\label{posterior-sampling}}
@@ -310,19 +328,11 @@ produce the final full conditional:
 \hypertarget{bayes-estimate}{%
 \subsection{Bayes Estimate}\label{bayes-estimate}}
 
-Our Gibbs sampler provides posterior samples of \(\mathbf{Z}\) which we
-use to make our final decisions about the linkage structure. In the case
-where we false matches and missed matches contribute the same loss, we
-declare \((i,j)\) to be a match whenever \(P(Z_j = i) > \frac{1}{2}\)
-according to these posterior samples. We can create more elaborate
-decisions by attributing different loss values to different kinds of
-error, and allowing pairings with middling posterior probabilities to be
-left unlabeled by the algorithm so that the modeler can address those
-manually. For further discussion, see Sadinle 2017.
+(Adapt from Sadinle)
 
 Since our Gibbs procedure does not strictly enforce one-to-one matching,
-it is possible for the final Bayes estimate to link mulitple records in
-\(B\) to one record in \(A\). The modeller can either report both such
+it is possible for the final Bayes estimate to link multiple records in
+\(B\) to one record in \(A\). The modeler can either report both such
 matches (with their respective posterior match probabilities), or
 resolve these conflicts by accepting only the match with highest
 posterior probability. Rigorous proof of this resolution procedure is
@@ -395,43 +405,44 @@ relating record pairs to those vectors. However, even storing these
 Worse, the overwhelming majority of these labels relate to record pairs
 that are clear non-matches.
 
-To address this, we propose a new strategy called \emph{random
-indexing}. In standard indexing, the modeller decides a certain criteria
-that they expect all true matching pairs to satisfy, and a priori label
-any record pairs that do not meet that criteria as non-matching. For
-example, one might only consider pairs with a certain similarity score
-on a field deemed to be important (like first name), or only pairs with
-exact matching on a specified number of fields. While generally chosen
-to be be quite loose, establishing these criteria requires knowledge of
-the problem and invites room for human error. We propose a method of
-reducing the comparison space (and reducing storage requirements)
-without these drawbacks. Note that all records of the same agreement
-pattern have the same probality when sampling \(Z_j\). Therefore we know
-that records belonging to an \(h_p\) such that \(H_{p_j}\) is large are
-very unlikely to be sampled consistently enough to be deemed a match
-through the Bayes estimate, even without considering the form of the
-agreement pattern itself. In random indexing, rather than store all of
-these unlikely record labels, we choose to store only a small number
-\(R\) of them. Posterior calculations still attribute the appropiate
-weight to all records through the summary statistics \(H_{p_j}, H_p^m\),
-and \(H_p^u\); this is similar to the \emph{u-correction} concept
-introduced by \_\_\_\_\_\_\_\_. Rather than storing \(n_A \times n_B\)
-record labels, random indexing allows us to store at most
-\(n_B \times P \times R\), regardless of how large \(n_A\) is. Coupled
-with the partitioning strategy for creating comparison vectors, this
-greatly expands the size of the linkage tasks we can undertake.
+To address this, we propose a new strategy called \emph{storage
+efficient indexing} (SEI). In standard indexing, the modeler decides a
+certain criteria that they expect all true matching pairs to satisfy,
+and a priori label any record pairs that do not meet that criteria as
+non-matching. For example, one might only consider pairs with a certain
+similarity score on a field deemed to be important (like first name), or
+only pairs with exact matching on a specified number of fields. While
+generally chosen to be be quite loose, establishing these criteria
+requires knowledge of the problem and invites room for human error. We
+propose a method of reducing the comparison space (and reducing storage
+requirements) without these drawbacks. Note that all records of the same
+agreement pattern have the same probability when sampling \(Z_j\).
+Therefore we know that records belonging to an \(h_p\) such that
+\(H_{p_j}\) is large are very unlikely to be sampled consistently enough
+to be deemed a match through the Bayes estimate, even without
+considering the form of the agreement pattern itself. In random
+indexing, rather than store all of these unlikely record labels, we
+choose to store only a small number \(R\) of them. Posterior
+calculations still attribute the appropriate weight to all records
+through the summary statistics \(H_{p_j}, H_p^m\), and \(H_p^u\); this
+is similar to the \emph{u-correction} concept introduced by
+\_\_\_\_\_\_\_\_. Rather than storing \(n_A \times n_B\) record labels,
+random indexing allows us to store at most \(n_B \times P \times R\),
+regardless of how large \(n_A\) is. Coupled with the partitioning
+strategy for creating comparison vectors, this greatly expands the size
+of the linkage tasks we can undertake.
 
 \hypertarget{gibbs-sampling}{%
 \subsection{Gibbs Sampling}\label{gibbs-sampling}}
 
-After receiving matching statuses from \(\mathbf{Z}\), the Sadinle
-method calculates \(\alpha_{fl}(\mathbf{Z})\) and
-\(\beta_{fl}(\mathbf{Z})\) for each field and level. This constitutes
-\(2 \times \sum L_f\) many summations over \(n_A \times n_B\)
-quantities, and becomes computationally burdensome with large data. In
-contrast, we recognize that each unique agreement pattern contributes to
-the posterior \(\alpha(\mathbf{Z})\) and \(\beta(\mathbf{Z})\) vectors
-in the same way. In fact, if we denote
+\underline{Updating $\mathbf{m}$ and $\mathbf{u}$:} After receiving
+matching statuses from \(\mathbf{Z}\), the Sadinle method calculates
+\(\alpha_{fl}(\mathbf{Z})\) and \(\beta_{fl}(\mathbf{Z})\) for each
+field and level. This constitutes \(2 \times \sum L_f\) many summations
+over \(n_A \times n_B\) quantities, and becomes computationally
+burdensome with large data. In contrast, we recognize that each unique
+agreement pattern contributes to the posterior \(\alpha(\mathbf{Z})\)
+and \(\beta(\mathbf{Z})\) vectors in the same way. In fact, if we denote
 \(H_p^m = \sum_{j=1}^{n_B} \mathbf{1}_{(Z_j, j) \in h_p}\) to be the
 number of matching record pairs with agreement pattern \(p\), then the
 contribution of pairs of pattern \(p\) to the \(\alpha(\mathbf{Z})\)
@@ -447,25 +458,19 @@ parameter through
 that these constitute \(P\) many summations over \(n_B\) quantities, and
 thus avoid the \(n_A \times n_B\) summation from the original method.
 
-Sadinle uses a prior for \(\mathbf{Z}\) that induces the a full
-conditional for \(Z_j\) that strictly enforces one-to-one matching. In
-particular, this sampler removes previously matches records from the set
-of candidate records when sampling \(Z_j\), creating a dependency that
-makes the sampler \emph{inherently serial}. By weakening the one-to-one
-requirement, our full conditional for \(Z\) does not depend on the rest
-of the \(\mathbf{Z}_{-j}\) vector, and thus can be computed in parallel.
-More importantly, since only the agreement pattern of \(Z_j\) is used
-for calculations within the Gibbs sampler, and not the particular record
-label, we can conduct this sampling only at the level of the unique
-agreement patterns. This boosts computation time far greater than
-parallelization.
-
-To do this, we calculate the Fellegi Sunter weight \(w_{h_p}\) for each
-unique pattern, sample the agreement pattern between \(j\) and its
-potential match, and then sample the record label uniformly among viable
-records. More concretely, define \(h(Z_j)\) to be the agreement pattern
-between \(j\) and its potential match, and say \(h(Z_j) = h_{P+1}\) when
-\(Z_j = n_A + 1\). Then,
+\underline{Updating $\mathbf{Z}$:} Although sampling \(Z_j\) from a the
+full conditional provided earlier is conceptually straightforward, it
+becomes computational burdensome when \(n_A\) is larger. The reader can
+confirm that sampling a value from a large set of unequal probabilities
+becomes difficult in most programming languages. To speed up
+computation, we break this sampling step into two simpler steps. First,
+we calculate the Fellegi Sunter weight \(w_{h_p}\) associated with each
+unique pattern and sample the agreement pattern between \(j\) and its
+potential match. Second, we sample the record label uniformly among
+records associated with that agreement pattern for that particular
+\(j\in B\). More concretely, define \(h(Z_j)\) to be the agreement
+pattern between \(j\) and its potential match, and say
+\(h(Z_j) = h_{P+1}\) when \(Z_j = n_A + 1\). Then,
 
 \[h\left(Z_j^{(s+1)}\right) | \mathbf{m}, \mathbf{u}, \mathbf{Z^{(s)}} \propto
 \begin{cases} 
@@ -473,10 +478,14 @@ between \(j\) and its potential match, and say \(h(Z_j) = h_{P+1}\) when
      n_A \frac{n_B - D + \beta_{\lambda}}{D + \alpha_{\lambda}} &   p = P + 1 \\
 \end{cases}\]
 
-We complete the entire Gibbs procedure at the level of the \(P\)
-agreement patterns. After, we can back-fill the records corresponding to
-the agreement patterns by sampling uniformly at random among candidate
-records stored in \(\tilde{\Gamma}\).
+Lastly, we recognize that all posterior updates are governed by the
+agreement patterns of the record pairs rather than the record labels
+themselves. Thuse We complete the entire Gibbs procedure at the level of
+the \(P\) agreement patterns. After, we can back-fill the records
+corresponding to the agreement patterns by sampling uniformly at random
+among candidate records stored in \(\tilde{\Gamma}\). Sampling uniformly
+is computational simple even for large sets of candidate records, but
+this step can also be parallelized when working with large data.
 
 \hypertarget{simulation-studies}{%
 \section{Simulation Studies}\label{simulation-studies}}
@@ -503,12 +512,12 @@ problem. Distributions are meant to emulate the behavior of similarity
 scores across first name, last name, and day, month, and and year of
 birth, with 1 indicating an exact match on a particular field and 0
 indicating a nonmatch. We simulate these data for different values of
-\(n_A\) and \(n_B\), and compare the runtime of \texttt{parlr} against
+\(n_A\) and \(n_B\), and compare the run-time of \texttt{parlr} against
 \texttt{BRL}. We see that at low data size, \texttt{BRL} outperforms,
 but that \texttt{parlr} is significantly faster at handling larger data.
 
-In particular, runtime for \texttt{BRL} seems to grow quadratically
-while runtime for \texttt{parlr} seems to grow linearly.
+In particular, run-time for \texttt{BRL} seems to grow quadratically
+while run-time for \texttt{parlr} seems to grow linearly.
 
 \begin{table}[ht]
 \centering
@@ -535,19 +544,19 @@ fname\_0 & 0.05 & 0.99 \\
 The above discussion suggests that for fixed \(n_B\), computation time
 should remain mostly constant with growing \(n_A\). Shockingly, this
 seems to be true. In the plot below, fixing \(n_B = 500\), we see linear
-growth for the runtime under \texttt{BRL} as \(n_A\) increases, with
-much more static runtime under \texttt{parlr}. The slight increases in
-runtime that we do see are due primarily to the hashing step, which
+growth for the run-time under \texttt{BRL} as \(n_A\) increases, with
+much more static run-time under \texttt{parlr}. The slight increases in
+run-time that we do see are due primarily to the hashing step, which
 again can be run in parallel for large data.
 
 \begin{center}\includegraphics[width=29.17in]{../notes/figures/speed_plot_fixed_nB} \end{center}
 
 We note here that \texttt{BRL} is coded in C, which makes for unfair
 comparison against \texttt{parlr}, currently only built in R.
-Additionally, although \texttt{parlr} is amenable to parallezation, this
-simulation was run on a single core. Running \texttt{parlr} in C++ with
-paralellization for the hashing step and sampling the matching status of
-the record pairs should lead to even more drastic results.
+Additionally, although \texttt{parlr} is amenable to parallelization,
+this simulation was run on a single core. Running \texttt{parlr} in C++
+with paralellization for the hashing step and sampling the matching
+status of the record pairs should lead to even more drastic results.
 
 \hypertarget{data-analysis}{%
 \section{Data Analysis}\label{data-analysis}}
@@ -555,15 +564,13 @@ the record pairs should lead to even more drastic results.
 \begin{itemize}
 \tightlist
 \item
-  Necessary? El Salvador data? Or perhaps needs to be a bigger dataset?
+  Thinking of re-running the El Salvador linkage from the Sadinle 2017
+  paper, but doing so with without the formal blocking and indexing that
+  he uses. Instead, I'd use hashing and storage efficient indexing -- I
+  should be able to do linkage on the all the data at once!
 \end{itemize}
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}
-
-We note that this often not a reasonable assumption; for example if we
-know that two records differ on gender, this does not give any
-information on whether their year of births are the same, but it does
-suggest that its more likely that their first names are different.
 
 \end{document}
