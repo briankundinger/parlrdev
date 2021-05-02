@@ -42,8 +42,8 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
   candidates <- 1:n1
   candidates_P <- 1:(P+1)
   Z.SAMPS <- matrix(NA, nrow = n2, ncol = S)
-  M.SAMPS <- matrix(NA, nrow = dim(indicators_raw)[2], ncol = S)
-  U.SAMPS <- matrix(NA, nrow = dim(indicators_raw)[2], ncol = S)
+  M.SAMPS <- matrix(NA, nrow = length(parameter_split), ncol = S)
+  U.SAMPS <- matrix(NA, nrow = length(parameter_split), ncol = S)
   L.SAMPS <- vector(length = S)
   Z.temp <- rep(0, n1*n2)
   Z <- rep(n1+1, n2)
@@ -161,8 +161,8 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
     # hash$Z.temp <- Z.temp
 
     Z.SAMPS[,s] <- Z
-    #M.SAMPS[,s] <- m
-    #U.SAMPS[,s] <- u
+    M.SAMPS[,s] <- m
+    U.SAMPS[,s] <- u
     L.SAMPS[s] <- L
 
     if(show_progress){
@@ -176,15 +176,17 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
     parallel::stopCluster(cl)
   }
   Z.SAMPS <- Z.SAMPS[,-(1:burn)]
-  #L.SAMPS <- L.SAMPS[-(1:burn)]
-  #M.SAMPS <- M.SAMPS[,-(1:burn)]
+  L.SAMPS <- L.SAMPS[-(1:burn)]
+  M.SAMPS <- M.SAMPS[,-(1:burn)]
   #U.SAMPS <- U.SAMPS[,-(1:burn)]
 
   final_gibbs <- apply(Z.SAMPS, 2, function(z){
     unlist(imap(z, ~sample_with_1(hash_to_rec1[[.y]][[.x]], 1)))
   })
 
-  final_gibbs
+  list(Z = final_gibbs,
+       m = M.SAMPS,
+       u = U.SAMPS)
 
 }
 

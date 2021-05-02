@@ -1,0 +1,100 @@
+---
+title: "elsalvador1"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{elsalvador1}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+devtools::load_all()
+library(parlrdev)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+
+```{r}
+R <- 10
+show_progress <- T
+fast <- F
+
+cd <- readRDS("../data/comparison_elsalvador.rds")
+nA <- cd$n1
+levels <- cd[[4]]
+ptm <- proc.time()
+Zchain_parlr <- BKSimple_hash2(cd, R = R, show_progress = T)
+elapsed_parlr <- proc.time() - ptm
+Zhat_parlr <- LinkRecordsBK(Zchain_parlr, nA, 1, 1, 2, Inf)
+overlap_parlr <- sum(Zhat_parlr[[1]] < nA + 1)
+
+Zhat_resolved <- ResolveConflicts(Zhat_parlr)
+overlap_resolved <- sum(Zhat_resolved < nA + 1)
+overlap_samples_parlr <- apply(Zchain_parlr[[1]], 2, function(x){
+  sum(x < nA + 1)
+})
+not_one2one_samps <- apply(Zchain_parlr, 2, function(x){
+  sum(duplicated(x[x < nA + 1]))
+})
+
+results_parlr <- c(overlap_parlr, elapsed_parlr[3])
+
+ptm <- proc.time()
+Zchain_sadinle <- BRL::bipartiteGibbs(cd)
+elapsed_sadinle <- proc.time() - ptm
+Zhat_sadinle <- LinkRecordsBK(Zchain_sadinle[[1]], nA, 1, 1, 2, Inf)
+overlap_sadinle <- sum(Zhat_sadinle[[1]] < nA +1)
+
+overlap_samples_sadinle <- apply(Zchain_sadinle[[1]], 2, function(x){
+  sum(x < nA + 1)
+})[-(1:100)]
+
+results_sadinle <- c(overlap_sadinle, elapsed_sadinle[3])
+
+
+```
+
+```{r}
+method <- c(rep("parlr", 900), rep("sadinle", 900))
+overlap <- c(overlap_samples_parlr, overlap_samples_sadinle)
+df <- data.frame(overlap, method)
+
+df %>% 
+  ggplot(aes(y = overlap, fill = method)) +
+  geom_histogram() +
+  coord_flip() + 
+  theme_bw() + 
+  scale_color_brewer(palette="Set1")
+```
+
+```{r}
+ProcessChain <- function(samps){
+avg <- apply(samps, 1, mean)
+upper <- apply(samps, 1, function(x){
+  quantile(x, .975)
+})
+lower <- apply(samps, 1, function(x){
+  quantile(x, .025)
+})
+values <- c(avg, upper, lower)
+labels <- rep(c("avg", "upper", "lower"), each = length(avg))
+cbind(values, labels)
+}
+
+chain_summary <- lapply(thing, ProcessChain)
+chain_summary <- do.call(rbind, chain_summary)
+
+params <- 1:sum(levels)
+param <- rep(params, 2)
+method
+
+```
+
