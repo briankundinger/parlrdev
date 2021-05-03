@@ -1,8 +1,8 @@
 ---
-title: "elsalvador1"
+title: "elsalvador_small_P"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{elsalvador1}
+  %\VignetteIndexEntry{elsalvador_small_P}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -27,7 +27,7 @@ R <- 10
 show_progress <- T
 fast <- F
 
-cd <- readRDS("../data/comparison_elsalvador.rds")
+cd <- readRDS("../data/comparison_elsalvador_smallP.rds")
 nA <- cd$n1
 levels <- cd[[4]]
 P <- prod(levels)
@@ -72,10 +72,11 @@ results_table %>%
   kable(caption = paste("Linkage Results with P = ", paste(P), "patterns")) %>% 
   kable_classic() %>% 
   kable_styling(full_width = F) %>% 
-  as_image(file = "../notes/figures/el_salvador/time_table_big_P.png")
+  as_image(file = "../notes/figures/el_salvador/time_table_small_P.png")
 
 
 ```
+
 
 ```{r}
 method <- c(rep("parlr", 900), rep("sadinle", 900))
@@ -93,7 +94,7 @@ df %>%
   theme_bw() + 
   scale_color_brewer(palette="Set1")
 
-ggsave("../notes/figures/el_salvador/overlap_distribution_bigP.png")
+ggsave("../notes/figures/el_salvador/overlap_distribution_smallP.png")
 ```
 
 ```{r}
@@ -130,9 +131,7 @@ df %>%
   theme_bw() + 
   scale_color_brewer(palette="Set1")
 
-ggsave("../notes/figures/el_salvador/m_posterior_bigP.png")
+ggsave("../notes/figures/el_salvador/m_posterior_smallP.png")
 
 
 ```
-
-
