@@ -91,7 +91,7 @@ df %>%
        color = "Method") +
   coord_flip() + 
   theme_bw() + 
-  scale_color_brewer(palette="Set1")
+  scale_fill_brewer(palette="Set1")
 
 ggsave("../notes/figures/el_salvador/overlap_distribution_bigP.png")
 ```

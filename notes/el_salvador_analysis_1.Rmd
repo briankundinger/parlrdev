@@ -25,7 +25,7 @@ Nevertheless, I proceeded. For a first run-through, I tried to build the compari
 My results are close, but not identical to what's provided in the Sadinle paper.
 
 - After data cleaning, my ER dataset has 1323 records, while the paper says there should be 1324. 
-- The paper has a Bayes estimate with 187 links, but my implementation (with `BRL`) finds 178. This might be because the paper detects adjecent municipalities, while I do not
+- The paper has a Bayes estimate with 187 links, but my implementation (with `BRL`) finds 178. This might be because the paper detects adjacent municipalities, while I do not
 - Distribution of $m$ parameters for given name substantially different from whats in the paper. 
 
 I can go more into details about these things, but for the moment, I'm more concerned with comparing the results of `BRL` and `parlr` in my own implementation, rather than reproducing Sadinle17 exactly. 
@@ -48,9 +48,9 @@ Below is the posterior distribution of the overlap between the files. We see tha
 include_graphics("../notes/figures/el_salvador/overlap_distribution_bigP.png")
 ```
 
-- Within the Sadinle framework, it is typical that Gibbs iterations have more matches than the eventualy Bayes estimate. This is because many of the matches are due to randomness, and they only make it through to the Bayes estimate if that same matching occurs consistently 50% of the time. In Sadinle's paper, the overlap has a mean of 241, and a 90% credible interval of [227, 256], but a Bayes estimate of only 187.
+- Within the Sadinle framework, it is typical that Gibbs iterations have more matches than the eventual Bayes estimate. This is because many of the matches are due to randomness, and they only make it through to the Bayes estimate if that same matching occurs consistently 50% of the time. In Sadinle's paper, the overlap has a mean of 241, and a 90% credible interval of [227, 256], but a Bayes estimate of only 187.
 
-- Severe overmatching within the Gibbs iterations can possibly lead to biased postiors for the $m$ parameters. There is an interesting conversation to be had here. When Enamorado compared `fastlink` to `BRL`, he notes that the first estimate under `fastlink` has way too many matches, but that `fastlink` produces similar results to `BRL` after resolving all the matches that violate one-to-one. While this is true, the overmatching within his EM algorithm lead to biases in the $m$ parameters, and these can not be cleaned up posthoc. In the Sadinle paper, he notes that the FS method leads to nonsensicle estimates of the $m$ parameters, and I believe it is for this reason.
+- Severe overmatching within the Gibbs iterations can possibly lead to biased posteriors for the $m$ parameters. There is an interesting conversation to be had here. When Enamorado compared `fastlink` to `BRL`, he notes that the first estimate under `fastlink` has way too many matches, but that `fastlink` produces similar results to `BRL` after resolving all the matches that violate one-to-one. While this is true, the overmatching within his EM algorithm lead to biases in the $m$ parameters, and these can not be cleaned up posthoc. In the Sadinle paper, he notes that the FS method leads to nonsensical estimates of the $m$ parameters, and I believe it is for this reason.
 
 This led to me worry that parameter estimates under `parlr` would be similarly biased. However, good news, they are not! This is because the overmatching under `parlr` is very slight compared to `fastlink`
 
@@ -60,8 +60,32 @@ include_graphics("../notes/figures/el_salvador/m_posterior_bigP.png")
 
 This comparison of $m$ parameters also makes me more convinced that Sadinle is using way too many levels per field. So now we're going to run `parlr` with fewer levels and see how things change. 
 
-## Good News: Less Patterns Less Time
+## Good News: Less Patterns Less Problems
 
+I reran everything with only 3 levels for first name, last name, and day, and only 2 levels for everything else. This yields $P = 432$.
+
+
+```{r}
+include_graphics("../notes/figures/el_salvador/time_table_small_P.png")
+```
+
+
+```{r}
+include_graphics("../notes/figures/el_salvador/overlap_distribution_smallP.png")
+```
+
+
+```{r}
+include_graphics("../notes/figures/el_salvador/m_posterior_smallP.png")
+```
+
+## Limitation of parlr
+
+Doing this analysis made me realize a limitation of this `parlr` method. When you have many many fields and levels, you can have situations where $P > n_A$, which means that doing calculations over all possible patterns will actually be slower than the standard method. Of course, there will only be at most $n_A$ realized patterns (and probably less than that ), but computational saving will only be significant when $P << n_A$.
+
+One other issue regarding the size of $P$: Numerically, missing values lead to another unique pattern. Consider the previous examples with 5 fields with only 2 agreement levels, yeilding $P = 2^5 =32$ unique patterns. If there is at even one missing value for each of the fields, this would lead to $P = 3^5 =243$ unique patterns. For large $n_A$ this is still a big savings, but its important to note how quickly $P$ can grow, especially with regards to missing values.
+
+(Sadinle's `BRL` incorrectly classifies all missing values as disagreements. Adopting this would help keep $P$ small, but is bad for tons of different reasons.)
 
 ## Questions
 
@@ -70,5 +94,5 @@ Is still a good case study to choose? Consider that:
 - I haven't been able to exactly reproduce the results from the Sadinle paper
 - This doesn't show off the computational gains of `parlr`
 
-I think its nice that it demonstrates the influence of the $P$ patterns, but I'm not sure if thats enough. Let me know your thoughts on this!
+I think its nice that it demonstrates the influence of the $P$ patterns, but I'm not sure if that's enough. Let me know your thoughts on this!
 
