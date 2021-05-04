@@ -23,14 +23,17 @@ library(kableExtra)
 ```
 
 ```{r}
+rm(list=ls())
+set.seed(2)
 R <- 10
 show_progress <- T
 fast <- F
 
 cd <- readRDS("../data/comparison_elsalvador_smallP.rds")
 nA <- cd$n1
+nB <- cd$n2
 levels <- cd[[4]]
-P <- prod(levels)
+P <- prod(levels) 
 var_names <- cd$compFields[,1]
 ptm <- proc.time()
 Zchain_parlr <- BKSimple_hash2(cd, R = R, show_progress = T)
@@ -71,9 +74,7 @@ rownames(results_table) <- c("parlr", "parlr_resolved",
 results_table %>% 
   kable(caption = paste("Linkage Results with P = ", paste(P), "patterns"), digits = 3) %>% 
   kable_classic() %>% 
-  kable_styling(full_width = F) 
-
-%>% 
+  kable_styling(full_width = F) %>% 
   as_image(file = "../notes/figures/el_salvador/time_table_small_P.png")
 
 
@@ -116,9 +117,9 @@ ProcessChain <- function(samps){
   
   data.frame(params, field, avg, upper, lower)
 }
-m_parlr <- ProcessChain(Zchain_parlr$u)
+m_parlr <- ProcessChain(Zchain_parlr$m)
 m_parlr$method <- "parlr"
-m_sadinle <- ProcessChain(Zchain_sadinle$u)
+m_sadinle <- ProcessChain(Zchain_sadinle$m)
 m_sadinle$method <- "sadinle"
 df <- rbind(m_parlr, m_sadinle)
 df %>% 
@@ -137,3 +138,17 @@ ggsave("../notes/figures/el_salvador/m_posterior_smallP.png")
 
 
 ```
+
+## Comparing probs
+
+```{r}
+samesies <- Zhat_resolved == Zhat_sadinle[[1]]
+compare_probs <- Zhat_parlr[[2]][samesies] - Zhat_sadinle[[2]][samesies]
+
+hist(compare_probs)
+
+sum(Zhat_parlr[[1]] == Zhat_sadinle[[1]])/nB
+sum(Zhat_resolved== Zhat_sadinle[[1]])/nB
+```
+
+

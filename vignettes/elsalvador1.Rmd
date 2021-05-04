@@ -23,6 +23,8 @@ library(kableExtra)
 ```
 
 ```{r}
+rm(list=ls())
+set.seed(2)
 R <- 10
 show_progress <- T
 fast <- F
@@ -30,7 +32,7 @@ fast <- F
 cd <- readRDS("../data/comparison_elsalvador.rds")
 nA <- cd$n1
 levels <- cd[[4]]
-P <- prod(levels)
+P <- prod(levels) #Only 352 realized patter
 var_names <- cd$compFields[,1]
 ptm <- proc.time()
 Zchain_parlr <- BKSimple_hash2(cd, R = R, show_progress = T)
@@ -73,6 +75,8 @@ results_table %>%
   kable_classic() %>% 
   kable_styling(full_width = F) %>% 
   as_image(file = "../notes/figures/el_salvador/time_table_big_P.png")
+
+probs <- Zhat_parlr[[2]]
 
 
 ```
