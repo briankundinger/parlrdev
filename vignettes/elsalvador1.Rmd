@@ -47,7 +47,7 @@ overlap_samples_parlr <- apply(Zchain_parlr[[1]], 2, function(x){
 not_one2one_samps <- apply(Zchain_parlr[[1]], 2, function(x){
   sum(duplicated(x[x < nA + 1]))
 })
-results_parlr_resolved <- c(overlap_resolved, "")
+results_parlr_resolved <- c(overlap_resolved, elapsed_parlr[3])
 
 
 ptm <- proc.time()
@@ -69,7 +69,7 @@ colnames(results_table) <- c("Overlap", "time")
 rownames(results_table) <- c("parlr", "parlr_resolved",
                              "sadinle")
 results_table %>% 
-  kable(caption = paste("Linkage Results with P = ", paste(P), "patterns")) %>% 
+  kable(caption = paste("Linkage Results with P = ", paste(P), "patterns"), digits = 3) %>% 
   kable_classic() %>% 
   kable_styling(full_width = F) %>% 
   as_image(file = "../notes/figures/el_salvador/time_table_big_P.png")
