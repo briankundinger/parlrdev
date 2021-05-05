@@ -12,3 +12,4 @@ ResolveConflicts <- function(Zhat){
   Zhat[to_resolve] <- max(Zhat)
   Zhat
 }
+

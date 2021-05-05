@@ -139,16 +139,47 @@ ggsave("../notes/figures/el_salvador/m_posterior_smallP.png")
 
 ```
 
-## Comparing probs
+## Comparing Mixing
 
 ```{r}
-samesies <- Zhat_resolved == Zhat_sadinle[[1]]
-compare_probs <- Zhat_parlr[[2]][samesies] - Zhat_sadinle[[2]][samesies]
+find <- which(Zhat_parlr[[1]] == 2776)
+probs <- Zhat_parlr[[2]][find]
+dups_parlr <- Zchain_parlr[[1]][find,]
+dups_sadinle <- Zchain_sadinle[[1]][find, ]
+dups_sadinle[dups_sadinle > nA + 2] <- nA + 1
 
-hist(compare_probs)
 
-sum(Zhat_parlr[[1]] == Zhat_sadinle[[1]])/nB
-sum(Zhat_resolved== Zhat_sadinle[[1]])/nB
+dups_parlr <- cbind(dups_parlr, c("Rosa", "Rosa Maria") , "parlr")
+dups_sadinle <- cbind(dups_sadinle, c("Rosa", "Rosa Maria") , "sadinle")
+df <- data.frame(rbind(dups_parlr, dups_sadinle[,-(1:100)]))
+names(df)[c(901, 902)] <- c("record", "method")
+df_mixing <- df %>% 
+  pivot_longer(1:900) %>% 
+  group_by(record, method) %>% 
+  mutate(iter = row_number()) %>% 
+  filter(iter < 400) %>% 
+  mutate(type_match = case_when(
+    value == 2776 ~ "Correct Match",
+    value > nA ~ "No match",
+    TRUE  ~ "Match to other record"
+  ))
+
+
+
+
+df_mixing %>% 
+  ggplot(aes(x = iter, y = value, color = type_match)) +
+  geom_point(size = .8) +
+  facet_grid(record~method) + 
+  #scale_x_continuous(labels = NULL, breaks = NULL) + 
+  labs(title = "Near Matches under Parlr and Sadinle",
+       subtitle = "Both have undesirable behavior",
+       x = "Gibbs Iterations",
+       y = expression(Z[j]),
+       color = "Type of Match") +
+  theme_bw(base_size = 12)
+
+ggsave("../notes/figures/el_salvador/bad_mixing.png")
 ```
 
 
