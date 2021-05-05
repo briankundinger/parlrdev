@@ -15,17 +15,17 @@ library(knitr)
 
 # El Salvador Data: Parlr vs Sadinle17
 
-I've attempted to reproduce the results from Sadinle's 2017 paper, which has been a little bit of a mixed bag. The code that Beka gave me does not seem to be the same that is used in the actual 2017 paper. I think this for two reasons:
+I've attempted to reproduce the results from Sadinle's 2017 paper, which has been a little bit of a mixed bag. The code we have does not seem to be the same that is used in the actual 2017 paper. I think this for two reasons:
 
 - Code involves three datasets (ER, CHDES, and UNTC), while paper only links two (ER and CHDES)
-- There is code for priors for "truncation points" which are used in Sadinle's 2014 model.
+- There is code for priors for "truncation points" which are elements of Sadinle's 2014 model.
 
-Nevertheless, I proceeded. For a first run-through, I tried to build the comparison vectors in the exact same way that Sadinle did. He uses 4 levels for many fields, which I'll discuss more later. Also, his paper calls for three agreement levels for location of death (exact municipality, adjacent municipality, nonmatch), but the code I have doesn't do that, and that would be pretty difficult to implement. So I just use binary comparisons.
+Nevertheless, I proceeded. For a first run-through, I tried to build the comparison vectors in the exact same way that Sadinle did. One difference in implementation is that his paper calls for three agreement levels for location of death (exact municipality, adjacent municipality, nonmatch), but the code I have doesn't do that, and that would be pretty difficult to implement. So I just use binary comparisons.
 
 My results are close, but not identical to what's provided in the Sadinle paper.
 
 - After data cleaning, my ER dataset has 1323 records, while the paper says there should be 1324. 
-- The paper has a Bayes estimate with 187 links, but my implementation (with `BRL`) finds 180. This might be because the paper detects adjacent municipalities, while I do not.
+- The paper has a Bayes estimate with 187 links, but my implementation (with `BRL`) finds 179. This might be because the paper detects adjacent municipalities, while I do not.
 - Distribution of $m$ parameters for given name is a bit different from whats in the paper. 
 
 I can go more into details about these things, but for the moment, I'm more concerned with comparing the results of `BRL` and `parlr` in my own implementation, rather than reproducing Sadinle17 exactly. 
@@ -40,7 +40,7 @@ include_graphics("../notes/figures/el_salvador/time_table_big_P.png")
 ```
 
 
-Below is the posterior distribution of the overlap between the files. We see that `parlr` typically matches me, which is to be expected; at minimum, there are the 13 matches that `parlr` made that violated one-to-one matching which Sadinle avoids. For two reasons, I do not consider this to be a problem.
+Below is the posterior distribution of the overlap between the files. We see that `parlr` typically matches more, which is to be expected; at minimum, there are the 13 matches that `parlr` made that violated one-to-one matching which Sadinle avoids. For two reasons, I do not consider this to be a problem.
 
 
 ```{r}
@@ -49,9 +49,11 @@ include_graphics("../notes/figures/el_salvador/overlap_distribution_bigP.png")
 
 - Within the Sadinle framework, it is typical that Gibbs iterations have more matches than the eventual Bayes estimate. This is because many of the matches are due to randomness, and they only make it through to the Bayes estimate if that same matching occurs consistently 50% of the time. In Sadinle's paper, the overlap has a mean of 241, and a 90% credible interval of [227, 256], but a Bayes estimate of only 187.
 
-- Severe overmatching within the Gibbs iterations can possibly lead to biased posteriors for the $m$ parameters. There is an interesting conversation to be had here. When Enamorado compared `fastlink` to `BRL`, he notes that the first estimate under `fastlink` has way too many matches, but that `fastlink` produces similar results to `BRL` after resolving all the matches that violate one-to-one. While this is true, the overmatching within his EM algorithm lead to biases in the $m$ parameters, and these can not be cleaned up posthoc. In the Sadinle paper, he notes that the FS method leads to nonsensical estimates of the $m$ parameters, and I believe it is for this reason.
+- Severe overmatching within the Gibbs iterations can possibly lead to biased posteriors for the $m$ parameters (this is Sadinle's critique of Fellegi Sunter). This led to me worry that parameter estimates under `parlr` would be similarly biased. However, good news, they are not! This is because the overmatching under `parlr` is very slight compared to FS and `fastlink`.
 
-This led to me worry that parameter estimates under `parlr` would be similarly biased. However, good news, they are not! This is because the overmatching under `parlr` is very slight compared to `fastlink`.
+<!-- When Enamorado compared `fastlink` to `BRL`, he notes that the first estimate under `fastlink` has way too many matches, but that `fastlink` produces similar results to `BRL` after resolving all the matches that violate one-to-one. While this is true, the overmatching within his EM algorithm lead to biases in the $m$ parameters, and these can not be cleaned up posthoc. In the Sadinle paper, he notes that the FS method leads to nonsensical estimates of the $m$ parameters, and I believe it is for this reason. -->
+
+
 
 ```{r}
 include_graphics("../notes/figures/el_salvador/m_posterior_bigP.png")
@@ -61,7 +63,7 @@ Looking at these $m$ parameters, we see that many levels are redundant. Also, si
 
 ## Using Less Patterns
 
-I reran everything with only 3 levels for first name, last name, and day, and only 2 levels for everything else. I probably could use just two levels for the names since the code puts so much work into standardizing names and using a modified Levenstein distance, but for now, I'll stick with 3 levels. Here $P$ is bounded by 216, and only 159 unique patterns are realized. Results stay basically the same, but see significant speed up for `parlr`.
+I reran everything with only 3 levels for first name, last name, and day, and only 2 levels for everything else. I probably could use just two levels for the names since the code puts so much work into standardizing names and using a modified Levenstein distance, but for now, I'll stick with 3 levels. Here $P$ is bounded by $3^3 \times 2^3 = 216$, and only 159 unique patterns are realized. Results stay basically the same, but see significant speed up for `parlr`.
 
 
 ```{r}
@@ -86,9 +88,11 @@ include_graphics("../notes/figures/el_salvador/m_posterior_smallP.png")
 
 <!-- (Sadinle's `BRL` incorrectly classifies all missing values as disagreements. Adopting this would help keep $P$ small, but is bad for tons of different reasons.) -->
 
-## Mixing and Multiple Possible Matches
+\newpage
 
-Something interesting about this comparison is that this dataset is specifically an example where `parlr` and Sadinle would differ the most. In cases were there multiple plausible matches, each method produces undesirable behavior. For example, examine the records of Rosa and Rosa Maria in the CDHES dataset. 
+## Mixing and Multiple Plausible Matches
+
+Something interesting about this comparison is that this dataset is specifically an example where `parlr` and Sadinle would differ the most. Interestingly, in cases were there multiple plausible matches, each method produces undesirable behavior. For example, examine the records of Rosa and Rosa Maria in the CDHES dataset. 
 
 
 ```{r}
@@ -106,8 +110,6 @@ include_graphics("../notes/figures/el_salvador/bad_mixing.png")
 As a result, `parlr` provides an initial Bayes Estimate (without conflict resolution) with two matches, each with high posterior probability (90% +) The modeller can algorithmically take the one with highest posterior, or examine the records manually. Sadinle provides only one match (consistent with 1-1 matching), with low posterior probability (a bit above 50%).
 
 I used to think this behavior made the El Salvador data a bad option for my case study, but I think its actually instructive to examine this closely. Let me know your thoughts on this!
-
-(PS, it took me forever to figure out how to represent this visually!)
 
 ## Questions
 

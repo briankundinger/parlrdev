@@ -159,7 +159,7 @@ df_mixing <- df %>%
   mutate(iter = row_number()) %>% 
   filter(iter < 400) %>% 
   mutate(type_match = case_when(
-    value == 2776 ~ "Correct Match",
+    value == 2776 ~ "Best Match (Rosa Maria)",
     value > nA ~ "No match",
     TRUE  ~ "Match to other record"
   ))
@@ -169,7 +169,7 @@ df_mixing <- df %>%
 
 df_mixing %>% 
   ggplot(aes(x = iter, y = value, color = type_match)) +
-  geom_point(size = .8) +
+  geom_point(size = .9) +
   facet_grid(record~method) + 
   #scale_x_continuous(labels = NULL, breaks = NULL) + 
   labs(title = "Near Matches under Parlr and Sadinle",
@@ -177,7 +177,10 @@ df_mixing %>%
        x = "Gibbs Iterations",
        y = expression(Z[j]),
        color = "Type of Match") +
-  theme_bw(base_size = 12)
+  theme_bw(base_size = 10)+
+  scale_color_brewer(palette="Set1") +
+  theme(legend.position="bottom") +
+  guides(color=guide_legend(nrow=2,byrow=TRUE))
 
 ggsave("../notes/figures/el_salvador/bad_mixing.png")
 ```
