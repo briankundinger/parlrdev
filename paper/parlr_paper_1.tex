@@ -82,19 +82,33 @@
 
     \end{center}
 
-\hypertarget{introduction-or-abstract}{%
-\subsection{Introduction (or
-Abstract?)}\label{introduction-or-abstract}}
+\hypertarget{introduction}{%
+\subsection{Introduction}\label{introduction}}
 
 Record linkage is the task of identifying duplicate records across
 multiple data sources. This task is straightforward when provided unique
 identifiers or highly reliable information, but becomes difficult when
-data sources are plagued with error. Additionally, record linkage is
-inherently computationally intensive, and many existing methods are not
-feasible for many applications. In this paper, we propose a Bayesian
-model for record linkage that is amenable to parallel computing, hashing
-techniques and efficient storage mechanisms, that is scalable to large
-linkage tasks.
+data sources are plagued with error. Additionally, many record linkage
+tasks are large in nature, and many existing methods are too
+computational intensive to be used in practice. In this paper, we
+propose a Bayesian model for record linkage that is amenable to parallel
+computing, hashing techniques and efficient storage mechanisms, that is
+scalable to large linkage tasks.
+
+The proposed method is inspired by the ``Beta Record Linkage'' method
+proposed by Mauricio Sadinle's 2017 ``Bayesian Estimation of Bipartite
+Matching for Record Linkage''. As such, we demonstrate our method
+through a comparison of our methods against Sadinle's on the simulation
+study he designed and the El Salvador homocide case study he utilized.
+We include one additional simulation study to demonstrate the power of
+our method on large datasets. In what follows, Section 2 describes
+previous work in record linkage that lays the foundation for our method,
+Section 3 provides our model and the Gibbs sampler used for posterior
+inference, and Section 4 describes strategies used for more efficient
+and scalable implementation. Then, Sections 5 and 6 demonstrate the
+method through simulations and a case study. Lastly, our discussion
+highlights open questions in the record linkage liturature and motivates
+future work.
 
 \hypertarget{related-work}{%
 \subsection{Related Work}\label{related-work}}
@@ -119,25 +133,20 @@ provide an option for partial matching. For text data, we calculate
 similarity based on Levenstein distance or some other text similarity
 score, and bin these scores to integers for use in the model.
 
-Two modern adaptations of the Fellegi Sunter model are important for
-understanding \texttt{parlr} and its contribution. In 2019, Enamorado et
-al proposed \texttt{fastlink}, a method that closely followed the
-modelling assumptions of Fellegi and Sunter, but used innovating hashing
-techniques to greatly enhance its speed and scale. Importantly, they
-maintained Fellegi and Sunter's independent matching assumption, in
-which the matching status of any \((i,j)\) pair is made independently of
-the matching of any other \((i', j')\). This leads to many matchings
-that violate ``one-to-one'' considerations that are often implicit in
-the data, which need to be resolved in a post-processing step. In
-contrast, Sadinle (2017) proposed ``Beta Record Linkage for Bipartite
-Matching'' and the accompanying \texttt{BRL} package which strictly
-enforces one-to-one matching. Specifically, in each iteration of his
-Gibbs sampler, he considers each record \(j\in B\), removes from
-consideration the records \(i\in A\) that have already been matched,
-then samples a potential link. However, accounting for these
-dependencies throughout the linkage process is computationally
-burdensome, leaving \texttt{BRL} only suitable for small to moderate
-linkage problems.
+The likelihood in the original Fellegi Sunter model is a mixture model
+through which each record pair is independently classified as a match or
+nonmatch. This independent classification often leads to sets of matches
+that break expectations of transisitivity, and Jaro devised an procedure
+to reduce a set of conflicting matches to the mostly likely set of
+one-to-one matchings. One key strength of Sadinle's \texttt{BRL} is that
+it is garunteed to produce a set of bipartite matchings that respect
+one-to-one assumptions--without the need for any post-hoc procedures.
+Specifically, in each iteration of his Gibbs sampler, he considers each
+record \(j\in B\), removes from consideration the records \(i\in A\)
+that have already been matched, and then samples a potential link.
+However, accounting for these dependencies throughout the linkage
+process is computationally burdensome, leaving \texttt{BRL} only
+suitable for small to moderate linkage problems.
 
 Outside of the Fellegi-Sunter framework, some researchers have developed
 methods that model the data directly, not a derived set of comparison
@@ -151,18 +160,19 @@ its Gibbs sampler by drawing from an empirical distribution, and
 remedied its slow mixing through a probabilistic blocking approach.
 However, this method remains computationally intensive and requires
 distributed computing to manage even moderate linkage problems in
-acceptable time.
+acceptable time. Because these methods fall outside of the
+Fellegi-Sunter framework, we do not consider them further in this paper.
 
 \hypertarget{notation-and-assumptions}{%
 \subsection{Notation and Assumptions}\label{notation-and-assumptions}}
 
-Our notation and assumptions closely follow that of Sadinle (2017).
-Denote two files as \(A\) and \(B\), with \(n_A\) and \(n_B\) records
-respectively, and with records indexed as \(i \in \{1, \ldots, n_A\}\)
-in \(A\) and \(j \in \{1, \ldots, n_B\}\) in \(B\). Without loss of
-generality, label the files such that \(n_A \geq n_B\). We also assume
-there are no duplicates within files, only across. For each record pair
-under consideration, we generate a comparison vector
+Our notation and assumptions closely follow those of Sadinle. Denote two
+files as \(A\) and \(B\), with \(n_A\) and \(n_B\) records respectively,
+and with records indexed as \(i \in \{1, \ldots, n_A\}\) in \(A\) and
+\(j \in \{1, \ldots, n_B\}\) in \(B\). Without loss of generality, label
+the files such that \(n_A \geq n_B\). We also assume there are no
+duplicates within files, only across. For each record pair under
+consideration, we generate a comparison vector
 \(\boldsymbol{\gamma}_{ij} = \{\gamma_{ij}^1, \ldots, \gamma_{ij}^F\}\),
 where \(F\) is the number of fields used in the linkage and each
 \(\gamma_{ij}^f\) takes on a value \(l \in \{1, \ldots, L_f\}\)
@@ -202,7 +212,7 @@ for record pair \((i,j)\). We hope that these conventions avoid
 overloaded notation in the likelihood and subsequent derivations.
 
 \hypertarget{model-specification}{%
-\section{Model Specification}\label{model-specification}}
+\subsection{Model Specification}\label{model-specification}}
 
 For fields \(f \in \{1, \ldots, F\}\) and levels
 \(l\in \{1, \ldots, L_f\}\) we adopt the following likelihood and prior
@@ -236,14 +246,15 @@ sampler \emph{inherently serial}. We however use independent priors for
 each \(Z_j\), thereby weakening the one-to-one requirement; our sampler
 does ensure that each record in \(B\) can be matched to at most one
 record in \(A\), but allows for the possiblity that multiple records in
-\(B\) match to the same record in \(A\). With this change, components of
-the \(\mathbf{Z}\) vector can be computed in parallel, allowing for
-significant computational gains. More importantly, since only the
-agreement pattern of \(Z_j\) is used for calculations within the Gibbs
-sampler, and not the particular record label, we can conduct this
-sampling only at the level of the unique agreement patterns, offering
-even more computational savings. This will be explained further in
-\textcolor{red}{Section XX}.
+\(B\) match to the same record in \(A\). We explore the ramifications of
+this distinction with the El Salvador case study. With this change,
+components of the \(\mathbf{Z}\) vector can be computed in parallel,
+allowing for significant computational gains. More importantly, since
+only the agreement pattern of \(Z_j\) is used for calculations within
+the Gibbs sampler, and not the particular record label, we can conduct
+this sampling only at the level of the unique agreement patterns,
+offering even more computational savings. This will be explained further
+in \textcolor{red}{Section XX}.
 
 \hypertarget{posterior-sampling}{%
 \subsection{Posterior Sampling}\label{posterior-sampling}}
@@ -424,13 +435,12 @@ considering the form of the agreement pattern itself. In random
 indexing, rather than store all of these unlikely record labels, we
 choose to store only a small number \(R\) of them. Posterior
 calculations still attribute the appropriate weight to all records
-through the summary statistics \(H_{p_j}, H_p^m\), and \(H_p^u\); this
-is similar to the \emph{u-correction} concept introduced by
-\_\_\_\_\_\_\_\_. Rather than storing \(n_A \times n_B\) record labels,
-random indexing allows us to store at most \(n_B \times P \times R\),
-regardless of how large \(n_A\) is. Coupled with the partitioning
-strategy for creating comparison vectors, this greatly expands the size
-of the linkage tasks we can undertake.
+through the summary statistics \(H_{p_j}, H_p^m\), and \(H_p^u\). Rather
+than storing \(n_A \times n_B\) record labels, SEI allows us to store at
+most \(n_B \times P \times R\) labels, regardless of how large \(n_A\)
+is. Coupled with the partitioning strategy for creating comparison
+vectors, this greatly expands the size of the linkage tasks we can
+undertake.
 
 \hypertarget{gibbs-sampling}{%
 \subsection{Gibbs Sampling}\label{gibbs-sampling}}
@@ -487,24 +497,39 @@ among candidate records stored in \(\tilde{\Gamma}\). Sampling uniformly
 is computational simple even for large sets of candidate records, but
 this step can also be parallelized when working with large data.
 
-\hypertarget{simulation-studies}{%
-\section{Simulation Studies}\label{simulation-studies}}
+\hypertarget{simulation-study-1---accuracy}{%
+\section{Simulation Study 1 -
+Accuracy}\label{simulation-study-1---accuracy}}
 
-In his 2017 paper, Sadinle demonstrated the strength of his method by
+In his 2017 paper, Sadinle demonstrated the accuracy of his method by
 running \texttt{BRL} on simulated pairs of files with differing levels
-of errors and overlap. Comparing our method against \texttt{BRL} on
-these same simulated datasets, we find that our method only has weakened
-performance in the extreme scenario of very high errors and very high
-overlap across files. We use the following measures of accuracy in our
-analysis: although using only recall and precision is common in the
-literature, we find it useful to have a single metric the gauge overall
-performance, and thus also include F measure.
+of errors and overlap. Each file consists of first name, last name,
+gender, postal code, age, and occupation, and following Sadinle's
+implementation, we use only four fields for the linkage process: both
+names, age, and occupation. Similarity scores for the names are binned
+into three levels according the default settings for the
+\texttt{compareRecords} function in the \texttt{BRL} package, and age
+and occupation similarity scores are binary for exact matching. We use
+flat priors for all \(\mathbf{m}\) and \(\mathbf{u}\) parameters, and
+run the Gibbs sampler for 1000 iterations, with the first 100 discarded
+as burn-in.
+
+Comparing our method against \texttt{BRL} on these same simulated
+datasets, we find that our method only has weakened performance in the
+most extreme scenario of very high errors and very high overlap across
+files. We use the following measures of accuracy in our analysis:
+although using only recall and precision is common in the literature, we
+find it useful to have a single metric the gauge overall performance,
+and thus also include F measure.
 
 \[\text{Recall} = \frac{\text{Matches Correctly Identified}}{\text{True Matches in Data}}\]
 \[\text{Precision} = \frac{\text{Declared Matches}}{\text{True Matches in Data}}\]
 \[\text{F-Measure} = 2\left(\frac{\text{Recall} \times \text{Precision}}{\text{Recall} + \text{Precision}}\right)\]
 
 \begin{center}\includegraphics[width=29.17in]{../notes/figures/sadinle_sim_plot} \end{center}
+
+\hypertarget{simulation-study-2---speed}{%
+\section{Simulation Study 2 - Speed}\label{simulation-study-2---speed}}
 
 To demonstrate speed, we generate comparison vectors from pre-specified
 distributions so that we can easily increase the size of the linkage
@@ -513,11 +538,15 @@ scores across first name, last name, and day, month, and and year of
 birth, with 1 indicating an exact match on a particular field and 0
 indicating a nonmatch. We simulate these data for different values of
 \(n_A\) and \(n_B\), and compare the run-time of \texttt{parlr} against
-\texttt{BRL}. We see that at low data size, \texttt{BRL} outperforms,
-but that \texttt{parlr} is significantly faster at handling larger data.
+\texttt{BRL}. Note that the number of unique patterns \(P\) is bounded
+above by \(2^5 = 32\), a bound which is consistently attained in the
+larger simulations.
 
-In particular, run-time for \texttt{BRL} seems to grow quadratically
-while run-time for \texttt{parlr} seems to grow linearly.
+We see that at low data size, \texttt{BRL} outperforms, but that
+\texttt{parlr} is significantly faster at handling larger data. In
+particular, run-time for \texttt{BRL} seems to grow quadratically (or
+linearly with the size of both \(A\) and \(B\)) while run-time for
+\texttt{parlr} seems to grow linearly (in the size of \(B\)).
 
 \begin{table}[ht]
 \centering
@@ -542,12 +571,12 @@ fname\_0 & 0.05 & 0.99 \\
 \begin{center}\includegraphics[width=23.6in]{../notes/figures/sadinle_speed_plot} \end{center}
 
 The above discussion suggests that for fixed \(n_B\), computation time
-should remain mostly constant with growing \(n_A\). Shockingly, this
-seems to be true. In the plot below, fixing \(n_B = 500\), we see linear
-growth for the run-time under \texttt{BRL} as \(n_A\) increases, with
-much more static run-time under \texttt{parlr}. The slight increases in
-run-time that we do see are due primarily to the hashing step, which
-again can be run in parallel for large data.
+should remain mostly constant with growing \(n_A\). Simulation study
+suggests that this is true. In the plot below, fixing \(n_B = 500\), we
+see linear growth for the run-time under \texttt{BRL} as \(n_A\)
+increases, with much more static run-time under \texttt{parlr}. The
+slight increases in run-time that we do see are due primarily to the
+hashing step, which again can be run in parallel for large data.
 
 \begin{center}\includegraphics[width=29.17in]{../notes/figures/speed_plot_fixed_nB} \end{center}
 
@@ -561,14 +590,45 @@ status of the record pairs should lead to even more drastic results.
 \hypertarget{data-analysis}{%
 \section{Data Analysis}\label{data-analysis}}
 
-\begin{itemize}
-\tightlist
-\item
-  Thinking of re-running the El Salvador linkage from the Sadinle 2017
-  paper, but doing so with without the formal blocking and indexing that
-  he uses. Instead, I'd use hashing and storage efficient indexing -- I
-  should be able to do linkage on the all the data at once!
-\end{itemize}
+the country of El Salvador was immersed in civil war from 1980 to 1991,
+and throughout the time, several organizations attempted to document
+casualties of the conflict. When estimating the total number of
+casualities, one cannot simply sum the numbers recorded by each
+organization, as it is likely that the same individuals are recorded in
+multiple casuality lists. To obtain a more accurate estimate of the
+casualties then, we follow Sadinle's 2017 paper and link records of El
+Salvadoran civilian casualties from two sources: El Rescate - Tutela
+Regal (ERTL) and the Salvadoran Human Rights Commission (CDHES, by its
+acronym in Spanish). The ERTL dataset consists of digitized reports that
+had been published throughout the conflict. The CDHES dataset consists
+of casualties that had been reported directly to the organization, and
+later digitized.
+
+There are several challenges with working with such data. Firstly, both
+datasets have been automatically digitized, which inherently leads to
+some degree of typographical error. Secondly, the CDHES records are all
+second hand accounts reported by individuals, which can result in
+additional errors. Lastly, the only fields recorded are given name, last
+name, date of death, and place of death; it is relatively common for a
+parent and child to share the same given name, resulting in
+indistinguishable records for two different individuals. This last point
+nearly breaks the above mentioned assumption that there are no
+duplicates within files, and reveals a key difference between
+\texttt{BRL} and our proposed method.
+
+We only utilized records with nonmissing entries for given and last
+name, results in \(n_A = 4420\) files in CHDES and \(n_B = 1323\) files
+in ERTL. The names were standardized to account for common misspellings
+in the Spanish language, and then compared using a modified Levenstein
+distance to account for the fact that second names are often ommited.
+Place of birth is recorded by municipality and department within that
+municipality; however, since department was missing in 95\% of records
+in CHDES and 80\% of records in ERTL, we excluded it from our linkage
+process. Thus we conduct linkage using given name, last name,
+municipality, and day, month, and year of death. We again use flat
+priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters, but use
+2000 Gibbs iterations with 200 discarded as burn-in to mirror the
+implementation in Sadinle 2017.
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}

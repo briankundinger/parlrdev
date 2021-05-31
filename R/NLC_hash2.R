@@ -22,7 +22,9 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
     cl <- parallel::makeCluster(numCores)
   }
 
+  ptm <- proc.time()
   patterns <- GetUniquePatterns2(comparisons, fast, R)
+  elapsed_hash <- proc.time() - ptm
 
   parameter_split <- as.vector(unlist(sapply(1:fields, function(x){
     rep(x, comparisons[[4]][x])
@@ -186,7 +188,8 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
 
   list(Z = final_gibbs,
        m = M.SAMPS,
-       u = U.SAMPS)
+       u = U.SAMPS,
+       hash_time = elapsed_hash[3])
 
 }
 

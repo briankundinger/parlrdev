@@ -38,6 +38,7 @@ var_names <- cd$compFields[,1]
 ptm <- proc.time()
 Zchain_parlr <- BKSimple_hash2(cd, R = R, show_progress = T)
 elapsed_parlr <- proc.time() - ptm
+Zchain_parlr[[4]]
 Zhat_parlr <- LinkRecordsBK(Zchain_parlr[[1]], nA, 1, 1, 2, Inf)
 overlap_parlr <- sum(Zhat_parlr[[1]] < nA + 1)
 results_parlr <- c(overlap_parlr, elapsed_parlr[3])
@@ -74,7 +75,7 @@ rownames(results_table) <- c("parlr", "parlr_resolved",
 results_table %>% 
   kable(caption = paste("Linkage Results with P = ", paste(P), "patterns"), digits = 3) %>% 
   kable_classic() %>% 
-  kable_styling(full_width = F) %>% 
+  kable_styling(full_width = F) %>%
   as_image(file = "../notes/figures/el_salvador/time_table_small_P.png")
 
 
@@ -177,7 +178,7 @@ df_mixing %>%
        x = "Gibbs Iterations",
        y = expression(Z[j]),
        color = "Type of Match") +
-  theme_bw(base_size = 10)+
+  theme_bw(base_size = 8)+
   scale_color_brewer(palette="Set1") +
   theme(legend.position="bottom") +
   guides(color=guide_legend(nrow=2,byrow=TRUE))

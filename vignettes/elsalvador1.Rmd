@@ -28,14 +28,19 @@ set.seed(2)
 R <- 10
 show_progress <- T
 fast <- F
+iter <- 1000
+burn <- iter * .1
 
 cd <- readRDS("../data/comparison_elsalvador.rds")
 nA <- cd$n1
 levels <- cd[[4]]
 P <- prod(levels) #Only 352 realized patter
 var_names <- cd$compFields[,1]
+
 ptm <- proc.time()
-Zchain_parlr <- BKSimple_hash2(cd, R = R, show_progress = T)
+Zchain_parlr <- BKSimple_hash2(cd, R = R, show_progress = T,
+                               S = iter, burn  = burn)
+Zchain_parlr[[4]]
 elapsed_parlr <- proc.time() - ptm
 Zhat_parlr <- LinkRecordsBK(Zchain_parlr[[1]], nA, 1, 1, 2, Inf)
 overlap_parlr <- sum(Zhat_parlr[[1]] < nA + 1)
@@ -53,14 +58,15 @@ results_parlr_resolved <- c(overlap_resolved, elapsed_parlr[3])
 
 
 ptm <- proc.time()
-Zchain_sadinle <- BRL::bipartiteGibbs(cd)
+Zchain_sadinle <- BRL::bipartiteGibbs(cd, nIter = iter)
+Zchain_sadinle[[1]] <- Zchain_sadinle[[1]][, -(1:burn)]
 elapsed_sadinle <- proc.time() - ptm
 Zhat_sadinle <- LinkRecordsBK(Zchain_sadinle[[1]], nA, 1, 1, 2, Inf)
 overlap_sadinle <- sum(Zhat_sadinle[[1]] < nA +1)
 
 overlap_samples_sadinle <- apply(Zchain_sadinle[[1]], 2, function(x){
   sum(x < nA + 1)
-})[-(1:100)]
+})
 
 results_sadinle <- c(overlap_sadinle, elapsed_sadinle[3])
 
@@ -73,16 +79,15 @@ rownames(results_table) <- c("parlr", "parlr_resolved",
 results_table %>% 
   kable(caption = paste("Linkage Results with P = ", paste(P), "patterns"), digits = 3) %>% 
   kable_classic() %>% 
-  kable_styling(full_width = F) %>% 
+  kable_styling(full_width = F) %>%
   as_image(file = "../notes/figures/el_salvador/time_table_big_P.png")
 
-probs <- Zhat_parlr[[2]]
 
 
 ```
 
 ```{r}
-method <- c(rep("parlr", 900), rep("sadinle", 900))
+method <- c(rep("parlr", iter - burn), rep("sadinle", iter - burn))
 overlap <- c(overlap_samples_parlr, overlap_samples_sadinle)
 df <- data.frame(overlap, method)
 

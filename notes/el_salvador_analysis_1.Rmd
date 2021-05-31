@@ -32,7 +32,7 @@ I can go more into details about these things, but for the moment, I'm more conc
 
 ## Using Sadinle's Levels
 
-The table below shows the amount of overlap detected by each method, as well as the time it took for the linkage to run. Interestingly, since Sadinle uses so many levels per field, we have $4^5 \times 2^2 = 4096$ possible unique patterns, so I was worried that `parlr` wouldn't give the desired speedups. However, only 352 patterns are actually realized, so `parlr` goes pretty fast!
+The table below shows the amount of overlap detected by each method, as well as the time it took for the linkage to run. Interestingly, since Sadinle uses so many levels per field, we have $4^5 \times 2^2 = 4096$ possible unique patterns, so I was worried that `parlr` wouldn't give the desired speedups. However, only 352 patterns are actually realized, so `parlr` goes pretty fast! Of the 234 seconds reported below, 185 were used on hashing (which could be sped up through parallel computing), and 49 seconds were used on the Gibbs sampling. 
 
 
 ```{r}
@@ -63,7 +63,7 @@ Looking at these $m$ parameters, we see that many levels are redundant. Also, si
 
 ## Using Less Patterns
 
-I reran everything with only 3 levels for first name, last name, and day, and only 2 levels for everything else. I probably could use just two levels for the names since the code puts so much work into standardizing names and using a modified Levenstein distance, but for now, I'll stick with 3 levels. Here $P$ is bounded by $3^3 \times 2^3 = 216$, and only 159 unique patterns are realized. Results stay basically the same, but see significant speed up for `parlr`.
+I reran everything with only 3 levels for first name, last name, and day, and only 2 levels for everything else. I probably could use just two levels for the names since the code puts so much work into standardizing names and using a modified Levenstein distance, but for now, I'll stick with 3 levels. Here $P$ is bounded by $3^3 \times 2^3 = 216$, and only 159 unique patterns are realized. Results stay basically the same, but see significant speed up for `parlr`. Of the 151 second reported below, 112 were used on hasing, and 39 were used on Gibbs sampling. 
 
 
 ```{r}

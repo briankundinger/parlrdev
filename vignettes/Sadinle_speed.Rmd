@@ -25,8 +25,10 @@ library(kableExtra)
 
 ```{r simulation}
 
-n1_vals <- c(100, 500, 1000, 2000, 3000, 4000, 5000)
-n2_vals <- c(100, 500, 1000, 2000, 3000, 4000, 5000)
+rm(list=ls())
+set.seed(3)
+n1_vals <- c(100, 500, 1000, 2000, 3000)
+n2_vals <- c(100, 500, 1000, 2000, 3000)
 
 show_progress <- T
 fast = F
@@ -55,14 +57,15 @@ for(i in seq_along(n1_vals)){
   n1 <- n1_vals[i]
   n2 <- n2_vals[i]
   overlap <- n2/2
-  # cd <- SimulateComparisonsFast(m, u, levels, n1, n2, overlap)
-  cd <- SimulateComparisonsHash(m, u, levels, n1, n2, overlap)
+  cd <- SimulateComparisonsFast(m, u, levels, n1, n2, overlap)
+  #cd <- SimulateComparisonsHash(m, u, levels, n1, n2, overlap)
   Ztrue <- cd$Ztrue
   
   #parlr method
   ptm <- proc.time()
-  Zchain <- BKSimple_hash2_pat(cd, R = R)
-  #Zchain <- BKSimple_hash2(cd, R = R)
+  #Zchain <- BKSimple_hash2_pat(cd, R = R)
+  Zchain <- BKSimple_hash2(cd, R = R)
+  Zchain <- Zchain[[1]]
   elapsed <- proc.time() - ptm
   #Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   Zhat <- LinkRecordsBK(Zchain, n1, 1, 1, 2, Inf)
@@ -97,25 +100,25 @@ double_matches/n2_vals
 
 
 
-parlr_df <- data.frame(results_bk_samps, n2_vals, "Parlr")
+parlr_df <- data.frame(results_bk_samps, n2_vals, "fabl")
 names(parlr_df) <- c("Recall", "Precision", "Fmeasure", "time", "n", "method")
 
-parlr_resolved_df <- data.frame(results_bk_samps_resolved, n2_vals, "Parlr_resolved")
+parlr_resolved_df <- data.frame(results_bk_samps_resolved, n2_vals, "fabl_resolved")
 names(parlr_resolved_df) <- c("Recall", "Precision", "Fmeasure", "time", "n", "method")
 
-sadinle_df <- data.frame(results_sad_samps, n2_vals, "Sadinle17")
+sadinle_df <- data.frame(results_sad_samps, n2_vals, "BRL")
 names(sadinle_df) <- c("Recall", "Precision", "Fmeasure", "time", "n",  "method")
 
 df<- rbind(parlr_df, parlr_resolved_df, sadinle_df)
 
 speed_plot <- df %>% 
-  filter(method != "Parlr_resolved") %>% 
+  filter(method != "fabl_resolved") %>% 
   ggplot(aes(x = n, y = time, color = method)) +
   geom_line(size = 1) +
   labs(x = "Size of each dataset",
        y = "Time (seconds)",
        color = "Method", 
-       title = "Speed Comparison: Parlr and Sadinle17",
+       title = "Speed Comparison: fabl and BRL",
        subtitle = "1000 Gibbs iterations") +
   theme_bw() +
   theme(plot.title = element_text(hjust = .5),
@@ -124,8 +127,8 @@ speed_plot <- df %>%
 
 speed_plot
 
-# ggsave(filename = "../notes/figures/sadinle_speed_plot.png",
-#        plot = speed_plot)
+ggsave(filename = "../notes/figures/sadinle_speed_plot2.png",
+       plot = speed_plot)
 
 # results_df <- df %>% 
 #   pivot_longer(cols = 1:4, names_to = "metric") %>% 
