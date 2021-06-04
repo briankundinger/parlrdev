@@ -21,6 +21,7 @@ library(tidyverse)
 - Transform the $F$ fields of information among the $n_A$ records in File $A$ and the $n_B$ records in File $B$ into a $n_A n_B \times F$ matrix of comparison vectors $\Gamma$.
 
 - Comparisons for each field $f$ are binned to integers $\{1, \ldots, L_f\}$, with 1 being the highest level of agreement
+
   - Common to use $\{1, 2\}$ to reflect exact agreement or disagreement, and $\{1, 2, 3\}$ to allow for partial agreement
   
 ## Comparison Vector Example
@@ -72,7 +73,6 @@ $$Z_j=\begin{cases}
 For fields $f \in \{1, \ldots, F\}$ and levels $l\in \{1, \ldots, L_f\}$ we adopt the following likelihood and prior distributions. 
 
 $$P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda) =\prod_{j=1}^{n_B}  \prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}$$
-
 $$\mathbf{m^{f}} \sim \text{Dirichlet}(\alpha^{f1}, \ldots, \alpha^{fL_f})$$
 $$\mathbf{u^{f}} \sim \text{Dirichlet}(\beta^{f1}, \ldots, \beta^{fL_f})$$
 $$Z_j | \lambda =
@@ -80,7 +80,6 @@ $$Z_j | \lambda =
     \frac{1}{n_A}\lambda  & z_j \leq n_A; \\
      1-\lambda &  z_j  = n_A + 1 \\
 \end{cases}$$
-
 $$\lambda \sim \text{Beta}(\alpha_{\lambda}, \beta_{\lambda}) $$
 
 ## Gibbs Sampling

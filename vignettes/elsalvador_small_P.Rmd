@@ -20,12 +20,13 @@ library(parlrdev)
 library(tidyverse)
 library(knitr)
 library(kableExtra)
+library(RColorBrewer)
 ```
 
 ```{r}
 rm(list=ls())
 set.seed(2)
-R <- 10
+R <- NULL
 show_progress <- T
 fast <- F
 
@@ -36,22 +37,22 @@ levels <- cd[[4]]
 P <- prod(levels) 
 var_names <- cd$compFields[,1]
 ptm <- proc.time()
-Zchain_parlr <- BKSimple_hash2(cd, R = R, show_progress = T)
-elapsed_parlr <- proc.time() - ptm
-Zchain_parlr[[4]]
-Zhat_parlr <- LinkRecordsBK(Zchain_parlr[[1]], nA, 1, 1, 2, Inf)
-overlap_parlr <- sum(Zhat_parlr[[1]] < nA + 1)
-results_parlr <- c(overlap_parlr, elapsed_parlr[3])
+Zchain_fabl <- BKSimple_hash2(cd, R = R, show_progress = T)
+elapsed_fabl <- proc.time() - ptm
+Zchain_fabl[[4]]
+Zhat_fabl <- LinkRecordsBK(Zchain_fabl[[1]], nA, 1, 1, 2, Inf)
+overlap_fabl <- sum(Zhat_fabl[[1]] < nA + 1)
+results_fabl <- c(overlap_fabl, elapsed_fabl[3])
 
-Zhat_resolved <- ResolveConflicts(Zhat_parlr)
+Zhat_resolved <- ResolveConflicts(Zhat_fabl)
 overlap_resolved <- sum(Zhat_resolved < nA + 1)
-overlap_samples_parlr <- apply(Zchain_parlr[[1]], 2, function(x){
+overlap_samples_fabl <- apply(Zchain_fabl[[1]], 2, function(x){
   sum(x < nA + 1)
 })
-not_one2one_samps <- apply(Zchain_parlr[[1]], 2, function(x){
+not_one2one_samps <- apply(Zchain_fabl[[1]], 2, function(x){
   sum(duplicated(x[x < nA + 1]))
 })
-results_parlr_resolved <- c(overlap_resolved, elapsed_parlr[3])
+results_fabl_resolved <- c(overlap_resolved, elapsed_fabl[3])
 
 
 ptm <- proc.time()
@@ -66,12 +67,12 @@ overlap_samples_sadinle <- apply(Zchain_sadinle[[1]], 2, function(x){
 
 results_sadinle <- c(overlap_sadinle, elapsed_sadinle[3])
 
-results_table <- rbind(results_parlr,
-                       results_parlr_resolved,
+results_table <- rbind(results_fabl,
+                       results_fabl_resolved,
                        results_sadinle)
 colnames(results_table) <- c("Overlap", "time (sec)")
-rownames(results_table) <- c("parlr", "parlr_resolved",
-                             "sadinle")
+rownames(results_table) <- c("fabl", "fabl_resolved",
+                             "BRL")
 results_table %>% 
   kable(caption = paste("Linkage Results with P = ", paste(P), "patterns"), digits = 3) %>% 
   kable_classic() %>% 
@@ -83,26 +84,51 @@ results_table %>%
 
 
 ```{r}
-method <- c(rep("parlr", 900), rep("sadinle", 900))
-overlap <- c(overlap_samples_parlr, overlap_samples_sadinle)
+bayes <- results_table[,1]
+method <- rownames(results_table)
+bayes_df <- data.frame(bayes, method)
+bayes_df <- bayes_df[c(2, 3), ]
+
+method <- c(rep("fabl", 900), rep("BRL", 900))
+overlap <- c(overlap_samples_fabl, overlap_samples_sadinle)
 df <- data.frame(overlap, method)
 
 df %>% 
   ggplot(aes(y = overlap, fill = method)) +
   geom_histogram() + 
+  geom_hline(yintercept = bayes_df$bayes,
+             color = brewer.pal(n = 3, name = "Set1")[1:2]) + 
   labs(y = "Overlap",
        x = NULL,
        title = "Posterior Distribution of Overlap",
-       color = "Method") +
+       fill = "Method") +
   coord_flip() + 
   theme_bw() + 
   scale_fill_brewer(palette="Set1")
 
 ggsave("../notes/figures/el_salvador/overlap_distribution_smallP.png")
+
+bayes_df$bayes <- nA + nB - bayes_df$bayes
+df$overlap <- nA + nB - df$overlap
+
+df %>% 
+  ggplot(aes(y = overlap, fill = method)) +
+  geom_histogram() + 
+  geom_hline(yintercept = bayes_df$bayes,
+             color = brewer.pal(n = 3, name = "Set1")[1:2]) + 
+  labs(y = "DID",
+       x = NULL,
+       title = "Posterior Distribution of DID",
+       fill = "Method") +
+  coord_flip() + 
+  theme_bw() + 
+  scale_fill_brewer(palette="Set1")
+
+ggsave("../notes/figures/el_salvador/DID_distribution_smallP.png")
 ```
 
 ```{r}
-#samps <- Zchain_parlr$m
+#samps <- Zchain_fabl$m
 ProcessChain <- function(samps){
   avg <- apply(samps, 1, mean)
   upper <- apply(samps, 1, function(x){
@@ -118,11 +144,11 @@ ProcessChain <- function(samps){
   
   data.frame(params, field, avg, upper, lower)
 }
-m_parlr <- ProcessChain(Zchain_parlr$m)
-m_parlr$method <- "parlr"
+m_fabl <- ProcessChain(Zchain_fabl$m)
+m_fabl$method <- "fabl"
 m_sadinle <- ProcessChain(Zchain_sadinle$m)
 m_sadinle$method <- "sadinle"
-df <- rbind(m_parlr, m_sadinle)
+df <- rbind(m_fabl, m_sadinle)
 df %>% 
   ggplot(aes(x = params, y = avg,
              ymin = lower, ymax = upper, color = method)) +
@@ -143,16 +169,16 @@ ggsave("../notes/figures/el_salvador/m_posterior_smallP.png")
 ## Comparing Mixing
 
 ```{r}
-find <- which(Zhat_parlr[[1]] == 2776)
-probs <- Zhat_parlr[[2]][find]
-dups_parlr <- Zchain_parlr[[1]][find,]
+find <- which(Zhat_fabl[[1]] == 2776)
+probs <- Zhat_fabl[[2]][find]
+dups_fabl <- Zchain_fabl[[1]][find,]
 dups_sadinle <- Zchain_sadinle[[1]][find, ]
 dups_sadinle[dups_sadinle > nA + 2] <- nA + 1
 
 
-dups_parlr <- cbind(dups_parlr, c("Rosa", "Rosa Maria") , "parlr")
+dups_fabl <- cbind(dups_fabl, c("Rosa", "Rosa Maria") , "fabl")
 dups_sadinle <- cbind(dups_sadinle, c("Rosa", "Rosa Maria") , "sadinle")
-df <- data.frame(rbind(dups_parlr, dups_sadinle[,-(1:100)]))
+df <- data.frame(rbind(dups_fabl, dups_sadinle[,-(1:100)]))
 names(df)[c(901, 902)] <- c("record", "method")
 df_mixing <- df %>% 
   pivot_longer(1:900) %>% 
@@ -173,7 +199,7 @@ df_mixing %>%
   geom_point(size = .9) +
   facet_grid(record~method) + 
   #scale_x_continuous(labels = NULL, breaks = NULL) + 
-  labs(title = "Near Matches under Parlr and Sadinle",
+  labs(title = "Near Matches under fabl and Sadinle",
        subtitle = "Both have undesirable behavior",
        x = "Gibbs Iterations",
        y = expression(Z[j]),

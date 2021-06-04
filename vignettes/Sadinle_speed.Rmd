@@ -24,15 +24,15 @@ library(kableExtra)
 
 
 ```{r simulation}
-
+gcinfo(verbose = FALSE)
 rm(list=ls())
 set.seed(3)
-n1_vals <- c(100, 500, 1000, 2000, 3000)
-n2_vals <- c(100, 500, 1000, 2000, 3000)
+n1_vals <- c(100, 500, 1000, 2000, 3000, 4000, 5000)
+n2_vals <- c(100, 500, 1000, 2000, 3000, 4000, 5000)
 
 show_progress <- T
 fast = F
-R <- 10
+R <- NULL
 
 m <- c(.05, .95, .05, .95, .05, .95, .05, .95, .05, .95)
 
@@ -43,9 +43,9 @@ u <- c(.99, .01, .99, .01,
 levels <- c(2, 2, 2, 2, 2)
 
 
-# S <- 1000; burn <- S * .1
-# m_prior <- u_prior <- rep(1, length(m))
-# alpha <- beta <- 1
+S <- 1000; burn <- S * .1
+m_prior <- u_prior <- rep(1, length(m))
+alpha <- beta <- 1
 results_bk_samps <- matrix(NA, nrow = length(n1_vals), ncol = 4)
 results_sad_samps <- matrix(NA, nrow = length(n1_vals), ncol = 4)
 results_bk_samps_resolved <- matrix(NA, nrow = length(n1_vals), ncol = 4)
@@ -64,7 +64,7 @@ for(i in seq_along(n1_vals)){
   #parlr method
   ptm <- proc.time()
   #Zchain <- BKSimple_hash2_pat(cd, R = R)
-  Zchain <- BKSimple_hash2(cd, R = R)
+  Zchain <- BKSimple_hash2(cd)
   Zchain <- Zchain[[1]]
   elapsed <- proc.time() - ptm
   #Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
@@ -85,15 +85,15 @@ for(i in seq_along(n1_vals)){
   Zhat <- BRL::linkRecords(Zchain[[1]], n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
   results_sad_samps[i,] <- c(eval, elapsed[3])
-  
+  gc()
   print(i)
 }
 
-list(BK = results_bk_samps,
-     BK_resolved = results_bk_samps_resolved,
-     Sadinle = results_sad_samps)
-
-double_matches/n2_vals
+# list(BK = results_bk_samps,
+#      BK_resolved = results_bk_samps_resolved,
+#      Sadinle = results_sad_samps)
+# 
+# double_matches/n2_vals
 ```
 
 ```{r speed_plot}
@@ -117,9 +117,7 @@ speed_plot <- df %>%
   geom_line(size = 1) +
   labs(x = "Size of each dataset",
        y = "Time (seconds)",
-       color = "Method", 
-       title = "Speed Comparison: fabl and BRL",
-       subtitle = "1000 Gibbs iterations") +
+       color = "Method") + 
   theme_bw() +
   theme(plot.title = element_text(hjust = .5),
         plot.subtitle = element_text(hjust = .5)) +

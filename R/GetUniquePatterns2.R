@@ -10,72 +10,11 @@ GetUniquePatterns2 <- function(cd, fast = F, R = NULL){
   rec1 <- ids[,1]
   rec2 <- ids[,2]
   levels <- cd[[4]]
-  # fields <- length(levels)
-  # gk <- unlist(lapply(1:fields, function(x){
-  #   0:(levels[x] -1)
-  # }))
-  # Lf_vec <- unlist(lapply(1:fields, function(x){
-  #   rep(levels[x], levels[x])
-  # }))
-  #
-  # fields_vec <- unlist(lapply(1:fields, function(x){
-  #   rep(seq_len(fields)[x], levels[x])
-  # }))
 
-
-  #gk_ij <- sweep(indicators, MARGIN = 2, gk, FUN = "*")
-  # Lf_long <- sapply(Lf_vec, function(x){
-  #   rep(x, N)
-  # })
-  # fields_long <- sapply(fields_vec, function(x){
-  #   rep(x, N)
-  # })
-
-  # level_sum <- cumsum(levels)
-  # level_sum_vec <-  unlist(lapply(1:fields, function(x){
-  #   rep(level_sum[x], levels[x])
-  # }))
 df <- data.frame(indicators, rec1, rec2)
 
 pattern_df <- df %>%
   unite(pattern, 1:fields, sep = "")
-  # level_sum_long <- sapply(level_sum_vec, function(x){
-  #   rep(x, N)
-  # })
-
-  #hash <- rowSums((gk_ij >0) * 2 ^ (gk_ij + (fields_long > 1) * level_sum_long))
-  # if(fast){
-  #   numCores <- parallel::detectCores()
-  #   cl <- parallel::makeCluster(numCores)
-  #
-  #   parallel::clusterExport(cl, c("gk", "fields_vec", "level_sum_vec"))
-  #   hash_temp <- parallel::parApply(cl, indicators, 1, FUN = function(x){
-  #     gk_ij <- x * gk
-  #     (gk_ij >0) * 2 ^ (gk_ij + (fields_vec > 1) * level_sum_vec)
-  #   })
-  #
-  #   parallel::stopCluster(cl)
-  #
-  # } else {
-  #
-  #   hash_temp <- apply(indicators, 1, function(x){
-  #     gk_ij <- x * gk
-  #     (gk_ij >0) * 2 ^ (gk_ij + (fields_vec > 1) * level_sum_vec)
-  #   })
-
-
-    # thing <- lapply(seq_len(nrow(indicators)), function(x){
-    #   indicators[x, ]
-    # })
-    #
-    # hash_temp <- lapply(thing, function(x){
-    #   gk_ij <- x * gk
-    #   (gk_ij >0) * 2 ^ (gk_ij + (fields_vec > 1) * level_sum_vec)
-    # })
-
-  #}
- # hash <- colSums(hash_temp)
-  #hash_id <- as.numeric(factor(as.character(hash)))
 
   unique_hash <- unique(pattern_df$pattern)
   P <- length(unique_hash)
@@ -84,7 +23,6 @@ pattern_df <- df %>%
   for(i in seq_along(unique_hash)){
     hash_id[pattern_df$pattern == unique_hash[i]] <- i
   }
-
   hash_id <- factor(hash_id)
 
 
@@ -123,6 +61,7 @@ pattern_df <- df %>%
                    pattern_counts,
                    counts_by_rec,
                    hash_to_rec1)
+  patterns
 
 }
 
