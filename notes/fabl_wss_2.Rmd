@@ -19,9 +19,12 @@ library(tidyverse)
 
 - El Salvadoran Civil War (1979 - 1992)
 
-- Multiple organizations have documented casualties, and we need to find duplicates across separate datafiles to accurately estimate *documented identifiable deaths* (DID)
+- Multiple organizations have documented casualties. El Rescate - Tutela Legal (ERTL) contains $n_A = 4420$ records, and  Salvadoran Human Rights Commission (CDHES) contains $n_B =  1323$ records.
+
+- We need to find duplicates across separate datafiles to accurately estimate *documented identifiable deaths* (DID)
 
 - Not much information, only first name, last name, and date and place of death
+
 - Spanish language: very common for parent and child to share the same name, "second" names often omitted
 
 ## Foundations of Method

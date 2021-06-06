@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 ```{r}
 
 n1_vals <- c(500, 1000, 2000, 3000, 4000)
-n2_vals <- 500
+n2 <- 500
 show_progress <- T
 fast = F
 
@@ -51,6 +51,7 @@ for(i in seq_along(n1_vals)){
   ptm <- proc.time()
   Zchain <- BKSimple_hash2(cd)
   elapsed <- proc.time() - ptm
+  Zchain <- Zchain[[1]]
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
   parlr_speed_samps2[i,] <- c(eval, elapsed[3])
@@ -74,9 +75,9 @@ for(i in seq_along(n1_vals)){
 
 
 
-parlr_df <- data.frame(parlr_speed_samps2, n1_vals, "parlr")
+parlr_df <- data.frame(parlr_speed_samps2, n1_vals, "fabl")
 names(parlr_df) <- c("recall", "precision", "fmeasure", "time", "nA", "method")
-sadinle_df <- data.frame(sad_speed_samps2, n1_vals, "sadinle")
+sadinle_df <- data.frame(sad_speed_samps2, n1_vals, "BRL")
 names(sadinle_df) <- c("recall", "precision", "fmeasure", "time", "nA",  "method")
 
 df<- rbind(parlr_df, sadinle_df)
@@ -87,15 +88,11 @@ speed_plot_fixed_nB <- df %>%
   geom_point(size = 2) + 
   labs(x = expression(n[A]),
        y = "Time (seconds)",
-       color = "Method", 
-       title = "Speed Comparison: parlr and Sadinle 17",
-       subtitle = paste0("1000 Gibbs iterations, file B size fixed")) +
-  theme_bw() +
-  theme(plot.title = element_text(hjust = .5),
-        plot.subtitle = element_text(hjust = .5))
+       color = "Method") +
+  theme_bw() + 
+  scale_color_brewer(palette="Set1")
 
-ggsave(filename = "../notes/figures/speed_plot_fixed_nB.png",
-       plot = speed_plot_fixed_nB)
+ggsave(filename = "../notes/figures/speed_plot_fixed_nB.png", plot = speed_plot_fixed_nB)
 
 
 # results_df <- df %>% 
