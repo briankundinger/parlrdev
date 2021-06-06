@@ -78,8 +78,9 @@ results_image <- results_table %>%
   kable_classic() %>%
   kable_styling(full_width = F)
 
+results_image
 
-as_image(results_image, file = "../notes/figures/el_salvador/time_table_small_P.png")
+# as_image(results_image, file = "../notes/figures/el_salvador/time_table_small_P.png")
 
 
 ```
@@ -101,7 +102,7 @@ df %>%
   geom_hline(yintercept = bayes_df$bayes,
              color = brewer.pal(n = 3, name = "Set1")[1:2]) + 
   geom_hline(yintercept = bayes[1],
-             color = brewer.pal(n = 3, name = "Set1")[1],
+             color = brewer.pal(n = 3, name = "Set1")[2],
              linetype = "longdash") +
   labs(y = "Overlap",
        x = NULL,
@@ -122,7 +123,7 @@ df %>%
   geom_hline(yintercept = bayes_df$bayes,
              color = brewer.pal(n = 3, name = "Set1")[1:2]) + 
   geom_hline(yintercept = nA + nB - bayes[1],
-             color = brewer.pal(n = 3, name = "Set1")[1],
+             color = brewer.pal(n = 3, name = "Set1")[2],
              linetype = "longdash") +
   labs(y = "DID",
        x = NULL,
@@ -155,21 +156,20 @@ ProcessChain <- function(samps){
 m_fabl <- ProcessChain(Zchain_fabl$m)
 m_fabl$method <- "fabl"
 m_sadinle <- ProcessChain(Zchain_sadinle$m)
-m_sadinle$method <- "sadinle"
+m_sadinle$method <- "BRL"
 df <- rbind(m_fabl, m_sadinle)
 df %>% 
   ggplot(aes(x = params, y = avg,
              ymin = lower, ymax = upper, color = method)) +
   geom_pointrange(position = position_dodge2(width = .5)) +
   facet_wrap(~field, scales = "free_x") + 
-  labs(title = paste("Distributions of m parameters, P =", paste(P), "Patterns"),
-       y = "Probability",
+  labs(y = "Probability",
        x = "Agreement Level",
        color = "Method") + 
   theme_bw() + 
   scale_color_brewer(palette="Set1")
 
-#ggsave("../notes/figures/el_salvador/m_posterior_smallP.png")
+ggsave("../notes/figures/el_salvador/m_posterior_smallP.png")
 
 
 ```
@@ -185,7 +185,7 @@ dups_sadinle[dups_sadinle > nA + 2] <- nA + 1
 
 
 dups_fabl <- cbind(dups_fabl, c("Rosa", "Rosa Maria") , "fabl")
-dups_sadinle <- cbind(dups_sadinle, c("Rosa", "Rosa Maria") , "sadinle")
+dups_sadinle <- cbind(dups_sadinle, c("Rosa", "Rosa Maria") , "BRL")
 df <- data.frame(rbind(dups_fabl, dups_sadinle[,-(1:100)]))
 names(df)[c(901, 902)] <- c("record", "method")
 df_mixing <- df %>% 
@@ -207,9 +207,7 @@ df_mixing %>%
   geom_point(size = .9) +
   facet_grid(record~method) + 
   #scale_x_continuous(labels = NULL, breaks = NULL) + 
-  labs(title = "Near Matches under fabl and Sadinle",
-       subtitle = "Both have undesirable behavior",
-       x = "Gibbs Iterations",
+  labs(x = "Gibbs Iterations",
        y = expression(Z[j]),
        color = "Type of Match") +
   theme_bw(base_size = 8)+

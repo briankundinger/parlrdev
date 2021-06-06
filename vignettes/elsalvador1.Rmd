@@ -25,7 +25,7 @@ library(kableExtra)
 ```{r}
 rm(list=ls())
 set.seed(2)
-R <- 10
+R <- NULL
 show_progress <- T
 fast <- F
 iter <- 1000
@@ -34,7 +34,7 @@ burn <- iter * .1
 cd <- readRDS("../data/comparison_elsalvador.rds")
 nA <- cd$n1
 levels <- cd[[4]]
-P <- prod(levels) #Only 352 realized patter
+P <- prod(levels) #Only 1173 realized patter
 var_names <- cd$compFields[,1]
 
 ptm <- proc.time()
@@ -76,11 +76,14 @@ results_table <- rbind(results_parlr,
 colnames(results_table) <- c("Overlap", "time")
 rownames(results_table) <- c("parlr", "parlr_resolved",
                              "sadinle")
-results_table %>% 
+results_image <- results_table %>% 
   kable(caption = paste("Linkage Results with P = ", paste(P), "patterns"), digits = 3) %>% 
   kable_classic() %>% 
-  kable_styling(full_width = F) %>%
-  as_image(file = "../notes/figures/el_salvador/time_table_big_P.png")
+  kable_styling(full_width = F)
+
+results_image
+
+# as_image(results_image, file = "../notes/figures/el_salvador/time_table_big_P.png")
 
 
 
