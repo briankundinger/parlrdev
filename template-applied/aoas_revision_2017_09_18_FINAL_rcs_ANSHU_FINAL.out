@@ -1,0 +1,37 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Related Work for Unique Entity Estimation}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{The Syrian Conflict}{section.1}% 3
+\BOOKMARK [2][-]{subsection.1.3}{Challenges and Proposed Solutions}{section.1}% 4
+\BOOKMARK [1][-]{section.2}{Variants of Locality Sensitive Hashing \(LSH\)}{}% 5
+\BOOKMARK [2][-]{subsection.2.1}{Shingling}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.2}{Locality Sensitive Hashing}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.3}{Minhashing}{section.2}% 8
+\BOOKMARK [3][-]{subsubsection.2.3.1}{Densified One Permutation Hashing \(DOPH\)}{subsection.2.3}% 9
+\BOOKMARK [1][-]{section.3}{Unique Entity Estimation}{}% 10
+\BOOKMARK [2][-]{subsection.3.1}{Notation}{section.3}% 11
+\BOOKMARK [2][-]{subsection.3.2}{Illustrative Example}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.3}{Proposed Unique Entity Estimator}{section.3}% 13
+\BOOKMARK [2][-]{subsection.3.4}{Optimality Properties of LSHE}{section.3}% 14
+\BOOKMARK [2][-]{subsection.3.5}{Adaptive Sampling versus Random Sampling}{section.3}% 15
+\BOOKMARK [2][-]{subsection.3.6}{The Missing Ingredient: \(K,L\)-LSH Algorithm}{section.3}% 16
+\BOOKMARK [3][-]{subsubsection.3.6.1}{\(K,L\)-LSH Algorithm and Sub-quadratic Adaptive Sampling}{subsection.3.6}% 17
+\BOOKMARK [3][-]{subsubsection.3.6.2}{Computational Complexity}{subsection.3.6}% 18
+\BOOKMARK [3][-]{subsubsection.3.6.3}{Underlying Assumptions and Connections with p}{subsection.3.6}% 19
+\BOOKMARK [3][-]{subsubsection.3.6.4}{Why LSH?}{subsection.3.6}% 20
+\BOOKMARK [2][-]{subsection.3.7}{Putting it all Together: Scalable Unique Entity Estimation}{section.3}% 21
+\BOOKMARK [1][-]{section.4}{Experiments}{}% 22
+\BOOKMARK [2][-]{subsection.4.1}{Evaluation Settings}{section.4}% 23
+\BOOKMARK [2][-]{subsection.4.2}{Evaluation Results}{section.4}% 24
+\BOOKMARK [1][-]{section.5}{Estimation of Casualties in Syrian Conflict}{}% 25
+\BOOKMARK [2][-]{subsubsection.5.0.1}{Running Time}{section.5}% 26
+\BOOKMARK [2][-]{subsection.5.1}{Unique Number of Documented Identifiable Victims}{section.5}% 27
+\BOOKMARK [2][-]{subsection.5.2}{Effects of L, K, on sample size and p}{section.5}% 28
+\BOOKMARK [1][-]{section.6}{Discussion}{}% 29
+\BOOKMARK [1][-]{appendix.A}{Syrian Data Set}{}% 30
+\BOOKMARK [2][-]{subsection.A.1}{Syrian Handmatched Data Set}{appendix.A}% 31
+\BOOKMARK [1][-]{appendix.B}{Unique Entity Estimation Proofs}{}% 32
+\BOOKMARK [2][-]{subsection.B.1}{Expectation}{appendix.B}% 33
+\BOOKMARK [2][-]{subsection.B.2}{Variance}{appendix.B}% 34
+\BOOKMARK [2][-]{subsection.B.3}{Variance Monotonicity}{appendix.B}% 35
+\BOOKMARK [1][-]{section*.8}{References}{}% 36
+\BOOKMARK [1][-]{section*.9}{Author's addresses}{}% 37
