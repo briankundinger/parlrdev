@@ -1,0 +1,41 @@
+\begin{thebibliography}{3}
+% BibTex style file: imsart-nameyear.bst, 2017-11-03
+% Default style options (sort=1,type=nameyear).
+% Used options (sort=1,type=nameyear).
+
+\bibitem[\protect\citeauthoryear{Fellegi and Sunter}{1969}]{fellegi1969theory}
+\begin{barticle}[author]
+\bauthor{\bsnm{Fellegi},~\bfnm{Ivan~P}\binits{I.~P.}} \AND
+  \bauthor{\bsnm{Sunter},~\bfnm{Alan~B}\binits{A.~B.}}
+(\byear{1969}).
+\btitle{A theory for record linkage}.
+\bjournal{Journal of the American Statistical Association}
+\bvolume{64}
+\bpages{1183--1210}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Sadinle}{2014}]{sadinle_detecting_2014}
+\begin{barticle}[author]
+\bauthor{\bsnm{Sadinle},~\bfnm{Mauricio}\binits{M.}}
+(\byear{2014}).
+\btitle{Detecting duplicates in a homicide registry using a Bayesian
+  partitioning approach}.
+\bjournal{The Annals of Applied Statistics}
+\bvolume{8}
+\bpages{2404--2434}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Sadinle}{2017}]{sadinle2017bayesian}
+\begin{barticle}[author]
+\bauthor{\bsnm{Sadinle},~\bfnm{Mauricio}\binits{M.}}
+(\byear{2017}).
+\btitle{Bayesian estimation of bipartite matchings for record linkage}.
+\bjournal{Journal of the American Statistical Association}
+\bvolume{112}
+\bpages{600--612}.
+\end{barticle}
+\endbibitem
+
+\end{thebibliography}

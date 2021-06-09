@@ -1,0 +1,433 @@
+\begin{thebibliography}{35}
+% BibTex style file: imsart-nameyear.bst, 2013-01-28
+% Default style options (sort=1,type=nameyear).
+% Used options (sort=1,type=nameyear).
+
+\bibitem[\protect\citeauthoryear{Aleksandrov}{1956}]{wiki:xxx}
+\begin{bbook}[author]
+\bauthor{\bsnm{Aleksandrov},~\bfnm{Pavel~S}\binits{P.~S.}}
+(\byear{1956}).
+\btitle{Combinatorial topology}
+\bvolume{1}.
+\bpublisher{Courier Corporation}.
+\end{bbook}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Andoni and Indyk}{2004}]{Report:E2LSH}
+\begin{btechreport}[author]
+\bauthor{\bsnm{Andoni},~\bfnm{Alexandr}\binits{A.}} \AND
+  \bauthor{\bsnm{Indyk},~\bfnm{Piotr}\binits{P.}}
+(\byear{2004}).
+\btitle{E2lsh: Exact Euclidean Locality Sensitive Hashing}
+\btype{Technical Report}.
+\end{btechreport}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Bhattacharya and Getoor}{2006}]{getoor_2006}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Bhattacharya},~\bfnm{Indrajit}\binits{I.}} \AND
+  \bauthor{\bsnm{Getoor},~\bfnm{Lise}\binits{L.}}
+(\byear{2006}).
+\btitle{A Latent Dirichlet Model for Unsupervised Entity Resolution.}
+In \bbooktitle{SDM}
+\bvolume{5}
+\bpages{59}.
+\bpublisher{SIAM}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Broder}{1997}]{Proc:Broder}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Broder},~\bfnm{Andrei~Z.}\binits{A.~Z.}}
+(\byear{1997}).
+\btitle{On the Resemblance and Containment of Documents}.
+In \bbooktitle{the Compression and Complexity of Sequences}
+\bpages{21-29}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Chazelle, Rubinfeld and
+  Trevisan}{2005}]{chazelle2005approximating}
+\begin{barticle}[author]
+\bauthor{\bsnm{Chazelle},~\bfnm{Bernard}\binits{B.}},
+  \bauthor{\bsnm{Rubinfeld},~\bfnm{Ronitt}\binits{R.}} \AND
+  \bauthor{\bsnm{Trevisan},~\bfnm{Luca}\binits{L.}}
+(\byear{2005}).
+\btitle{Approximating the minimum spanning tree weight in sublinear time}.
+\bjournal{SIAM Journal on computing}
+\bvolume{34}
+\bpages{1370--1379}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Christen}{2012}]{christen_2012}
+\begin{barticle}[author]
+\bauthor{\bsnm{Christen},~\bfnm{Peter}\binits{P.}}
+(\byear{2012}).
+\btitle{A survey of indexing techniques for scalable record linkage and
+  deduplication}.
+\bjournal{IEEE Transactions on Knowledge and Data Engineering}
+\bvolume{24}
+\bpages{1537--1555}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Erdos and
+  R{\'e}nyi}{1960}]{erdos1960evolution}
+\begin{barticle}[author]
+\bauthor{\bsnm{Erdos},~\bfnm{Paul}\binits{P.}} \AND
+  \bauthor{\bsnm{R{\'e}nyi},~\bfnm{Alfr{\'e}d}\binits{A.}}
+(\byear{1960}).
+\btitle{On the evolution of random graphs}.
+\bjournal{Publ. Math. Inst. Hung. Acad. Sci}
+\bvolume{5}
+\bpages{17--60}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Fellegi and Sunter}{1969}]{fellegi_1969}
+\begin{barticle}[author]
+\bauthor{\bsnm{Fellegi},~\bfnm{I.}\binits{I.}} \AND
+  \bauthor{\bsnm{Sunter},~\bfnm{A.}\binits{A.}}
+(\byear{1969}).
+\btitle{A Theory for Record Linkage}.
+\bjournal{Journal of the American Statistical Association}
+\bvolume{64}
+\bpages{1183--1210}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Frank}{1978}]{1978paper}
+\begin{barticle}[author]
+\bauthor{\bsnm{Frank},~\bfnm{Ove}\binits{O.}}
+(\byear{1978}).
+\btitle{Estimation of the Number of Connected Components in a Graph by Using a
+  Sampled Subgraph}.
+\bjournal{Scandinavian Journal of Statistics}
+\bvolume{5}
+\bpages{177-188}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Gionis et~al.}{}]{gionis_1999}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Gionis},~\bfnm{Aristides}\binits{A.}},
+  \bauthor{\bsnm{Indyk},~\bfnm{Piotr}\binits{P.}},
+  \bauthor{\bsnm{Motwani},~\bfnm{Rajeev}\binits{R.}} \betal{et~al.}
+\btitle{Similarity search in high dimensions via hashing}.
+In \bbooktitle{{Very Large Data Bases (VLDB)}, volume={99}, pages={518--529},
+  year={1999}}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Grillo}{2016}]{hrdag-2017}
+\begin{barticle}[author]
+\bauthor{\bsnm{Grillo},~\bfnm{Christine}\binits{C.}}
+(\byear{2016}).
+\btitle{Judges in {H}abre {T}rial {C}ite {H}{R}{D}{A}{G} {A}nalysis}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Gutman, Afendulis and
+  Zaslavsky}{2013}]{gutman_2013}
+\begin{barticle}[author]
+\bauthor{\bsnm{Gutman},~\bfnm{Roee}\binits{R.}},
+  \bauthor{\bsnm{Afendulis},~\bfnm{Christopher~C}\binits{C.~C.}} \AND
+  \bauthor{\bsnm{Zaslavsky},~\bfnm{Alan~M}\binits{A.~M.}}
+(\byear{2013}).
+\btitle{A Bayesian procedure for file linking to analyze end-of-life medical
+  costs}.
+\bjournal{Journal of the American Statistical Association}
+\bvolume{108}
+\bpages{34--47}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Indyk and Motwani}{1998}]{Proc:Indyk_STOC98}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Indyk},~\bfnm{Piotr}\binits{P.}} \AND
+  \bauthor{\bsnm{Motwani},~\bfnm{Rajeev}\binits{R.}}
+(\byear{1998}).
+\btitle{Approximate Nearest Neighbors: Towards Removing the Curse of
+  Dimensionality}.
+In \bbooktitle{STOC}
+\bpages{604-613}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Li, Shrivastava and Konig}{2012}]{li2012gpu}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Li},~\bfnm{Ping}\binits{P.}},
+  \bauthor{\bsnm{Shrivastava},~\bfnm{Anshumali}\binits{A.}} \AND
+  \bauthor{\bsnm{Konig},~\bfnm{Christian~A}\binits{C.~A.}}
+(\byear{2012}).
+\btitle{Gpu-based minwise hashing: Gpu-based minwise hashing}.
+In \bbooktitle{Proceedings of the 21st International Conference on World Wide
+  Web}
+\bpages{565--566}.
+\bpublisher{ACM}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Liseo and Tancredi}{2013}]{liseo2013some}
+\begin{barticle}[author]
+\bauthor{\bsnm{Liseo},~\bfnm{Brunero}\binits{B.}} \AND
+  \bauthor{\bsnm{Tancredi},~\bfnm{Andrea}\binits{A.}}
+(\byear{2013}).
+\btitle{Some advances on Bayesian record linkage and inference for linked
+  data}.
+\bjournal{URL http://www. ine. es/e/essnetdi\_ws2011/ppts/Liseo\_Tancredi.
+  pdf}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Luo and Shrivastava}{2017}]{luo2017Arrays}
+\begin{barticle}[author]
+\bauthor{\bsnm{Luo},~\bfnm{Chen}\binits{C.}} \AND
+  \bauthor{\bsnm{Shrivastava},~\bfnm{Anshumali}\binits{A.}}
+(\byear{2017}).
+\btitle{Arrays of (locality-sensitive) Count Estimators {(ACE):} High-Speed
+  Anomaly Detection via Cache Lookups}.
+\bjournal{CoRR}
+\bvolume{abs/1706.06664}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{McCallum and
+  Wellner}{2004}]{McCallumWellner04}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{McCallum},~\bfnm{Andrew}\binits{A.}} \AND
+  \bauthor{\bsnm{Wellner},~\bfnm{Ben}\binits{B.}}
+(\byear{2004}).
+\btitle{{Conditional Models of Identity Uncertainty with Application to Noun
+  Coreference}}.
+In \bbooktitle{Advances in Neural Information Processing Systems (NIPS '04)}
+\bpages{905--912}.
+\bpublisher{MIT Press}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Price and Ball}{2015a}]{IOAS2015}
+\begin{barticle}[author]
+\bauthor{\bsnm{Price},~\bfnm{Megan}\binits{M.}} \AND
+  \bauthor{\bsnm{Ball},~\bfnm{Patrick}\binits{P.}}
+(\byear{2015}a).
+\btitle{Selection bias and the statistical patterns of mortality in conflict}.
+\bjournal{Statistical Journal of the IAOS}
+\bvolume{31}
+\bpages{263--272}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Price and Ball}{2015b}]{CJLS2015}
+\begin{barticle}[author]
+\bauthor{\bsnm{Price},~\bfnm{Megan}\binits{M.}} \AND
+  \bauthor{\bsnm{Ball},~\bfnm{Patrick}\binits{P.}}
+(\byear{2015}b).
+\btitle{The Limits of Observation for Understanding Mass Violence}.
+\bjournal{Canadian Journal of Law and Society/Revue Canadienne Droit et
+  Soci{\'e}t{\'e}}
+\bvolume{30}
+\bpages{237--257}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Price, Gohdes and Ball}{2015}]{Sig2015}
+\begin{barticle}[author]
+\bauthor{\bsnm{Price},~\bfnm{Megan}\binits{M.}},
+  \bauthor{\bsnm{Gohdes},~\bfnm{Anita}\binits{A.}} \AND
+  \bauthor{\bsnm{Ball},~\bfnm{Patrick}\binits{P.}}
+(\byear{2015}).
+\btitle{Documents of war: Understanding the Syrian conflict}.
+\bjournal{Significance}
+\bvolume{12}
+\bpages{14--19}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Price et~al.}{2013}]{price_2013}
+\begin{barticle}[author]
+\bauthor{\bsnm{Price},~\bfnm{Megan}\binits{M.}},
+  \bauthor{\bsnm{Klingner},~\bfnm{Jeff}\binits{J.}},
+  \bauthor{\bsnm{Qtiesh},~\bfnm{Anas}\binits{A.}} \AND
+  \bauthor{\bsnm{Ball},~\bfnm{Patrick}\binits{P.}}
+(\byear{2013}).
+\btitle{Updated statistical analysis of documentation of killings in the Syrian
+  Arab Republic}.
+\bjournal{United Nations Office of the UN High Commissioner for Human Rights}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Price et~al.}{2014}]{price2014updated}
+\begin{barticle}[author]
+\bauthor{\bsnm{Price},~\bfnm{Megan}\binits{M.}},
+  \bauthor{\bsnm{Klingner},~\bfnm{Jeff}\binits{J.}},
+  \bauthor{\bsnm{Qtiesh},~\bfnm{Anas}\binits{A.}} \AND
+  \bauthor{\bsnm{Ball},~\bfnm{Patrick}\binits{P.}}
+(\byear{2014}).
+\btitle{Updated statistical analysis of documentation of killings in the
+  {S}yrian {A}rab {R}epublic}.
+\bjournal{United Nations Office of the UN High Commissioner for Human Rights}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Provan and Ball}{1983}]{doi:10.1137/0212053}
+\begin{barticle}[author]
+\bauthor{\bsnm{Provan},~\bfnm{J.~Scott}\binits{J.~S.}} \AND
+  \bauthor{\bsnm{Ball},~\bfnm{Michael~O.}\binits{M.~O.}}
+(\byear{1983}).
+\btitle{The Complexity of Counting Cuts and of Computing the Probability that a
+  Graph is Connected}.
+\bjournal{SIAM Journal on Computing}
+\bvolume{12}
+\bpages{777-788}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Rajaraman and Ullman}{2012}]{rajaraman_2012}
+\begin{bbook}[author]
+\bauthor{\bsnm{Rajaraman},~\bfnm{Anand}\binits{A.}} \AND
+  \bauthor{\bsnm{Ullman},~\bfnm{Jeffrey~David}\binits{J.~D.}}
+(\byear{2012}).
+\btitle{Mining of massive datasets}.
+\bpublisher{Cambridge University Press}.
+\end{bbook}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Sadinle et~al.}{2014}]{sadinle_2014}
+\begin{barticle}[author]
+\bauthor{\bsnm{Sadinle},~\bfnm{Mauricio}\binits{M.}} \betal{et~al.}
+(\byear{2014}).
+\btitle{Detecting duplicates in a homicide registry using a Bayesian
+  partitioning approach}.
+\bjournal{The Annals of Applied Statistics}
+\bvolume{8}
+\bpages{2404--2434}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Shrivastava}{2017}]{shrivastava2017optimal}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Shrivastava},~\bfnm{Anshumali}\binits{A.}}
+(\byear{2017}).
+\btitle{Optimal Densification for Fast and Accurate Minwise Hashing}.
+In \bbooktitle{Proceedings of the Internation Conference on Machine Learning
+  (ICML)}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Shrivastava and
+  Li}{2014a}]{shrivastava2014defense}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Shrivastava},~\bfnm{Anshumali}\binits{A.}} \AND
+  \bauthor{\bsnm{Li},~\bfnm{Ping}\binits{P.}}
+(\byear{2014}a).
+\btitle{In Defense of Minhash over Simhash}.
+In \bbooktitle{Proceedings of the Seventeenth International Conference on
+  Artificial Intelligence and Statistics}
+\bpages{886--894}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Shrivastava and
+  Li}{2014b}]{shrivastava2014densifying}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Shrivastava},~\bfnm{Anshumali}\binits{A.}} \AND
+  \bauthor{\bsnm{Li},~\bfnm{Ping}\binits{P.}}
+(\byear{2014}b).
+\btitle{Densifying one permutation hashing via rotation for fast near neighbor
+  search}.
+In \bbooktitle{Proceedings of The 31st International Conference on Machine
+  Learning}
+\bpages{557--565}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Shrivastava and
+  Li}{2014c}]{shrivastava2014improved}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Shrivastava},~\bfnm{Anshumali}\binits{A.}} \AND
+  \bauthor{\bsnm{Li},~\bfnm{Ping}\binits{P.}}
+(\byear{2014}c).
+\btitle{Improved densification of one permutation hashing}.
+In \bbooktitle{Proceedings of the Thirtieth Conference on Uncertainty in
+  Artificial Intelligence}
+\bpages{732--741}.
+\bpublisher{AUAI Press}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Spring and
+  Shrivastava}{2017a}]{spring2017scalable}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Spring},~\bfnm{Ryan}\binits{R.}} \AND
+  \bauthor{\bsnm{Shrivastava},~\bfnm{Anshumali}\binits{A.}}
+(\byear{2017}a).
+\btitle{Scalable and sustainable deep learning via randomized hashing}.
+In \bbooktitle{Proceedings of the 23rd ACM SIGKDD International Conference on
+  Knowledge Discovery and Data Mining}
+\bpages{445--454}.
+\bpublisher{ACM}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Spring and Shrivastava}{2017b}]{spring2017new}
+\begin{barticle}[author]
+\bauthor{\bsnm{Spring},~\bfnm{Ryan}\binits{R.}} \AND
+  \bauthor{\bsnm{Shrivastava},~\bfnm{Anshumali}\binits{A.}}
+(\byear{2017}b).
+\btitle{A New Unbiased and Efficient Class of LSH-Based Samplers and Estimators
+  for Partition Function Computation in Log-Linear Models}.
+\bjournal{arXiv preprint arXiv:1703.05160}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Steorts, Hall and
+  Fienberg}{2016}]{steorts??bayesian}
+\begin{barticle}[author]
+\bauthor{\bsnm{Steorts},~\bfnm{R.~C.}\binits{R.~C.}},
+  \bauthor{\bsnm{Hall},~\bfnm{R.}\binits{R.}} \AND
+  \bauthor{\bsnm{Fienberg},~\bfnm{S.~E.}\binits{S.~E.}}
+(\byear{2016}).
+\btitle{A {B}ayesian Approach to Graphical record Linkage and De-duplication}.
+\bjournal{Journal of the American Statistical Society}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Steorts et~al.}{2014}]{steorts14comparison}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Steorts},~\bfnm{R.~C.}\binits{R.~C.}},
+  \bauthor{\bsnm{Ventura},~\bfnm{S.~L.}\binits{S.~L.}},
+  \bauthor{\bsnm{Sadinle},~\bfnm{M.}\binits{M.}} \AND
+  \bauthor{\bsnm{Fienberg},~\bfnm{S.~E.}\binits{S.~E.}}
+(\byear{2014}).
+\btitle{A Comparison of Blocking Methods for Record Linkage}.
+In \bbooktitle{International Conference on Privacy in Statistical Databases}
+\bpages{253--268}.
+\end{binproceedings}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Tancredi and Liseo}{2011}]{liseo_2011}
+\begin{barticle}[author]
+\bauthor{\bsnm{Tancredi},~\bfnm{A.}\binits{A.}} \AND
+  \bauthor{\bsnm{Liseo},~\bfnm{B.}\binits{B.}}
+(\byear{2011}).
+\btitle{A hierarchical {B}ayesian approach to record linkage and population
+  size problems}.
+\bjournal{Annals of Applied Statistics}
+\bvolume{5}
+\bpages{1553--1585}.
+\end{barticle}
+\endbibitem
+
+\bibitem[\protect\citeauthoryear{Winkler}{2006}]{winkler_2006}
+\begin{binproceedings}[author]
+\bauthor{\bsnm{Winkler},~\bfnm{William~E}\binits{W.~E.}}
+(\byear{2006}).
+\btitle{Overview of record linkage and current research directions}.
+In \bbooktitle{Bureau of the Census}.
+\bpublisher{Citeseer}.
+\end{binproceedings}
+\endbibitem
+
+\end{thebibliography}

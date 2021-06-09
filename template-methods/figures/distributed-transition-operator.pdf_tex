@@ -1,0 +1,77 @@
+%% Creator: Inkscape 1.0beta2 (unknown), www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'distributed-transition-operator.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \newcommand*\fsize{\dimexpr\f@size pt\relax}%
+  \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{506.29501343bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.3950266)%
+    \lineheight{1}%
+    \setlength\tabcolsep{0pt}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{distributed-transition-operator.pdf}}%
+    \put(0.11908417,0.37685574){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{0.01}\smash{\begin{tabular}[t]{c}{\bfseries\sffamily Step 1}\end{tabular}}}}%
+    \put(0.37309124,0.37685574){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{0.01}\smash{\begin{tabular}[t]{c}{\bfseries\sffamily Step 2}\end{tabular}}}}%
+    \put(0.62740941,0.37685583){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{0.01}\smash{\begin{tabular}[t]{c}{\bfseries\sffamily Step 3}\end{tabular}}}}%
+    \put(0.88142128,0.37685566){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{0.01}\smash{\begin{tabular}[t]{c}{\bfseries\sffamily Step 4}\end{tabular}}}}%
+    \put(0.01217768,0.08765172){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{0.21257369\unitlength}\centering \scriptsize\sffamily Update $\vec{\Theta}$ on the manager and broadcast to the workers.\end{minipage}}}%
+    \put(0.27104355,0.00259573){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{0.22220246\unitlength}\centering \end{minipage}}}%
+    \put(0.52509504,0.00259573){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{0.22220246\unitlength}\centering \end{minipage}}}%
+    \put(0.78406243,-0.05126996){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{0.22220246\unitlength}\centering \end{minipage}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{distributed-transition-operator.pdf}}%
+    \put(0.04878502,0.22610396){\color[rgb]{1,0,0}\makebox(0,0)[t]{\lineheight{0.01}\smash{\begin{tabular}[t]{c}\large $\vec{\Theta}$\end{tabular}}}}%
+    \put(0.26650572,0.08765172){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{0.21257369\unitlength}\centering \scriptsize\sffamily Update $\vec{\Lambda}$ on the workers. Records may only link to entities within their assigned blocks.\end{minipage}}}%
+    \put(0.52083372,0.08765183){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{0.21257369\unitlength}\centering \scriptsize\sffamily Update $\vec{Y}$ and $\vec{\Gamma}$ on the workers. Then move the entities and records to their newly-assigned blocks.\end{minipage}}}%
+    \put(0.77516168,0.08765172){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{0.21257369\unitlength}\centering \scriptsize\sffamily Update $\vec{Z}$, then calculate summary stats on the workers. Broadcast to the manager.\end{minipage}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=3]{distributed-transition-operator.pdf}}%
+    \put(0.92081041,0.30496176){\color[rgb]{1,0,0}\makebox(0,0)[lt]{\lineheight{0.01}\smash{\begin{tabular}[t]{l}\small\sffamily stats\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=4]{distributed-transition-operator.pdf}}%
+    \put(0.9208104,0.15260272){\color[rgb]{1,0,0}\makebox(0,0)[lt]{\lineheight{0.01}\smash{\begin{tabular}[t]{l}\small\sffamily stats\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=5]{distributed-transition-operator.pdf}}%
+    \put(0.95158734,0.22610379){\color[rgb]{0,0,0}\makebox(0,0)[t]{\lineheight{0.01}\smash{\begin{tabular}[t]{c}\large $\vec{\Theta}$\end{tabular}}}}%
+  \end{picture}%
+\endgroup%
