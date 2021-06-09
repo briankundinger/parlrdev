@@ -122,12 +122,11 @@ df %>%
   geom_histogram() + 
   geom_hline(yintercept = bayes_df$bayes,
              color = brewer.pal(n = 3, name = "Set1")[1:2]) + 
-  geom_hline(yintercept = nA + nB - bayes[1],
-             color = brewer.pal(n = 3, name = "Set1")[2],
-             linetype = "longdash") +
-  labs(y = "DID",
+  # geom_hline(yintercept = nA + nB - bayes[1],
+  #            color = brewer.pal(n = 3, name = "Set1")[2],
+  #            linetype = "longdash") +
+  labs(y = "Documented Identifiable Deaths",
        x = NULL,
-       title = "Posterior Distribution of DID",
        fill = "Method") +
   coord_flip() + 
   theme_bw() + 
