@@ -1,0 +1,13 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Related work}{}% 2
+\BOOKMARK [1][-]{section.7}{A scalable model for Bayesian Record Linkage}{}% 3
+\BOOKMARK [2][-]{subsection.8}{Model Specification}{section.7}% 4
+\BOOKMARK [2][-]{subsection.9}{Posterior Sampling}{section.7}% 5
+\BOOKMARK [2][-]{subsection.10}{Bayes Estimate}{section.7}% 6
+\BOOKMARK [1][-]{section.11}{Efficient and Scalable Implementation}{}% 7
+\BOOKMARK [2][-]{subsection.12}{Data Representation, Hashing, and Storage}{section.11}% 8
+\BOOKMARK [1][-]{section.13}{Efficient Posterior Inference}{}% 9
+\BOOKMARK [1][-]{section.14}{Simulation Studies}{}% 10
+\BOOKMARK [1][-]{section.21}{Case Studies}{}% 11
+\BOOKMARK [2][-]{subsection.25}{Violations of One-to-One Matching}{section.21}% 12
+\BOOKMARK [1][-]{section.33}{Discussion}{}% 13

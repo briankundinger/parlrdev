@@ -1,0 +1,199 @@
+---
+title: "nltcs_linkage"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{nltcs_linkage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+#devtools::install()
+devtools::load_all()
+library(parlrdev)
+library(tidyverse)
+library(BRL)
+library(furrr)
+```
+
+```{r}
+nltcs <- read.csv("../data/proc_nltcs.csv")
+df82 <- nltcs %>% 
+  filter(FILE == 82)
+df89 <- nltcs %>% 
+  filter(FILE == 89)
+
+
+# All to all comparisons
+# cd <- compareRecords(df82, df89,
+#                      flds = c(2, 3, 4, 5, 6, 7),
+#                      types = c("bi", "bi", "bi", "bi", "bi", "bi"))
+
+```
+
+
+```{r}
+chunks <- 30
+chunk_size <- ceiling(dim(df89)[1]/chunks)
+chunk_id <- rep(1:chunks, each = chunk_size)[1:dim(df89)[1]]
+fields <- c(2, 3, 4, 5, 6, 7)
+df89_partition <- split(df89, chunk_id)
+
+#df2 <- df89_partition[[1]]
+
+HashRecords <- function(df2){
+  cd <- CompareBinary(df82, df2, fields)
+  patterns <- GetUniquePatterns3(cd, R = 5)
+  patterns
+}
+#plan(multisession, workers = 6)
+
+
+#df89_partition <- list(df89_partition[[1]], df89_partition[[2]])
+# patterns_hashed <- future_map(df89_partition, HashRecords,
+#                     .options = furrr_options(packages = "tidyverse"))
+patterns_hashed <- lapply(df89_partition, HashRecords)
+#plan(sequential)
+```
+
+```{r combine-results}
+counts_big <- Reduce(`+`, map(patterns_hashed, ~.x[[2]]))
+
+counts_per_rec_big <- patterns_hashed %>%
+    map(`[[`, 3) %>%
+    flatten()
+
+  hash_list_big <- patterns_hashed %>%
+    map(`[[`, 4) %>%
+    flatten()
+
+
+  #n2 <- max(do.call(max, n2_list))
+
+  # Ztrue <- patterns_big %>%
+  #   map(`[[`, 5) %>%
+  #   do.call(c, .)
+
+  #possible_patterns <- GetPossiblePatternsSad_sep(levels)
+
+  comparisons <- list(indicators = NULL,
+                      n1 = dim(df82)[1],
+                      n2 = dim(df89)[1],
+                      nDisagLevs = rep(2, 6),
+                      Ztrue = NULL)
+
+  patterns <- list(patterns_hashed[[1]][[1]],
+       counts_big,
+       counts_per_rec_big,
+       hash_list_big)
+
+  cd <- list(comparisons, patterns)
+  
+```
+
+```{r load_hash}
+#saveRDS(cd, file = "../data/ntlcs_hash.rds")
+cd <- readRDS(file = "../data/ntlcs_hash.rds")
+```
+
+
+```{r Gibbs}
+chain <- BKSimple_hash2_big(cd)
+Zchain <- chain$Z
+nA <- cd[[1]][[2]]
+nB <- cd[[1]][[3]]
+Zhat <- LinkRecordsBK(Zchain, nA, 1, 1, 2, Inf)
+Zhat_resolved <- ResolveConflicts(Zhat)
+Zhat <- Zhat[[1]]
+overlap_samps <- apply(Zchain, 2, function(x){
+  sum(x < nA + 1)
+})
+
+#hist(overlap_samps)
+# hist(Zhat[[2]][Zhat[[1]] < nA + 1])
+```
+
+```{r}
+B_matches <- which(Zhat_resolved < nA + 1)
+A_matches <- Zhat[which(Zhat_resolved < nA + 1)]
+
+B_records <- df89[B_matches, ]
+A_records <- df82[A_matches, ]
+```
+
+```{r}
+
+differences <- sapply(fields, function(x){
+  sum(A_files[, x] != B_files[, x])
+})
+names(differences) <- names(df82)[fields]
+differences
+
+```
+
+
+```{r}
+bayes_initial <- sum(Zhat < nA + 1)
+bayes_resolved <- sum(Zhat_resolved < nA + 1)
+overlap_samps <- data.frame(overlap_samps)
+
+#not a good image
+overlap_samps %>% 
+  ggplot(aes(x = overlap_samps)) +
+  geom_histogram() + 
+  geom_vline(xintercept = bayes_initial) + 
+  geom_vline(xintercept = bayes_resolved,
+             linetype = "longdash") +
+  theme_bw()
+```
+
+```{r m_and_u}
+var_names <- colnames(nltcs)[fields]
+levels <- cd[[1]][[4]]
+ProcessChain <- function(samps){
+  avg <- apply(samps, 1, mean)
+  upper <- apply(samps, 1, function(x){
+    quantile(x, .975)
+  })
+  lower <- apply(samps, 1, function(x){
+    quantile(x, .025)
+  })
+  params <- factor(unlist(sapply(levels, seq_len)))
+  field <- factor(unlist(mapply(function(x, y) {
+    rep(x, y)
+  }, x = var_names, y = levels)), levels = var_names)
+  
+  data.frame(params, field, avg, upper, lower)
+}
+m_summary <- ProcessChain(chain$m)
+u_summary <- ProcessChain(chain$u)
+
+m_summary %>% 
+  ggplot(aes(x = params, y = avg,
+             ymin = lower, ymax = upper)) +
+  geom_pointrange(position = position_dodge2(width = .5)) +
+  facet_wrap(~field, scales = "free_x") + 
+  labs(y = "Probability",
+       x = "Agreement Level") + 
+  theme_bw()
+
+u_summary %>% 
+  ggplot(aes(x = params, y = avg,
+             ymin = lower, ymax = upper)) +
+  geom_pointrange(position = position_dodge2(width = .5)) +
+  facet_wrap(~field, scales = "free_x") + 
+  labs(y = "Probability",
+       x = "Agreement Level") + 
+  theme_bw()
+
+#ggsave("../notes/figures/el_salvador/m_posterior_smallP.png")
+
+```
+

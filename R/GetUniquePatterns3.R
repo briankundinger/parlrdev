@@ -1,43 +1,47 @@
 GetUniquePatterns3 <- function(cd, fast = F, R = NULL){
 
-  gamma <- cd[[1]]
-  N <- dim(gamma)[1]
-  fields <- dim(gamma)[2]
+  indicators <- apply(cd[[1]], 2, as.numeric)
+  N <- dim(indicators)[1]
+  fields <- dim(indicators)[2]
   n1 <- cd[[2]]
   n2 <- cd[[3]]
-  levels <- cd[[4]]
-  possible_patterns <- GetPossiblePatterns(levels)
 
   ids <- expand.grid(1:n1, 1:n2)
   rec1 <- ids[,1]
   rec2 <- ids[,2]
+  levels <- cd[[4]]
+  possible_patterns <- GetPossiblePatternsSad(levels)
+  P <- length(possible_patterns)
 
-  df <- data.frame(gamma, rec1, rec2)
+  df <- data.frame(indicators, rec1, rec2)
 
+  #this step is slow. maybe use data.table?
   pattern_df <- df %>%
-    unite(pattern, 1:fields, sep = "")
+    tidyr::unite(pattern, 1:fields, sep = "")
+
+  thing <- unique(pattern_df$pattern)
 
 
 
+  # hash_id <- vector(length = N)
+  # for(i in seq_along(possible_patterns)){
+  #   hash_id[pattern_df$pattern == possible_patterns[i]] <- i
+  # }
+  # hash_id <- factor(hash_id)
 
-  # unique_hash <- unique(pattern_df$pattern)
-   P <- length(possible_patterns)
-
-  hash_id <- vector(length = n1 * n2)
-  for(i in 1:P){
-    hash_id[pattern_df$pattern == possible_patterns[i]] <- i
-  }
-
-  hash_id <- factor(hash_id)
+  hash_id <- factor(pattern_df$pattern,
+                   levels = possible_patterns,
+                   labels = 1:P)
 
 
-  temp <- data.frame(gamma, rec1, rec2, hash_id)
+  #used to have indicators here too)
+  temp <- data.frame(rec1, rec2, hash_id)
   pattern_counts <- temp %>%
-    group_by(hash_id) %>%
+    group_by(hash_id, .drop = F) %>%
     count() %>%
     pull()
 
-  #unique_patterns <- gamma[!duplicated(hash_id),]
+  #unique_patterns <- indicators[!duplicated(hash_id),]
 
   counts_by_rec <- temp %>%
     group_by(rec2, hash_id, .drop = F) %>%
@@ -60,11 +64,15 @@ GetUniquePatterns3 <- function(cd, fast = F, R = NULL){
     })
   }
 
+  possible_patterns_sep <- GetPossiblePatternsSad_sep(levels)
+
 
   patterns <- list(#hash_id,
-    possible_patterns,
+    possible_patterns_sep,
     pattern_counts,
     counts_by_rec,
     hash_to_rec1)
+
+  patterns
 
 }
