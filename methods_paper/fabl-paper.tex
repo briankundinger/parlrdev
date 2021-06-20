@@ -57,12 +57,11 @@
 \sectionfont{\large\nohang\centering\MakeUppercase}
 
 \title{Efficient and Scalable Entity Resolution with Fast Beta Linkage  (fabl)}
-\author{Brian Kundinger\textsuperscript{a} \and
-  Jerome Reiter\textsuperscript{a} \and 
-  Rebecca C.~Steorts\textsuperscript{b}}
+\author{Brian Kundinger \and
+  Jerome Reiter \and 
+  Rebecca C.~Steorts}
 \date{
-  \textsuperscript{a}Department of Statistical Science, Duke University\\
-  \textsuperscript{b}Department of Statistical Science and Computer Science, Duke University\\Principal Mathematical Statistician, United States Census Bureau\\
+  Department of Statistical Science, Duke University\\
   \today}
 
 \begin{document}
@@ -91,8 +90,8 @@ information, but becomes difficult when data sources are plagued with
 error. This motivates the use of probabilistic record linkage techniques that are able to model the reliability of the information and which are more robust to errors than are deterministic methods. Unfortunately, probabilistic record linkage is computationally intense, and many entity resolution tasks are large in nature,
 motivating the search for scalable and efficient record linkage techniques. 
 
-In this paper, we propose an extention to the \emph{Beta Record Linkage}
-(\texttt{BRL}) method proposed proposed by \citep{sadinle2017} for this very end.  We increase the speed of the \texttt{BRL} procedure through the modification to the model specification that allows for parallel computing of the linkage parameter, and use hashing techniques to hasten calculations and reduce computational complexity. Additionally, we introduce storage efficient indexing (SEI), and a data partitioning approach to make the method amenable to large linkage tasks. To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{Fast Beta Linkage} (\texttt{fabl},
+In this paper, we propose an extension to the \emph{Beta Record Linkage}
+(\texttt{BRL}) method proposed by \citep{sadinle2017} for this very end.  We increase the speed of the \texttt{BRL} procedure through the modification to the model specification that allows for parallel computing of the linkage parameter, and use hashing techniques to hasten calculations and reduce computational complexity. Additionally, we introduce storage efficient indexing (SEI), and a data partitioning approach to make the method amenable to large linkage tasks. To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{Fast Beta Linkage} (\texttt{fabl},
 pronounced ``fable'')
 
 In what follows, Section 2 describes previous work in record linkage that lays the foundation for our method, Section
@@ -109,8 +108,7 @@ questions in the record linkage literature and motivates future work.
 \label{sec:related}
 
 \paragraph{Fellegi and Sunter Method}
-Most record linkage techniques are derived from the seminal 1969 paper
-by Fellegi and Sunter: ``A Theory for Record Linkage''. The defining
+Most record linkage techniques are derived from the seminal \citep{fs} paper "A Theory for Record Linkage". The defining
 characteristic of their approach was to transform the sets of records,
 which often contain text data that is difficult to model, into sets of
 comparison vectors governed by parameters that can be more easily
@@ -130,7 +128,7 @@ is common to use use binary 1-2 variables to indicate exact matching,
 and 1-2-3 variables to provide an option for partial matching. For text
 data, we calculate similarity based on Levenstein distance or some other
 text similarity score, and bin these scores to integers for use in the
-model. Jaro (1989) provided guidelines for appropriate binning for the
+model. \citep{jaro1989} provided guidelines for appropriate binning for the
 comparison vectors, but details of implementation are generally context
 specific.
 
@@ -138,7 +136,7 @@ The likelihood in the original Fellegi Sunter model is a mixture model
 through which each record pair is independently classified as a match or
 nonmatch. This independent classification often leads to sets of matches
 that break expectations of transitivity, which is undesirable. Although
-Jaro devised an procedure to reduce a set of conflicting matches to the
+\citep{jaro1995} devised an procedure to reduce a set of conflicting matches to the
 mostly likely set of one-to-one matchings, the abundance of false
 matches can bias the estimation of other parameters of the model.
 
@@ -148,11 +146,9 @@ accounting for these dependencies throughout the linkage process is
 computationally burdensome, leaving \texttt{BRL} only suitable for small
 to moderate linkage problems.
 
-\paragraph{Deterministic Blocking}
-
-\paragraph{Other Approach (Will probably remove)}Outside of the Fellegi-Sunter framework, some researchers have developed
+\paragraph{Other Approaches (Will probably remove)}Outside of the Fellegi-Sunter framework, some researchers have developed
 methods that model the data directly, not a derived set of comparison
-vectors. As an early example, Steorts et al 2016 produced
+vectors. As an early example,  produced
 \texttt{blink}, which had the advantage of a computational complexity
 that grew linearly with the data (as opposed to quadratically within
 Fellegi Sunter), but was plagued with slow mixing times and was unable
@@ -245,15 +241,14 @@ sampler that strictly enforces one-to-one matching. In particular, this
 sampler removes previously matches records from the set of candidate
 records when sampling \(Z_j\), creating a dependency that makes the
 sampler \emph{inherently serial}. We however use independent priors for
-each \(Z_j\), creating a sampler that is \emph{perfectly
-	parallelizable}, allowing for significant computational gains. More
+each \(Z_j\), creating a sampler that is \emph{perfectly parallelizable}, allowing for significant computational gains. More
 importantly, since only the agreement pattern of \(Z_j\) is used for
 calculations within the Gibbs sampler, and not the particular record
 label, we can conduct this sampling only at the level of the unique
 agreement patterns, offering even more computational savings. In doing
 so however, we thereby weaken the one-to-one requirement from
 \texttt{BRL}; our sampler does ensure that each record in \(B\) can be
-matched to at most one record in \(A\), but allows for the possiblity
+matched to at most one record in \(A\), but allows for the possibility
 that multiple records in \(B\) match to the same record in \(A\). We
 explore the ramifications of this distinction with the El Salvador case
 study.
@@ -328,7 +323,7 @@ With the likelihood in this form, we can derive the full conditional
 	1-\lambda &  z_j  = n_A + 1 \\
 \end{cases}\]
 
-In order to make fair comparisons against the Sadinle 2017 model, we
+In order to make fair comparisons against the \citep{sadinle2017} model, we
 integrate over the posterior of \(\lambda\) and rearrange terms to
 produce the final full conditional:
 
@@ -374,7 +369,7 @@ inducing the intuitive decision rule
 \end{cases}\]
 
 For a more indepth explanation of this function and the induced Bayes
-estimate, see Sadinle 2017.
+estimate, see \citep{sadinle2017}.
 
 Since our Gibbs procedure does not strictly enforce one-to-one matching,
 it is possible for the final Bayes estimate to link multiple records in
@@ -399,7 +394,7 @@ processing the data, we identify all \(P\) patterns in \(\mathcal{H}\)
 and enumerate them \(h_1, \ldots, h_P\). When the \((i,j)\) pair
 exhibits the \(p^{th}\) agreement pattern, we say \((i,j) \in h_p\).
 Wherever possible, we conduct calculations over these \(P\) agreement
-patterns rather than the \(n_A \times n_B\) record pairs.
+patterns rather than the \(n_A \times n_B\) record pairs. Some of these techniques were used by \citep{enamorado2019} to produce \texttt{fastlink} a fast a scalable implementation of the Fellegi-Sunter model, and others have been created here for our particular context. 
 
 \hypertarget{data-representation-hashing-and-storage}{%
 	\subsection{Data Representation, Hashing, and
@@ -414,7 +409,7 @@ computations, we instead represent the comparison as a concatenation of
 under the classical framework becomes
 \(\gamma_{ij} = (0, 1, 1, 0, 0, 0, 1)\) under our framework. This is a
 bijective transformation that does not change the meaning of the data,
-but this representation will ease calculations and posterior updates.
+but this representation will ease calculations and posterior updates. This is also the form the data takes in the \texttt{BRL} package in \texttt{R}. 
 
 In the classic Fellegi Sunter framework, \(\Gamma\) is a
 \(n_A n_B \times F\) matrix, with each row providing the comparison
@@ -466,7 +461,7 @@ statistics \(H_p\), and \(H_{p_j}\). Rather than storing
 \(n_A \times n_B\) record labels, SEI allows us to store at most
 \(n_B \times P \times R\) labels, regardless of how large \(n_A\) is.
 
-Laslty, for large data, we can partition the two datasets \(A\) and
+Lastly, for large data, we can partition the two datasets \(A\) and
 \(B\) into smaller blocks \(\{A_m\}\) and \(\{B_m\}\) for more
 manageable computations. On a single machine, we can read-in data
 sequentially, conduct hashing, compress information through SEI, and
@@ -531,7 +526,7 @@ themselves. Thus we complete the entire Gibbs procedure first at the
 level of the \(P\) agreement patterns with the first equation above.
 After, we can back-fill the records corresponding to the agreement
 patterns through the second equation. Sampling uniformly is
-computational simple even for large sets of candidate records, but this
+computationally simple even for large sets of candidate records, but this
 step can also be parallelized when working with large data.
 
 \section{Simulation Studies}
@@ -558,15 +553,20 @@ although using only recall and precision is common in the literature, we
 find it useful to have a single metric to gauge overall performance, and
 thus also include F measure.
 
-\[\text{Recall} = \frac{\text{Matches Correctly Identified}}{\text{True Matches in Data}}\]
-\[\text{Precision} = \frac{\text{Declared Matches}}{\text{True Matches in Data}}\]
-\[\text{F-Measure} = 2\left(\frac{\text{Recall} \times \text{Precision}}{\text{Recall} + \text{Precision}}\right)\]
+\begin{figure}
+	\[\text{Recall} = \frac{\text{Matches Correctly Identified}}{\text{True Matches in Data}}\]
+	\[\text{Precision} = \frac{\text{Declared Matches}}{\text{True Matches in Data}}\]
+	\[\text{F-Measure} = 2\left(\frac{\text{Recall} \times \text{Precision}}{\text{Recall} + \text{Precision}}\right)\]
+	
+	\caption{Definitions of performance metrics}\label{fig:performance_metrics}
+\end{figure}
+
 
 \begin{figure}[ht]
 	
 	{\centering 
 		
-		\includegraphics{../notes/figures/sadinle_sim_plot} 
+		\includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_sim_plot} 
 	}
 	
 	\caption{Posterior means and credible intervals for accuracy metrics under the replication of simulation study from Sadinle 2017. For each level of overlap and each level of error, we have 100 paired sets of 500 records.}\label{fig:sadinle_simulation}
@@ -578,7 +578,7 @@ distributions so that we can easily increase the size of the linkage
 problem. Distributions are meant to emulate the behavior of similarity
 scores across first name, last name, and day, month. For simplicity, we
 consider only exact matching, so a vector (1, 0) corresponds to
-agreeement and (0, 1) to disagreement. We simulate these data for
+agreement and (0, 1) to disagreement. We simulate these data for
 different values of \(n_A\) and \(n_B\), and compare the run-time of
 \texttt{fabl} against \texttt{BRL}. Note that the number of unique
 patterns \(P\) is bounded above by \(2^5 = 32\), a bound which is
@@ -590,7 +590,7 @@ particular, run-time for \texttt{BRL} seems to grow quadratically (or
 linearly with the size of both \(A\) and \(B\)) while run-time for
 \texttt{fabl} seems to grow linearly (in the size of \(B\)).
 
-\begin{table}[ht]
+\begin{table}[t]
 	\centering
 	\begin{tabular}{rrr}
 		\hline
@@ -603,15 +603,17 @@ linearly with the size of both \(A\) and \(B\)) while run-time for
 		year & (0.95, 0.05) & (0.07, 0.93) \\ 
 		\hline
 	\end{tabular}
+\caption{Distributions used for $m$ and $u$ probabilties in simulation studies}\label{fig:distributions}
 \end{table}
+
 
 \begin{figure}[ht]
 	
-	{\centering \includegraphics{../notes/figures/sadinle_speed_plot2} 
+	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_speed_plot2} 
 		
 	}
 	
-	\caption{Runtime for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, for increasing values of both $n_A$ and $n_B$}\label{fig:speed1}
+	\caption{Run-time for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, for increasing values of both $n_A$ and $n_B$}\label{fig:speed1}
 \end{figure}
 
 The above discussion suggests that for fixed \(n_B\), computation time
@@ -624,11 +626,11 @@ hashing step, which again can be run in parallel for large data.
 
 \begin{figure}[t]
 	
-	{\centering \includegraphics{../notes/figures/speed_plot_fixed_nB} 
+	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/speed_plot_fixed_nB} 
 		
 	}
 	
-	\caption{Runtime for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, with increasing $n_A$, and $n_B$ fixed at 500}\label{fig:speed2}
+	\caption{Run-time for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, with increasing $n_A$, and $n_B$ fixed at 500}\label{fig:speed2}
 \end{figure}
 
 We note here that \texttt{BRL} is coded in C, which makes for unfair
@@ -641,14 +643,17 @@ status of the record pairs should lead to even more computational gains.
 \section{Case Studies}
 \label{case-studies}
 
-We now demonstrate the power of our method through two case studies. The first is a study of documented identifiable deaths (DID) from the El Salvadoran Civil War. Though the data files used here are small, this study shows how the computational complexity of \texttt{fabl} depends on the number of unique agreement patterns, and how significant computational gains can be acheived by simplifying the construction of the comparison vectors. Secondly, the case study reveals the impact of independently sampling $Z_j$ rather than strictly enforcing one-to-one matching as done by \texttt{BRL}. The second case study is the National Long Term Care Survey (NLTCS), a much larger linkage tasks which \texttt{BRL} is unable to complete but which we complete with \texttt{fabl} with relative ease. 
+We now demonstrate the power of our method through two case studies. The first is a study of documented identifiable deaths (DID) from the El Salvadoran Civil War. Though the data files used here are small, this study shows how the computational complexity of \texttt{fabl} depends on the number of unique agreement patterns, and how significant computational gains can be achieved by simplifying the construction of the comparison vectors. Secondly, the case study reveals the impact of independently sampling $Z_j$ rather than strictly enforcing one-to-one matching as done by \texttt{BRL}. The second case study is the National Long Term Care Survey (NLTCS), a much larger linkage tasks which \texttt{BRL} is unable to complete but which we complete with \texttt{fabl} with relative ease. 
 
-\paragraph{El Salvadoran Civil War}The country of El Salvador was immersed in civil war from 1980 to 1991,
+\subsection{El Salvadoran Civil War}
+\label{el_salvador}
+
+The country of El Salvador was immersed in civil war from 1980 to 1991,
 and throughout the time, several organizations attempted to document
 casualties of the conflict. When estimating the total number of
-casualities, one cannot simply sum the numbers recorded by each
+casualties, one cannot simply sum the numbers recorded by each
 organization, as it is likely that the same individuals are recorded in
-multiple casuality lists. To obtain a more accurate estimate of the
+multiple casualty lists. To obtain a more accurate estimate of the
 casualties then, we follow Sadinle's 2017 paper and link records of El
 Salvadoran civilian casualties from two sources: El Rescate - Tutela
 Regal (ERTL) and the Salvadoran Human Rights Commission (CDHES, by its
@@ -673,7 +678,7 @@ We only utilized records with nonmissing entries for given and last
 name, results in \(n_A = 4420\) files in CHDES and \(n_B = 1323\) files
 in ERTL. The names were standardized to account for common misspellings
 in the Spanish language, and then compared using a modified Levenstein
-distance to account for the fact that second names are often ommited.
+distance to account for the fact that second names are often omitted.
 Place of birth is recorded by municipality and department within that
 municipality; however, since department was missing in 95\% of records
 in CHDES and 80\% of records in ERTL, we excluded it from our linkage
@@ -683,7 +688,7 @@ priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters.
 
 \begin{figure}[t]
 	
-	{\centering \includegraphics{../notes/figures/el_salvador/m_posterior_smallP} 
+	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_posterior_smallP} 
 		
 	}
 	
@@ -698,7 +703,7 @@ distributions of several levels of the \(\mathbf{m}\) and \(\mathbf{u}\)
 parameters were nearly identical, and that of the
 \(4^5 \times 2 = 2048\) possible agreement patterns, only 1173 are
 realized in the data. This leads us to believe that such high number of
-aggreement levels creates unnecesary distictions in the data and makes
+agreement levels creates unnecessary distinctions in the data and makes
 the comparison vectors less interpretable. Therefore we re-ran our
 analysis with fewer agreement levels for each field (see Figure XX), and
 obtained analogous results. With 216 possible agreement patterns, 159
@@ -706,16 +711,13 @@ were realized in the data, and our proposed method became much faster,
 finishing in 124 seconds. Meanwhile \texttt{BRL} took 239 seconds,
 relatively unchanged from the first implementation. This demonstrates
 the way that the computational complexity of our method depends on the
-number of unique agreement patterns, and how significant computional
+number of unique agreement patterns, and how significant computational
 gains can be made by simplifying the construction of the comparison
 vectors. We also note that estimates of the \(\mathbf{m}\) and
-\(\mathbf{u}\) paramters under each method are very similar, as shown in
+\(\mathbf{u}\) parameters under each method are very similar, as shown in
 Figure~\ref{fig:m-and-u}.
 
-\subsection{Violations of One-to-One Matching}
-\label{violations-of-one-to-one-matching}
-
-Figure~\ref{fig:overlap-plot} shows the posterior distribution for \(D\), the number of
+\paragraph{Violations of One-to-One Matching} Figure~\ref{fig:overlap-plot} shows the posterior distribution for \(D\), the number of
 duplicates found across file for both \texttt{fabl} and \texttt{BRL}. We
 see that \texttt{fabl} consistently overmatches within each Gibbs
 iteration when compared to \texttt{BRL}, which is to be expected because
@@ -727,7 +729,7 @@ the eventual Bayes estimate.
 
 \begin{figure}[t]
 	
-	{\centering \includegraphics{../notes/figures/el_salvador/overlap_distribution_smallP_bayes} 
+	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_distribution_smallP_bayes} 
 		
 	}
 	
@@ -736,7 +738,7 @@ the eventual Bayes estimate.
 
 Overall, both methods presented similar results. \texttt{fabl} yielded
 an initial Bayes estimate of 195 matches found across files, and after
-resolving matches that violated one-to-one requirements, yeilded 180
+resolving matches that violated one-to-one requirements, yielded 180
 matches across files. This is acceptably close to the 181 matches found
 by \texttt{BRL}. The main reason for this discrepancy is the difference
 in how each model handles situations in which one file in \(B\) has
@@ -744,7 +746,7 @@ multiple plausible matches in \(A\).
 
 \begin{figure}[t]
 	
-	{\centering \includegraphics{../notes/figures/el_salvador/rosa_records} 
+	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/rosa_records} 
 		
 	}
 	
@@ -753,7 +755,7 @@ multiple plausible matches in \(A\).
 
 \begin{figure}[t]
 	
-	{\centering \includegraphics{../notes/figures/el_salvador/bad_mixing} 
+	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/bad_mixing} 
 		
 	}
 	
@@ -768,7 +770,7 @@ nearly identical. Additionally, using the modified Levenstein distance
 from Sadinle 2017, the comparison vectors \(\gamma_{2776, 825}\) and
 \(\gamma_{2776, 826}\) are exactly identical.
 
-Figure XX shows the values that \(Z_{825}\) and \(Z_{826}\) take on
+Figure~\ref{fig:mixing-plot} shows the values that \(Z_{825}\) and \(Z_{826}\) take on
 throughout the Gibbs sampler, and demonstrates how each method handles
 this situation. Under \texttt{fabl}, both records in \(B\) match to the
 same record in \(A\) throughout the Gibbs process, creating consistent
@@ -784,13 +786,16 @@ strictly enforcing one-to-one matching throughout the sampler, can lead
 to situations where none of the plausible matches reach the threshold to
 be identified through the Bayes estimate.
 
-\paragraph{National Long Term Care Survey} The National Long Term Care Survey is a longitudinal study to track changes in health among Medicare recipients. It was conducted approximately every five years, and we concern ourselves here with linking records from years 1982 and 1989. The data only contains day, month, and year of birth, sex, state the individual lives in, and regional office. State and regional office have been anomynized, presented as numbers instead of their actual values. We construct the comparison vectors using only binary exact matching for each field, since there is no straightfoward way to incorporate partial matching in this context. The 1982 file contains $n_A = 20485$ records, 1989 file contains $n_B = 17466 files$, and the six linkage fields induces $2^6 = 64$ possible unique agreement patterns. We note that linkage quality is bound to be quite weak for many potential matches with such a large number of records and such limited identifying information.  
+\subsection{National Long Term Care Survey}
+\label{nltcs} 
+
+The National Long Term Care Survey is a longitudinal study to track changes in health among Medicare recipients. It was conducted approximately every five years, and we concern ourselves here with linking records from years 1982 and 1989. The data only contains day, month, and year of birth, sex, state the individual lives in, and regional office. State and regional office have been anonymized, presented as numbers instead of their actual values. We construct the comparison vectors using only binary exact matching for each field, since there is no straightfoward way to incorporate partial matching in this context. The 1982 file contains $n_A = 20485$ records, 1989 file contains $n_B = 17466$ files, and the six linkage fields induces $2^6 = 64$ possible unique agreement patterns. We note that linkage quality is bound to be quite weak for many potential matches with such a large number of records and such limited identifying information.  
 
 With such large files, performing all-to-all comparisons under the original Fellegi-Sunter framework is infeasible. Indeed, this would require nearly 400 million comparison vectors, each containing 6 integer comparisons; the resulting data object would contain over 2 billion integers, and would require approximately 16 GBs of memory to hold. Instead, we take the partitioning approach reviewed in \ref{data-representation-hashing-and-storage}, and split each dataset into 10 smaller datasets. We use parallel computing on cluster service create the comparison vectors for each pair of data chunks, hash the results, and compress in size through storage efficient indexing. We then aggregate the results, creating a data object of just 87 MB, and proceed with the Gibbs Sampler. 
 
-Were a personal computer able to hold the 16 GB data object required by the direct approach, the Gibbs sampler under \texttt{BRL} would be tortuously slow, with computatonal complexity $O(n_A \times n_B \times F)$ where $n_A = 20485$. However, under \texttt{fabl} the sampler has complexity $O(P \times n_B \times F)$ where $P = 64$, so 1000 iterations of the Gibbs sampler are completed in just XX seconds. Posterior analysis yields an initial estimate of 9991 individuals linked across the the two datasets, and 8895 individuals linked once conficts are resolved to ensure one-to-one matching. 
+Were a personal computer able to hold the 16 GB data object required by the direct approach, the Gibbs sampler under \texttt{BRL} would be tortuously slow, with computational complexity $O(n_A \times n_B \times F)$ where $n_A = 20485$. However, under \texttt{fabl} the sampler has complexity $O(P \times n_B \times F)$ where $P = 64$, so 1000 iterations of the Gibbs sampler are completed in just XX seconds. Posterior analysis yields an initial estimate of 9991 individuals linked across the the two datasets, and 8895 individuals linked once conflicts are resolved to ensure one-to-one matching. 
 
-Lastly, we comment on the significance of conducting this linkage without the use of deterministic blocking. With previous methods, one could link these two records by blocking on a certain field, and running separate Gibbs samplers on each of the seperate blocks. This strategy drastically improves computation since it significantly reduces the number of comparison vectors that need to be formed and uses smaller data objects throughout the sampler. However, this computational savings comes at the cost of missing potential links, specifically in cases where the blocking variable is recorded in error. In this case, 62 of the matched pairs exhibit a disagreement in sex, 17 exhibit a disagreement in state, and 39 exhibit a disagreement in regional office. We have no way to verify that the matches found under \texttt{fabl} are indeed correct, so it is possible that matches found with such disagreements are false positives. Even if not, the modeller may conclude that, for example, 17 missed matches are a small price to pay to be able to block on state and run 50 smaller, independent linkage procedures. However, \texttt{fabl} allows the modeler to make this choice for themselves, rather than being forced to do so for computational reasons. Additionally, by running on the Gibbs sampler the entirety of both files, we achieve $m$ and $u$ parameters that are interpretale for the entire study, rather than separate parameters for each block. Although these $m$ and $u$'s are often regarded as nuisance parameters in the record linkage literature, \texttt{fabl} allows for study of these parameters that has been been possible before. 
+Lastly, we comment on the significance of conducting this linkage without the use of deterministic blocking. With previous methods, one could link these two records by blocking on a certain field, and running separate Gibbs samplers on each of the separate blocks. This strategy drastically improves computation since it significantly reduces the number of comparison vectors that need to be formed and uses smaller data objects throughout the sampler. However, this computational savings comes at the cost of missing potential links, specifically in cases where the blocking variable is recorded in error. In this case, 62 of the matched pairs exhibit a disagreement in sex, 17 exhibit a disagreement in state, and 39 exhibit a disagreement in regional office. We have no way to verify that the matches found under \texttt{fabl} are indeed correct, so it is possible that matches found with such disagreements are false positives. Even if not, the modeler may conclude that, for example, 17 missed matches are a small price to pay to be able to block on state and run 50 smaller, independent linkage procedures. However, \texttt{fabl} allows the modeler to make this choice for themselves, rather than being forced to do so for computational reasons. Additionally, by running on the Gibbs sampler the entirety of both files, we achieve $m$ and $u$ parameters that are interpretale for the entire study, rather than separate parameters for each block. Although these $m$ and $u$'s are often regarded as nuisance parameters in the record linkage literature, \texttt{fabl} allows for study of these parameters that has been been possible before. 
 
 \section{Discussion}
 \label{discussion}
@@ -803,20 +808,22 @@ particularly powerful in linking records when one datafile is
 substantially smaller than the other.
 
 In our case study, we included an exploration of how to conduct record
-linkage when modelling assumptions are not met in practice. We explored
+linkage when modeling assumptions are not met in practice. We explored
 ``one-to-many'' scenarios in which one record in \(A\) has multiple
 plausible matches in \(B\), and showed how both \texttt{fabl} and
 \texttt{BRL} demonstrated undesirable qualities. Other issues arise
 under ``many-to-one'' scenarios, where one record in \(B\) has multiple
 plausible matches in \(A\), and ``many-to-many'' scenarios in which
 there is duplication both across and within datasets. Tuning
-\texttt{fabl} for use in these scenarious is one potential avenue for
+\texttt{fabl} for use in these scenarios is one potential avenue for
 future work.
 
 \bigskip
 
 \begin{center}
-{\large\bf ACKNOWLEDGEMENTS}
+{\large\bf ACKNOWLEDGMENTS}
+
+Left over from dblink paper, might remove.
 \end{center}
 
 \bibliographystyle{jasa}

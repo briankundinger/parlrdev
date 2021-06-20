@@ -1,0 +1,64 @@
+---
+title: "Sadinle_datasets"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Sadinle_accuracy}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+
+library(tidyverse)
+```
+
+```{r}
+files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
+
+overlap_vals <- c(50, 250, 450)
+
+
+for(j in seq_along(overlap_vals)){
+  
+  overlap <- overlap_vals[j]
+  
+  for(i in seq_along(files)){
+    
+    records <- read_csv(files[i])
+    records$file <- rep(2:1, length.out = dim(records)[1])
+    
+    records <- records %>% 
+      janitor::clean_names() %>% 
+      mutate(rec_id = as.numeric(str_extract(rec_id, "\\d{3}")) + 1)
+    
+    n1 <- 500
+    n2 <- 500
+    #overlap <- n2/2
+    
+    Ztrue <- rep(n1 + 1, n2)
+    Ztrue[1:overlap] <- 1:overlap
+    
+    file1 <- records %>% 
+      filter(file ==1,
+             rec_id <= n1) %>% 
+      select(-rec_id) %>% 
+      as.matrix(.) %>% 
+      data.frame(.)
+    
+    file2 <- records %>% 
+      filter(file == 2,
+             rec_id %in% c(1:overlap, (n1 +1):(1000 - overlap))) %>% 
+      select(-rec_id) %>% 
+      as.matrix() %>% 
+      data.frame(.)
+    
+  }
+}
+```

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7140 64-bit) (preloaded format=pdflatex 2019.8.26)  15 JUN 2021 10:54
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7140 64-bit) (preloaded format=pdflatex 2019.8.26)  20 JUN 2021 13:23
 entering extended mode
 **./fabl-paper.tex
 (fabl-paper.tex
@@ -866,22 +866,22 @@ File: pgflibraryplotmarks.code.tex 2020/01/08 v3.1.5b (3.1.5b)
  (fabl-paper.aux)
 \openout1 = `fabl-paper.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 68.
-LaTeX Font Info:    ... okay on input line 68.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 67.
+LaTeX Font Info:    ... okay on input line 67.
 \AtBeginShipoutBox=\box66
-Package hyperref Info: Link coloring OFF on input line 68.
+Package hyperref Info: Link coloring OFF on input line 67.
 
 ("C:\Users\brian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/hyperref\nameref.s
 ty"
@@ -893,9 +893,9 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 )
 \c@section@level=\count150
 )
-LaTeX Info: Redefining \ref on input line 68.
-LaTeX Info: Redefining \pageref on input line 68.
-LaTeX Info: Redefining \nameref on input line 68.
+LaTeX Info: Redefining \ref on input line 67.
+LaTeX Info: Redefining \pageref on input line 67.
+LaTeX Info: Redefining \nameref on input line 67.
  (fabl-paper.out) (fabl-paper.out)
 \@outlinefile=\write4
 \openout4 = `fabl-paper.out'.
@@ -931,7 +931,7 @@ Package grfext Info: Graphics extension search list:
 G,.JBIG2,.JB2,.eps]
 (grfext)             \AppendGraphicsExtensions on input line 456.
 ) ABD: EveryShipout initializing macros
-LaTeX Info: Redefining \microtypecontext on input line 68.
+LaTeX Info: Redefining \microtypecontext on input line 67.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
@@ -947,7 +947,7 @@ fg"
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-LaTeX Font Info:    Try loading font information for U+msa on input line 69.
+LaTeX Font Info:    Try loading font information for U+msa on input line 68.
 
 ("C:\Users\brian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -956,7 +956,7 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 fg"
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 69.
+LaTeX Font Info:    Try loading font information for U+msb on input line 68.
 
 ("C:\Users\brian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -973,94 +973,79 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             See the microtype manual for details.
 
 [2] [3] [4] [5] [6] [7] [8] [9] [10] [11] [12]
-<../notes/figures/sadinle_sim_plot.png, id=163, 505.89pt x 505.89pt>
+<../notes/figures/sadinle_sim_plot.png, id=182, 505.89pt x 505.89pt>
 File: ../notes/figures/sadinle_sim_plot.png Graphic file (type png)
 <use ../notes/figures/sadinle_sim_plot.png>
 Package pdftex.def Info: ../notes/figures/sadinle_sim_plot.png  used on input l
 ine 569.
-(pdftex.def)             Requested size: 505.88875pt x 505.88875pt.
-
-Overfull \hbox (43.61876pt too wide) in paragraph at lines 569--571
-[][]
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 569--571
-
- []
-
-[13]
-<../notes/figures/sadinle_speed_plot2.png, id=169, 307.8702pt x 189.5883pt>
+(pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
+ [13]
+<../notes/figures/sadinle_speed_plot2.png, id=190, 307.8702pt x 189.5883pt>
 File: ../notes/figures/sadinle_speed_plot2.png Graphic file (type png)
 <use ../notes/figures/sadinle_speed_plot2.png>
 Package pdftex.def Info: ../notes/figures/sadinle_speed_plot2.png  used on inpu
-t line 610.
-(pdftex.def)             Requested size: 307.86943pt x 189.58783pt.
-<../notes/figures/speed_plot_fixed_nB.png, id=170, 505.89pt x 505.89pt>
+t line 612.
+(pdftex.def)             Requested size: 277.3648pt x 170.81592pt.
+ [14 <../notes/figures/sadinle_sim_plot.png>]
+<../notes/figures/speed_plot_fixed_nB.png, id=198, 505.89pt x 505.89pt>
 File: ../notes/figures/speed_plot_fixed_nB.png Graphic file (type png)
 <use ../notes/figures/speed_plot_fixed_nB.png>
 Package pdftex.def Info: ../notes/figures/speed_plot_fixed_nB.png  used on inpu
-t line 627.
-(pdftex.def)             Requested size: 505.88875pt x 505.88875pt.
-
-Overfull \hbox (43.61876pt too wide) in paragraph at lines 627--628
- [][] 
- []
-
-[14]
-<../notes/figures/el_salvador/m_posterior_smallP.png, id=175, 396.5214pt x 244.
+t line 629.
+(pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
+ [15 <../notes/figures/sadinle_speed_plot2.png>] [16 <../notes/figures/speed_pl
+ot_fixed_nB.png>]
+<../notes/figures/el_salvador/m_posterior_smallP.png, id=215, 396.5214pt x 244.
 5135pt>
 File: ../notes/figures/el_salvador/m_posterior_smallP.png Graphic file (type pn
 g)
 <use ../notes/figures/el_salvador/m_posterior_smallP.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/m_posterior_smallP.png  u
-sed on input line 686.
-(pdftex.def)             Requested size: 396.52042pt x 244.5129pt.
- [15]
-<../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png, id=183, 39
+sed on input line 691.
+(pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
+ [17] [18 <../notes/figures/el_salvador/m_posterior_smallP.png>]
+<../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png, id=231, 39
 6.5214pt x 244.5135pt>
 File: ../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png Graphi
 c file (type png)
 <use ../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/overlap_distribution_smal
-lP_bayes.png  used on input line 730.
-(pdftex.def)             Requested size: 396.52042pt x 244.5129pt.
-<../notes/figures/el_salvador/rosa_records.png, id=184, 112.9821pt x 34.4487pt>
+lP_bayes.png  used on input line 732.
+(pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
+<../notes/figures/el_salvador/rosa_records.png, id=232, 112.9821pt x 34.4487pt>
 
 File: ../notes/figures/el_salvador/rosa_records.png Graphic file (type png)
 <use ../notes/figures/el_salvador/rosa_records.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/rosa_records.png  used on
- input line 747.
-(pdftex.def)             Requested size: 112.98181pt x 34.44861pt.
-<../notes/figures/el_salvador/bad_mixing.png, id=185, 396.5214pt x 244.5135pt>
+ input line 749.
+(pdftex.def)             Requested size: 277.3648pt x 84.57927pt.
+<../notes/figures/el_salvador/bad_mixing.png, id=233, 396.5214pt x 244.5135pt>
 File: ../notes/figures/el_salvador/bad_mixing.png Graphic file (type png)
 <use ../notes/figures/el_salvador/bad_mixing.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/bad_mixing.png  used on i
-nput line 756.
-(pdftex.def)             Requested size: 396.52042pt x 244.5129pt.
- [16] [17] [18] (fabl-paper.bbl) [19] [20 <../notes/figures/sadinle_sim_plot.pn
-g>] [21 <../notes/figures/sadinle_speed_plot2.png>] [22 <../notes/figures/speed
-_plot_fixed_nB.png>] [23 <../notes/figures/el_salvador/m_posterior_smallP.png> 
-<../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png>]
-[24 <../notes/figures/el_salvador/rosa_records.png> <../notes/figures/el_salvad
-or/bad_mixing.png>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 828.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 828.
- (fabl-paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 828.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 828.
+nput line 758.
+(pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
+ [19 <../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png> <../n
+otes/figures/el_salvador/rosa_records.png>] [20 <../notes/figures/el_salvador/b
+ad_mixing.png>] [21] (fabl-paper.bbl [22]) [23]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 835.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 835.
+
+(fabl-paper.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 835.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 835.
 Package rerunfilecheck Info: File `fabl-paper.out' has not changed.
-(rerunfilecheck)             Checksum: D8073026C4DC8B134907959CD17A60C2;841.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 828.
+(rerunfilecheck)             Checksum: A0D1B116C6232383569809F802CB9EB7;911.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 835.
  ) 
 Here is how much of TeX's memory you used:
- 22247 strings out of 492895
- 444927 string characters out of 3123735
- 574661 words of memory out of 3000000
- 25546 multiletter control sequences out of 15000+200000
- 21752 words of font info for 122 fonts, out of 3000000 for 9000
+ 22272 strings out of 492895
+ 445262 string characters out of 3123735
+ 574659 words of memory out of 3000000
+ 25563 multiletter control sequences out of 15000+200000
+ 21862 words of font info for 123 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,14n,83p,1688b,349s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 55i,14n,83p,1687b,474s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts
 /cm/cmbx10.pfb><C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pu
 blic/amsfonts/cm/cmbx12.pfb><C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/f
@@ -1086,9 +1071,9 @@ n/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C
 cmti10.pfb><C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public
 /amsfonts/cm/cmti12.pfb><C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts
 /type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on fabl-paper.pdf (24 pages, 496675 bytes).
+Output written on fabl-paper.pdf (23 pages, 505743 bytes).
 PDF statistics:
- 329 PDF objects out of 1000 (max. 8388607)
- 63 named destinations out of 1000 (max. 500000)
- 19704 words of extra memory for PDF output out of 20736 (max. 10000000)
+ 349 PDF objects out of 1000 (max. 8388607)
+ 69 named destinations out of 1000 (max. 500000)
+ 19712 words of extra memory for PDF output out of 20736 (max. 10000000)
 

@@ -1,9 +1,33 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{5}
 \newcommand{\enquote}[1]{``#1''}
 \expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
 \expandafter\ifx\csname url\endcsname\relax
   \def\url#1{{\tt #1}}\fi
 \expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+
+\bibitem[{Enamorado and Imai(2019)}]{enamorado2019}
+Enamorado, T. and Imai, K.
+\newblock \enquote{Validating self-reported turnout by linking public opinion
+  surveys with administrative records.}
+\newblock {\em Public Opinion Quarterly\/}, 83(4):723--748 (2019).
+
+\bibitem[{Fellegi and Sunter(1969)}]{fs}
+Fellegi, I. and Sunter, A.
+\newblock \enquote{A theory for record linkage.}
+\newblock {\em Journal of the American Statistical Association\/},
+  64:1183--1210 (1969).
+
+\bibitem[{Jaro(1989)}]{jaro1989}
+Jaro, M.
+\newblock \enquote{Advances in record-linkage methodology as applied to
+  matching the 1985 census of {T}ampa, {F}lorida.}
+\newblock {\em Journal of the American Statistical Association\/}, 84:414--420
+  (1989).
+
+\bibitem[{Jaro(1995)}]{jaro1995}
+---.
+\newblock \enquote{Probabilistic linkage of large public health data files.}
+\newblock {\em Statistics in Medicine\/}, 14:491--498 (1995).
 
 \bibitem[{Sadinle(2017)}]{sadinle2017}
 Sadinle, M.
