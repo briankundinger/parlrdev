@@ -24,8 +24,9 @@ library(kableExtra)
 
 
 ```{r simulation}
-gcinfo(verbose = FALSE)
+
 rm(list=ls())
+gc()
 set.seed(3)
 n1_vals <- c(100, 500, 1000, 2000, 3000, 4000, 5000)
 n2_vals <- c(100, 500, 1000, 2000, 3000, 4000, 5000)
@@ -33,6 +34,7 @@ n2_vals <- c(100, 500, 1000, 2000, 3000, 4000, 5000)
 show_progress <- T
 fast = F
 R <- NULL
+all_patterns <- FALSE
 
 m <- c(.05, .95, .05, .95, .05, .95, .05, .95, .05, .95)
 
@@ -64,7 +66,7 @@ for(i in seq_along(n1_vals)){
   #parlr method
   ptm <- proc.time()
   #Zchain <- BKSimple_hash2_pat(cd, R = R)
-  Zchain <- BKSimple_hash2(cd)
+  Zchain <- BKSimple_hash2(cd, all_patterns = all_patterns)
   Zchain <- Zchain[[1]]
   elapsed <- proc.time() - ptm
   #Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
@@ -203,4 +205,3 @@ distributions %>%
 
 #xtable::xtable(distributions)
 ```
-

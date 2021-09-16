@@ -46,6 +46,9 @@ library(tidyverse)
 
 ```{r}
 files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
+all_patterns = TRUE
+R = NULL
+
 
 #files <- files[201:220]
 
@@ -53,7 +56,8 @@ overlap_vals <- c(50, 250, 450)
 # parlr_acc_samps <- matrix(NA, nrow = 3 * length(files), ncol = 5)
 # sad_acc_samps <- matrix(NA, nrow = 3 * length(files), ncol = 5)
 
-parlr_acc_samps <- array(NA, dim = c(length(files), 5, 3))
+fabl_acc_samps <- array(NA, dim = c(length(files), 5, 3))
+fabl_acc_samps_resolved <- array(NA, dim = c(length(files), 5, 3))
 sad_acc_samps <- array(NA, dim = c(length(files), 5, 3))
 
 for(j in seq_along(overlap_vals)){
@@ -102,9 +106,13 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   ptm <- proc.time()
   Zchain <- BKSimple_hash2(cd)
   elapsed <- proc.time() - ptm
-  Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
-  eval <- GetEvaluations(Zhat, Ztrue, n1)
-  parlr_acc_samps[i, ,j] <- c(eval, elapsed[3], overlap)
+  Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
+  eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
+  
+  Zhat_resolved <- ResolveConflicts(Zhat)
+  eval_resolved <- GetEvaluations(Zhat_resolved, Ztrue, n1)
+  fabl_acc_samps_resolved[i, , j] <- c(eval_resolved, elapsed[3], overlap)
+  fabl_acc_samps[i, ,j] <- c(eval, elapsed[3], overlap)
   
   #Sadinle 2017 Method
   ptm <- proc.time()
@@ -124,7 +132,9 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
 ```
 
 ```{r}
-parlr_samps <- rbind(parlr_acc_samps[,,1], parlr_acc_samps[,,2], parlr_acc_samps[,,3])
+fabl_samps <- rbind(fabl_acc_samps[,,1], fabl_acc_samps[,,2], fabl_acc_samps[,,3])
+
+fabl_samps_resolved <- rbind(fabl_acc_samps_resolved[,,1], fabl_acc_samps_resolved[,,2], fabl_acc_samps_resolved[,,3])
 
 sad_samps <- rbind(sad_acc_samps[,,1], sad_acc_samps[,,2], sad_acc_samps[,,3])
 error_level <- rep(rep(c("One Error", "Two Errors", "Three Errors"), each = 100), 3)
@@ -132,12 +142,14 @@ error_level <- factor(error_level, levels = c("One Error", "Two Errors", "Three 
 #error_level <- 3
 # error_level <- factor(error_level, levels = c("One Error", "Two Errors", "Three Errors"))
 
-parlr_df <- data.frame(parlr_samps, error_level, "Parlr")
-names(parlr_df) <- c("Recall", "Precision", "Fmeasure", "time", "overlap", "error_level", "method")
+fabl_df <- data.frame(fabl_samps, error_level, "fabl")
+names(fabl_df) <- c("Recall", "Precision", "Fmeasure", "time", "overlap", "error_level", "method")
+fabl_resolved_df <- data.frame(fabl_samps_resolved, error_level, "fabl_resolved")
+names(fabl_resolved_df) <- c("Recall", "Precision", "Fmeasure", "time", "overlap", "error_level", "method")
 sadinle_df <- data.frame(sad_samps, error_level, "Sadinle17")
 names(sadinle_df) <- c("Recall", "Precision", "Fmeasure", "time", "overlap", "error_level",  "method")
 
-df<- rbind(parlr_df, sadinle_df)
+df<- rbind(fabl_df, fabl_resolved_df, sadinle_df)
 
 results_df <- df %>%
   pivot_longer(cols = 1:4, names_to = "metric") %>%
@@ -154,16 +166,21 @@ results_df <- df %>%
            overlap == 450 ~ "90% Overlap"
          ))
 
+#saveRDS(results_df, file = "Sadinle_Replication_Results")
+results_df <- readRDS("Sadinle_Replication_Results")
+results_df <- results_df %>% 
+  filter(method != "fabl")
+
+results_df$method[results_df$method == "fabl_resolved"] <- "fabl"
 acc_plot <- results_df %>% 
   ggplot(aes(x = metric, y = avg,
              ymin  = lower, ymax = upper,
              color = method)) +
   geom_pointrange(position = position_dodge2(width = .5)) + 
   facet_grid(overlap ~ error_level) +
-  labs(x = "Error Level", 
+  labs(x = NULL, 
        y = NULL,
-       color = "Method",
-       title = "Replication of Sadinle Simulation") +
+       color = "Method") +
   theme_bw(base_size = 10) +
   theme(plot.title = element_text(hjust = .5),
         plot.subtitle = element_text(hjust = .5)) + 
@@ -171,8 +188,8 @@ acc_plot <- results_df %>%
 
 acc_plot
 
-# ggsave(filename = "../notes/figures/sadinle_sim_plot.png",
-#        plot = acc_plot)
+ggsave(filename = "../notes/figures/sadinle_sim_plot.png",
+       plot = acc_plot)
 #   
 # simple_dist_table <- results_df %>%
 #   kable(digits = 3,
@@ -181,13 +198,13 @@ acc_plot
 #   kable_styling(full_width = F)
   #as_image(file = "../notes/figures/simple_dist_table.png")
 
-# simulation_samps <- list(parlr_samps, sad_samps)
+# simulation_samps <- list(fabl_samps, sad_samps)
 # saveRDS(simulation_samps, file = "../data/sadinle_accuracy_samps.rds")
 ```
 
 ```{r}
-difference <- parlr_samps[,-5] - sad_samps[,-5]
-difference_df <- data.frame(difference, parlr_samps[,5], error_level)
+difference <- fabl_samps_resolved[,-5] - sad_samps[,-5]
+difference_df <- data.frame(difference, fabl_samps[,5], error_level)
 names(difference_df) <- c("Recall", "Precision", "Fmeasure", "time", "overlap", "error_level")
 
 results_diff_df <- difference_df %>%
@@ -212,7 +229,7 @@ acc_plot_pairwise <- results_diff_df %>%
   geom_hline(yintercept = 0, color = "light grey") +
   facet_grid(overlap ~ error_level) +
   labs(x = "Error Level", 
-       y = "Parlr Minus Sadinle",
+       y = "fabl Minus Sadinle",
        title = "Replication of Sadinle Simulation",
        subtitle = "Pairwise Comparison") +
   theme_bw(base_size = 10) +

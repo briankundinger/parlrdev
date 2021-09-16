@@ -1,6 +1,7 @@
 BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
                           alpha = 1, beta = 1, S = 1000, burn = 100,
-                          show_progress = T, fast = F, R = NULL){
+                          show_progress = T, fast = F, R = NULL,
+                          all_patterns = TRUE){
   # Implements bipartite record linkage with BK Sampling Mechanism
   #
   # Arguments
@@ -23,7 +24,7 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
   }
 
   ptm <- proc.time()
-  patterns <- GetUniquePatterns2(comparisons, fast, R)
+  patterns <- GetUniquePatterns2(comparisons, fast, R, all_patterns)
   elapsed_hash <- proc.time() - ptm
 
   parameter_split <- as.vector(unlist(sapply(1:fields, function(x){
@@ -177,10 +178,10 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
   if (fast){
     parallel::stopCluster(cl)
   }
-  Z.SAMPS <- Z.SAMPS[,-(1:burn)]
-  L.SAMPS <- L.SAMPS[-(1:burn)]
-  M.SAMPS <- M.SAMPS[,-(1:burn)]
-  U.SAMPS <- U.SAMPS[,-(1:burn)]
+  # Z.SAMPS <- Z.SAMPS[,-(1:burn)]
+  # L.SAMPS <- L.SAMPS[-(1:burn)]
+  # M.SAMPS <- M.SAMPS[,-(1:burn)]
+  # U.SAMPS <- U.SAMPS[,-(1:burn)]
 
   final_gibbs <- apply(Z.SAMPS, 2, function(z){
     unlist(imap(z, ~sample_with_1(hash_to_rec1[[.y]][[.x]], 1)))

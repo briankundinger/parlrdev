@@ -12,13 +12,23 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+devtools::load_all()
+library(parlrdev)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
 ```
 
 
 
 ```{r}
 
-n1_vals <- c(500, 1000, 2000, 3000, 4000)
+rm(list=ls())
+gc()
+set.seed(3)
+
+n1_vals <- c(500, 1000, 2000, 3000, 4000, 5000)
 n2 <- 500
 show_progress <- T
 fast = F
@@ -44,12 +54,12 @@ for(i in seq_along(n1_vals)){
   n1 <- n1_vals[i]
   overlap <- n2/2
   
-  cd <- SimulateComparisons(m, u, levels, n1, n2, overlap)
+  cd <- SimulateComparisonsFast(m, u, levels, n1, n2, overlap)
   Ztrue <- cd$Ztrue
   
   #parlr method
   ptm <- proc.time()
-  Zchain <- BKSimple_hash2(cd)
+  Zchain <- BKSimple_hash2(cd, all_patterns = F)
   elapsed <- proc.time() - ptm
   Zchain <- Zchain[[1]]
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
@@ -92,7 +102,9 @@ speed_plot_fixed_nB <- df %>%
   theme_bw() + 
   scale_color_brewer(palette="Set1")
 
-ggsave(filename = "../notes/figures/speed_plot_fixed_nB.png", plot = speed_plot_fixed_nB)
+speed_plot_fixed_nB
+
+# ggsave(filename = "../notes/figures/speed_plot_fixed_nB.png", plot = speed_plot_fixed_nB)
 
 
 # results_df <- df %>% 

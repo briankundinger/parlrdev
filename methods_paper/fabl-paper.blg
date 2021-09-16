@@ -1,3 +1,24 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: fabl-paper.aux
 The style file: jasa.bst
 Database file #1: references.bib
+Repeated entry---line 5408 of file references.bib
+ : @article{hu2017
+ :                ,
+I'm skipping whatever remains of this entry
+Too many commas in name 1 of "Hu Y., Wang Q., Vatsalan D., Christen P." for entry hu2017
+while executing---line 1391 of file jasa.bst
+Too many commas in name 1 of "Hu Y., Wang Q., Vatsalan D., Christen P." for entry hu2017
+while executing---line 1391 of file jasa.bst
+Too many commas in name 1 of "Steorts, R., Hall, R. and Fienberg, S." for entry steorts_2013
+while executing---line 1391 of file jasa.bst
+Too many commas in name 1 of "Steorts, R., Hall, R. and Fienberg, S." for entry steorts_2013
+while executing---line 1391 of file jasa.bst
+Too many commas in name 1 of "Hu Y., Wang Q., Vatsalan D., Christen P." for entry hu2017
+while executing---line 1466 of file jasa.bst
+Too many commas in name 1 of "Hu Y., Wang Q., Vatsalan D., Christen P." for entry hu2017
+while executing---line 1466 of file jasa.bst
+Too many commas in name 1 of "Steorts, R., Hall, R. and Fienberg, S." for entry steorts_2013
+while executing---line 1466 of file jasa.bst
+Too many commas in name 1 of "Steorts, R., Hall, R. and Fienberg, S." for entry steorts_2013
+while executing---line 1466 of file jasa.bst
+(There were 9 error messages)

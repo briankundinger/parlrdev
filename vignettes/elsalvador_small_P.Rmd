@@ -29,6 +29,8 @@ set.seed(2)
 R <- NULL
 show_progress <- T
 fast <- F
+S <- 1000
+iter_count <- seq_len(S)
 
 cd <- readRDS("../data/comparison_elsalvador_smallP.rds")
 nA <- cd$n1
@@ -37,7 +39,7 @@ levels <- cd[[4]]
 P <- prod(levels) 
 var_names <- cd$compFields[,1]
 ptm <- proc.time()
-Zchain_fabl <- BKSimple_hash2(cd, R = R, show_progress = T)
+Zchain_fabl <- BKSimple_hash2(cd, S = S, R = R, show_progress = T)
 elapsed_fabl <- proc.time() - ptm
 Zchain_fabl[[4]]
 Zhat_fabl <- LinkRecordsBK(Zchain_fabl[[1]], nA, 1, 1, 2, Inf)
@@ -63,7 +65,7 @@ overlap_sadinle <- sum(Zhat_sadinle[[1]] < nA +1)
 
 overlap_samples_sadinle <- apply(Zchain_sadinle[[1]], 2, function(x){
   sum(x < nA + 1)
-})[-(1:100)]
+})
 
 results_sadinle <- c(overlap_sadinle, elapsed_sadinle[3])
 
@@ -80,7 +82,7 @@ results_image <- results_table %>%
 
 results_image
 
-# as_image(results_image, file = "../notes/figures/el_salvador/time_table_small_P.png")
+#as_image(results_image, file = "../notes/figures/el_salvador/time_table_small_P.png")
 
 
 ```
@@ -92,8 +94,9 @@ method <- rownames(results_table)
 bayes_df <- data.frame(bayes, method)
 bayes_df <- bayes_df[c(2, 3), ]
 
-method <- c(rep("fabl", 900), rep("BRL", 900))
+method <- c(rep("fabl", S), rep("BRL", S))
 overlap <- c(overlap_samples_fabl, overlap_samples_sadinle)
+iteration <- c(iter_count, iter_count)
 df <- data.frame(overlap, method)
 
 df %>% 
@@ -112,7 +115,17 @@ df %>%
   theme_bw() + 
   scale_fill_brewer(palette="Set1")
 
-ggsave("../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png")
+#ggsave("../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png")
+
+overlap_trace <- df %>% 
+  filter(method == "fabl") %>% 
+  ggplot(aes(x = iter_count, y = overlap)) +
+  geom_line() + 
+  labs(x = NULL, 
+       y = NULL) +
+  theme_bw()
+
+ggsave("../notes/figures/el_salvador/overlap_trace.png")
 
 bayes_df$bayes <- nA + nB - bayes_df$bayes
 df$overlap <- nA + nB - df$overlap
@@ -170,7 +183,49 @@ df %>%
 
 ggsave("../notes/figures/el_salvador/m_posterior_smallP.png")
 
+m_tidy <- lapply(seq_len(dim(Zchain_fabl$m)[1]), function(x){
+  data.frame(Zchain_fabl$m[x, ], m_fabl[x, 1], m_fabl[x, 2])
+}) %>% 
+  do.call(rbind, .)
 
+colnames(m_tidy) <- c("value", "level", "field")
+m_tidy <- m_tidy %>% 
+  group_by(field, level) %>% 
+  mutate(iteration = row_number()) %>% 
+  ungroup()
+
+m_trace <- m_tidy %>% 
+  ggplot(aes(x = iteration, y = value)) +
+  facet_grid(level ~ field) + 
+  geom_line() +
+  labs(x = NULL, y = NULL) +
+  scale_x_continuous(labels = NULL, breaks = NULL)
+
+ggsave("../notes/figures/el_salvador/m_trace.png", plot = m_trace)
+
+u_fabl <- ProcessChain(Zchain_fabl$u)
+u_fabl$method <- "fabl"
+
+u_tidy <- lapply(seq_len(dim(Zchain_fabl$u)[1]), function(x){
+  data.frame(Zchain_fabl$u[x, ], u_fabl[x, 1], u_fabl[x, 2])
+}) %>% 
+  do.call(rbind, .)
+
+colnames(u_tidy) <- c("value", "level", "field")
+u_tidy <- u_tidy %>% 
+  group_by(field, level) %>% 
+  mutate(iteration = row_number()) %>% 
+  ungroup()
+
+u_trace <- u_tidy %>% 
+  ggplot(aes(x = iteration, y = value)) +
+  facet_grid(level ~ field, scales = "free_y") + 
+  geom_line() +
+  labs(x = NULL, y = NULL) +
+  scale_x_continuous(labels = NULL, breaks = NULL)
+
+ggsave("../notes/figures/el_salvador/u_trace.png", plot = u_trace)
+  
 ```
 
 ## Comparing Mixing
@@ -216,5 +271,4 @@ df_mixing %>%
 
 ggsave("../notes/figures/el_salvador/bad_mixing.png")
 ```
-
 
