@@ -1,0 +1,135 @@
+---
+title: "sadinle_big"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{sadinle_big}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(devtools)
+load_all()
+library(parlrdev)
+library(tidyverse)
+```
+
+```{r}
+files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
+number_of_files <- 40
+all_patterns = TRUE
+R = NULL
+n1 <- 500
+n2 <- 500
+overlap <- n1/2
+
+ExtractRecords <- function(simulation, dataset, overlap, n1, n2){
+  records <- read_csv(simulation, col_types = cols())
+
+records$file <- rep(2:1, length.out = dim(records)[1])
+
+records <- records %>% 
+  janitor::clean_names() %>% 
+  mutate(rec_id = as.numeric(str_extract(rec_id, "\\d{3}")) + 1)
+
+# Ztrue <- rep(n1 + 1, n2)
+# Ztrue[1:overlap] <- 1:overlap
+
+if (dataset == 1){
+records %>% 
+  filter(file == dataset,
+         rec_id <= n1) %>% 
+  select(-rec_id) %>% 
+  as.matrix(.) %>% 
+  data.frame(.)
+} else {
+records %>% 
+  filter(file == 2,
+         rec_id %in% c(1:overlap, (n1 +1):(1000 - overlap))) %>% 
+  select(-rec_id) %>% 
+  as.matrix() %>% 
+  data.frame(.)
+}
+}
+
+big_file1 <- lapply(files[1:number_of_files], function(x){
+  ExtractRecords(x, 1, overlap, n1, n2)
+}) %>% 
+  do.call(rbind, .)
+
+big_file2 <- lapply(files[1:number_of_files], function(x){
+  ExtractRecords(x, 2, overlap, n1, n2)
+}) %>% 
+  do.call(rbind, .)
+
+nA <- nB <- n1 * number_of_files
+Ztrue <- seq_len(nA)
+nonmatches <- c(rep(F, overlap), rep(T, n1 - overlap)) %>% 
+  rep(., number_of_files)
+Ztrue[nonmatches] <- nA + 1
+
+```
+
+
+```{r}
+chunks <- number_of_files
+chunk_size <- ceiling(dim(big_file2)[1]/chunks)
+file2_chunk_id <- rep(1:chunks, each = chunk_size)[1:dim(big_file2)[1]]
+file2_partition <- split(big_file2, file_chunk_id)
+
+HashRecords <- function(df2){
+  cd <- suppressMessages(BRL::compareRecords(big_file1, df2, c(2, 3, 4, 5), types = c("lv", "lv", "bi", "bi") ))
+  
+  cd[[1]] <- apply(cd[[1]], 2, as.numeric)
+  patterns <- GetUniquePatterns2(cd, R = 5)
+  patterns
+}
+
+patterns_hashed <- lapply(file2_partition, HashRecords)
+cd <- SynthesizeHash(patterns_hashed)
+
+```
+
+```{r}
+# counts_big <- Reduce(`+`, map(patterns_hashed, ~.x[[2]]))
+# 
+# counts_per_rec_big <- patterns_hashed %>%
+#     map(`[[`, 3) %>%
+#     flatten()
+# 
+#   hash_list_big <- patterns_hashed %>%
+#     map(`[[`, 4) %>%
+#     flatten()
+# 
+#   comparisons <- list(indicators = NULL,
+#                       n1 = dim(big_file2)[1],
+#                       n2 = dim(big_file2)[1],
+#                       nDisagLevs = c(4, 4, 2, 2),
+#                       Ztrue = NULL)
+# 
+#   patterns <- list(patterns_hashed[[1]][[1]],
+#        counts_big,
+#        counts_per_rec_big,
+#        hash_list_big)
+# 
+#   cd <- list(comparisons, patterns)
+```
+
+```{r}
+chain <- BKSimple_hash2_big(cd)
+Zchain <- chain$Z
+nA <- cd[[1]][[2]]
+nB <- cd[[1]][[3]]
+Zhat <- LinkRecordsBK(Zchain, nA, 1, 1, 2, Inf)
+Zhat_resolved <- ResolveConflicts(Zhat)
+eval <- GetEvaluations(Zhat_resolved, Ztrue, nA)
+```
+
+
