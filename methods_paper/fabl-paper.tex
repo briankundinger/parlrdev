@@ -569,6 +569,9 @@ To aid the reader, we provide summary of the \texttt{fabl} method through pseudo
 \section{Simulation Studies}
 \label{sec:simulations}
 
+\hypertarget{accuracy}{%
+	\subsection{Accuracy}\label{accuracy}}
+
 We first compare \texttt{fabl} against \texttt{BRL} on several simulated datasets with varying amounts of error and overlap. We use first name, last name, age, and occupation for this linkage, and create comparison vectors according to the default settings of the \texttt{compareRecords} function from the \texttt{BRL} package. Each simulation identifies duplicated individuals between two datasets, each with 500 records. We conduct linkage when matching records exhibit 1, 2, and 3 errors across the four fields, and when there are 50, 250, and 450 individuals in common across datasets. We use flat priors for all $m$ and $u$ parameters, run the Gibbs Sampler for 1000 iterations, and discard the first 100 as burn-in. This is a near exact replication of the simulation study provided by \citep{sadinle2017}. 
 
 In cases when there are only one or two errors in matching records, and in cases with low to moderate duplication across records, we see that \texttt{fabl} provides approximately equivalent accuracy as \texttt{BRL}. 
@@ -595,6 +598,9 @@ files. In these situations, \texttt{BRL} is removing large numbers of records fr
 	\caption{Posterior means and credible intervals for accuracy metrics under the replication of simulation study from Sadinle 2017. For each level of overlap and each level of error, we have 100 paired sets of 500 records.}\label{fig:sadinle_simulation}
 	
 \end{figure}
+
+\hypertarget{speed}{%
+	\subsection{Speed}\label{speed}}
 
 To demonstrate speed, we generate comparison vectors from pre-specified
 distributions so that we can easily increase the size of the linkage
@@ -663,6 +669,10 @@ this simulation was run on a single core. Running \texttt{fabl} in C++
 with paralellization for the hashing step and sampling the matching
 status of the record pairs should lead to even more computational gains.
 
+\hypertarget{scale}{%
+	\subsection{Scale}\label{scale}}
+
+In one final simulation, we demonstrate how partitioning and hashing the data through \texttt{fabl} greatly expands the scale of the linkage tasks we can solve. Assuming a 16GB personal machine, standard record linkage methods using all-to-all comparisons can only function on tasks where the matrix of comparison vectors $\Gamma$ is less than 8GB. In the context of the above simulation, each comparison vector contains four integers, 
 
 \section{Case Studies}
 \label{sex:case-studies}
