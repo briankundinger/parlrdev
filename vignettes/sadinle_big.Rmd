@@ -136,7 +136,7 @@ HashRecords <- function(df2){
 library(parallel)
 
 #Linux, for the cluster
-patterns_hashed <- parallel::mclapply(file2_partition, HashRecords, mc.cores = 2)
+patterns_hashed <- parallel::mclapply(file2_partition, HashRecords, mc.cores = parallel::detectCores())
 cd <- SynthesizeHash(patterns_hashed)
 
 ```
@@ -203,6 +203,9 @@ Zhat_resolved <- ResolveConflicts(Zhat)
 eval <- GetEvaluations(Zhat_resolved, Ztrue, nA)
 
 elapsed <- proc.time() - ptm
+
+eval
+elapsed
 ```
 
 ```{r}
