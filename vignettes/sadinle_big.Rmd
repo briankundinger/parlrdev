@@ -136,7 +136,7 @@ HashRecords <- function(df2){
 library(parallel)
 
 #Linux, for the cluster
-patterns_hashed <- parallel::mclapply(file2_partition, HashRecords, mc.cores = parallel::detectCores())
+patterns_hashed <- parallel::mclapply(file2_partition, HashRecords, mc.cores = 1)
 cd <- SynthesizeHash(patterns_hashed)
 
 ```
