@@ -230,7 +230,7 @@ HashRecords &lt;-<span class="st"> </span><span class="cf">function</span>(df2){
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(parallel)
 
 <span class="co">#Linux, for the cluster</span>
-patterns_hashed &lt;-<span class="st"> </span>parallel<span class="op">::</span><span class="kw">mclapply</span>(file2_partition, HashRecords, <span class="dt">mc.cores =</span> <span class="dv">2</span>)
+patterns_hashed &lt;-<span class="st"> </span>parallel<span class="op">::</span><span class="kw">mclapply</span>(file2_partition, HashRecords, <span class="dt">mc.cores =</span> parallel<span class="op">::</span><span class="kw">detectCores</span>())
 cd &lt;-<span class="st"> </span><span class="kw">SynthesizeHash</span>(patterns_hashed)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Synthesize results with both chunked up</span>
 <span class="co"># thing2 &lt;- lapply(seq_len(chunks_df1), function(J){</span>
@@ -387,7 +387,14 @@ Zhat &lt;-<span class="st"> </span><span class="kw">LinkRecordsBK</span>(Zchain,
 Zhat_resolved &lt;-<span class="st"> </span><span class="kw">ResolveConflicts</span>(Zhat)
 eval &lt;-<span class="st"> </span><span class="kw">GetEvaluations</span>(Zhat_resolved, Ztrue, nA)
 
-elapsed &lt;-<span class="st"> </span><span class="kw">proc.time</span>() <span class="op">-</span><span class="st"> </span>ptm</code></pre></div>
+elapsed &lt;-<span class="st"> </span><span class="kw">proc.time</span>() <span class="op">-</span><span class="st"> </span>ptm
+
+eval
+<span class="co">#&gt;    Recall Precision  Fmeasure </span>
+<span class="co">#&gt;  0.998000  0.996008  0.997003</span>
+elapsed
+<span class="co">#&gt;    user  system elapsed </span>
+<span class="co">#&gt;  65.740   1.600  52.515</span></code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># HashRecords &lt;- function(df1, df2, df1_index = NULL, df2_index = NULL){</span>
 <span class="co">#   cd &lt;- CompareRecordsBK(df1, </span>
 <span class="co">#                          df2, </span>
