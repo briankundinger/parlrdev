@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>sadinle_big</title>
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">sadinle_big</h1>
+
+
+
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
+<span class="co">#&gt; Loading required package: usethis</span>
+<span class="kw">load_all</span>()
+<span class="co">#&gt; ℹ Loading parlrdev</span>
+<span class="kw">library</span>(parlrdev)
+<span class="kw">library</span>(tidyverse)
+<span class="co">#&gt; ── Attaching packages ─────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.1 ──</span>
+<span class="co">#&gt; ✔ ggplot2 3.3.5     ✔ purrr   0.3.4</span>
+<span class="co">#&gt; ✔ tibble  3.1.4     ✔ dplyr   1.0.7</span>
+<span class="co">#&gt; ✔ tidyr   1.1.3     ✔ stringr 1.4.0</span>
+<span class="co">#&gt; ✔ readr   1.4.0     ✔ forcats 0.5.1</span>
+<span class="co">#&gt; ── Conflicts ────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──</span>
+<span class="co">#&gt; ✖ dplyr::filter() masks stats::filter()</span>
+<span class="co">#&gt; ✖ dplyr::lag()    masks stats::lag()</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">files &lt;-<span class="st"> </span><span class="kw">list.files</span>(<span class="dt">path =</span> <span class="st">&quot;../data/SimulationDatafiles&quot;</span>, <span class="dt">full.names =</span> T)
+number_of_files &lt;-<span class="st"> </span><span class="dv">2</span>
+all_patterns =<span class="st"> </span><span class="ot">TRUE</span>
+R =<span class="st"> </span><span class="ot">NULL</span>
+n1 &lt;-<span class="st"> </span><span class="dv">500</span>
+n2 &lt;-<span class="st"> </span><span class="dv">500</span>
+overlap &lt;-<span class="st"> </span>n1<span class="op">/</span><span class="dv">2</span>
+
+ExtractRecords &lt;-<span class="st"> </span><span class="cf">function</span>(simulation, dataset, overlap, n1, n2){
+  records &lt;-<span class="st"> </span><span class="kw">read_csv</span>(simulation, <span class="dt">col_types =</span> <span class="kw">cols</span>())
+
+records<span class="op">$</span>file &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">2</span><span class="op">:</span><span class="dv">1</span>, <span class="dt">length.out =</span> <span class="kw">dim</span>(records)[<span class="dv">1</span>])
+
+records &lt;-<span class="st"> </span>records <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span>janitor<span class="op">::</span><span class="kw">clean_names</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">rec_id =</span> <span class="kw">as.numeric</span>(<span class="kw">str_extract</span>(rec_id, <span class="st">&quot;</span><span class="ch">\\</span><span class="st">d{3}&quot;</span>)) <span class="op">+</span><span class="st"> </span><span class="dv">1</span>)
+
+<span class="co"># Ztrue &lt;- rep(n1 + 1, n2)</span>
+<span class="co"># Ztrue[1:overlap] &lt;- 1:overlap</span>
+
+<span class="cf">if</span> (dataset <span class="op">==</span><span class="st"> </span><span class="dv">1</span>){
+records <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(file <span class="op">==</span><span class="st"> </span>dataset,
+         rec_id <span class="op">&lt;=</span><span class="st"> </span>n1) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>rec_id) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">as.matrix</span>(.) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">data.frame</span>(.)
+} <span class="cf">else</span> {
+records <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">filter</span>(file <span class="op">==</span><span class="st"> </span><span class="dv">2</span>,
+         rec_id <span class="op">%in%</span><span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span>overlap, (n1 <span class="op">+</span><span class="dv">1</span>)<span class="op">:</span>(<span class="dv">1000</span> <span class="op">-</span><span class="st"> </span>overlap))) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(<span class="op">-</span>rec_id) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">as.matrix</span>() <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">data.frame</span>(.)
+}
+}
+
+big_file1 &lt;-<span class="st"> </span><span class="kw">lapply</span>(files[<span class="dv">1</span><span class="op">:</span>number_of_files], <span class="cf">function</span>(x){
+  <span class="kw">ExtractRecords</span>(x, <span class="dv">1</span>, overlap, n1, n2)
+}) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">do.call</span>(rbind, .)
+
+big_file2 &lt;-<span class="st"> </span><span class="kw">lapply</span>(files[<span class="dv">1</span><span class="op">:</span>number_of_files], <span class="cf">function</span>(x){
+  <span class="kw">ExtractRecords</span>(x, <span class="dv">2</span>, overlap, n1, n2)
+}) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">do.call</span>(rbind, .)
+
+nA &lt;-<span class="st"> </span><span class="kw">nrow</span>(big_file1)
+nB &lt;-<span class="st"> </span><span class="kw">nrow</span>(big_file2)
+Ztrue &lt;-<span class="st"> </span><span class="kw">seq_len</span>(nA)
+nonmatches &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="kw">rep</span>(F, overlap), <span class="kw">rep</span>(T, n1 <span class="op">-</span><span class="st"> </span>overlap)) <span class="op">%&gt;%</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">rep</span>(., number_of_files)
+Ztrue[nonmatches] &lt;-<span class="st"> </span>nA <span class="op">+</span><span class="st"> </span><span class="dv">1</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># chunks_df1 &lt;- 40</span>
+<span class="co"># chunk_size_df1 &lt;- ceiling(dim(big_file1)[1]/chunks_df1)</span>
+<span class="co"># file1_chunk_id &lt;- rep(1:chunks_df1, each = chunk_size_df1)[1:dim(big_file1)[1]]</span>
+<span class="co"># file1_partition &lt;- split(big_file1, file1_chunk_id)</span>
+
+
+chunks_df2 &lt;-<span class="st"> </span><span class="dv">2</span>
+chunk_size_df2 &lt;-<span class="st"> </span><span class="kw">ceiling</span>(<span class="kw">dim</span>(big_file2)[<span class="dv">1</span>]<span class="op">/</span>chunks_df2)
+file2_chunk_id &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span><span class="op">:</span>chunks_df2, <span class="dt">each =</span> chunk_size_df2)[<span class="dv">1</span><span class="op">:</span><span class="kw">dim</span>(big_file2)[<span class="dv">1</span>]]
+file2_partition &lt;-<span class="st"> </span><span class="kw">split</span>(big_file2, file2_chunk_id)
+
+ptm &lt;-<span class="st"> </span><span class="kw">proc.time</span>()
+
+HashRecords &lt;-<span class="st"> </span><span class="cf">function</span>(df2){
+  cd &lt;-<span class="st"> </span>BRL<span class="op">::</span><span class="kw">compareRecords</span>(big_file1, 
+                         df2, 
+                         <span class="kw">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>), 
+                         <span class="dt">types =</span> <span class="kw">c</span>(<span class="st">&quot;lv&quot;</span>, <span class="st">&quot;lv&quot;</span>, <span class="st">&quot;bi&quot;</span>, <span class="st">&quot;bi&quot;</span>))
+  
+  cd[[<span class="dv">1</span>]] &lt;-<span class="st"> </span><span class="kw">apply</span>(cd[[<span class="dv">1</span>]], <span class="dv">2</span>, as.numeric)
+  patterns &lt;-<span class="st"> </span><span class="kw">GetUniquePatterns2</span>(cd, 
+                                 <span class="dt">R =</span> <span class="dv">5</span>, 
+                                 <span class="dt">all_patterns =</span> <span class="ot">TRUE</span>)
+  patterns
+}
+
+<span class="co">#Keep File A intact</span>
+<span class="co"># patterns_hashed &lt;- lapply(file2_partition, HashRecords)</span>
+<span class="co"># cd &lt;- SynthesizeHash(patterns_hashed)</span>
+
+<span class="co"># Chunk both files</span>
+<span class="co"># chunks_df1 &lt;- 2</span>
+<span class="co"># chunks_df2 &lt;- 2</span>
+<span class="co"># chunk_ids &lt;- expand.grid(1:chunks_df1, 1:chunks_df2)</span>
+<span class="co"># chunk_size_df1 &lt;- ceiling(dim(big_file1)[1]/chunks_df1)</span>
+<span class="co"># chunk_size_df2 &lt;- ceiling(dim(big_file2)[1]/chunks_df2)</span>
+<span class="co"># file1_chunk_id &lt;- rep(1:chunks_df1, each = chunk_size_df1)[1:dim(big_file1)[1]]</span>
+<span class="co"># file1_partition &lt;- split(big_file1, file1_chunk_id)</span>
+<span class="co"># file2_chunk_id &lt;- rep(1:chunks_df2, each = chunk_size_df2)[1:dim(big_file2)[1]]</span>
+<span class="co"># file2_partition &lt;- split(big_file2, file2_chunk_id)</span>
+<span class="co"># </span>
+<span class="co"># thing &lt;- map2(chunk_ids[, 1], chunk_ids[, 2], ~</span>
+<span class="co">#        {df1 &lt;- file1_partition[[.x]]</span>
+<span class="co">#        df2 &lt;- file2_partition[[.y]]</span>
+<span class="co">#        df1_index &lt;- which(file1_chunk_id == .x)</span>
+<span class="co">#        df2_index &lt;- which(file2_chunk_id == .x)</span>
+<span class="co">#        HashRecords(df1, df2, df1_index, df2_index)</span>
+<span class="co">#        })</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(parallel)
+
+<span class="co">#Linux, for the cluster</span>
+patterns_hashed &lt;-<span class="st"> </span>parallel<span class="op">::</span><span class="kw">mclapply</span>(file2_partition, HashRecords, <span class="dt">mc.cores =</span> <span class="dv">2</span>)
+cd &lt;-<span class="st"> </span><span class="kw">SynthesizeHash</span>(patterns_hashed)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Synthesize results with both chunked up</span>
+<span class="co"># thing2 &lt;- lapply(seq_len(chunks_df1), function(J){</span>
+<span class="co">#   index &lt;- which(chunk_ids[, 2] == J)</span>
+<span class="co">#   chunk_hashed &lt;- thing[index]</span>
+<span class="co"># </span>
+<span class="co">#   hash_list_big &lt;- chunk_hashed %&gt;%</span>
+<span class="co">#     map(`[[`, 4) %&gt;%</span>
+<span class="co">#     flatten()</span>
+<span class="co">#   </span>
+<span class="co">#   counts_by_rec_big &lt;-  map(hash_list_big, ~lapply(.x, length)) %&gt;%</span>
+<span class="co">#     map(unlist) %&gt;% </span>
+<span class="co">#     map(~.x[-length(.x)])</span>
+<span class="co">#   </span>
+<span class="co">#   counts_big &lt;- Reduce(`+`, counts_by_rec_big)</span>
+<span class="co">#   </span>
+<span class="co">#   patterns &lt;- chunk_hashed[[1]][[1]]</span>
+<span class="co">#   </span>
+<span class="co">#   chunk_info &lt;- list(patterns, </span>
+<span class="co">#                      counts_big, </span>
+<span class="co">#                      counts_by_rec_big, </span>
+<span class="co">#                      hash_list_big)</span>
+<span class="co">#   chunk_info</span>
+<span class="co"># })</span>
+<span class="co"># </span>
+<span class="co"># cd &lt;- SynthesizeHash(thing2)</span>
+<span class="co"># View(thing3)</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># counts_big &lt;- Reduce(`+`, map(patterns_hashed, ~.x[[2]]))</span>
+<span class="co"># </span>
+<span class="co"># counts_per_rec_big &lt;- patterns_hashed %&gt;%</span>
+<span class="co">#     map(`[[`, 3) %&gt;%</span>
+<span class="co">#     flatten()</span>
+<span class="co"># </span>
+<span class="co">#   hash_list_big &lt;- patterns_hashed %&gt;%</span>
+<span class="co">#     map(`[[`, 4) %&gt;%</span>
+<span class="co">#     flatten()</span>
+<span class="co"># </span>
+<span class="co">#   comparisons &lt;- list(indicators = NULL,</span>
+<span class="co">#                       n1 = dim(big_file2)[1],</span>
+<span class="co">#                       n2 = dim(big_file2)[1],</span>
+<span class="co">#                       nDisagLevs = c(4, 4, 2, 2),</span>
+<span class="co">#                       Ztrue = NULL)</span>
+<span class="co"># </span>
+<span class="co">#   patterns &lt;- list(patterns_hashed[[1]][[1]],</span>
+<span class="co">#        counts_big,</span>
+<span class="co">#        counts_per_rec_big,</span>
+<span class="co">#        hash_list_big)</span>
+<span class="co"># </span>
+<span class="co">#   cd &lt;- list(comparisons, patterns)</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">chain &lt;-<span class="st"> </span><span class="kw">BKSimple_hash2_big</span>(cd)
+<span class="co">#&gt; </span>
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">1</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">2</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">3</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">4</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">5</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">6</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">7</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">8</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">9</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">10</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">11</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">12</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">13</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">14</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">15</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">16</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">17</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">18</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">19</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">20</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">21</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">22</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">23</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">24</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">25</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">26</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">27</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">28</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">29</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">30</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">31</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">32</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">33</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">34</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">35</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">36</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">37</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">38</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">39</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">40</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">41</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">42</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">43</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">44</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">45</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">46</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">47</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">48</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">49</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">50</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">51</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">52</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">53</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">54</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">55</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">56</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">57</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">58</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">59</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">60</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">61</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">62</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">63</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">64</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">65</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">66</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">67</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">68</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">69</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">70</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">71</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">72</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">73</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">74</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">75</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">76</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">77</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">78</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">79</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">80</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">81</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">82</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">83</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">84</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">85</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">86</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">87</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">88</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">89</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">90</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">91</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">92</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">93</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">94</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">95</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">96</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">97</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">98</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">99</span>% complete
+ Simulation<span class="op">:</span><span class="st"> </span><span class="dv">100</span>% complete
+Zchain &lt;-<span class="st"> </span>chain<span class="op">$</span>Z
+Zhat &lt;-<span class="st"> </span><span class="kw">LinkRecordsBK</span>(Zchain, nA, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="ot">Inf</span>)
+Zhat_resolved &lt;-<span class="st"> </span><span class="kw">ResolveConflicts</span>(Zhat)
+eval &lt;-<span class="st"> </span><span class="kw">GetEvaluations</span>(Zhat_resolved, Ztrue, nA)
+
+elapsed &lt;-<span class="st"> </span><span class="kw">proc.time</span>() <span class="op">-</span><span class="st"> </span>ptm</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># HashRecords &lt;- function(df1, df2, df1_index = NULL, df2_index = NULL){</span>
+<span class="co">#   cd &lt;- CompareRecordsBK(df1, </span>
+<span class="co">#                          df2, </span>
+<span class="co">#                          c(2, 3, 4, 5), </span>
+<span class="co">#                          types = c(&quot;lv&quot;, &quot;lv&quot;, &quot;bi&quot;, &quot;bi&quot;),</span>
+<span class="co">#                          df1_index = df1_index,</span>
+<span class="co">#                          df2_index = df2_index)</span>
+<span class="co">#   </span>
+<span class="co">#   cd[[1]] &lt;- apply(cd[[1]], 2, as.numeric)</span>
+<span class="co">#   patterns &lt;- GetUniquePatterns2(cd, </span>
+<span class="co">#                                  R = 5, </span>
+<span class="co">#                                  all_patterns = TRUE, </span>
+<span class="co">#                                  df1_index = df1_index, </span>
+<span class="co">#                                  df2_index = df2_index)</span>
+<span class="co">#   patterns</span>
+<span class="co"># }</span></code></pre></div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
