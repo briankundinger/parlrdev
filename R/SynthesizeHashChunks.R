@@ -1,4 +1,4 @@
-SythensizeHash <- function(patterns_hashed){
+SynthesizeHash <- function(patterns_hashed){
   counts_big <- Reduce(`+`, map(patterns_hashed, ~.x[[2]]))
 
   counts_per_rec_big <- patterns_hashed %>%
@@ -22,3 +22,6 @@ SythensizeHash <- function(patterns_hashed){
 
   cd <- list(comparisons, patterns)
 }
+
+
+

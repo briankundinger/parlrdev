@@ -98,7 +98,7 @@ pronounced ``fable'')
 
 In what follows, Section~\ref{sec:related} describes previous work in record linkage that lays the foundation for our method, Section~\ref{sec:model}
 3 provides our model and the Gibbs sampler used for posterior inference,
-and Section~\ref{sec:efficiency} describes strategies used for more efficient and scalable
+and Sections~\ref{sec:efficiency} and~\ref{sec:efficient-posterior} describe strategies used for more efficient and scalable
 implementation. Then, Section~\ref{sec:simulations} demonstrates the accuracy and speed of
 out method through two simulation studies, and Section~\ref{sec:case-studies} reveals
 interesting properties of the method through a case study of El
@@ -147,18 +147,18 @@ accounting for these dependencies throughout the linkage process is
 computationally burdensome, leaving \texttt{BRL} only suitable for small
 to moderate linkage problems.
 
-Outside of the Fellegi-Sunter framework, some researchers have developed
-methods that model the data directly, not a derived set of comparison
-vectors. As an early example,  produced \texttt{blink}, which had the advantage of a computational complexity
-that grew linearly with the data (as opposed to quadratically within
-Fellegi Sunter), but was plagued with slow mixing times and was unable
-to incorporate text data. Later, Steorts et al 2020 improved on this
-method with \texttt{dblink}, which was able to simulate text data within
-its Gibbs sampler by drawing from an empirical distribution, and
-remedied its slow mixing through a probabilistic blocking approach.
-However, this method remains computationally intensive and requires
-distributed computing to manage even moderate linkage problems in
-acceptable time. These methods perform entity resolution over arbitrary numbers of datasets with arbitrary amounts of duplication and fall outside the Fellegi-Sunter framework, so we do not discuss them further here. 
+%Outside of the Fellegi-Sunter framework, some researchers have developed
+%methods that model the data directly, not a derived set of comparison
+%vectors. As an early example,  produced \texttt{blink}, which had the advantage of a computational complexity
+%that grew linearly with the data (as opposed to quadratically within
+%Fellegi Sunter), but was plagued with slow mixing times and was unable
+%to incorporate text data. Later, Steorts et al 2020 improved on this
+%method with \texttt{dblink}, which was able to simulate text data within
+%its Gibbs sampler by drawing from an empirical distribution, and
+%remedied its slow mixing through a probabilistic blocking approach.
+%However, this method remains computationally intensive and requires
+%distributed computing to manage even moderate linkage problems in
+%acceptable time. These methods perform entity resolution over arbitrary numbers of datasets with arbitrary amounts of duplication and fall outside the Fellegi-Sunter framework, so we do not discuss them further here. 
 
 \section{A scalable model for Bayesian Record Linkage}
 \label{sec:model}
@@ -215,7 +215,9 @@ For fields \(f \in \{1, \ldots, F\}\) and levels
 \(l\in \{1, \ldots, L_f\}\) we adopt the following likelihood and prior
 distributions.
 
-\[P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda) =\prod_{j=1}^{n_B}  \prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}\]
+%\[P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda) =\prod_{j=1}^{n_B}  \prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}\]
+
+$$P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}) = \prod_{j=1}^{n_B}  \prod_{i=1}^{n_A}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)}$$
 
 \[\mathbf{m^{f}} \sim \text{Dirichlet}(\alpha^{f1}, \ldots, \alpha^{fL_f})\]
 \[\mathbf{u^{f}} \sim \text{Dirichlet}(\beta^{f1}, \ldots, \beta^{fL_f})\]
@@ -258,7 +260,10 @@ study.
 We work with the following factorization of the joint posterior distribution:
 
 \begin{align*}
-p(\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda|\Gamma) \propto p(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}) p(\mathbf{Z} | \lambda) p(\mathbf{m}, \mathbf{u}) p(\lambda)
+p(\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda|\Gamma) &\propto p(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}) p(\mathbf{Z} | \lambda) p(\mathbf{m}, \mathbf{u}) p(\lambda) \\
+&\propto \prod_{j=1}^{n_B}  \prod_{i=1}^{n_A}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right] \\
+&\times  \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{\alpha_{fl} - 1}  \times\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{\beta_{fl} - 1} \\
+&\times \prod_{j=1}^{n_B} \left[I(Z_j \leq n_A)\frac{1}{n_A}\lambda + I(Z_j = n_A + 1)(1 - \lambda)\right]
 \end{align*}
 This factorization leads to following Gibbs Sampler:
 
@@ -266,12 +271,12 @@ This factorization leads to following Gibbs Sampler:
 The \(\mathbf{m}\) and \(\mathbf{u}\) parameters are updated through
 standard multinomial-dirichlet mechanics. Thus we have
 
-\[\mathbf{m}^f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\alpha^{f1}(\mathbf{Z}), \ldots, \alpha^{fL_f}(\mathbf{Z}))\]
-\[\mathbf{u}^f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\beta^{f1}(\mathbf{Z}), \ldots, \beta^{fL_f}(\mathbf{Z}))\]
+\[\mathbf{m}_f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\alpha_{f1}(\mathbf{Z}), \ldots, \alpha_{fL_f}(\mathbf{Z}))\]
+\[\mathbf{u}_f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\beta_{f1}(\mathbf{Z}), \ldots, \beta_{fL_f}(\mathbf{Z}))\]
 where
-\(\alpha_{fl}(\mathbf{Z})= \sum_{i,j} \mathbf{1}_{obs(\gamma_{ij}^f)}\mathbf{1}_{\gamma_{ij}^f = l} \mathbf{1}_{z_j = i}\)
+\(\alpha_{fl}(\mathbf{Z})= \alpha_{fl} + \sum_{i,j} I(\gamma_{ij}^f = l) I(z_j = i)\)
 and
-\(\beta_{fl}(\mathbf{Z})= \mathbf{1}_{obs(\gamma_{ij}^f)}\mathbf{1}_{\gamma_{ij}^f = l} \mathbf{1}_{z_j \neq i}\).
+\(\beta_{fl}(\mathbf{Z})= \beta_{fl} + I(\gamma_{ij}^f = l) I(z_j \neq i)\).
 
 \underline{Sample $\lambda^{(s+1)}|\mathbf{Z}^{(s)}$:} As a function of
 \(\lambda\), the linkage structure parameter \(\mathbf{Z}\) is sequence
@@ -296,8 +301,8 @@ that as a function of \(Z_j\), the likelihood
 is a discrete distribution with probabilities proportional to
 
 \begin{align*}
-	p(\Gamma_{.j}|Z_j = z_j, \mathbf{m}, \mathbf{u}) &\propto \prod_{i=1}^{n_A}\mathbf{m}_{ij}^{\mathbf{1}_{z_j = i}}\mathbf{u}_{ij}^{\mathbf{1}_{z_j \neq i}}\\
-	&\propto \prod_{i=1}^{n_A}\left(\frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}}\right)^{\mathbf{1}_{z_j = i}} && \text{By dividing through by} \prod_{i = 1}^{n_A}\mathbf{u}_{ij}\\
+	p(\Gamma_{.j}|Z_j = z_j, \mathbf{m}, \mathbf{u}) &\propto \prod_{i=1}^{n_A}\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)}\\
+	&\propto \prod_{i=1}^{n_A}\left(\prod_{f=1}^{F}\prod_{l=1}^{L_f} \frac{m_{fl}}{u_{fl}}\right)^{I(z_j = i, \gamma_{ij}^f = l)} \\
 	&=
 	\begin{cases} 
 		w_{ij}  & z_j \leq n_A; \\
@@ -306,7 +311,7 @@ is a discrete distribution with probabilities proportional to
 \end{align*}
 
 where
-\(w_{ij} = \frac{\mathbf{m}_{ij}}{\mathbf{u}_{ij}} = \frac{P(\boldsymbol{\gamma_{ij}}|Z_j = i)}{P(\boldsymbol{\gamma_{ij}} |Z_j \neq i)}\).
+\(w_{ij} = \left(\frac{\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}}{\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}}\right)^{I(\gamma_{ij}^f = l)} = \frac{P(\boldsymbol{\gamma_{ij}}|Z_j = i)}{P(\boldsymbol{\gamma_{ij}} |Z_j \neq i)}\).
 The interested reader should note that these are precisely the
 likelihood ratios used in the Fellegi-Sunter model to classify matches
 and non-matches, and we therefore refer to \(w_{ij}\) as the
@@ -531,6 +536,36 @@ patterns through the second equation. Sampling uniformly is
 computationally simple even for large sets of candidate records, but this
 step can also be parallelized when working with large data.
 
+To aid the reader, we provide summary of the \texttt{fabl} method through pseudocode:
+
+\begin{algorithm}
+	\caption{Summary of fabl algorithm}
+	\begin{algorithmic}[1]
+		
+		\Procedure{Hashing and Preprocessing}{}
+		\State Partition files $A$ and $B$ into chunks $\{A_I\}, \{B_J\}$
+		\For{each $I$, $J$}
+		\State Create comparison vectors between $A_I$ and $B_J$
+		\State Hash results and calculate summary statistics
+		\State Use SEI to reduce memory usage
+		\EndFor
+		\State Synthesize results across pairings
+		\EndProcedure
+		
+		\Procedure{Gibbs Sampling}{}
+		\State Initialize $m$, $u$, and $Z$ parameters
+		
+		\For{$t \in \{1, \ldots, T\}$} 
+		\State Sample $m^{t+1}|Z^{t}, \Gamma$ and  $u^{t+1}|Z^{t}, \Gamma$ 
+		\State Sample $H\left(Z^{t+1}\right)|m^{t+1}, u^{t+1}, \Gamma$  \Comment{Sample agreement pattern, not record}
+		\EndFor
+		\State Sample $Z | H(Z), \Gamma$ \Comment{Fills in record label based on agreement pattern}
+
+		\EndProcedure
+		
+	\end{algorithmic}
+\end{algorithm}
+
 \section{Simulation Studies}
 \label{sec:simulations}
 
@@ -628,8 +663,9 @@ this simulation was run on a single core. Running \texttt{fabl} in C++
 with paralellization for the hashing step and sampling the matching
 status of the record pairs should lead to even more computational gains.
 
+
 \section{Case Studies}
-\label{case-studies}
+\label{sex:case-studies}
 
 We now demonstrate the power of our method through two case studies. The first is a study of documented identifiable deaths (DID) from the El Salvadoran Civil War. Though the data files used here are small, this study shows how the computational complexity of \texttt{fabl} depends on the number of unique agreement patterns, and how significant computational gains can be achieved by simplifying the construction of the comparison vectors. Secondly, the case study reveals the impact of independently sampling $Z_j$ rather than strictly enforcing one-to-one matching as done by \texttt{BRL}. The second case study is the National Long Term Care Survey (NLTCS), a much larger linkage tasks which \texttt{BRL} is unable to complete but which we complete with \texttt{fabl} with relative ease. 
 
@@ -774,16 +810,16 @@ strictly enforcing one-to-one matching throughout the sampler, can lead
 to situations where none of the plausible matches reach the threshold to
 be identified through the Bayes estimate.
 
-\subsection{National Long Term Care Survey}
-\label{nltcs} 
-
-The National Long Term Care Survey is a longitudinal study to track changes in health among Medicare recipients. It was conducted approximately every five years, and we concern ourselves here with linking records from years 1982 and 1989. The data only contains day, month, and year of birth, sex, state the individual lives in, and regional office. State and regional office have been anonymized, presented as numbers instead of their actual values. We construct the comparison vectors using only binary exact matching for each field, since there is no straightfoward way to incorporate partial matching in this context. The 1982 file contains $n_A = 20485$ records, 1989 file contains $n_B = 17466$ files, and the six linkage fields induces $2^6 = 64$ possible unique agreement patterns. We note that linkage quality is bound to be quite weak for many potential matches with such a large number of records and such limited identifying information.  
-
-With such large files, performing all-to-all comparisons under the original Fellegi-Sunter framework is infeasible. Indeed, this would require nearly 400 million comparison vectors, each containing 6 integer comparisons; the resulting data object would contain over 2 billion integers, and would require approximately 16 GBs of memory to hold. Instead, we take the partitioning approach reviewed in \ref{data-representation-hashing-and-storage}, and split each dataset into 10 smaller datasets. We use parallel computing on cluster service create the comparison vectors for each pair of data chunks, hash the results, and compress in size through storage efficient indexing. We then aggregate the results, creating a data object of just 87 MB, and proceed with the Gibbs Sampler. 
-
-Were a personal computer able to hold the 16 GB data object required by the direct approach, the Gibbs sampler under \texttt{BRL} would be tortuously slow, with computational complexity $O(n_A \times n_B \times F)$ where $n_A = 20485$. However, under \texttt{fabl} the sampler has complexity $O(P \times n_B \times F)$ where $P = 64$, so 1000 iterations of the Gibbs sampler are completed in just XX seconds. Posterior analysis yields an initial estimate of 9991 individuals linked across the the two datasets, and 8895 individuals linked once conflicts are resolved to ensure one-to-one matching. 
-
-Lastly, we comment on the significance of conducting this linkage without the use of deterministic blocking. With previous methods, one could link these two records by blocking on a certain field, and running separate Gibbs samplers on each of the separate blocks. This strategy drastically improves computation since it significantly reduces the number of comparison vectors that need to be formed and uses smaller data objects throughout the sampler. However, this computational savings comes at the cost of missing potential links, specifically in cases where the blocking variable is recorded in error. In this case, 62 of the matched pairs exhibit a disagreement in sex, 17 exhibit a disagreement in state, and 39 exhibit a disagreement in regional office. We have no way to verify that the matches found under \texttt{fabl} are indeed correct, so it is possible that matches found with such disagreements are false positives. Even if not, the modeler may conclude that, for example, 17 missed matches are a small price to pay to be able to block on state and run 50 smaller, independent linkage procedures. However, \texttt{fabl} allows the modeler to make this choice for themselves, rather than being forced to do so for computational reasons. Additionally, by running on the Gibbs sampler the entirety of both files, we achieve $m$ and $u$ parameters that are interpretale for the entire study, rather than separate parameters for each block. Although these $m$ and $u$'s are often regarded as nuisance parameters in the record linkage literature, \texttt{fabl} allows for study of these parameters that has been been possible before. 
+%\subsection{National Long Term Care Survey}
+%\label{nltcs} 
+%
+%The National Long Term Care Survey is a longitudinal study to track changes in health among Medicare recipients. It was conducted approximately every five years, and we concern ourselves here with linking records from years 1982 and 1989. The data only contains day, month, and year of birth, sex, state the individual lives in, and regional office. State and regional office have been anonymized, presented as numbers instead of their actual values. We construct the comparison vectors using only binary exact matching for each field, since there is no straightfoward way to incorporate partial matching in this context. The 1982 file contains $n_A = 20485$ records, 1989 file contains $n_B = 17466$ files, and the six linkage fields induces $2^6 = 64$ possible unique agreement patterns. We note that linkage quality is bound to be quite weak for many potential matches with such a large number of records and such limited identifying information.  
+%
+%With such large files, performing all-to-all comparisons under the original Fellegi-Sunter framework is infeasible. Indeed, this would require nearly 400 million comparison vectors, each containing 6 integer comparisons; the resulting data object would contain over 2 billion integers, and would require approximately 16 GBs of memory to hold. Instead, we take the partitioning approach reviewed in \ref{data-representation-hashing-and-storage}, and split each dataset into 10 smaller datasets. We use parallel computing on cluster service create the comparison vectors for each pair of data chunks, hash the results, and compress in size through storage efficient indexing. We then aggregate the results, creating a data object of just 87 MB, and proceed with the Gibbs Sampler. 
+%
+%Were a personal computer able to hold the 16 GB data object required by the direct approach, the Gibbs sampler under \texttt{BRL} would be tortuously slow, with computational complexity $O(n_A \times n_B \times F)$ where $n_A = 20485$. However, under \texttt{fabl} the sampler has complexity $O(P \times n_B \times F)$ where $P = 64$, so 1000 iterations of the Gibbs sampler are completed in just XX seconds. Posterior analysis yields an initial estimate of 9991 individuals linked across the the two datasets, and 8895 individuals linked once conflicts are resolved to ensure one-to-one matching. 
+%
+%Lastly, we comment on the significance of conducting this linkage without the use of deterministic blocking. With previous methods, one could link these two records by blocking on a certain field, and running separate Gibbs samplers on each of the separate blocks. This strategy drastically improves computation since it significantly reduces the number of comparison vectors that need to be formed and uses smaller data objects throughout the sampler. However, this computational savings comes at the cost of missing potential links, specifically in cases where the blocking variable is recorded in error. In this case, 62 of the matched pairs exhibit a disagreement in sex, 17 exhibit a disagreement in state, and 39 exhibit a disagreement in regional office. We have no way to verify that the matches found under \texttt{fabl} are indeed correct, so it is possible that matches found with such disagreements are false positives. Even if not, the modeler may conclude that, for example, 17 missed matches are a small price to pay to be able to block on state and run 50 smaller, independent linkage procedures. However, \texttt{fabl} allows the modeler to make this choice for themselves, rather than being forced to do so for computational reasons. Additionally, by running on the Gibbs sampler the entirety of both files, we achieve $m$ and $u$ parameters that are interpretale for the entire study, rather than separate parameters for each block. Although these $m$ and $u$'s are often regarded as nuisance parameters in the record linkage literature, \texttt{fabl} allows for study of these parameters that has been been possible before. 
 
 \section{Discussion}
 \label{discussion}

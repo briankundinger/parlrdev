@@ -6,7 +6,10 @@ hash_field <- function(L_f, k, Lf_vec){
 GetUniquePatterns2 <- function(cd,
                                fast = F,
                                R = NULL,
-                               all_patterns = TRUE){
+                               all_patterns = TRUE,
+                               nA_index = FALSE,
+                               df1_index = NULL,
+                               df2_index = NULL){
 
   indicators <- cd[[1]]
   N <- dim(indicators)[1]
@@ -14,7 +17,17 @@ GetUniquePatterns2 <- function(cd,
   n1 <- cd[[2]]
   n2 <- cd[[3]]
 
-  ids <- expand.grid(1:n1, 1:n2)
+  if(is.null(df1_index)){
+    chunkA_index <- 1:n1
+  }else{
+    chunkA_index <-  df1_index
+  }
+  if(is.null(df2_index)){
+    chunkB_index <- 1:n2
+  }else{
+    chunkB_index <-  df2_index
+  }
+  ids <- expand.grid(chunkA_index, chunkB_index)
   rec1 <- ids[,1]
   rec2 <- ids[,2]
   levels <- cd[[4]]
