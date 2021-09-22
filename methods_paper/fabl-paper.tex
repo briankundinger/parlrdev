@@ -83,22 +83,8 @@ Abstract
 \section{Introduction}
 \label{sec:introduction}
 
-%% Reworking introduction for Brian's paper.
-
-Record linkage is the task of identifying duplicate records across multiple data sources, often in the absence of a unique identifier \citep{christen2012data}. Record linkage is an increasingly important task in ``data cleaning," that is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others. 
-
-\begin{enumerate}
-\item Let's re-visit the case study of Sadinle. Lay this out and the importance of it. 
-\item Next, let's briefly review the landscape of the literature. 
-\item State Brian's contributions. 
-\item Then write a section on related work. 
-\item Then write a section regarding the layout of the paper.
-\end{enumerate}
-
-
-\newpage
-
-In many cases, this identification is itself the goal of an analysis, as in estimating human rights atrocities from disparate data sources, or linking voter information across election years. In others, we seek to perform some other statistical procedure, such as survival analysis or regression, using linked datasets, and one must  propagate linkage uncertainty into the subsequent analysis. 
+Record linkage is the task of identifying
+duplicate records across multiple data sources. In many cases, this identification is itself the goal of an analysis, as in estimating human rights atrocities from disparate data sources, or linking voter information across election years. In others, we seek to perform some other statistical procedure, such as survival analysis or regression, using linked datasets, and one must  propagate linkage uncertainty into the subsequent analysis. 
 
 Record linkage is straightforward when provided unique identifiers or highly reliable information, but becomes difficult when data sources are plagued with error. This motivates the use of probabilistic record linkage techniques that are able to model the reliability of the information and which are more robust to errors than are deterministic methods. Unfortunately, probabilistic record linkage is computationally intense, and many entity resolution tasks are large in nature,
 motivating the search for scalable and efficient record linkage techniques. 
@@ -212,14 +198,14 @@ leads to models that perform well in practice; see discussion for
 further remarks. Lastly, we define \(\lambda\) to be the (marginal)
 probability that some record \(j \in B\) has a match in \(A\).
 
-Wherever possible, we reserve superscripts for denoting field and level,
-while reserving subscripts for record indices. For example,
-\(\mathbf{m}^f = (m^{f1}, \ldots, m^{fL_f})\) is the probability
-distribution governing field \(f\) for matching records, and
-\(\mathbf{m}_{ij}= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(m^{fl}\right)^{\mathbf{1}_{\gamma_{ij}^f = l}} = P(\boldsymbol{\gamma}_{ij}|Z_j = i)\)
-is product of the relevant of the appropriate \(\mathbf{m}\) parameters
-for record pair \((i,j)\). We hope that these conventions avoid
-overloaded notation in the likelihood and subsequent derivations.
+%Wherever possible, we reserve superscripts for denoting field and level,
+%while reserving subscripts for record indices. For example,
+%\(\mathbf{m}^f = (m^{f1}, \ldots, m^{fL_f})\) is the probability
+%distribution governing field \(f\) for matching records, and
+%\(\mathbf{m}_{ij}= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(m^{fl}\right)^{\mathbf{1}_{\gamma_{ij}^f = l}} = P(\boldsymbol{\gamma}_{ij}|Z_j = i)\)
+%is product of the relevant of the appropriate \(\mathbf{m}\) parameters
+%for record pair \((i,j)\). We hope that these conventions avoid
+%overloaded notation in the likelihood and subsequent derivations.
 
 \hypertarget{model-specification}{%
 	\subsection{Model Specification}

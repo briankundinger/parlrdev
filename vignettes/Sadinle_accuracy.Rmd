@@ -22,39 +22,13 @@ library(tidyverse)
 ```
 
 
-<!-- ```{r} -->
-<!-- library(RecordLinkage) -->
-<!-- library(clue) -->
-
-<!-- # function computes agreement levels for binary comparisons, used inside for -->
-<!-- AgrLevBinComp <- function(x){ -->
-<!-- 	same <- (x[cellinds[,1]]==x[cellinds[,2]]) -->
-<!-- 	AgrLev <- 1*same -->
-<!-- 	AgrLev[!same] <- 2 -->
-<!-- 	AgrLev <- as.factor(AgrLev) -->
-<!-- 	return(AgrLev) -->
-<!-- } -->
-
-<!-- # function computes agreement levels for Levenshtein comparisons, used inside for -->
-<!-- AgrLevLevenshtein <- function(x,breaks=c(-Inf,.001,.25,.5,Inf)){ -->
-<!-- 	x <- as.character(x) -->
-<!-- 	LevenshteinSim <- 1 - levenshteinSim(x[cellinds[,1]], x[cellinds[,2]]) -->
-<!-- 	AgrLev <- cut(LevenshteinSim,breaks=breaks,labels=seq_len(length(breaks)-1)) -->
-<!-- 	return(AgrLev) -->
-<!-- # } -->
-<!-- ``` -->
-
 ```{r}
 files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
 all_patterns = TRUE
 R = NULL
 
 
-#files <- files[201:220]
-
 overlap_vals <- c(50, 250, 450)
-# parlr_acc_samps <- matrix(NA, nrow = 3 * length(files), ncol = 5)
-# sad_acc_samps <- matrix(NA, nrow = 3 * length(files), ncol = 5)
 
 fabl_acc_samps <- array(NA, dim = c(length(files), 5, 3))
 fabl_acc_samps_resolved <- array(NA, dim = c(length(files), 5, 3))
@@ -66,7 +40,7 @@ for(j in seq_along(overlap_vals)){
   
 for(i in seq_along(files)){
   suppressMessages(
-records <- read_csv(files[i])
+records <- read_csv(files[i], col_types = cols())
 )
 records$file <- rep(2:1, length.out = dim(records)[1])
 

@@ -1,0 +1,51 @@
+\begin{thebibliography}{}
+\newcommand{\enquote}[1]{``#1''}
+
+\bibitem[Enamorado and Imai(2019)Enamorado and Imai]{enamorado2019}
+Enamorado, T. and Imai, K. (2019), \enquote{Validating self-reported turnout by
+  linking public opinion surveys with administrative records,} \emph{Public
+  Opinion Quarterly}, 83, 723--748.
+
+\bibitem[Fellegi and Sunter(1969)Fellegi and Sunter]{fs}
+Fellegi, I. and Sunter, A. (1969), \enquote{A theory for record linkage,}
+  \emph{Journal of the American Statistical Association}, 64, 1183--1210.
+
+\bibitem[Hof et~al.(2017)Hof, Ravelli, and Zwinderman]{hof2017}
+Hof, M.~H., Ravelli, A.~C., and Zwinderman, A.~H. (2017), \enquote{A
+  Probabilistic Record Linkage Model for Survival Data,} \emph{Journal of the
+  American Statistical Association}, 112, 1504--1515.
+
+\bibitem[Hu~Y.(2017)Hu~Y.]{hu2017}
+Hu~Y., Wang~Q., V. D. C.~P. (2017), \enquote{Improving Temporal Record Linkage
+  Using Regression Classification,} \emph{Advances in Knowledge Discovery and
+  Data Mining}.
+
+\bibitem[Jaro(1989)Jaro]{jaro1989}
+Jaro, M. (1989), \enquote{Advances in record-linkage methodology as applied to
+  matching the 1985 census of {T}ampa, {F}lorida,} \emph{Journal of the
+  American Statistical Association}, 84, 414--420.
+
+\bibitem[Jaro(1995)Jaro]{jaro1995}
+Jaro, M. (1995), \enquote{Probabilistic linkage of large public health data
+  files,} \emph{Statistics in Medicine}, 14, 491--498.
+
+\bibitem[Larsen(2005)Larsen]{larsen2005}
+Larsen, M. (2005), \enquote{Advances in record linkage theory: {H}ierarchical
+  {B}ayesian record linkage theory,} in \emph{Proceedings of the Section on
+  Survey Research Methods}, p. 3277–3284, Alexandria, VA: American
+  Statistical Association.
+
+\bibitem[Newcombe et~al.(1959)Newcombe, Kennedy, Axford, and James]{newcombe}
+Newcombe, H., Kennedy, J., Axford, S., and James, A. (1959), \enquote{Automatic
+  linkage of vital records,} \emph{Science}, 130, 954--959.
+
+\bibitem[Sadinle(2017)Sadinle]{sadinle2017}
+Sadinle, M. (2017), \enquote{Bayesian estimation of bipartite matchings for
+  record linkage,} \emph{Journal of the American Statistical Association}, 112,
+  600--612.
+
+\bibitem[Steorts and Fienberg(2014)Steorts and Fienberg]{steorts_2013}
+Steorts, R., H.~R. and Fienberg, S. (2014), \enquote{A Bayesian Approach to
+  Graphical Record Linkage and De-duplication,} \emph{In Revision}.
+
+\end{thebibliography}
