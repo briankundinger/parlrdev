@@ -672,12 +672,20 @@ status of the record pairs should lead to even more computational gains.
 \hypertarget{scale}{%
 	\subsection{Scale}\label{scale}}
 
-In one final simulation, we demonstrate how partitioning and hashing the data through \texttt{fabl} greatly expands the scale of the linkage tasks we can solve. Assuming a 16GB personal machine, standard record linkage methods using all-to-all comparisons can only function on tasks where the matrix of comparison vectors $\Gamma$ is less than 8GB. In the context of the above simulation, each comparison vector contains four integers, 
+% Assuming a 16GB personal machine, standard record linkage methods using all-to-all comparisons can only function on tasks where the matrix of comparison vectors $\Gamma$ is less than 8GB. In the context of the above simulation, each comparison vector contains four integers, collectively requiring 16 bytes of memory; assuming files of equal lengths, this means the largest linkage task possible is around $7000 \times 7000$. 
+ 
+ In one final simulation, we demonstrate how partitioning and hashing the data through \texttt{fabl} method allows us undertake significantly larger linkage tasks We concatenate two sets of 40 simulated datasets from the Sadinle simulation to create two larger files, each of 20,000 records. Working on one machine, we sequentially compare records across chunks, hash results, and then synthesize summary statistics for the entire simulation. Under standard Fellegi Sunter procedures, this would require 400,000,000 comparison vectors, each consisting for four integers, resulting a final comparison matrix about 6.4 GB in size. 
+ 
+ For simplicity, we partition one dataset into 20 smaller chunks, and leave the second dataset fully intact. We then compare records, hash results, and then synthesize summary statistics for all 20 chunk comparisons. The resulting data object is only 90 MB, about 1\% the size of the object required under the standard method. Excecuted sequentially, these comparisons and the Gibbs sampler take about one hour to run; using distributed computing, it could be completed much faster. This simulation achieved 96.5\% recall and 97.7\% precision, with an overall F-measure of 97.1\% F-measure. The reader will note that this slightly worse performance than witnessed in the smaller simulation studies; this is expected because it is naturally more difficult to link more files with the same amount of information. With more linkage fields \texttt{fabl} maintains the high accuracy seen above. 
+ 
+ 
 
 \section{Case Studies}
 \label{sex:case-studies}
 
-We now demonstrate the power of our method through two case studies. The first is a study of documented identifiable deaths (DID) from the El Salvadoran Civil War. Though the data files used here are small, this study shows how the computational complexity of \texttt{fabl} depends on the number of unique agreement patterns, and how significant computational gains can be achieved by simplifying the construction of the comparison vectors. Secondly, the case study reveals the impact of independently sampling $Z_j$ rather than strictly enforcing one-to-one matching as done by \texttt{BRL}. The second case study is the National Long Term Care Survey (NLTCS), a much larger linkage tasks which \texttt{BRL} is unable to complete but which we complete with \texttt{fabl} with relative ease. 
+We now demonstrate the power of our method through a case study of documented identifiable deaths (DID) from the El Salvadoran Civil War. Though the data files used here are small, this study shows how the computational complexity of \texttt{fabl} depends on the number of unique agreement patterns, and how significant computational gains can be achieved by simplifying the construction of the comparison vectors. Secondly, the case study reveals the impact of independently sampling $Z_j$ rather than strictly enforcing one-to-one matching as done by \texttt{BRL}. 
+
+%The second case study is the National Long Term Care Survey (NLTCS), a much larger linkage tasks which \texttt{BRL} is unable to complete but which we complete with \texttt{fabl} with relative ease. 
 
 \subsection{El Salvadoran Civil War}
 \label{el_salvador}

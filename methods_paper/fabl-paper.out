@@ -8,7 +8,10 @@
 \BOOKMARK [2][-]{subsection.9}{Data Representation, Hashing, and Storage}{section.8}% 8
 \BOOKMARK [1][-]{section.10}{Efficient Posterior Inference}{}% 9
 \BOOKMARK [1][-]{section.12}{Simulation Studies}{}% 10
-\BOOKMARK [1][-]{section.21}{Case Studies}{}% 11
-\BOOKMARK [2][-]{subsection.22}{El Salvadoran Civil War}{section.21}% 12
-\BOOKMARK [1][-]{section.32}{Discussion}{}% 13
-\BOOKMARK [1][-]{section.33}{Appendix}{}% 14
+\BOOKMARK [2][-]{subsection.13}{Accuracy}{section.12}% 11
+\BOOKMARK [2][-]{subsection.16}{Speed}{section.12}% 12
+\BOOKMARK [2][-]{subsection.23}{Scale}{section.12}% 13
+\BOOKMARK [1][-]{section.24}{Case Studies}{}% 14
+\BOOKMARK [2][-]{subsection.25}{El Salvadoran Civil War}{section.24}% 15
+\BOOKMARK [1][-]{section.35}{Discussion}{}% 16
+\BOOKMARK [1][-]{section.36}{Appendix}{}% 17

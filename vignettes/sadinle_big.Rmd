@@ -23,7 +23,7 @@ library(tidyverse)
 
 ```{r}
 files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
-number_of_files <- 2
+number_of_files <- 40
 all_patterns = TRUE
 R = NULL
 n1 <- 500
@@ -86,7 +86,7 @@ Ztrue[nonmatches] <- nA + 1
 # file1_partition <- split(big_file1, file1_chunk_id)
 
 
-chunks_df2 <- 2
+chunks_df2 <- 20
 chunk_size_df2 <- ceiling(dim(big_file2)[1]/chunks_df2)
 file2_chunk_id <- rep(1:chunks_df2, each = chunk_size_df2)[1:dim(big_file2)[1]]
 file2_partition <- split(big_file2, file2_chunk_id)
@@ -107,8 +107,8 @@ HashRecords <- function(df2){
 }
 
 #Keep File A intact
-# patterns_hashed <- lapply(file2_partition, HashRecords)
-# cd <- SynthesizeHash(patterns_hashed)
+patterns_hashed <- lapply(file2_partition, HashRecords)
+cd <- SynthesizeHash(patterns_hashed)
 
 # Chunk both files
 # chunks_df1 <- 2
@@ -136,8 +136,8 @@ HashRecords <- function(df2){
 library(parallel)
 
 #Linux, for the cluster
-patterns_hashed <- parallel::mclapply(file2_partition, HashRecords, mc.cores = 1)
-cd <- SynthesizeHash(patterns_hashed)
+# patterns_hashed <- parallel::mclapply(file2_partition, HashRecords, mc.cores = 1)
+# cd <- SynthesizeHash(patterns_hashed)
 
 ```
 
@@ -204,6 +204,7 @@ eval <- GetEvaluations(Zhat_resolved, Ztrue, nA)
 
 elapsed <- proc.time() - ptm
 
+object.size(cd) / (10^6)
 eval
 elapsed
 ```

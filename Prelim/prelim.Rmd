@@ -1,0 +1,60 @@
+---
+title: "Prelim"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction to Record Linkage
+
+# Fellegi and Sunter
+
+# Notation
+
+- File A with records indexed $i \in \{1, \ldots, n_A\}$ and file B with records $j \in \{1, \ldots, n_B}$. We use $F$ features for linkage, with $L_f$ possible levels of agreement on feature $f$.
+
+- $\Gamma \in \mathbb{R}^{n_A n_B \times F}$ matrix of comparison vectors
+
+- $Z_j$
+
+- $m_{fl} = P\left(\gamma_{ij}^f = l |Z_j = i\right)$
+
+- $u_{fl} = P\left(\gamma_{ij}^f = l |Z_j \neq i\right)$
+
+- $\lambda = P(Z_j \leq n_A)$
+
+# m's and u's
+
+# Previous work
+
+# Model
+
+# Hashing
+
+Demonstration
+
+# Managing large data
+
+# Simulation Results 1
+
+# Simulation Results 2
+
+# Extentions and Directions
+
+
+
+- $m_{fl} = $
+
+# Previous work
+
+
+
+______________________________________
+
+# El Salvador
+
+# Distributed computation
+
+# Storage Efficient Indexing
