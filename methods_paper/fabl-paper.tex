@@ -85,10 +85,18 @@ Abstract
 
 %% Reworking introduction for Brian's paper.
 
-Record linkage is the task of identifying duplicate records across multiple data sources, often in the absence of a unique identifier \citep{christen2012data}. Record linkage is an increasingly important task in ``data cleaning," that is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others. In the literature, bipartite record linkage is commonly known as merging two databases that contain duplication across the two databases, but do not contain any duplications within each database. 
+Record linkage is the task of identifying duplicate records across multiple data sources, often in the absence of a unique identifier \citep{christen2012data}. Record linkage is an increasingly important task in ``data cleaning," that is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others. Many statistical record linkage methods are the results of extensions from the groundbreaking work of \cite{fs, newcombe}. Specifically, \cite{newcombe} created comparison vectors for each pair of records in the data and independently classified those pairs as a match or a non-match. While this independence assumption may not always be reasonable, it is appealing for its mathematical simplicity and relative computational ease. Many recent work in the statistical literature has extended the aforementioned work [Brian: add citations here: Winkler and Thibadeau, 1991, Fair, 2004, Wagner and Layne, 2014, Gill and Goldacre, 2003, Singleton, 2013). 
+
+In the literature, bipartite record linkage is commonly known as merging two databases that contain duplication across the two databases, but do not contain any duplications within each database \citep{sadinle2017}. 
+
+Citations to add (Fellegi and Sunter, Jaro, 1989, Winkler 1988, 1993, 1994, Belin and Rubin 1995, Larsen and Rubin 2001, Herzog et al 2007, Tancredi and Liseo, 2011, Gutman et al. 2013, others?)
+
+Talk about the advantages and then what Sadinle has added to the literature. Then talk about our contributions to the Sadinle paper. 
 
 
-task consists of merging two disparate datafiles containing information on two overlapping sets of entities.
+
+%Several authors have elaborated on this approach by including hierarchical structure on model parameters, aiding classification through regression to incorporate covariates, establishing joint models for linkage and analysis, and more \citep{larsen2005}, \citep{hu2017}, \citep{hof2017}. Importantly, \citep{enamorado2019} modified the Fellegi-Sunter method with innovative hashing techniques, greatly expanding the scalability of the independent classification approach. 
+
 
 \begin{enumerate}
 \item Let's re-visit the case study of Sadinle. Lay this out and the importance of it. 
@@ -101,12 +109,16 @@ task consists of merging two disparate datafiles containing information on two o
 
 \newpage
 
-In many cases, this identification is itself the goal of an analysis, as in estimating human rights atrocities from disparate data sources, or linking voter information across election years. In others, we seek to perform some other statistical procedure, such as survival analysis or regression, using linked datasets, and one must  propagate linkage uncertainty into the subsequent analysis. 
+%In many cases, this identification is itself the goal of an analysis, as in estimating human rights atrocities from disparate data sources, or linking voter information across election years. In others, we seek to perform some other statistical procedure, such as survival analysis or regression, using linked datasets, and one must  propagate linkage uncertainty into the subsequent analysis. 
+%
+%Record linkage is straightforward when provided unique identifiers or highly reliable information, but becomes difficult when data sources are plagued with error. This motivates the use of probabilistic record linkage techniques that are able to model the reliability of the information and which are more robust to errors than are deterministic methods. Unfortunately, probabilistic record linkage is computationally intense, and many entity resolution tasks are large in nature,
+%motivating the search for scalable and efficient record linkage techniques. 
 
-Record linkage is straightforward when provided unique identifiers or highly reliable information, but becomes difficult when data sources are plagued with error. This motivates the use of probabilistic record linkage techniques that are able to model the reliability of the information and which are more robust to errors than are deterministic methods. Unfortunately, probabilistic record linkage is computationally intense, and many entity resolution tasks are large in nature,
-motivating the search for scalable and efficient record linkage techniques. 
+%Most record linkage techniques are based the seminal \citep{fs}, which formalized the methods outlined by \citep{newcombe}. 
 
-Most record linkage techniques are based the seminal \citep{fs}, which formalized the methods outlined by \citep{newcombe}. This method creates comparison vectors for each pair of records in the data, and independently classifies those pairs as a match or a non-match. Though this independence is usually not reasonable, it is appealing for its mathematical simplicity and relative computational ease. Several authors have elaborated on this approach by including hierarchical structure on model parameters, aiding classification through regression to incorporate covariates, establishing joint models for linkage and analysis, and more \citep{larsen2005}, \citep{hu2017}, \citep{hof2017}. Importantly, \citep{enamorado2019} modified the Fellegi-Sunter method with innovative hashing techniques, greatly expanding the scalability of the independent classification approach. 
+%This method creates comparison vectors for each pair of records in the data, and independently classifies those pairs as a match or a non-match. Though this independence is usually not reasonable, it is appealing for its mathematical simplicity and relative computational ease. 
+
+Several authors have elaborated on this approach by including hierarchical structure on model parameters, aiding classification through regression to incorporate covariates, establishing joint models for linkage and analysis, and more \citep{larsen2005}, \citep{hu2017}, \citep{hof2017}. Importantly, \citep{enamorado2019} modified the Fellegi-Sunter method with innovative hashing techniques, greatly expanding the scalability of the independent classification approach. 
 
 Despite the appeal of independent classification, it often leads to linkage decisions that do not enjoy transitive closure, and ignores that fact that we are often in scenarios where we know one record in one file has at most one match in another file. This setting is known as bipartite matching, and has received much less attention in the literature. \citep{sadinle2017} developed a prior distribution on the space of bipartite matchings such that his method, known as Beta Record Linkage (BRL), resulted in one-to-one matchings without any need for post-processing. However, BRL was even more computationally intensive than the original Fellegi-Sunter method, making it infeasible for large linkage tasks. 
 
