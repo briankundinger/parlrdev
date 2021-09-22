@@ -2,7 +2,7 @@ This is BibTeX, Version 0.99d (TeX Live 2021)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: fabl-paper.aux
 Case mismatch error between cite keys jaro1989 and Jaro1989
----line 35 of file fabl-paper.aux
+---line 41 of file fabl-paper.aux
  : \citation{jaro1989
  :                   }
 I'm skipping whatever remains of this command

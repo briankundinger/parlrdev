@@ -83,6 +83,7 @@ Abstract
 \section{Introduction}
 \label{sec:introduction}
 
+
 %% Reworking introduction for Brian's paper.
 
 Record linkage is the task of identifying duplicate records across multiple data sources, often in the absence of a unique identifier \citep{christen_2012}. Record linkage is an increasingly important task in ``data cleaning," that is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others. Many statistical record linkage methods and case studies are extensions of seminal work of \cite{fellegi_theory_1969} and \cite{newcombe_automatic_1959}. Specifically, \cite{fellegi_theory_1969} created comparison vectors for each pair of records in the data and independently classified those pairs as a match or a non-match using a likelihood ratio test (or hypothesis test). Recent work in the statistical literature has extended the aforementioned work \citep{winkler1991application, fair2004generalized, wagner2014person, gill2003english}. 
@@ -122,6 +123,7 @@ Then mention related work.
 %motivating the search for scalable and efficient record linkage techniques. 
 
 %Most record linkage techniques are based the seminal \citep{fs}, which formalized the methods outlined by \citep{newcombe}. 
+>>>>>>> e17e46b99593a9cae2676267d508dfcd21a5d0ac
 
 %This method creates comparison vectors for each pair of records in the data, and independently classifies those pairs as a match or a non-match. Though this independence is usually not reasonable, it is appealing for its mathematical simplicity and relative computational ease. 
 
@@ -234,14 +236,14 @@ leads to models that perform well in practice; see discussion for
 further remarks. Lastly, we define \(\lambda\) to be the (marginal)
 probability that some record \(j \in B\) has a match in \(A\).
 
-Wherever possible, we reserve superscripts for denoting field and level,
-while reserving subscripts for record indices. For example,
-\(\mathbf{m}^f = (m^{f1}, \ldots, m^{fL_f})\) is the probability
-distribution governing field \(f\) for matching records, and
-\(\mathbf{m}_{ij}= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(m^{fl}\right)^{\mathbf{1}_{\gamma_{ij}^f = l}} = P(\boldsymbol{\gamma}_{ij}|Z_j = i)\)
-is product of the relevant of the appropriate \(\mathbf{m}\) parameters
-for record pair \((i,j)\). We hope that these conventions avoid
-overloaded notation in the likelihood and subsequent derivations.
+%Wherever possible, we reserve superscripts for denoting field and level,
+%while reserving subscripts for record indices. For example,
+%\(\mathbf{m}^f = (m^{f1}, \ldots, m^{fL_f})\) is the probability
+%distribution governing field \(f\) for matching records, and
+%\(\mathbf{m}_{ij}= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(m^{fl}\right)^{\mathbf{1}_{\gamma_{ij}^f = l}} = P(\boldsymbol{\gamma}_{ij}|Z_j = i)\)
+%is product of the relevant of the appropriate \(\mathbf{m}\) parameters
+%for record pair \((i,j)\). We hope that these conventions avoid
+%overloaded notation in the likelihood and subsequent derivations.
 
 \hypertarget{model-specification}{%
 	\subsection{Model Specification}
