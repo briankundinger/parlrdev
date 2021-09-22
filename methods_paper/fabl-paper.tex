@@ -85,9 +85,11 @@ Abstract
 
 %% Reworking introduction for Brian's paper.
 
-Record linkage is the task of identifying duplicate records across multiple data sources, often in the absence of a unique identifier \citep{christen2012data}. Record linkage is an increasingly important task in ``data cleaning," that is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others. Many statistical record linkage methods are the results of extensions from the groundbreaking work of \cite{fs, newcombe}. Specifically, \cite{newcombe} created comparison vectors for each pair of records in the data and independently classified those pairs as a match or a non-match. While this independence assumption may not always be reasonable, it is appealing for its mathematical simplicity and relative computational ease. Many recent work in the statistical literature has extended the aforementioned work [Brian: add citations here: Winkler and Thibadeau, 1991, Fair, 2004, Wagner and Layne, 2014, Gill and Goldacre, 2003, Singleton, 2013). 
+Record linkage is the task of identifying duplicate records across multiple data sources, often in the absence of a unique identifier \citep{christen_2012}. Record linkage is an increasingly important task in ``data cleaning," that is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others. Many statistical record linkage methods and case studies are extensions of seminal work of \cite{fellegi_theory_1969} and \cite{newcombe_automatic_1959}. Specifically, \cite{fellegi_theory_1969} created comparison vectors for each pair of records in the data and independently classified those pairs as a match or a non-match using a likelihood ratio test (or hypothesis test). Recent work in the statistical literature has extended the aforementioned work \citep{winkler1991application, fair2004generalized, wagner2014person, gill2003english}. 
 
-In the literature, bipartite record linkage is commonly known as merging two databases that contain duplication across the two databases, but do not contain any duplications within each database \citep{sadinle2017}. 
+%While this independence assumption may not always be reasonable, it is appealing for its mathematical simplicity and relative computational ease. Many recent work in the statistical literature has extended the aforementioned work [Brian: add citations here: 
+
+In this paper, we consider bipartite record linkage, which is commonly known as merging two databases that contain duplication across the two databases, but do not contain any duplications within each database \citep{sadinle_bayesian_2017}. Much of the statistical literature focuses on bipartite record linkage \citep{fellegi_theory_1969, Jaro1989, Winkler1988, belin_1995, larsen_2001, liseo_2011,  herzog2007data, gutman_bayesian_2013, sadinle_bayesian_2017}. 
 
 Citations to add (Fellegi and Sunter, Jaro, 1989, Winkler 1988, 1993, 1994, Belin and Rubin 1995, Larsen and Rubin 2001, Herzog et al 2007, Tancredi and Liseo, 2011, Gutman et al. 2013, others?)
 
@@ -120,9 +122,9 @@ Talk about the advantages and then what Sadinle has added to the literature. The
 
 Several authors have elaborated on this approach by including hierarchical structure on model parameters, aiding classification through regression to incorporate covariates, establishing joint models for linkage and analysis, and more \citep{larsen2005}, \citep{hu2017}, \citep{hof2017}. Importantly, \citep{enamorado2019} modified the Fellegi-Sunter method with innovative hashing techniques, greatly expanding the scalability of the independent classification approach. 
 
-Despite the appeal of independent classification, it often leads to linkage decisions that do not enjoy transitive closure, and ignores that fact that we are often in scenarios where we know one record in one file has at most one match in another file. This setting is known as bipartite matching, and has received much less attention in the literature. \citep{sadinle2017} developed a prior distribution on the space of bipartite matchings such that his method, known as Beta Record Linkage (BRL), resulted in one-to-one matchings without any need for post-processing. However, BRL was even more computationally intensive than the original Fellegi-Sunter method, making it infeasible for large linkage tasks. 
+Despite the appeal of independent classification, it often leads to linkage decisions that do not enjoy transitive closure, and ignores that fact that we are often in scenarios where we know one record in one file has at most one match in another file. This setting is known as bipartite matching, and has received much less attention in the literature. \citep{sadinle_bayesian_2017} developed a prior distribution on the space of bipartite matchings such that his method, known as Beta Record Linkage (BRL), resulted in one-to-one matchings without any need for post-processing. However, BRL was even more computationally intensive than the original Fellegi-Sunter method, making it infeasible for large linkage tasks. 
 
-In this paper, we propose an extension to the \texttt{BRL} method proposed by \citep{sadinle2017} for this very end.  We increase the speed of the \texttt{BRL} procedure through a modification to the model specification that allows for parallel computing of the linkage parameter, and use hashing techniques to hasten calculations and reduce computational complexity. Additionally, we introduce storage efficient indexing (SEI), and a data partitioning approach to make the method amenable to large linkage tasks. To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{Fast Beta Linkage} (\texttt{fabl},
+In this paper, we propose an extension to the \texttt{BRL} method proposed by \citep{sadinle_bayesian_2017} for this very end.  We increase the speed of the \texttt{BRL} procedure through a modification to the model specification that allows for parallel computing of the linkage parameter, and use hashing techniques to hasten calculations and reduce computational complexity. Additionally, we introduce storage efficient indexing (SEI), and a data partitioning approach to make the method amenable to large linkage tasks. To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{Fast Beta Linkage} (\texttt{fabl},
 pronounced ``fable'')
 
 In what follows, Section~\ref{sec:related} describes previous work in record linkage that lays the foundation for our method, Section~\ref{sec:model}
@@ -171,7 +173,7 @@ that break expectations of transitivity, which is undesirable. Although
 mostly likely set of one-to-one matchings, the abundance of false
 matches can bias the estimation of other parameters of the model, and ultimately leads to poor linkage performance. 
 
-\citep{sadinle2017} uses the same comparison vector approach as Fellegi and Sunter, but proposed a prior distribution for the set of matches that strictly enforced one-to-one matching without the need for any post-hoc processing procedures. Specifically, in each iteration of his Gibbs sampler, he considers each record \(j\in B\), removes from consideration the records \(i\in A\) that have already been matched, and then samples a potential link. This leads to a sampler that is significantly more accurate than the standard Fellegi-Sunter approach. However,
+\citep{sadinle_bayesian_2017} uses the same comparison vector approach as Fellegi and Sunter, but proposed a prior distribution for the set of matches that strictly enforced one-to-one matching without the need for any post-hoc processing procedures. Specifically, in each iteration of his Gibbs sampler, he considers each record \(j\in B\), removes from consideration the records \(i\in A\) that have already been matched, and then samples a potential link. This leads to a sampler that is significantly more accurate than the standard Fellegi-Sunter approach. However,
 accounting for these dependencies throughout the linkage process is
 computationally burdensome, leaving \texttt{BRL} only suitable for small
 to moderate linkage problems.
@@ -357,7 +359,7 @@ With the likelihood in this form, we can derive the full conditional
 	1-\lambda &  z_j  = n_A + 1 \\
 \end{cases}\]
 
-In order to make fair comparisons against the \citep{sadinle2017} model, we
+In order to make fair comparisons against the \citep{sadinle_bayesian_2017} model, we
 integrate over the posterior of \(\lambda\) and rearrange terms to
 produce the final full conditional:
 
@@ -403,7 +405,7 @@ inducing the intuitive decision rule
 \end{cases}\]
 
 For a more in-depth explanation of this function and the induced Bayes
-estimate, see \citep{sadinle2017}.
+estimate, see \citep{sadinle_bayesian_2017}.
 
 Since our Gibbs procedure does not strictly enforce one-to-one matching,
 it is possible for the final Bayes estimate to link multiple records in
@@ -926,7 +928,7 @@ future work.
 \bibliographystyle{jasa}
 {
 \footnotesize
-\bibliography{references}
+\bibliography{biblio}
 }
 
 \end{document}

@@ -1,79 +1,77 @@
 This is BibTeX, Version 0.99d (TeX Live 2021)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: fabl-paper.aux
+Case mismatch error between cite keys jaro1989 and Jaro1989
+---line 35 of file fabl-paper.aux
+ : \citation{jaro1989
+ :                   }
+I'm skipping whatever remains of this command
 The style file: jasa.bst
-Database file #1: references.bib
-Repeated entry---line 5408 of file references.bib
- : @article{hu2017
- :                ,
-I'm skipping whatever remains of this entry
+Database file #1: biblio.bib
+Warning--I didn't find a database entry for "larsen2005"
+Warning--I didn't find a database entry for "hu2017"
+Warning--I didn't find a database entry for "hof2017"
+Warning--I didn't find a database entry for "enamorado2019"
+Warning--I didn't find a database entry for "fs"
+Warning--I didn't find a database entry for "sadinle2017"
 Bibliography style `jasa.bst' by Russ Lenth, April 1996 (rev. Mar. 1999)
-Too many commas in name 1 of "Hu Y., Wang Q., Vatsalan D., Christen P." for entry hu2017
-while executing---line 1172 of file jasa.bst
-Too many commas in name 1 of "Hu Y., Wang Q., Vatsalan D., Christen P." for entry hu2017
-while executing---line 1172 of file jasa.bst
-Too many commas in name 1 of "Steorts, R., Hall, R. and Fienberg, S." for entry steorts_2013
-while executing---line 1172 of file jasa.bst
-Too many commas in name 1 of "Steorts, R., Hall, R. and Fienberg, S." for entry steorts_2013
-while executing---line 1172 of file jasa.bst
-[christen2012data]
-[enamorado2019]
-[fs]
-[hof2017]
-[hu2017]
-Too many commas in name 1 of "Hu Y., Wang Q., Vatsalan D., Christen P." for entry hu2017
-while executing---line 1246 of file jasa.bst
-Too many commas in name 1 of "Hu Y., Wang Q., Vatsalan D., Christen P." for entry hu2017
-while executing---line 1246 of file jasa.bst
-[jaro1989]
+[belin_1995]
+[christen_2012]
+[fair2004generalized]
+[fellegi_theory_1969]
+[gill2003english]
+[gutman_bayesian_2013]
+[herzog2007data]
+[Jaro1989]
 [jaro1995]
-[larsen2005]
-[newcombe]
-[sadinle2017]
+[larsen_2001]
+[newcombe_automatic_1959]
+[sadinle_bayesian_2017]
 [steorts_2013]
-Too many commas in name 1 of "Steorts, R., Hall, R. and Fienberg, S." for entry steorts_2013
-while executing---line 1246 of file jasa.bst
-Too many commas in name 1 of "Steorts, R., Hall, R. and Fienberg, S." for entry steorts_2013
-while executing---line 1246 of file jasa.bst
-You've used 11 entries,
+[liseo_2011]
+[wagner2014person]
+[Winkler1988]
+[winkler1991application]
+Warning--empty publisher in winkler1991application
+You've used 17 entries,
             2332 wiz_defined-function locations,
-            603 strings with 5792 characters,
-and the built_in function-call counts, 4760 in all, are:
-= -- 477
-> -- 194
-< -- 10
-+ -- 60
-- -- 54
-* -- 410
-:= -- 805
-add.period$ -- 21
-call.type$ -- 11
-change.case$ -- 58
-chr.to.int$ -- 11
-cite$ -- 22
-duplicate$ -- 211
-empty$ -- 327
-format.name$ -- 71
-if$ -- 953
+            651 strings with 6858 characters,
+and the built_in function-call counts, 7277 in all, are:
+= -- 728
+> -- 327
+< -- 14
++ -- 103
+- -- 91
+* -- 658
+:= -- 1255
+add.period$ -- 32
+call.type$ -- 17
+change.case$ -- 92
+chr.to.int$ -- 17
+cite$ -- 35
+duplicate$ -- 295
+empty$ -- 487
+format.name$ -- 120
+if$ -- 1419
 int.to.chr$ -- 1
 int.to.str$ -- 0
-missing$ -- 12
-newline$ -- 37
-num.names$ -- 44
-pop$ -- 66
+missing$ -- 18
+newline$ -- 55
+num.names$ -- 68
+pop$ -- 103
 preamble$ -- 1
-purify$ -- 69
+purify$ -- 108
 quote$ -- 0
-skip$ -- 159
-stack$ -- 12
-substring$ -- 345
-swap$ -- 55
+skip$ -- 209
+stack$ -- 18
+substring$ -- 538
+swap$ -- 57
 text.length$ -- 1
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 96
-warning$ -- 0
-while$ -- 45
+type$ -- 147
+warning$ -- 1
+while$ -- 76
 width$ -- 0
-write$ -- 122
-(There were 9 error messages)
+write$ -- 186
+(There was 1 error message)

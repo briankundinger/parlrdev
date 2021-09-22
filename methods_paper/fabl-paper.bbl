@@ -1,56 +1,91 @@
 \begin{thebibliography}{}
 \newcommand{\enquote}[1]{``#1''}
 
-\bibitem[Christen(2012)Christen]{christen2012data}
-Christen, P. (2012), \emph{Data Matching: Concepts and Techniques for Record
-  Linkage, Entity Resolution, and Duplicate Detection}, Springer Science \&
-  Business Media.
+\bibitem[Belin and Rubin(1995)Belin and Rubin]{belin_1995}
+Belin, T.~R. and Rubin, D.~B. (1995), \enquote{A {Method} for {Calibrating}
+  {False}-{Match} {Rates} in {Record} {Linkage},} \emph{Journal of the American
+  Statistical Association}, 90, 694--707.
 
-\bibitem[Enamorado and Imai(2019)Enamorado and Imai]{enamorado2019}
-Enamorado, T. and Imai, K. (2019), \enquote{Validating self-reported turnout by
-  linking public opinion surveys with administrative records,} \emph{Public
-  Opinion Quarterly}, 83, 723--748.
+\bibitem[Christen(2012)Christen]{christen_2012}
+Christen, P. (2012), \enquote{A survey of indexing techniques for scalable
+  record linkage and deduplication,} \emph{IEEE Transactions on Knowledge and
+  Data Engineering}, 24, 1537--1555.
 
-\bibitem[Fellegi and Sunter(1969)Fellegi and Sunter]{fs}
-Fellegi, I. and Sunter, A. (1969), \enquote{A theory for record linkage,}
-  \emph{Journal of the American Statistical Association}, 64, 1183--1210.
+\bibitem[Fair(2004)Fair]{fair2004generalized}
+Fair, M. (2004), \enquote{Generalized record linkage system--Statistics
+  Canada’s record linkage software,} \emph{Austrian Journal of Statistics},
+  33, 37--53.
 
-\bibitem[Hof et~al.(2017)Hof, Ravelli, and Zwinderman]{hof2017}
-Hof, M.~H., Ravelli, A.~C., and Zwinderman, A.~H. (2017), \enquote{A
-  Probabilistic Record Linkage Model for Survival Data,} \emph{Journal of the
-  American Statistical Association}, 112, 1504--1515.
+\bibitem[Fellegi and Sunter(1969)Fellegi and Sunter]{fellegi_theory_1969}
+Fellegi, I.~P. and Sunter, A.~B. (1969), \enquote{A {Theory} for {Record}
+  {Linkage},} \emph{Journal of the American Statistical Association}, 64,
+  1183--1210.
 
-\bibitem[Hu~Y.(2017)Hu~Y.]{hu2017}
-Hu~Y., Wang~Q., V. D. C.~P. (2017), \enquote{Improving Temporal Record Linkage
-  Using Regression Classification,} \emph{Advances in Knowledge Discovery and
-  Data Mining}.
+\bibitem[Gill and Goldacre(2003)Gill and Goldacre]{gill2003english}
+Gill, L. and Goldacre, M. (2003), \enquote{English national record linkage of
+  hospital episode statistics and death registration records,} \emph{Report to
+  the department of health}.
 
-\bibitem[Jaro(1989)Jaro]{jaro1989}
-Jaro, M. (1989), \enquote{Advances in record-linkage methodology as applied to
-  matching the 1985 census of {T}ampa, {F}lorida,} \emph{Journal of the
-  American Statistical Association}, 84, 414--420.
+\bibitem[Gutman et~al.(2013)Gutman, Afendulis, and
+  Zaslavsky]{gutman_bayesian_2013}
+Gutman, R., Afendulis, C.~C., and Zaslavsky, A.~M. (2013), \enquote{A
+  {Bayesian} {Procedure} for {File} {Linking} to {Analyze} {End}-of-{Life}
+  {Medical} {Costs},} \emph{Journal of the American Statistical Association},
+  108, 34--47.
+
+\bibitem[Herzog et~al.(2007)Herzog, Scheuren, and Winkler]{herzog2007data}
+Herzog, T.~N., Scheuren, F.~J., and Winkler, W.~E. (2007), \emph{Data quality
+  and record linkage techniques}, Springer Science \& Business Media.
+
+\bibitem[Jaro(1989)Jaro]{Jaro1989}
+Jaro, M.~A. (1989), \enquote{Advances in Record-Linkage Methodology as Applied
+  to Matching the 1985 Census of Tampa, Florida,} \emph{Journal of the American
+  Statistical Association}, 84, 414--420.
 
 \bibitem[Jaro(1995)Jaro]{jaro1995}
-Jaro, M. (1995), \enquote{Probabilistic linkage of large public health data
+Jaro, M.~A. (1995), \enquote{Probabilistic linkage of large public health data
   files,} \emph{Statistics in Medicine}, 14, 491--498.
 
-\bibitem[Larsen(2005)Larsen]{larsen2005}
-Larsen, M. (2005), \enquote{Advances in record linkage theory: {H}ierarchical
-  {B}ayesian record linkage theory,} in \emph{Proceedings of the Section on
-  Survey Research Methods}, p. 3277–3284, Alexandria, VA: American
-  Statistical Association.
+\bibitem[Larsen and Rubin(2001)Larsen and Rubin]{larsen_2001}
+Larsen, M.~D. and Rubin, D.~B. (2001), \enquote{Iterative {Automated} {Record}
+  {Linkage} {Using} {Mixture} {Models},} \emph{Journal of the American
+  Statistical Association}, 96, 32--41.
 
-\bibitem[Newcombe et~al.(1959)Newcombe, Kennedy, Axford, and James]{newcombe}
-Newcombe, H., Kennedy, J., Axford, S., and James, A. (1959), \enquote{Automatic
-  linkage of vital records,} \emph{Science}, 130, 954--959.
+\bibitem[Newcombe et~al.(1959)Newcombe, Kennedy, Axford, and
+  James]{newcombe_automatic_1959}
+Newcombe, H.~B., Kennedy, J.~M., Axford, S.~J., and James, A.~P. (1959),
+  \enquote{Automatic {Linkage} of {Vital} {Records},} \emph{Science}, 130,
+  954--959.
 
-\bibitem[Sadinle(2017)Sadinle]{sadinle2017}
-Sadinle, M. (2017), \enquote{Bayesian estimation of bipartite matchings for
-  record linkage,} \emph{Journal of the American Statistical Association}, 112,
-  600--612.
+\bibitem[Sadinle(2017)Sadinle]{sadinle_bayesian_2017}
+Sadinle, M. (2017), \enquote{Bayesian {Estimation} of {Bipartite} {Matchings}
+  for {Record} {Linkage},} \emph{Journal of the American Statistical
+  Association}, 112, 600--612.
 
-\bibitem[Steorts and Fienberg(2014)Steorts and Fienberg]{steorts_2013}
-Steorts, R., H.~R. and Fienberg, S. (2014), \enquote{A Bayesian Approach to
-  Graphical Record Linkage and De-duplication,} \emph{In Revision}.
+\bibitem[Steorts(2013)Steorts]{steorts_2013}
+Steorts, R. (2013), \enquote{Divergence losses under benchmarking for small
+  area estimation,} \emph{Working Paper}.
+
+\bibitem[Tancredi and Liseo(2011)Tancredi and Liseo]{liseo_2011}
+Tancredi, A. and Liseo, B. (2011), \enquote{{A Hierarchical Bayesian Approach
+  to Record Linkage and Size Population Problems},} \emph{Annals of Applied
+  Statistics}, 5, 1553--1585.
+
+\bibitem[Wagner et~al.(2014)Wagner, Lane, et~al.]{wagner2014person}
+Wagner, D., Lane, M., et~al. (2014), \enquote{The person identification
+  validation system (PVS): applying the Center for Administrative Records
+  Research and Applications’(CARRA) record linkage software,} Tech. rep.,
+  Center for Economic Studies, US Census Bureau.
+
+\bibitem[Winkler(1988)Winkler]{Winkler1988}
+Winkler, W.~E. (1988), \enquote{Using the EM Algorithm for Weight Computation
+  in the Fellegi-Sunter Model of Record Linkage,} in \emph{Proceedings of the
+  Section on Survey Research Methods}, pp. 667--671, American Statistical
+  Association.
+
+\bibitem[Winkler and Thibaudeau(1991)Winkler and
+  Thibaudeau]{winkler1991application}
+Winkler, W.~E. and Thibaudeau, Y. (1991), \emph{An Application of the
+  Fellegi-Sunter Model of Record Linkage to the 1990 US Decennial Census}.
 
 \end{thebibliography}
