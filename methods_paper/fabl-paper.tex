@@ -91,9 +91,14 @@ Record linkage is the task of identifying duplicate records across multiple data
 
 In this paper, we consider bipartite record linkage, which is commonly known as merging two databases that contain duplication across the two databases, but do not contain any duplications within each database \citep{sadinle_bayesian_2017}. Much of the statistical literature focuses on bipartite record linkage \citep{fellegi_theory_1969, Jaro1989, Winkler1988, belin_1995, larsen_2001, liseo_2011,  herzog2007data, gutman_bayesian_2013, sadinle_bayesian_2017}. 
 
-Citations to add (Fellegi and Sunter, Jaro, 1989, Winkler 1988, 1993, 1994, Belin and Rubin 1995, Larsen and Rubin 2001, Herzog et al 2007, Tancredi and Liseo, 2011, Gutman et al. 2013, others?)
+The Fellegi-Sunter method and its extensions are widely popular mainly due to its simplicity and computational scalability. Despite this, like any method, it has limitations, that are well known in the literature. Specifically, the assumption of no duplications within a database implies a maximum one-to-one constraint. That is, a record from one database ban be linked with only one record in the other database. Modern methods of Fellegi-Sunter either ignore this restriction \citep{Winkler1988, belin_1995, larsen_2001}, include this as a post-processing step \citep{Jaro1989}, or include it directly in the modeling framework \citep{sadinle_bayesian_2017}. It is important to note that \cite{fellegi_theory_1969} ignored this restriction as well. In practice, it seems that one should either directly include it in the modeling framework or correct for this in a post-processing step. 
 
-Talk about the advantages and then what Sadinle has added to the literature. Then talk about our contributions to the Sadinle paper. 
+To our knowledge, \cite{sadinle_bayesian_2017} was the first to propose correcting the Fellegi and Sunter model for the one-to-one constraint. Specifically, the authors propose a Bayesian variant of the original model. This satisfies two goals. First, it allows one to quantify uncertainty regarding match or non-match status. In addition, posterior distributions are readily available to help estimate point estimates of interest (and quantity such estimates). Second, under the Bayesian paradigm, the one-to-one matching constraint is easily imbedded. The downside to this constraint is an added computational cost. Our goal is proposing a model in the spirit of \cite{sadinle_bayesian_2017}, which scales beyond the original proposed model, without sacrificing much in the way of accuracy or precision of the resulting estimates. 
+
+
+Now, mention Brian's contributions. 
+
+Then mention related work.
 
 
 
