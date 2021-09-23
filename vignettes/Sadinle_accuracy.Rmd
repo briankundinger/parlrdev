@@ -145,6 +145,8 @@ results_df <- readRDS("Sadinle_Replication_Results")
 results_df <- results_df %>% 
   filter(method != "fabl")
 
+results_df$method[results_df$method == "Sadinle17"] <- "BRL"
+
 results_df$method[results_df$method == "fabl_resolved"] <- "fabl"
 acc_plot <- results_df %>% 
   ggplot(aes(x = metric, y = avg,
