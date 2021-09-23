@@ -2,76 +2,84 @@ This is BibTeX, Version 0.99d (TeX Live 2021)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: fabl-paper.aux
 Case mismatch error between cite keys jaro1989 and Jaro1989
----line 41 of file fabl-paper.aux
+---line 38 of file fabl-paper.aux
  : \citation{jaro1989
  :                   }
 I'm skipping whatever remains of this command
 The style file: jasa.bst
 Database file #1: biblio.bib
-Warning--I didn't find a database entry for "larsen2005"
-Warning--I didn't find a database entry for "hu2017"
-Warning--I didn't find a database entry for "hof2017"
-Warning--I didn't find a database entry for "enamorado2019"
+Repeated entry---line 3523 of file biblio.bib
+ : @misc{liseo_2013
+ :                 ,
+I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for ""
 Warning--I didn't find a database entry for "fs"
+Warning--I didn't find a database entry for "enamorado2019"
 Warning--I didn't find a database entry for "sadinle2017"
 Bibliography style `jasa.bst' by Russ Lenth, April 1996 (rev. Mar. 1999)
 [belin_1995]
 [christen_2012]
+[Christophides2019]
 [fair2004generalized]
 [fellegi_theory_1969]
 [gill2003english]
 [gutman_bayesian_2013]
+[Herzog_2007]
 [herzog2007data]
 [Jaro1989]
 [jaro1995]
+[Jurek2019]
+Warning--can't use both author and editor fields in Jurek2019
 [larsen_2001]
+[liseo_2013]
 [newcombe_automatic_1959]
 [sadinle_bayesian_2017]
 [steorts_2013]
 [liseo_2011]
 [wagner2014person]
 [Winkler1988]
+[Winkler2014]
 [winkler1991application]
 Warning--empty publisher in winkler1991application
-You've used 17 entries,
+You've used 22 entries,
             2332 wiz_defined-function locations,
-            651 strings with 6858 characters,
-and the built_in function-call counts, 7277 in all, are:
-= -- 728
-> -- 327
-< -- 14
-+ -- 103
-- -- 91
-* -- 658
-:= -- 1255
-add.period$ -- 32
-call.type$ -- 17
-change.case$ -- 92
-chr.to.int$ -- 17
-cite$ -- 35
-duplicate$ -- 295
-empty$ -- 487
-format.name$ -- 120
-if$ -- 1419
-int.to.chr$ -- 1
+            679 strings with 7694 characters,
+and the built_in function-call counts, 9396 in all, are:
+= -- 924
+> -- 450
+< -- 18
++ -- 139
+- -- 126
+* -- 853
+:= -- 1628
+add.period$ -- 40
+call.type$ -- 22
+change.case$ -- 119
+chr.to.int$ -- 21
+cite$ -- 46
+duplicate$ -- 381
+empty$ -- 618
+format.name$ -- 164
+if$ -- 1834
+int.to.chr$ -- 2
 int.to.str$ -- 0
-missing$ -- 18
-newline$ -- 55
-num.names$ -- 68
-pop$ -- 103
+missing$ -- 24
+newline$ -- 70
+num.names$ -- 88
+pop$ -- 140
 preamble$ -- 1
-purify$ -- 108
+purify$ -- 140
 quote$ -- 0
-skip$ -- 209
-stack$ -- 18
-substring$ -- 538
-swap$ -- 57
-text.length$ -- 1
+skip$ -- 272
+stack$ -- 23
+substring$ -- 650
+swap$ -- 77
+text.length$ -- 2
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 147
-warning$ -- 1
-while$ -- 76
+type$ -- 186
+warning$ -- 2
+while$ -- 96
 width$ -- 0
-write$ -- 186
-(There was 1 error message)
+write$ -- 240
+(There were 2 error messages)

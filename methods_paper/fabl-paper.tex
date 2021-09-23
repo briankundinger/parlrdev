@@ -70,7 +70,7 @@
 
 \bigskip
 \begin{abstract}
-In this paper, we propose the \emph{fast beta linkage} (\texttt{fabl}, which extends a recent Bayesian Fellegi Sunter model to allow for parallel computing. In addition, we propose using hashing techniques to hasten calculations and to reduce the overall computational complexity. To achieve a scalable model, we propose independent priors in order to create computational speeds and gains, where we relax the one-to-one matching assumption. Second, we resolve the one-to-one matching issue via a post processing step. Third, we derive conditional distributions, a Gibbs sampler, and corresponding Bayes estimates for our proposed model. Fourth, we explore other computational speeds up based upon storage efficient indexing. Finally, we explore a sensitivity analysis and revisit the case study of the El Salvadoran conflict to understand the practical ramifications regarding our proposed modeling choices, where we provide comparisons to the \text{BRL} package in CRAN. 
+In this paper, we propose the \emph{fast beta linkage} (\texttt{fabl}), which extends a recent Bayesian Fellegi Sunter model to allow for parallel computing. In addition, we propose using hashing techniques to hasten calculations and to reduce the overall computational complexity. To achieve a scalable model, we propose independent priors in order to create computational speeds and gains, where we relax the one-to-one matching assumption. Second, we resolve the one-to-one matching issue via a post processing step. Third, we derive conditional distributions, a Gibbs sampler, and corresponding Bayes estimates for our proposed model. Fourth, we explore other computational speeds up based upon storage efficient indexing. Finally, we explore a sensitivity analysis and revisit the case study of the El Salvadoran conflict to understand the practical ramifications regarding our proposed modeling choices, where we provide comparisons to the \text{BRL} package in CRAN. 
 \end{abstract}
 
 
@@ -101,61 +101,75 @@ In this paper, we propose a Bayesian extension of \cite{sadinle_bayesian_2017} (
 To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{fast beta linkage} (\texttt{fabl},
 pronounced ``fable'')
 
+The remainder of the paper is as follows. Section~\ref{sec:bipartite} reviews bipartite record linkage; section \ref{sec:fs} reviews the traditional approach of the Fellegi and Sunter framework before introducing our proposed work. 
+
+\section{Bipartite Record Linkage and Related Work}
+As already mentioned, bipartite record linkage is the traditional set up studied in record linkage, where we assume there are two databases $\bm{X}_1$ and $\bm{X}_2$ such that there are duplications across the databases but not within each databases. We assume that each database has $n_1$ and $n_2$ records, and that $n_1 \leq n_2.$ Denote the number of entities simultaneously recorded by \emph{both databases} by $n_{12}$ such that $0 \leq n_{12} \leq n_2.$ Given this set up, as explained by \cite{steorts_bayesian_2016} and \cite{sadinle_bayesian_2017}, this can be viewed as bipartite record linkage. This is important as it allows one to view the matching matrix or linkage structure in the following way:
+\begin{align}
+\Delta_{ij} =
+\begin{cases}
+1 \quad \text{if records}\;  i \in \bm{X}_1 \; \text{and}\; j\in \bm{X}_2 \; \text{refer to the same entity}; \\
+0 \quad \text{otherwise}.\\
+\end{cases}
+\end{align}
+Bipartite matching can also be viewed as a matching labeling $\bm{Z} = (Z_1, \ldots, Z_{n_2})$ for the records in database $\bm{X}_2$ such that 
+\begin{align}
+Z_{j} =
+\begin{cases}
+i \quad \text{if records}\;  i \in \bm{X}_1 \; \text{and}\; j\in \bm{X}_2 \; \text{refer to the same entity}; \\
+n_1 + j \quad n_1 + j \quad \text{if records}\;  j \in \bm{X}_2 \; \text{does not have a match in database}\; \bm{X}_1. \\
+\end{cases}
+\end{align}
+Depending on which representation is the most convenient, we can go back and forth between the two using $\Delta_{ij} = I(Z_j = i),$ where $I(\cdot)$ is the indicator function. 
+
+\textcolor{red}{Now state the related work here in this literature and common approaches.}
+
+ATTN: These are just notes and need to be edited
+
+\begin{enumerate}
+\item The most common approach is FS. 
+\item ``A number of approaches directly model the information contained in the datafiles (Fortini et al., 2002; Matsakis, 2010; Liseo and Tancredi, 2011; Tancredi and Liseo, 2011; Gutman et al., 2013; Steorts et al., 2013), which requires crafting specific models for each type of field in the datafile, and are therefore currently limited to handle nominal categorical
+fields, or continuous variables modeled under normality." [Update this literature] 
+\item Classification. ``A more common way of tackling this problem is to see it as a traditional classification
+problem: we need to classify record pairs into matches and non-matches. If we have access
+to a sample of record pairs for which the true matching statuses are known, we can train a
+classifier on this sample using comparisons between the pairs of records as our predictors,
+and then predict the matching statuses of the remaining record pairs (e.g., Cochinwala et al.,
+2001; Bilenko et al., 2003; Christen, 2008; Ventura et al., 2013)." [Update this literature] 
+\end{enumerate}
+
+\section{The Fellegi Sunter Approach to Record Linkage}
+
+I think this should be reviewed so that the paper is more clear. 
+
+
+%n_1 + j \quad \text{if records}\;  j \in \bm{X}_2 \; \text{does not have a match in database}\; \bm{X}_1 \\
+
+%describes previous work in record linkage that lays the foundation for our method, Section~\ref{sec:model}
+%3 provides our model and the Gibbs sampler used for posterior inference,
+%and Sections~\ref{sec:efficiency} and~\ref{sec:efficient-posterior} describe strategies used for more efficient and scalable
+%implementation. Then, Section~\ref{sec:simulations} demonstrates the accuracy and speed of
+%out method through two simulation studies, and Section~\ref{sec:case-studies} reveals
+%interesting properties of the method through a case study of El
+%Salvadoran casualty records. Lastly, Section~\ref{sec:discussion} is a discussion that highlights open
+%questions in the record linkage literature and motivates future work.
+
 
 % We increase the speed of the \texttt{BRL} procedure through a modification to the model specification that allows for parallel computing of the linkage parameter, and use hashing techniques to hasten calculations and reduce computational complexity. Additionally, we introduce storage efficient indexing (SEI), and a data partitioning approach to make the method amenable to large linkage tasks. To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{Fast Beta Linkage} (\texttt{fabl},
 %pronounced ``fable'')
 
 
-\textcolor{red}{Talk about related work and weave in the El Salvadoran study.}
-
-%Now, mention Brian's contributions. 
-
-
-
-
-
-%Several authors have elaborated on this approach by including hierarchical structure on model parameters, aiding classification through regression to incorporate covariates, establishing joint models for linkage and analysis, and more \citep{larsen2005}, \citep{hu2017}, \citep{hof2017}. Importantly, \citep{enamorado2019} modified the Fellegi-Sunter method with innovative hashing techniques, greatly expanding the scalability of the independent classification approach. 
-
-
-%\begin{enumerate}
-%\item Let's re-visit the case study of Sadinle. Lay this out and the importance of it. 
-%\item Next, let's briefly review the landscape of the literature. 
-%\item State Brian's contributions. 
-%\item Then write a section on related work. 
-%\item Then write a section regarding the layout of the paper.
-%\end{enumerate}
-
-
-\newpage
-
-%In many cases, this identification is itself the goal of an analysis, as in estimating human rights atrocities from disparate data sources, or linking voter information across election years. In others, we seek to perform some other statistical procedure, such as survival analysis or regression, using linked datasets, and one must  propagate linkage uncertainty into the subsequent analysis. 
+%\textcolor{red}{Talk about related work and weave in the El Salvadoran study.}
 %
-%Record linkage is straightforward when provided unique identifiers or highly reliable information, but becomes difficult when data sources are plagued with error. This motivates the use of probabilistic record linkage techniques that are able to model the reliability of the information and which are more robust to errors than are deterministic methods. Unfortunately, probabilistic record linkage is computationally intense, and many entity resolution tasks are large in nature,
-%motivating the search for scalable and efficient record linkage techniques. 
-
-%Most record linkage techniques are based the seminal \citep{fs}, which formalized the methods outlined by \citep{newcombe}. 
-
-
-%This method creates comparison vectors for each pair of records in the data, and independently classifies those pairs as a match or a non-match. Though this independence is usually not reasonable, it is appealing for its mathematical simplicity and relative computational ease. 
-
-%Several authors have elaborated on this approach by including hierarchical structure on model parameters, aiding classification through regression to incorporate covariates, establishing joint models for linkage and analysis, and more \citep{larsen2005}, \citep{hu2017}, \citep{hof2017}. Importantly, \citep{enamorado2019} modified the Fellegi-Sunter method with innovative hashing techniques, greatly expanding the scalability of the independent classification approach. 
-%
-%Despite the appeal of independent classification, it often leads to linkage decisions that do not enjoy transitive closure, and ignores that fact that we are often in scenarios where we know one record in one file has at most one match in another file. This setting is known as bipartite matching, and has received much less attention in the literature. \citep{sadinle_bayesian_2017} developed a prior distribution on the space of bipartite matchings such that his method, known as Beta Record Linkage (BRL), resulted in one-to-one matchings without any need for post-processing. However, BRL was even more computationally intensive than the original Fellegi-Sunter method, making it infeasible for large linkage tasks. 
+%\newpage
 
 
 
-In what follows, Section~\ref{sec:related} describes previous work in record linkage that lays the foundation for our method, Section~\ref{sec:model}
-3 provides our model and the Gibbs sampler used for posterior inference,
-and Sections~\ref{sec:efficiency} and~\ref{sec:efficient-posterior} describe strategies used for more efficient and scalable
-implementation. Then, Section~\ref{sec:simulations} demonstrates the accuracy and speed of
-out method through two simulation studies, and Section~\ref{sec:case-studies} reveals
-interesting properties of the method through a case study of El
-Salvadoran casualty records. Lastly, Section~\ref{sec:discussion} is a discussion that highlights open
-questions in the record linkage literature and motivates future work.
 
 
 \section{Related work}
 \label{sec:related}
+In this section, we review work that is most related to our proposed work. For surveys of the record linkage literature, see \citep{christen_2012, Herzog_2007, liseo_2013, Winkler2014, Christophides2019, Jurek2019}.
 
 \paragraph{Fellegi and Sunter Method}
 Most record linkage techniques are derived from the seminal \citep{fs} paper "A Theory for Record Linkage". The defining
