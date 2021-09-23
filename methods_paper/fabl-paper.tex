@@ -122,21 +122,18 @@ n_1 + j \quad n_1 + j \quad \text{if records}\;  j \in \bm{X}_2 \; \text{does no
 \end{align}
 Depending on which representation is the most convenient, we can go back and forth between the two using $\Delta_{ij} = I(Z_j = i),$ where $I(\cdot)$ is the indicator function. 
 
-\textcolor{red}{Now state the related work here in this literature and common approaches.}
+There are many approaches to bipartite record linkage, and we review some of the most common approaches below.
 
-ATTN: These are just notes and need to be edited
+\paragraph{Fellegi and Sunter}
+As already mentioned, the most common approach is the original approach of \cite{fellegi_theory_1969}. \cite{enamorado2019using} have extended this approach using computational speeds ups to allow for a much more scalable and practical approach, providing open source code for the community. 
 
-\begin{enumerate}
-\item The most common approach is FS. 
-\item ``A number of approaches directly model the information contained in the datafiles (Fortini et al., 2002; Matsakis, 2010; Liseo and Tancredi, 2011; Tancredi and Liseo, 2011; Gutman et al., 2013; Steorts et al., 2013), which requires crafting specific models for each type of field in the datafile, and are therefore currently limited to handle nominal categorical
-fields, or continuous variables modeled under normality." [Update this literature] 
-\item Classification. ``A more common way of tackling this problem is to see it as a traditional classification
-problem: we need to classify record pairs into matches and non-matches. If we have access
-to a sample of record pairs for which the true matching statuses are known, we can train a
-classifier on this sample using comparisons between the pairs of records as our predictors,
-and then predict the matching statuses of the remaining record pairs (e.g., Cochinwala et al.,
-2001; Bilenko et al., 2003; Christen, 2008; Ventura et al., 2013)." [Update this literature] 
-\end{enumerate}
+%These approaches have led to downstream tasks, such as regression approaches in the literature \citep{tang2020}. 
+
+\paragraph{Directly Modeling the Data} Instead of relying on comparison vectors, some authors will incorporate the data directly into their bipartite record linkage model \citep{Fortinietal01, Matsakis10, liseo_jos_2011, liseo_2011, gutman_bayesian_2013, shan2020bayesian}. These approaches have led to extensions regarding downstream tasks in the literature or joint models, such as regression approaches \citep{dalzell2018regression, steorts2018generalized, tancredi2020unified}.  There have been extensions to directly model the data in this literature where authors consider merging multiple databases (more than two) \citep{steorts_bayesian_2016, steorts_entity_2015, zanella_flexible_2016, marchant_distributed_2019, tancredi_2015_regression}. 
+We do not review this literature given that it is not directly/fairly comparable with the case of bipartite record linkage.
+
+\paragraph{Classification Approaches} 
+One common way of approaching the record linkage task, especially in computer science and machine learning is using a classification approach. One uses a model (such as random forests) to classify records into matches/non-matches. When access to unique identifiers is available, one can create a training data (or reference data) set of record pairs (where the true match status is known).  Finally, one can train a classifier using the reference data set to predict the match status on any record pairs that were not included in the reference data set \citep{Bilenko2006, Christen2008, ventura2015seeing}. 
 
 \section{The Fellegi Sunter Approach to Record Linkage}
 
