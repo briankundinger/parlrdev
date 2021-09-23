@@ -17,6 +17,17 @@ Christophides, V., Efthymiou, V., Palpanas, T., Papadakis, G., and Stefanidis,
   K. (2021), \enquote{{An Overview of End-to-End Entity Resolution for Big
   Data},} \emph{ACM Computing Surveys}, 53.
 
+\bibitem[Dalzell and Reiter(2018)Dalzell and Reiter]{dalzell2018regression}
+Dalzell, N.~M. and Reiter, J.~P. (2018), \enquote{Regression modeling and file
+  matching using possibly erroneous matching variables,} \emph{Journal of
+  Computational and Graphical Statistics}, 27, 728--738.
+
+\bibitem[Enamorado et~al.(2019)Enamorado, Fifield, and
+  Imai]{enamorado2019using}
+Enamorado, T., Fifield, B., and Imai, K. (2019), \enquote{Using a Probabilistic
+  Model to Assist Merging of Large-Scale Administrative Records,}
+  \emph{American Political Science Review}, 113, 353--371.
+
 \bibitem[Fair(2004)Fair]{fair2004generalized}
 Fair, M. (2004), \enquote{Generalized record linkage system--Statistics
   Canada’s record linkage software,} \emph{Austrian Journal of Statistics},
@@ -26,6 +37,12 @@ Fair, M. (2004), \enquote{Generalized record linkage system--Statistics
 Fellegi, I.~P. and Sunter, A.~B. (1969), \enquote{A {Theory} for {Record}
   {Linkage},} \emph{Journal of the American Statistical Association}, 64,
   1183--1210.
+
+\bibitem[Fortini et~al.(2001)Fortini, Liseo, Nuccitelli, and
+  Scanu]{Fortinietal01}
+Fortini, M., Liseo, B., Nuccitelli, A., and Scanu, M. (2001), \enquote{{On
+  Bayesian Record Linkage},} \emph{Research in Official Statistics}, 4,
+  185--198.
 
 \bibitem[Gill and Goldacre(2003)Gill and Goldacre]{gill2003english}
 Gill, L. and Goldacre, M. (2003), \enquote{English national record linkage of
@@ -66,9 +83,24 @@ Larsen, M.~D. and Rubin, D.~B. (2001), \enquote{Iterative {Automated} {Record}
   {Linkage} {Using} {Mixture} {Models},} \emph{Journal of the American
   Statistical Association}, 96, 32--41.
 
+\bibitem[Liseo and Tancredi(2011)Liseo and Tancredi]{liseo_jos_2011}
+Liseo, B. and Tancredi, A. (2011), \enquote{Bayesian estimation of population
+  size via linkage of multivariate Normal data sets,} \emph{Journal of Official
+  Statistics}, 27, 491--505.
+
 \bibitem[Liseo and Tancredi(2013)Liseo and Tancredi]{liseo_2013}
 Liseo, B. and Tancredi, A. (2013), \enquote{Some advances on {B}ayesian record
   linkage and inference for linked data,} .
+
+\bibitem[Marchant et~al.(2019)Marchant, Steorts, Kaplan, Rubinstein, and
+  Elazar]{marchant_distributed_2019}
+Marchant, N.~G., Steorts, R.~C., Kaplan, A., Rubinstein, B. I.~P., and Elazar,
+  D.~N. (2019), \enquote{d-blink: Distributed End-to-End Bayesian Entity
+  Resolution,} \emph{arXiv e-prints}, {arxiv:1909.06039}.
+
+\bibitem[Matsakis(2010)Matsakis]{Matsakis10}
+Matsakis, N.~E. (2010), \enquote{{Active Duplicate Detection with Bayesian
+  Nonparametric Models},} Ph.D. thesis, Massachusetts Institute of Technology.
 
 \bibitem[Newcombe et~al.(1959)Newcombe, Kennedy, Axford, and
   James]{newcombe_automatic_1959}
@@ -81,14 +113,46 @@ Sadinle, M. (2017), \enquote{Bayesian {Estimation} of {Bipartite} {Matchings}
   for {Record} {Linkage},} \emph{Journal of the American Statistical
   Association}, 112, 600--612.
 
+\bibitem[Shan et~al.(2020)Shan, Thomas, and Gutman]{shan2020bayesian}
+Shan, M., Thomas, K., and Gutman, R. (2020), \enquote{A Bayesian Multi-Layered
+  Record Linkage Procedure to Analyze Functional Status of Medicare Patients
+  with Traumatic Brain Injury,} \emph{arXiv e-prints}, {arxiv:2005.08549}.
+
 \bibitem[Steorts(2013)Steorts]{steorts_2013}
 Steorts, R. (2013), \enquote{Divergence losses under benchmarking for small
   area estimation,} \emph{Working Paper}.
+
+\bibitem[Steorts(2015)Steorts]{steorts_entity_2015}
+Steorts, R.~C. (2015), \enquote{Entity {Resolution} with {Empirically}
+  {Motivated} {Priors},} \emph{Bayesian Analysis}, 10, 849--875.
+
+\bibitem[Steorts et~al.(2016)Steorts, Hall, and
+  Fienberg]{steorts_bayesian_2016}
+Steorts, R.~C., Hall, R., and Fienberg, S.~E. (2016), \enquote{A {Bayesian}
+  {Approach} to {Graphical} {Record} {Linkage} and {Deduplication},}
+  \emph{Journal of the American Statistical Association}, 111, 1660--1672.
+
+\bibitem[Steorts et~al.(2018)Steorts, Tancredi, and
+  Liseo]{steorts2018generalized}
+Steorts, R.~C., Tancredi, A., and Liseo, B. (2018), \enquote{Generalized
+  Bayesian Record Linkage and Regression with Exact Error Propagation,} in
+  \emph{International Conference on Privacy in Statistical Databases}, pp.
+  297--313, Springer.
 
 \bibitem[Tancredi and Liseo(2011)Tancredi and Liseo]{liseo_2011}
 Tancredi, A. and Liseo, B. (2011), \enquote{{A Hierarchical Bayesian Approach
   to Record Linkage and Size Population Problems},} \emph{Annals of Applied
   Statistics}, 5, 1553--1585.
+
+\bibitem[Tancredi and Liseo(2015)Tancredi and Liseo]{tancredi_2015_regression}
+Tancredi, A. and Liseo, B. (2015), \enquote{Regression analysis with linked
+  data: problems and possible solutions,} \emph{Statistica}, 75, 19--35.
+
+\bibitem[Tancredi et~al.(2020)Tancredi, Steorts, and
+  Liseo]{tancredi2020unified}
+Tancredi, A., Steorts, R., and Liseo, B. (2020), \enquote{A Unified Framework
+  for De-Duplication and Population Size Estimation (with Discussion),}
+  \emph{Bayesian Analysis}, 15, 633--682.
 
 \bibitem[Wagner et~al.(2014)Wagner, Lane, et~al.]{wagner2014person}
 Wagner, D., Lane, M., et~al. (2014), \enquote{The person identification
@@ -110,5 +174,13 @@ Winkler, W.~E. (2014), \enquote{Matching and Record Linkage,} \emph{Wiley
   Thibaudeau]{winkler1991application}
 Winkler, W.~E. and Thibaudeau, Y. (1991), \emph{An Application of the
   Fellegi-Sunter Model of Record Linkage to the 1990 US Decennial Census}.
+
+\bibitem[Zanella et~al.(2016)Zanella, Betancourt, Wallach, Miller, Zaidi, and
+  Steorts]{zanella_flexible_2016}
+Zanella, G., Betancourt, B., Wallach, H., Miller, J., Zaidi, A., and Steorts,
+  R.~C. (2016), \enquote{Flexible {Models} for {Microclustering} with
+  {Application} to {Entity} {Resolution},} in \emph{Proceedings of the 30th
+  {International} {Conference} on {Neural} {Information} {Processing}
+  {Systems}}, {NIPS}'16, pp. 1425--1433, NY, USA, Curran Associates Inc.
 
 \end{thebibliography}

@@ -122,9 +122,23 @@ n_1 + j \quad n_1 + j \quad \text{if records}\;  j \in \bm{X}_2 \; \text{does no
 \end{align}
 Depending on which representation is the most convenient, we can go back and forth between the two using $\Delta_{ij} = I(Z_j = i),$ where $I(\cdot)$ is the indicator function. 
 
+There are many approaches to bipartite record linkage, and we review some of the most common approaches below.
+
+\paragraph{Fellegi and Sunter}
+As already mentioned, the most common approach is the original approach of \cite{fellegi_theory_1969}. \cite{enamorado2019using} have extended this approach using computational speeds ups to allow for a much more scalable and practical approach, providing open source code for the community. 
+
+%These approaches have led to downstream tasks, such as regression approaches in the literature \citep{tang2020}. 
+
+\paragraph{Directly Modeling the Data} Instead of relying on comparison vectors, some authors will incorporate the data directly into their bipartite record linkage model \citep{Fortinietal01, Matsakis10, liseo_jos_2011, liseo_2011, gutman_bayesian_2013, shan2020bayesian}. These approaches have led to extensions regarding downstream tasks in the literature or joint models, such as regression approaches \citep{dalzell2018regression, steorts2018generalized, tancredi2020unified}. 
+
+
+There have been extensions to directly model the data in this literature at combining many databases, however, we do not review this as it's not directly comparable with the situation of bipartite record linkage \citep{steorts_bayesian_2016, steorts_entity_2015, zanella_flexible_2016, marchant_distributed_2019, tancredi_2015_regression, }.
+
+\paragraph{Classification Approaches} 
+
 \textcolor{red}{Now state the related work here in this literature and common approaches.}
 
-ATTN: These are just notes and need to be edited
+\textcolor{red}{ATTN: These are just notes and need to be edited}
 
 \begin{enumerate}
 \item The most common approach is FS. 
