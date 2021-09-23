@@ -6,6 +6,18 @@ Belin, T.~R. and Rubin, D.~B. (1995), \enquote{A {Method} for {Calibrating}
   {False}-{Match} {Rates} in {Record} {Linkage},} \emph{Journal of the American
   Statistical Association}, 90, 694--707.
 
+\bibitem[Bilenko et~al.(2006)Bilenko, Kamath, and Mooney]{Bilenko2006}
+Bilenko, M., Kamath, B., and Mooney, R.~J. (2006), \enquote{Adaptive blocking:
+  Learning to scale up record linkage,} \emph{Proceedings - IEEE International
+  Conference on Data Mining, ICDM}, pp. 87--96.
+
+\bibitem[Christen(2008)Christen]{Christen2008}
+Christen, P. (2008), \enquote{Automatic Record Linkage Using Seeded Nearest
+  Neighbour and Support Vector Machine Classification,} in \emph{Proceedings of
+  the 14th ACM SIGKDD International Conference on Knowledge Discovery and Data
+  Mining}, p. 151–159, New York, NY, USA, Association for Computing
+  Machinery.
+
 \bibitem[Christen(2012)Christen]{christen_2012}
 Christen, P. (2012), \enquote{A survey of indexing techniques for scalable
   record linkage and deduplication,} \emph{IEEE Transactions on Knowledge and
@@ -153,6 +165,12 @@ Tancredi, A. and Liseo, B. (2015), \enquote{Regression analysis with linked
 Tancredi, A., Steorts, R., and Liseo, B. (2020), \enquote{A Unified Framework
   for De-Duplication and Population Size Estimation (with Discussion),}
   \emph{Bayesian Analysis}, 15, 633--682.
+
+\bibitem[Ventura et~al.(2015)Ventura, Nugent, and Fuchs]{ventura2015seeing}
+Ventura, S.~L., Nugent, R., and Fuchs, E.~R. (2015), \enquote{Seeing the
+  Non-Stars:(Some) Sources of Bias in Past Disambiguation Approaches and a New
+  Public Tool Leveraging Labeled Records,} \emph{Research Policy}, 44,
+  1672--1701.
 
 \bibitem[Wagner et~al.(2014)Wagner, Lane, et~al.]{wagner2014person}
 Wagner, D., Lane, M., et~al. (2014), \enquote{The person identification
