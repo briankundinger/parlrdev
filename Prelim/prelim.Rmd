@@ -14,9 +14,31 @@ knitr::opts_chunk$set(echo=FALSE, out.height="80%", out.width="80%", fig.align =
 
 # Introduction to Record Linkage
 
+\begin{columns}
+\begin{column}{0.5\textwidth}
+
+\begin{itemize}
+\item Record linkage is the task of identifying duplicate records over noisy datasets.
+
+\item Easy with unique identifiers, difficult when faced with errors
+
+\item Far ranging applications in business, public health, and human rights
+
+\end{itemize}
+
+\end{column}
+\begin{column}{0.5\textwidth}  %%<--- here
+    \begin{center}
+     picture
+     \end{center}
+\end{column}
+\end{columns}
+
+
+
 # Fellegi and Sunter
 
-```{r out.width="90%"}
+```{r out.width="100%"}
 knitr::include_graphics("fs_graphic.png")
 ```
 
@@ -27,8 +49,8 @@ knitr::include_graphics("fs_graphic.png")
 - $\Gamma \in \mathbb{R}^{n_A n_B \times F}$ matrix of comparison vectors where $\gamma_{ij}^f \in \{1, \ldots, L_f\}$
 
 - $Z_j = \begin{cases} 
-	i,  & \text{if records } i\in A \text{ and } j\in B \text{ refer to the same entity}; \\
-	n_A + 1,  & \text{if record } j\in B \text{ does not have a match in file } A; \\
+	i,  & \text{if records } i\in A \text{ and } j\in B \text{ match}; \\
+	n_A + 1,  & \text{if record } j\in B \text{ has no match in } A; \\
 	\end{cases}$
 
 - $m_{fl} = P\left(\gamma_{ij}^f = l |Z_j = i\right)$
@@ -67,11 +89,12 @@ $$\lambda \sim \text{Beta}(\alpha_{\lambda}, \beta_{\lambda})$$
 
 # Hashing
 
-- Recognize there are at most $P = \prod_{f = 1}^F L_f$ unique agreement patterns. When $(i,j)$ pair exhibits agreement pattern $p$, say $(i, j) \in h_p$
+- Recognize there are at most $P = \prod_{f = 1}^F L_f$ unique agreement patterns, regardless of number of records. When $(i,j)$ pair exhibits agreement pattern $p$, say $(i, j) \in h_p$.
 
 - Reduce data to sufficient statistics
-  - $H_p = \sum_{i,j} \mathbf{1}_{(i, j) \in h_p}$
-  - $H_{p_j} = \sum_{i} \mathbf{1}_{(i, j) \in h_p}$
+  - $r_{p_j} = \{i \;|\, (i, j) \in h_p\}$
+  - $H_{p_j} = ||r_{p_j}||$
+  - $H_p = \sum_{j} H_{p_j}$
 
 - Gibbs sampler over each record pair has complexity $O(n_A \times n_B \times F)$, but sampler over agreement pattern has complexity $O(P \times n_B \times F)$
 
@@ -81,7 +104,10 @@ $$\lambda \sim \text{Beta}(\alpha_{\lambda}, \beta_{\lambda})$$
 
 - **Distributed Computing** - Partition data in to chunks $\{A_I\}$ and $\{B_J\}$. Compare records, hash results, compute summary statistics in parallel, and synthesize results
 
-- **Storage Efficient Indexing (SEI)** - Remove highly unlikely record labels from memory. Proper weights for calculations maintained through summary statistics $\{H_p\}$ and $\{H_{p_j}\}$
+- **Storage Efficient Indexing (SEI)** - Store at most small number $R$ many record labels in each $r_{p_j}$, remove highly unlikely record labels from memory. Proper weights for calculations maintained through summary statistics $\{H_p\}$ and $\{H_{p_j}\}$.
+
+- Hashing plus SEI can reduce memory requirements by >99%.
+  - Simulation of $20,000 \times 20,000$ linkage problem with 4 fields. Naive approach requires 6.4GB of storage, hashing and SEI requires 90MB.
 
 # Simulation Results 1
 
