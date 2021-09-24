@@ -153,6 +153,11 @@ Let $\mathcal{S}_f(i,j)$ denote a general similarity measure for feature $f$ of 
 $$\gamma_{ij} = \ell \; \text{if} \; \mathcal{S}_f(i,j) \in I_{f\ell}.$$
 
 \subsection{Fellegi-Sunter Model}
+In this section, we review the Fellegi-Sunter model. While we have introduced comparison data, $\bm{\gamma}_{ij}$, this is not sufficient to determine whether a record is a match/non-match given errors that naturally occur in the data. This motivated \cite{fellegi_theory_1969} to consider the following likelihood ratio
+\begin{align}
+w_{ij} = \log \frac{P(\gamma_{ij} \mid \Delta_{ij} = 1)}{P(\gamma_{ij} \mid \Delta_{ij} = 0)}
+\end{align}
+as a weight to estimate if record pairs were a match/non-match.
 
 
 
