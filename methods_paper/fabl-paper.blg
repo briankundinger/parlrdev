@@ -2,7 +2,7 @@ This is BibTeX, Version 0.99d (TeX Live 2021)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: fabl-paper.aux
 Case mismatch error between cite keys jaro1989 and Jaro1989
----line 49 of file fabl-paper.aux
+---line 54 of file fabl-paper.aux
  : \citation{jaro1989
  :                   }
 I'm skipping whatever remains of this command
@@ -21,11 +21,13 @@ Warning--I didn't find a database entry for "enamorado2019"
 Warning--I didn't find a database entry for "sadinle2017"
 Bibliography style `jasa.bst' by Russ Lenth, April 1996 (rev. Mar. 1999)
 [belin_1995]
+[bilenko2006riddle]
 [Bilenko2006]
 [Christen2008]
 [christen_2012]
 [Christophides2019]
 [dalzell2018regression]
+[elmagarmid_duplicate_2007]
 [enamorado2019using]
 [fair2004generalized]
 [fellegi_theory_1969]
@@ -60,45 +62,45 @@ Warning--can't use both author and editor fields in Jurek2019
 [winkler1991application]
 Warning--empty publisher in winkler1991application
 [zanella_flexible_2016]
-You've used 38 entries,
+You've used 40 entries,
             2332 wiz_defined-function locations,
-            781 strings with 10992 characters,
-and the built_in function-call counts, 17267 in all, are:
-= -- 1704
-> -- 865
-< -- 28
-+ -- 264
-- -- 245
-* -- 1577
-:= -- 2955
-add.period$ -- 72
-call.type$ -- 38
-change.case$ -- 202
-chr.to.int$ -- 37
-cite$ -- 78
-duplicate$ -- 706
-empty$ -- 1116
-format.name$ -- 305
-if$ -- 3418
+            790 strings with 11318 characters,
+and the built_in function-call counts, 18081 in all, are:
+= -- 1786
+> -- 915
+< -- 29
++ -- 278
+- -- 259
+* -- 1654
+:= -- 3102
+add.period$ -- 76
+call.type$ -- 40
+change.case$ -- 213
+chr.to.int$ -- 39
+cite$ -- 82
+duplicate$ -- 736
+empty$ -- 1160
+format.name$ -- 323
+if$ -- 3574
 int.to.chr$ -- 2
 int.to.str$ -- 0
-missing$ -- 39
-newline$ -- 118
-num.names$ -- 152
-pop$ -- 244
+missing$ -- 40
+newline$ -- 124
+num.names$ -- 160
+pop$ -- 255
 preamble$ -- 1
-purify$ -- 239
+purify$ -- 252
 quote$ -- 0
-skip$ -- 517
-stack$ -- 39
-substring$ -- 1205
-swap$ -- 170
+skip$ -- 540
+stack$ -- 41
+substring$ -- 1247
+swap$ -- 175
 text.length$ -- 6
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 330
+type$ -- 348
 warning$ -- 2
-while$ -- 171
+while$ -- 179
 width$ -- 0
-write$ -- 422
+write$ -- 443
 (There were 3 error messages)

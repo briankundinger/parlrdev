@@ -144,6 +144,16 @@ $\bm{U} =  \{(i,j): i \in \bm{X}_1, j \in \bm{X}_2, \Delta_{ij} = 0\}.$ An alter
 duplications can be viewed as identifying the sets of matches/non-matches, or rather $\bm{M}, \bm{U}.$ In the literature, it is well known that record pairs that are estimated as matches are known as links; record pairs that are estimated as non-matches are known as non-links. \cite{fellegi_theory_1969} proposed using all-to-all pairwise comparison of records to estimate the matches/non-matches.
 
 \subsection{Comparison Data}
+In this section, we review the notion of \emph{comparison data}. Intuitively, records that are co-referent or rather refer to the same entity should be similar; records that are non co-referent and refer to different entities should not be similar. A common way to encode this is using a comparison vector $\bm{\gamma}_{ij}$ which is computed for each record pair $(i,j)$ in $\bm{X}_1 \times \bm{X}_2.$ Denote $F$ as the criteria for compare the records such that 
+$\bm{\gamma}_{ij} = (\gamma_{ij}^1, \gamma_{ij}^2, \ldots, \gamma_{ij}^f, \ldots \gamma_{ij}^F).$ In most cases, $F$ represents to a single comparison per feature that the databases share, such as gender. 
+%
+The simplest way to compare two records is check for agreement or disagreement, and this is commonly used for nominal variables such as gender. For more complex measurements, such as textual or numeric feature information, we can take into account partial agreement patterns using common string metrics, such as the Edit, Jaro, or Jaro-Winkler distance functions. This allows us to divide our records into a set of similarity values into different levels of disagreement \citep{bilenko2006riddle, elmagarmid_duplicate_2007}. 
+
+Let $\mathcal{S}_f(i,j)$ denote a general similarity measure for feature $f$ of records $i$ and $j,$ where the range of $\mathcal{S}_f$ can be divided into $L_f +1$ intervals denoted by $I_{f0}, I_{f1}, \ldots, I_{fL_f},$ representing disagreement levels. Following convention, $I_{f0}$ represents the highest level of agreement (inclusive of complete agreement) and $I_{fL_f}$ represents the highest level of disagreement (including complete disagreement). Thus, we can construct comparison vectors in the following way: 
+$$\gamma_{ij} = \ell \; \text{if} \; \mathcal{S}_f(i,j) \in I_{f\ell}.$$
+
+\subsection{Fellegi-Sunter Model}
+
 
 
 \newpage
