@@ -90,9 +90,9 @@ Record linkage is the task of identifying duplicate records across multiple data
 
 %While this independence assumption may not always be reasonable, it is appealing for its mathematical simplicity and relative computational ease. Many recent work in the statistical literature has extended the aforementioned work [Brian: add citations here: 
 
-In this paper, we consider bipartite record linkage, which is commonly known as merging two databases that contain duplication across the two databases, but do not contain any duplications within each database \citep{sadinle_bayesian_2017}. Much of the statistical literature focuses on bipartite record linkage \citep{fellegi_theory_1969, Jaro1989, Winkler1988, belin_1995, larsen_2001, liseo_2011,  herzog2007data, gutman_bayesian_2013, sadinle_bayesian_2017}. 
+In this paper, we consider bipartite record linkage, which is commonly known as merging two databases that contain duplication across the two databases, but do not contain any duplications within each database \citep{sadinle_bayesian_2017}. Much of the statistical literature focuses on bipartite record linkage \citep{fellegi_theory_1969, jaro1989, Winkler1988, belin_1995, larsen_2001, liseo_2011,  herzog2007data, gutman_bayesian_2013, sadinle_bayesian_2017}. 
 
-The Fellegi-Sunter method and its extensions are widely popular mainly due to its simplicity and computational scalability. Despite this, like any method, it has limitations, that are well known in the literature. Specifically, the assumption of no duplications within a database implies a maximum one-to-one constraint. That is, a record from one database can be linked with only one record in the other database. Modern methods of Fellegi-Sunter either ignore this restriction \citep{Winkler1988, belin_1995, larsen_2001}, include this as a post-processing step \citep{Jaro1989}, or include it directly in the modeling framework \citep{sadinle_bayesian_2017}. It is important to note that \cite{fellegi_theory_1969} ignored this restriction as well. In practice, it seems that one should either directly include it in the modeling framework or correct for this in a post-processing step. 
+The Fellegi-Sunter method and its extensions are widely popular mainly due to its simplicity and computational scalability. Despite this, like any method, it has limitations, that are well known in the literature. Specifically, the assumption of no duplications within a database implies a maximum one-to-one constraint. That is, a record from one database can be linked with only one record in the other database. Modern methods of Fellegi-Sunter either ignore this restriction \citep{Winkler1988, belin_1995, larsen_2001}, include this as a post-processing step \citep{jaro1989}, or include it directly in the modeling framework \citep{sadinle_bayesian_2017}. It is important to note that \cite{fellegi_theory_1969} ignored this restriction as well. In practice, it seems that one should either directly include it in the modeling framework or correct for this in a post-processing step. 
 
 To our knowledge, \cite{sadinle_bayesian_2017} was the first to propose correcting the Fellegi and Sunter model for the one-to-one constraint. Specifically, the authors propose a Bayesian variant of the original model that satisfies two goals. First, it allows one to quantify uncertainty regarding match or non-match status. In addition, posterior distributions are readily available to help estimate point estimates of interest (and quantity such estimates). Second, under the Bayesian paradigm, the one-to-one matching constraint is easily imbedded. The downside to this constraint is an added computational cost. The goal of our paper is proposing an extension of \cite{sadinle_bayesian_2017} that scales to large databases, but does not compromise much in terms of accuracy on the original case study considered by the author. 
 
@@ -150,14 +150,39 @@ $\bm{\gamma}_{ij} = (\gamma_{ij}^1, \gamma_{ij}^2, \ldots, \gamma_{ij}^f, \ldots
 The simplest way to compare two records is check for agreement or disagreement, and this is commonly used for nominal variables such as gender. For more complex measurements, such as textual or numeric feature information, we can take into account partial agreement patterns using common string metrics, such as the Edit, Jaro, or Jaro-Winkler distance functions. This allows us to divide our records into a set of similarity values into different levels of disagreement \citep{bilenko2006riddle, elmagarmid_duplicate_2007}. 
 
 Let $\mathcal{S}_f(i,j)$ denote a general similarity measure for feature $f$ of records $i$ and $j,$ where the range of $\mathcal{S}_f$ can be divided into $L_f +1$ intervals denoted by $I_{f0}, I_{f1}, \ldots, I_{fL_f},$ representing disagreement levels. Following convention, $I_{f0}$ represents the highest level of agreement (inclusive of complete agreement) and $I_{fL_f}$ represents the highest level of disagreement (including complete disagreement). Thus, we can construct comparison vectors in the following way: 
-$$\gamma_{ij} = \ell \; \text{if} \; \mathcal{S}_f(i,j) \in I_{f\ell}.$$
+$$\gamma_{ij} = \ell \; \text{if} \; \mathcal{S}_f(i,j) \in I_{f\ell}.$$ The choice of $I_{f\ell}$ are application specific, which we discuss in our simulation and case study. 
 
 \subsection{Fellegi-Sunter Model}
 In this section, we review the Fellegi-Sunter model. While we have introduced comparison data, $\bm{\gamma}_{ij}$, this is not sufficient to determine whether a record is a match/non-match given errors that naturally occur in the data. This motivated \cite{fellegi_theory_1969} to consider the following likelihood ratio
 \begin{align}
+\label{eqn:wts}
 w_{ij} = \log \frac{P(\gamma_{ij} \mid \Delta_{ij} = 1)}{P(\gamma_{ij} \mid \Delta_{ij} = 0)}
 \end{align}
-as a weight to estimate if record pairs were a match/non-match.
+as a weight to estimate if record pairs are a match/non-match. Assume $\bm{\Gamma}_{ij}$ is a random vector, whose distribution depends on $\Delta_{ij}.$ Then equation \ref{eqn:wts} is a representative value of $\bm{\Gamma}_{ij} \mid \Delta_{ij}.$ The ratio will be large if we favor the pair being a match. This is a problem in practice as transitive closures are violated. For example, suppose records $i$ and $j$ in $\bm{X}_1$ are extremely similar but are known to be non-matches. Suppose that both records $i$ and $j$ in $\bm{X}_1$ are very similar to record $k$ in $\bm{X}_2.$ By transitive closures, this implies that $i$ and $j$ are a match, which cannot be true by assumption. 
+
+\cite{jaro1989} proposed addressing this issue via an optimization approach as follows:
+\begin{align}
+\label{eqn:jaro}
+&\max_{\Delta} \sum_{i=1}^{n_1} \sum_{j=1}^{n_2} w_{ij} \Delta_{ij} 
+\quad \text{subject to} \quad \Delta_{ij} \in \{0,1\};\\
+& \quad \quad \sum_{i=1}^{n_1}  \Delta_{ij}  \leq 1, j=1,2, \ldots n_2; \; \text{and} \notag\\
+& \quad \quad\sum_{i=1}^{n_2}  \Delta_{ij}  \leq 1, j=1,2, \ldots n_1. \notag \\
+\end{align}
+
+Equation \label{eqn:jaro} ensures that each record of $\bm{X}_2$ only matches with at most one record in $\bm{X}_1$ (and the reverse condition). This is commonly known as the \emph{maximum-weight bipartite matching problem} or a \emph{linear sum assignment problem}. The output of this algorithm is a bipartite matching that maximizes the sum of the weights among matched pairs, where the pairs are not matched are assumed to be non-matches. \cite{jaro1989} provided no theoretical justification for using this approach, however, \cite{} recently showed that under certain conditions, equation \ref{eqn:jaro} is the maximum likelihood estimate. 
+
+\subsection{Model Estimation}
+In our review, we have assumed one knows $P(\cdot \mid \Delta_{ij} = 1)$ and $P(\cdot \mid \Delta_{ij} = 0),$ however these are typically not known in practice and must be estimated. Assume the comparison vectors are independent given the bipartite matching and we assume that the match status of the record pairs are independent. It then follows that we can model 
+the comparison data using mixture models in the following way:
+\begin{align}
+&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 1 \stackrel{iid}{\sim} \mathcal{M}(\bm{m}), \\
+&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 0  \stackrel{iid}{\sim} \mathcal{U}(\bm{u}), \\
+& \Delta_{ij}   \stackrel{iid}{\sim} \text{Bernoulli}(p), \\
+\end{align}
+where $p$ is the proportion of record pairs that match. Note that $\bm{m}$ and $\bm{u}$ are vectors of the match/non-match parameters. One common way to estimate the parameters of the aforementioned model is using the EM algorithm. 
+
+
+
 
 
 

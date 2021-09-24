@@ -1,11 +1,6 @@
 This is BibTeX, Version 0.99d (TeX Live 2021)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: fabl-paper.aux
-Case mismatch error between cite keys jaro1989 and Jaro1989
----line 54 of file fabl-paper.aux
- : \citation{jaro1989
- :                   }
-I'm skipping whatever remains of this command
 The style file: jasa.bst
 Database file #1: biblio.bib
 Repeated entry---line 2332 of file biblio.bib
@@ -36,7 +31,7 @@ Bibliography style `jasa.bst' by Russ Lenth, April 1996 (rev. Mar. 1999)
 [gutman_bayesian_2013]
 [Herzog_2007]
 [herzog2007data]
-[Jaro1989]
+[jaro1989]
 [jaro1995]
 [Jurek2019]
 Warning--can't use both author and editor fields in Jurek2019
@@ -64,7 +59,7 @@ Warning--empty publisher in winkler1991application
 [zanella_flexible_2016]
 You've used 40 entries,
             2332 wiz_defined-function locations,
-            790 strings with 11318 characters,
+            789 strings with 11310 characters,
 and the built_in function-call counts, 18081 in all, are:
 = -- 1786
 > -- 915
@@ -103,4 +98,4 @@ warning$ -- 2
 while$ -- 179
 width$ -- 0
 write$ -- 443
-(There were 3 error messages)
+(There were 2 error messages)
