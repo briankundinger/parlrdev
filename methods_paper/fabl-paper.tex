@@ -182,7 +182,21 @@ the comparison data using mixture models in the following way:
 where $p$ is the proportion of record pairs that match. Note that $\bm{m}$ and $\bm{u}$ are vectors of the match/non-match parameters. One common way to estimate the parameters of the aforementioned model is using the EM algorithm. 
 
 
-Talk about the pros/cons of the FS method and talk about how we'd like to find a middle ground for practical applications. Lead this into our proposed work. 
+\subsection{Pros and Cons of the Fellegi Sunter Method}
+
+\textcolor{red}{Notes below}
+
+``Even if one implores mixture models with a one-to-one constraint, the Fellegi-Sunter decision rule alone may still lead to many-to-many assignments such as the work by Jaro. This led to Sadinle (2017)  incorporating this constraint into the model (as in Fortini et al., 2001, 2002; Liseo and Tancredi, 2011; Tancredi and Liseo, 2011; Larsen, 2002, 2005, 2010, 2012; Gutman et al., 2013) rather than forcing it in a post-processing step."
+
+On the other hand, this greatly adds to the computational complexity as explored by Ted in [CITE]. Explain his paper. 
+
+In this paper, we bridge the gap between both methods, in order to propose a method that takes into account the one-to-one matching constraint, while scaling to large databases.
+
+Next, review briefly the two approach and the important technical components we utilize for our paper.
+
+
+
+
 
 
 
