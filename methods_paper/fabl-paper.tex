@@ -172,27 +172,17 @@ as a weight to estimate if record pairs are a match/non-match. Assume $\bm{\Gamm
 Equation \label{eqn:jaro} ensures that each record of $\bm{X}_2$ only matches with at most one record in $\bm{X}_1$ (and the reverse condition). This is commonly known as the \emph{maximum-weight bipartite matching problem} or a \emph{linear sum assignment problem}. The output of this algorithm is a bipartite matching that maximizes the sum of the weights among matched pairs, where the pairs are not matched are assumed to be non-matches. \cite{jaro1989} provided no theoretical justification for using this approach, however, \cite{} recently showed that under certain conditions, equation \ref{eqn:jaro} is the maximum likelihood estimate. 
 
 \subsection{Model Estimation}
-In our review, we have assumed one knows $P(\cdot \mid \Delta_{ij} = 1)$ and $P(\cdot \mid \Delta_{ij} = 0),$ however these are typically not known in practice and must be estimated. Assume the comparison vectors are independent given the bipartite matching and we assume that the match status of the record pairs are independent. It then follows that we can model 
+In our review, we have assumed one knows $P(\cdot \mid \Delta_{ij} = 1)$ and $P(\cdot \mid \Delta_{ij} = 0),$ however, these are typically not known in practice and must be estimated. Assume the comparison vectors are independent given the bipartite matching and assume that the match status of the record pairs are independent. It then follows that we can model 
 the comparison data using mixture models in the following way:
 \begin{align}
 &\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 1 \stackrel{iid}{\sim} \mathcal{M}(\bm{m}), \\
-&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 0  \stackrel{iid}{\sim} \mathcal{U}(\bm{u}), \\
-& \Delta_{ij}   \stackrel{iid}{\sim} \text{Bernoulli}(p), \\
+&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 0  \stackrel{iid}{\sim} \mathcal{U}(\bm{u}), \notag\\
+& \Delta_{ij}   \stackrel{iid}{\sim} \text{Bernoulli}(p), \notag
 \end{align}
-where $p$ is the proportion of record pairs that match. Note that $\bm{m}$ and $\bm{u}$ are vectors of the match/non-match parameters. One common way to estimate the parameters of the aforementioned model is using the EM algorithm. 
+where $p$ is the proportion of records that match. Note that $\bm{m}$ and $\bm{u}$ are vectors of the match/non-match parameters. One common way to estimate the unknown parameters of the aforementioned model is using the EM algorithm. 
 
 
-%\subsection{Pros and Cons of the Fellegi Sunter Method}
-%
-%\textcolor{red}{Notes below}
-%
-%``Even if one implores mixture models with a one-to-one constraint, the Fellegi-Sunter decision rule alone may still lead to many-to-many assignments such as the work by Jaro. This led to Sadinle (2017)  incorporating this constraint into the model (as in Fortini et al., 2001, 2002; Liseo and Tancredi, 2011; Tancredi and Liseo, 2011; Larsen, 2002, 2005, 2010, 2012; Gutman et al., 2013) rather than forcing it in a post-processing step."
-%
-%On the other hand, this greatly adds to the computational complexity as explored by Ted in [CITE]. Explain his paper. 
-%
-%In this paper, we bridge the gap between both methods, in order to propose a method that takes into account the one-to-one matching constraint, while scaling to large databases.
-%
-%Next, review briefly the two approach and the important technical components we utilize for our paper.
+One criticism of using mixture models as proposed by \cite{jaro1989} is the fact that the decision rule will lead to ``many-to-many assignments (breaking transitive closures). One way of resolving this issue to incorporate the constraint directly into the model \citep{Fortinietal01, Matsakis10, liseo_jos_2011, liseo_2011, Larsen05, Larsen12, gutman_bayesian_2013, sadinle_bayesian_2017}, which is appealing as one then obtains uncertainty quantification under the Bayesian paradigm, but often has to sacrifice scaling to very large databases. On the other hand, one can turn to post-processing methods in practical situations. In this paper, we attempt to bridge the best of both approaches. Specifically, we propose a model in the spirit of \cite{sadinle_bayesian_2017} and \cite{enamorado_using_2019}. We relax the one-to-one matching constraint proposed by  \cite{sadinle_bayesian_2017} for purely computational reasons, and resolve this in a post-processing step. In addition, we propose our own computational speeds up and those in the spirit of \cite{enamorado_using_2019}. Our framework is then embarassingly parallel, available in the \text{fabl} package, and evaluated on a real case study and simulation studies illustrating that any loss in accuracy due to removing the constraint is minimal. 
 
 
 
@@ -200,28 +190,7 @@ where $p$ is the proportion of record pairs that match. Note that $\bm{m}$ and $
 
 
 
-\newpage
 
-
-%n_1 + j \quad \text{if records}\;  j \in \bm{X}_2 \; \text{does not have a match in database}\; \bm{X}_1 \\
-
-%describes previous work in record linkage that lays the foundation for our method, Section~\ref{sec:model}
-%3 provides our model and the Gibbs sampler used for posterior inference,
-%and Sections~\ref{sec:efficiency} and~\ref{sec:efficient-posterior} describe strategies used for more efficient and scalable
-%implementation. Then, Section~\ref{sec:simulations} demonstrates the accuracy and speed of
-%out method through two simulation studies, and Section~\ref{sec:case-studies} reveals
-%interesting properties of the method through a case study of El
-%Salvadoran casualty records. Lastly, Section~\ref{sec:discussion} is a discussion that highlights open
-%questions in the record linkage literature and motivates future work.
-
-
-% We increase the speed of the \texttt{BRL} procedure through a modification to the model specification that allows for parallel computing of the linkage parameter, and use hashing techniques to hasten calculations and reduce computational complexity. Additionally, we introduce storage efficient indexing (SEI), and a data partitioning approach to make the method amenable to large linkage tasks. To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{Fast Beta Linkage} (\texttt{fabl},
-%pronounced ``fable'')
-
-
-%\textcolor{red}{Talk about related work and weave in the El Salvadoran study.}
-%
-%\newpage
 
 
 

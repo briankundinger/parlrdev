@@ -45,11 +45,18 @@ Elmagarmid, A.~K., Ipeirotis, P.~G., and Verykios, V.~S. (2007),
   \enquote{Duplicate {Record} {Detection}: {A} {Survey},} \emph{IEEE
   Transactions on Knowledge and Data Engineering}, 19, 1--16.
 
-\bibitem[Enamorado et~al.(2019)Enamorado, Fifield, and
+\bibitem[Enamorado et~al.(2019a)Enamorado, Fifield, and
   Imai]{enamorado2019using}
-Enamorado, T., Fifield, B., and Imai, K. (2019), \enquote{Using a Probabilistic
-  Model to Assist Merging of Large-Scale Administrative Records,}
+Enamorado, T., Fifield, B., and Imai, K. (2019a), \enquote{Using a
+  Probabilistic Model to Assist Merging of Large-Scale Administrative Records,}
   \emph{American Political Science Review}, 113, 353--371.
+
+\bibitem[Enamorado et~al.(2019b)Enamorado, Fifield, and
+  Imai]{enamorado_using_2019}
+Enamorado, T., Fifield, B., and Imai, K. (2019b), \enquote{Using a
+  {Probabilistic} {Model} to {Assist} {Merging} of {Large-Scale}
+  {Administrative} {Records},} \emph{American Political Science Review}, 113,
+  353--371.
 
 \bibitem[Fair(2004)Fair]{fair2004generalized}
 Fair, M. (2004), \enquote{Generalized record linkage system--Statistics
@@ -100,6 +107,16 @@ Jaro, M.~A. (1995), \enquote{Probabilistic linkage of large public health data
 Jurek-Loughrey, A. and P, D. (2019), \emph{Semi-supervised and Unsupervised
   Approaches to Record Pairs Classification in Multi-Source Data Linkage}, pp.
   55--78, Springer International Publishing, Cham.
+
+\bibitem[Larsen(2005)Larsen]{Larsen05}
+Larsen, M.~D. (2005), \enquote{{Advances in Record Linkage Theory: Hierarchical
+  Bayesian Record Linkage Theory},} in \emph{Proceedings of the Joint
+  Statistical Meetings, Section on Survey Research Methods}, pp. 3277--3284,
+  The American Statistical Association.
+
+\bibitem[Larsen(2012)Larsen]{Larsen12}
+Larsen, M.~D. (2012), \enquote{{An Experiment with Hierarchical Bayesian Record
+  Linkage},} arXiv e-prints, {arxiv:1212.5203}.
 
 \bibitem[Larsen and Rubin(2001)Larsen and Rubin]{larsen_2001}
 Larsen, M.~D. and Rubin, D.~B. (2001), \enquote{Iterative {Automated} {Record}

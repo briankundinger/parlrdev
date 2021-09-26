@@ -11,6 +11,8 @@ Repeated entry---line 3552 of file biblio.bib
  : @misc{liseo_2013
  :                 ,
 I'm skipping whatever remains of this entry
+Warning--I didn't find a database entry for ""
+Warning--I didn't find a database entry for "sadinle_2017"
 Warning--I didn't find a database entry for "fs"
 Warning--I didn't find a database entry for "enamorado2019"
 Warning--I didn't find a database entry for "sadinle2017"
@@ -24,6 +26,7 @@ Bibliography style `jasa.bst' by Russ Lenth, April 1996 (rev. Mar. 1999)
 [dalzell2018regression]
 [elmagarmid_duplicate_2007]
 [enamorado2019using]
+[enamorado_using_2019]
 [fair2004generalized]
 [fellegi_theory_1969]
 [Fortinietal01]
@@ -35,6 +38,8 @@ Bibliography style `jasa.bst' by Russ Lenth, April 1996 (rev. Mar. 1999)
 [jaro1995]
 [Jurek2019]
 Warning--can't use both author and editor fields in Jurek2019
+[Larsen05]
+[Larsen12]
 [larsen_2001]
 [liseo_jos_2011]
 [liseo_2013]
@@ -57,45 +62,45 @@ Warning--can't use both author and editor fields in Jurek2019
 [winkler1991application]
 Warning--empty publisher in winkler1991application
 [zanella_flexible_2016]
-You've used 40 entries,
+You've used 43 entries,
             2332 wiz_defined-function locations,
-            789 strings with 11310 characters,
-and the built_in function-call counts, 18081 in all, are:
-= -- 1786
-> -- 915
-< -- 29
-+ -- 278
-- -- 259
-* -- 1654
-:= -- 3102
-add.period$ -- 76
-call.type$ -- 40
-change.case$ -- 213
-chr.to.int$ -- 39
-cite$ -- 82
-duplicate$ -- 736
-empty$ -- 1160
-format.name$ -- 323
-if$ -- 3574
-int.to.chr$ -- 2
+            808 strings with 11878 characters,
+and the built_in function-call counts, 19427 in all, are:
+= -- 1927
+> -- 965
+< -- 32
++ -- 293
+- -- 273
+* -- 1767
+:= -- 3323
+add.period$ -- 82
+call.type$ -- 43
+change.case$ -- 228
+chr.to.int$ -- 41
+cite$ -- 88
+duplicate$ -- 798
+empty$ -- 1254
+format.name$ -- 340
+if$ -- 3850
+int.to.chr$ -- 3
 int.to.str$ -- 0
-missing$ -- 40
-newline$ -- 124
-num.names$ -- 160
-pop$ -- 255
+missing$ -- 42
+newline$ -- 133
+num.names$ -- 172
+pop$ -- 273
 preamble$ -- 1
-purify$ -- 252
+purify$ -- 270
 quote$ -- 0
-skip$ -- 540
-stack$ -- 41
-substring$ -- 1247
-swap$ -- 175
-text.length$ -- 6
+skip$ -- 586
+stack$ -- 44
+substring$ -- 1351
+swap$ -- 194
+text.length$ -- 7
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 348
+type$ -- 375
 warning$ -- 2
-while$ -- 179
+while$ -- 193
 width$ -- 0
-write$ -- 443
+write$ -- 477
 (There were 2 error messages)
