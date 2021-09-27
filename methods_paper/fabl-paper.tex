@@ -349,6 +349,8 @@ $$P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}) = \prod_{j=1}^{n_B}  \prod_{i=1}^
 
 \textcolor{red}{It seems to me that this should be $P(\bm{Z}, \Phi \mid \bm{\Gamma})$ above and not what is currently written. }
 
+\textcolor{red}{Are you handling missing values the way that Sadinle does? This isn't clear. It would he helpful to follow the Sadinle paper regarding structure as closely as possible given that it's very clear. I might recommend that you work on some details here regarding pages 12---13 as some important details are skipped over regarding what's random and observed that may not be obvious to the AE/reviewer.}
+
 \[\mathbf{m^{f}} \sim \text{Dirichlet}(\alpha^{f1}, \ldots, \alpha^{fL_f})\]
 \[\mathbf{u^{f}} \sim \text{Dirichlet}(\beta^{f1}, \ldots, \beta^{fL_f})\]
 \[Z_j | \lambda =
@@ -383,6 +385,9 @@ matched to at most one record in \(\bm{X}_1\), but allows for the possibility
 that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\). We resolve contradictions via a post-processing step \textcolor{red}{state what the post-processing step is Brian}. 
 \end{remark}
 
+
+\newpage
+\textcolor{red}{RCS: I stopped here.}
 \hypertarget{posterior-sampling}{%
 	\subsection{Gibbs Sampler}
 	\label{gibbs_sampling}}
