@@ -259,9 +259,12 @@ One criticism of using mixture models as proposed by \cite{jaro1989} is the fact
 %to moderate linkage problems.
 
 In this section, we propose the fast beta linkage method for bipartite record linkage, extending the work of \cite{sadinle_bayesian_2017}. Specifically, the author used the same comparison vector approach as Fellegi and Sunter, but proposed a prior distribution for the set of matches that strictly enforced one-to-one matching without the need for any post-hoc processing procedures. In each iteration of his Gibbs sampler, the author considered each record \(j\in \bm{X}_2\), and then removed from consideration the records \(i\in \bm{X}_1\) that have already been matched. Then a potential link is sampled. While this leads to a sampler that is more accurate than the classical Fellegi-Sunter approach, accounting for such dependencies throughout the linkage process is computationally burdensome, and this method is only suitable for small databases. 
-
 As such, we propose a framework for efficient computation in large linkage tasks. 
-\textcolor{red}{I think my notation is OK from earlier.} 
+
+\subsection{Notation}
+Before providing our proposed model, we first define notation and assumptions. 
+
+%\textcolor{red}{I think my notation is OK from earlier.} 
 
 %Denote two files as \(A\) and \(B\), with \(n_A\) and \(n_B\) records
 %respectively, and with records indexed as \(i \in \{1, \ldots, n_A\}\)
@@ -286,19 +289,29 @@ indicators.
 
 \textcolor{red}{Brian: This does not match what Sadinle has, so this needs to be justified regarding the change or if this is a typo. Could you please check this?} 
 
-Following the Fellegi Sunter framework, we define
-\(m^{fl}:= P(\gamma_{ij}^f = l |Z_j = i)\) to be the probability of
-observing agreement level \(l\) in field \(f\) for records \(i\) and
-\(j\) given that the records are a match, and similarly define
-\(u^{fl}:= P(\gamma_{ij}^f = l |Z_j \neq i)\), for non-matches. We also
-adopt Fellegi and Sunter's conditionally independent fields assumption
-that the level of agreement on one field is independent of the level of
-agreement on another. Though this assumption is often not reasonable
+
+\textcolor{blue}{Define \(m^{f\ell}:= P(\Gamma_{ij}^f = l |Z_j = i)\) as  the probability of a match having level $\ell$ of disagreement for feature $f.$ Define \(u^{f\ell}:= P(\gamma_{ij}^f = l |Z_j \neq i)\) as the corresponding probability for non-matches. Next, we adopt Fellegi and Sunter's conditionally independent fields assumption
+that the level of agreement on one feature is independent of the level of
+agreement on another.\footnote{Though this assumption is often not reasonable
 (for example, two individuals of a different genders are more likely to have different names than two individuals of the same gender),
 but it is common within the record linkage literature and generally
 leads to models that perform well in practice; see discussion for
-further remarks. Lastly, we define \(\lambda\) to be the (marginal)
-probability that some record \(j \in B\) has a match in \(A\).
+further remarks.} Denote \(\lambda\) to be the (marginal)
+probability that some record \(j \in \bm{X}_2\) has a match in \(\bm{X}_1\)}
+
+%Following the Fellegi Sunter framework, we define
+%\(m^{fl}:= P(\gamma_{ij}^f = l |Z_j = i)\) to be the probability of
+%observing agreement level \(l\) in field \(f\) for records \(i\) and
+%\(j\) given that the records are a match, and similarly define
+%\(u^{fl}:= P(\gamma_{ij}^f = l |Z_j \neq i)\), for non-matches. We also
+%adopt Fellegi and Sunter's conditionally independent fields assumption
+%that the level of agreement on one field is independent of the level of
+%agreement on another. Though this assumption is often not reasonable
+%(for example, two individuals of a different genders are more likely to have different names than two individuals of the same gender),
+%but it is common within the record linkage literature and generally
+%leads to models that perform well in practice; see discussion for
+%further remarks. Lastly, we define \(\lambda\) to be the (marginal)
+%probability that some record \(j \in B\) has a match in \(A\).
 
 %Wherever possible, we reserve superscripts for denoting field and level,
 %while reserving subscripts for record indices. For example,
