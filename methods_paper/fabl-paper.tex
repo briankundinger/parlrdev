@@ -311,7 +311,11 @@ further remarks.} Denote \(\lambda\) to be the (marginal)
 probability that some record \(j \in \bm{X}_2\) has a match in \(\bm{X}_1\). In addition, denote $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$, $\bm{u}_f = (u_{f1}, \ldots, u_{fL_f})$, 
 $\bm{m}= (m_1, \ldots m_F)$, $\bm{u}= (u_1, \ldots u_F)$, and $\Phi = (\bm{m}, \bm{u})$}.
 
-
+\begin{enumerate}
+\item Let's first write out the likelihood, which should be the same as in Sadinle
+\item Then we should write out the Beta Prior, which should deviate and needs its own section in my opinion so the reader understands why it's a deviation
+\item My understanding, is that section 4.1 and section 4.2 should look as they are, so these just need to be explained to the reader. The innovation is in the beta prior and making it more efficient. 
+\end{enumerate}
 
 %Following the Fellegi Sunter framework, we define
 %\(m^{fl}:= P(\gamma_{ij}^f = l |Z_j = i)\) to be the probability of
@@ -335,6 +339,37 @@ $\bm{m}= (m_1, \ldots m_F)$, $\bm{u}= (u_1, \ldots u_F)$, and $\Phi = (\bm{m}, \
 %is product of the relevant of the appropriate \(\mathbf{m}\) parameters
 %for record pair \((i,j)\). We hope that these conventions avoid
 %overloaded notation in the likelihood and subsequent derivations.
+
+\hypertarget{model-specification}{%
+	\subsection{New Model Specification}
+	\label{model-specification}}
+	
+In this section, we provide the specification for the models of $\mathcal{M}(\bm{m})$ and $\mathcal{U}(\bm{u}),$ which follows from assuming that the features are conditionally independent of the level of agreement of another. The likelihood can be written as follows:
+
+\begin{align}
+P(\bm{Z}, \Phi \mid \bm{\Gamma}) = \prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)}, 
+\end{align}
+where $m_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j = i)$ denotes the probability of a match have level $\ell$ of disagreement in feature $f$ and 
+$u_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j \neq i)$ represents the same probability for non-matches. 
+In addition, denote $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$, $\bm{u}_f = (u_{f1}, \ldots, u_{fL_f})$, 
+$\bm{m}= (m_1, \ldots m_F)$, $\bm{u}= (u_1, \ldots u_F)$, and $\Phi = (\bm{m}, \bm{u})$.
+
+As pointed out in ``We now need to modify this model to accommodate missing comparison criteria since in practice it is rather common to find records with missing fields of information, which lead in turn to missing comparisons for the corresponding record pairs."
+
+We will assume the the missing comparisons occur at missing at random as done in Little and Rubin (2002) and widely assumed in the record linkage literature [CITE]. 
+
+The likelihood becomes 
+
+\begin{align}
+P(\bm{Z}, \Phi \mid \bm{\gamma}^{obs}) = 
+\prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{a_{f\ell}(\bm{Z})}u_{fl}^{a_{f\ell}(\bm{Z})}\right], 
+\end{align}
+where 
+
+\begin{align}
+&a_{f\ell}(\bm{Z}) = \sum_{i,j} I_{obs}(\gamma_{ij}^f I(\gamma_{ij}^f = \ell) I(Z_j = i) \\
+&b_{f\ell}(\bm{Z}) = \sum_{i,j} I_{obs}(\gamma_{ij}^f I(\gamma_{ij}^f = \ell) I(Z_j \neq i) 
+\end{align}
 
 \hypertarget{model-specification}{%
 	\subsection{Model Specification}
