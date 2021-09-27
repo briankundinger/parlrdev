@@ -185,95 +185,68 @@ where $p$ is the proportion of records that match. Note that $\bm{m}$ and $\bm{u
 One criticism of using mixture models as proposed by \cite{jaro1989} is the fact that the decision rule will lead to ``many-to-many assignments (breaking transitive closures). One way of resolving this issue to incorporate the constraint directly into the model \citep{Fortinietal01, Matsakis10, liseo_jos_2011, liseo_2011, Larsen05, Larsen12, gutman_bayesian_2013, sadinle_bayesian_2017}, which is appealing as one then obtains uncertainty quantification under the Bayesian paradigm, but often has to sacrifice scaling to very large databases. On the other hand, one can turn to post-processing methods in practical situations. In this paper, we attempt to bridge the best of both approaches. Specifically, we propose a model in the spirit of \cite{sadinle_bayesian_2017} and \cite{enamorado_using_2019}. We relax the one-to-one matching constraint proposed by  \cite{sadinle_bayesian_2017} for purely computational reasons, and resolve this in a post-processing step. In addition, we propose our own computational speeds up and those in the spirit of \cite{enamorado_using_2019}. Our framework is then embarassingly parallel, available in the \text{fabl} package, and evaluated on a real case study and simulation studies illustrating that any loss in accuracy due to removing the constraint is minimal. 
 
 
-
-
-
-
-
-
-
-
-
-
-
-%\section{Related work}
-%\label{sec:related}
-%In this section, we review work that is most related to our proposed work. For surveys of the record linkage literature, see \citep{christen_2012, Herzog_2007, liseo_2013, Winkler2014, Christophides2019, Jurek2019}.
-%
-%\paragraph{Fellegi and Sunter Method}
-%Most record linkage techniques are derived from the seminal \citep{fs} paper "A Theory for Record Linkage". The defining
-%characteristic of their approach was to transform the sets of records,
-%which often contain text data that is difficult to model, into sets of
-%comparison vectors governed by parameters that can be more easily
-%estimated. Concretely, if files \(A\) and \(B\) have \(n_A\) and \(n_B\)
-%records respectively, and if the files share \(F\) fields in common upon
-%which to base the linkage, the Fellegi and Sunter approach generates an
-%\(n_A n_B \times F\) matrix \(\Gamma\), which contains similarity scores
-%between each pair of records across datasets. We say \(\gamma_{ij}\) is
-%the comparison vector for record \(i \in A\) and record \(j \in B\),
-%with \(\gamma_{ij}^f \in \{1, \ldots, L_f\}\) providing their similarity
-%score on the \(f^{th}\) field. For ease of modeling and computation, we
-%restrict these similarity scores to be discrete, ordinal variables, and
-%the construction of these is left to the modeler. We adopt the
-%convention that \(\gamma_{ij}^f = 1\) corresponds to the highest level
-%of agreement and \(\gamma_{ij}^f = L_f\) corresponds to the lowest. It
-%is common to use use binary 1-2 variables to indicate exact matching,
-%and 1-2-3 variables to provide an option for partial matching. For text
-%data, we calculate similarity based on Levenstein distance or some other
-%text similarity score, and bin these scores to integers for use in the
-%model. \citep{jaro1989} provided guidelines for appropriate binning for the
-%comparison vectors, but details of implementation are generally context
-%specific.
-%
-%The likelihood in the original Fellegi Sunter model is a mixture model
-%through which each record pair is independently classified as a match or
-%nonmatch. This independent classification often leads to sets of matches
-%that break expectations of transitivity, which is undesirable. Although
-%\citep{jaro1995} devised an procedure to reduce a set of conflicting matches to the
-%mostly likely set of one-to-one matchings, the abundance of false
-%matches can bias the estimation of other parameters of the model, and ultimately leads to poor linkage performance. 
-
-
-
-%Outside of the Fellegi-Sunter framework, some researchers have developed
-%methods that model the data directly, not a derived set of comparison
-%vectors. As an early example,  produced \texttt{blink}, which had the advantage of a computational complexity
-%that grew linearly with the data (as opposed to quadratically within
-%Fellegi Sunter), but was plagued with slow mixing times and was unable
-%to incorporate text data. Later, Steorts et al 2020 improved on this
-%method with \texttt{dblink}, which was able to simulate text data within
-%its Gibbs sampler by drawing from an empirical distribution, and
-%remedied its slow mixing through a probabilistic blocking approach.
-%However, this method remains computationally intensive and requires
-%distributed computing to manage even moderate linkage problems in
-%acceptable time. These methods perform entity resolution over arbitrary numbers of datasets with arbitrary amounts of duplication and fall outside the Fellegi-Sunter framework, so we do not discuss them further here. 
-
 \section{Proposed Methodology}
 \label{sec:model}
 
-\textcolor{red}{This section needs to be much more clear regarding what is our own contribution and how it differs from the rest of the literature. Right now it's confusing to the reader what comes from Sadinle, FS, etc and why these choices are being made.}
+In this section, we propose the fast beta linkage method (fabl) for bipartite record linkage, extending the work of \cite{sadinle_bayesian_2017}.  Specifically, we review the general approach of \cite{sadinle_bayesian_2017} and then provide our extensions for scalability. 
 
-%\citep{sadinle_bayesian_2017} uses the same comparison vector approach as Fellegi and Sunter, but proposed a prior distribution for the set of matches that strictly enforced one-to-one matching without the need for any post-hoc processing procedures. Specifically, in each iteration of his Gibbs sampler, he considers each record \(j\in B\), removes from consideration the records \(i\in A\) that have already been matched, and then samples a potential link. This leads to a sampler that is significantly more accurate than the standard Fellegi-Sunter approach. However,
-%accounting for these dependencies throughout the linkage process is
-%computationally burdensome, leaving \texttt{BRL} only suitable for small
-%to moderate linkage problems.
+%Specifically, the author used the same comparison vector approach as Fellegi and Sunter, but proposed a prior distribution for the set of matches that strictly enforced one-to-one matching without the need for any post-hoc processing procedures. In each iteration of his Gibbs sampler, the author considered each record \(j\in \bm{X}_2\), and then removed from consideration the records \(i\in \bm{X}_1\) that have already been matched. Then a potential link is sampled. While this leads to a sampler that is more accurate than the classical Fellegi-Sunter approach, accounting for such dependencies throughout the linkage process is computationally burdensome, and this method is only suitable for small databases. 
+%As such, we propose a framework for efficient computation in large linkage tasks. 
 
-In this section, we propose the fast beta linkage method for bipartite record linkage, extending the work of \cite{sadinle_bayesian_2017}. Specifically, the author used the same comparison vector approach as Fellegi and Sunter, but proposed a prior distribution for the set of matches that strictly enforced one-to-one matching without the need for any post-hoc processing procedures. In each iteration of his Gibbs sampler, the author considered each record \(j\in \bm{X}_2\), and then removed from consideration the records \(i\in \bm{X}_1\) that have already been matched. Then a potential link is sampled. While this leads to a sampler that is more accurate than the classical Fellegi-Sunter approach, accounting for such dependencies throughout the linkage process is computationally burdensome, and this method is only suitable for small databases. 
-As such, we propose a framework for efficient computation in large linkage tasks. 
-
-\subsection{Generalized Beta Linkage Model}
-In this section, our model can be written as a Bayesian model for comparison data. In general, it has the same form of \cite{sadinle_bayesian_2017} and can be written as follows:
-
+\subsection{Beta Linkage Model}
+In this section, we review the Beta Linkage Model, which can be written as follows: 
+%our model can be written as a Bayesian model for comparison data. In general, it has the same form of \cite{sadinle_bayesian_2017} and can be written as follows:
 \begin{align}
 &\bm{\Gamma}_{ij} \mid Z_j =i \stackrel{iid}{\sim} \mathcal{M}(\bm{m})  \\
 &\bm{\Gamma}_{ij} \mid Z_j \neq i \stackrel{iid}{\sim} \mathcal{U}(\bm{u}) \notag \\
 & \bm{Z} \sim \mathcal{B}, \notag
 \end{align}
-where $\mathcal{B}$ represents a prior on the space of bipartite matchings. $\mathcal{M}(\bm{m})$ and $\mathcal{M}(\bm{u})$ are models for the comparison vectors of matches and non-matches.
+where $\mathcal{B}$ represents a prior on the space of bipartite matchings and $\mathcal{M}(\bm{m}), \mathcal{M}(\bm{u})$ are models for the comparison vectors of matches and non-matches.
+
+\hypertarget{model-specification}{%
+	\subsection{New Model Specification}
+	\label{model-specification}}
+	
+In this section, we provide the specification for the models of $\mathcal{M}(\bm{m})$ and $\mathcal{U}(\bm{u}),$ which follows from assuming that the features are conditionally independent of the level of agreement of another. The likelihood can be written as follows:
+
+\begin{align}
+P(\bm{Z}, \Phi \mid \bm{\Gamma}) = \prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)}, 
+\end{align}
+where $m_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j = i)$ denotes the probability of a match have level $\ell$ of disagreement in feature $f$ and 
+$u_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j \neq i)$ represents the same probability for non-matches. 
+In addition, denote $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$, $\bm{u}_f = (u_{f1}, \ldots, u_{fL_f})$, 
+$\bm{m}= (m_1, \ldots m_F)$, $\bm{u}= (u_1, \ldots u_F)$, and $\Phi = (\bm{m}, \bm{u})$.
+
+Next, we allow for missing values or rather missing comparisons for corresponding record pairs. As commonly done in the record linkage literature, we assume that these occur missing at random [CITE: Little and Rubin (2002), Sadinle (2017), Steorts et al (2016)]. 
+
+The likelihood becomes 
+\begin{align}
+P(\bm{Z}, \Phi \mid \bm{\gamma}^{obs}) = 
+\prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{a_{f\ell}(\bm{Z})}u_{fl}^{a_{f\ell}(\bm{Z})}\right], 
+\end{align}
+where 
+\begin{align}
+&a_{f\ell}(\bm{Z}) = \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = \ell) I(Z_j = i) \\
+&b_{f\ell}(\bm{Z}) = \sum_{i,j} I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = \ell) I(Z_j \neq i),
+\end{align}
+where $I_{obs}$ denotes if a value is observed or not. Next, for a particular matching configuration $\bm{Z}$, $a_{f\ell}(\bm{Z})$
+and $b_{f\ell}(\bm{Z})$ denote the number of matches and non-matches with observed disagreement level $\ell$ for comparison feature $f.$ Using this parameterization, we specify independent conjugate priors for all features $f$:
+\begin{align}
+&\bm{m}_f \sim \text{Dirichlet}(\alpha_{f0}, \ldots, \alpha_{f L_f}) \\
+&\bm{u}_f \sim \text{Dirichlet}(\beta_{f0}, \ldots, \beta_{f L_f}).
+\end{align}
+
+\hypertarget{fast-beta-prior}{%
+	\subsection{Fast Beta Prior}
+	\label{fast-beta-prior}}
 
 
-\subsection{Notation}
-Before providing our proposed model, we first define notation and assumptions. 
+In this section, we deviate from the approach of \cite{}, and propose a more scalable prior on the matching labelings $\bm{Z}.$ 
+While the rest of the model has been proposed previously, to our knowledge, this particular prior has not been proposed before. 
+
+\textcolor{red}{Lay out Brian's prior here.}
+
+\newpage
 
 %\textcolor{red}{I think my notation is OK from earlier.} 
 
@@ -340,36 +313,6 @@ $\bm{m}= (m_1, \ldots m_F)$, $\bm{u}= (u_1, \ldots u_F)$, and $\Phi = (\bm{m}, \
 %for record pair \((i,j)\). We hope that these conventions avoid
 %overloaded notation in the likelihood and subsequent derivations.
 
-\hypertarget{model-specification}{%
-	\subsection{New Model Specification}
-	\label{model-specification}}
-	
-In this section, we provide the specification for the models of $\mathcal{M}(\bm{m})$ and $\mathcal{U}(\bm{u}),$ which follows from assuming that the features are conditionally independent of the level of agreement of another. The likelihood can be written as follows:
-
-\begin{align}
-P(\bm{Z}, \Phi \mid \bm{\Gamma}) = \prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)}, 
-\end{align}
-where $m_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j = i)$ denotes the probability of a match have level $\ell$ of disagreement in feature $f$ and 
-$u_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j \neq i)$ represents the same probability for non-matches. 
-In addition, denote $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$, $\bm{u}_f = (u_{f1}, \ldots, u_{fL_f})$, 
-$\bm{m}= (m_1, \ldots m_F)$, $\bm{u}= (u_1, \ldots u_F)$, and $\Phi = (\bm{m}, \bm{u})$.
-
-As pointed out in ``We now need to modify this model to accommodate missing comparison criteria since in practice it is rather common to find records with missing fields of information, which lead in turn to missing comparisons for the corresponding record pairs."
-
-We will assume the the missing comparisons occur at missing at random as done in Little and Rubin (2002) and widely assumed in the record linkage literature [CITE]. 
-
-The likelihood becomes 
-
-\begin{align}
-P(\bm{Z}, \Phi \mid \bm{\gamma}^{obs}) = 
-\prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{a_{f\ell}(\bm{Z})}u_{fl}^{a_{f\ell}(\bm{Z})}\right], 
-\end{align}
-where 
-
-\begin{align}
-&a_{f\ell}(\bm{Z}) = \sum_{i,j} I_{obs}(\gamma_{ij}^f I(\gamma_{ij}^f = \ell) I(Z_j = i) \\
-&b_{f\ell}(\bm{Z}) = \sum_{i,j} I_{obs}(\gamma_{ij}^f I(\gamma_{ij}^f = \ell) I(Z_j \neq i) 
-\end{align}
 
 \hypertarget{model-specification}{%
 	\subsection{Model Specification}
