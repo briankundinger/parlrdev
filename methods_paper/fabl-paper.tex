@@ -138,7 +138,7 @@ One common way of approaching the record linkage task, especially in computer sc
 \section{Review of the Fellegi Sunter Method}
 In this section, we review notation, terminology, and the classical approach of Fellegi and Sunter. 
 
-Consider ordered record pairs $\bm{X}_1 \times \bm{X}_2.$ 
+Consider ordered record pairs $\bm{X}_1 \times \bm{X}_2,$ where the size of the databases are $n_1$ and $n_2,$ respectively. 
 Denote the set of matches by $\bm{M} = \{(i,j): i \in \bm{X}_1, j \in \bm{X}_2, \Delta_{ij} = 1\}.$ Denote the set of non-matches 
 $\bm{U} =  \{(i,j): i \in \bm{X}_1, j \in \bm{X}_2, \Delta_{ij} = 0\}.$ An alternative way of merging two databases and removing 
 duplications can be viewed as identifying the sets of matches/non-matches, or rather $\bm{M}, \bm{U}.$ In the literature, it is well known that record pairs that are estimated as matches are known as links; record pairs that are estimated as non-matches are known as non-links. \cite{fellegi_theory_1969} proposed using all-to-all pairwise comparison of records to estimate the matches/non-matches.
@@ -151,6 +151,10 @@ The simplest way to compare two records is check for agreement or disagreement, 
 
 Let $\mathcal{S}_f(i,j)$ denote a general similarity measure for feature $f$ of records $i$ and $j,$ where the range of $\mathcal{S}_f$ can be divided into $L_f +1$ intervals denoted by $I_{f0}, I_{f1}, \ldots, I_{fL_f},$ representing disagreement levels. Following convention, $I_{f0}$ represents the highest level of agreement (inclusive of complete agreement) and $I_{fL_f}$ represents the highest level of disagreement (including complete disagreement). Thus, we can construct comparison vectors in the following way: 
 $$\gamma_{ij} = \ell \; \text{if} \; \mathcal{S}_f(i,j) \in I_{f\ell}.$$ The choice of $I_{f\ell}$ are application specific, which we discuss in our simulation and case study. 
+
+\subsection{Blocking}
+In practice, it is not feasible to make all-to-all record comparisons as the computationally complexity is of the order $O(n_1 \times n_2).$ The most common solution is utilize blocking, which places similar records into partitions, clusters, or ``blocks" to reduces this computational burden. Blocking can be deterministic, such as reducing the dimensionality of the comparison space on a highly reliable feature, such a gender. Blocking can be probabilistic, such as utilizing machine learning methods, known as hashing, which seek to use probabilistic functions (with low computational cost) to place similar records into the same bin. We propose hashing base methods for Bayesian bipartite record linkage, illustrating their ability to improve upon computational scalability. We emphasize that depending on the size of the problem, our proposed methodology can be used with or without hashing.
+
 
 \subsection{Fellegi-Sunter Model}
 In this section, we review the Fellegi-Sunter model. While we have introduced comparison data, $\bm{\gamma}_{ij}$, this is not sufficient to determine whether a record is a match/non-match given errors that naturally occur in the data. This motivated \cite{fellegi_theory_1969} to consider the following likelihood ratio
@@ -373,6 +377,8 @@ that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\). 
 	\subsection{Gibbs Sampler}
 	\label{gibbs_sampling}}
 We work with the following factorization of the joint posterior distribution:
+
+\textcolor{red}{Brian: The Gibbs sampler has some minor typos. It should be written in terms of $\bm{Z}, \Phi, \lambda \mid \gamma_{obs}.$ Also, just make the rest of the notation match please:)}
 
 \begin{align*}
 p(\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda|\Gamma) &\propto p(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}) p(\mathbf{Z} | \lambda) p(\mathbf{m}, \mathbf{u}) p(\lambda) \\
