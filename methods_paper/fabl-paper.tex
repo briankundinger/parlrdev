@@ -164,12 +164,12 @@ as a weight to estimate if record pairs are a match/non-match. Assume $\bm{\Gamm
 \begin{align}
 \label{eqn:jaro}
 &\max_{\Delta} \sum_{i=1}^{n_1} \sum_{j=1}^{n_2} w_{ij} \Delta_{ij} 
-\quad \text{subject to} \quad \Delta_{ij} \in \{0,1\};\\
+\quad \text{subject to} \quad \Delta_{ij} \in \{0,1\}; \\
 & \quad \quad \sum_{i=1}^{n_1}  \Delta_{ij}  \leq 1, j=1,2, \ldots n_2; \; \text{and} \notag\\
-& \quad \quad\sum_{i=1}^{n_2}  \Delta_{ij}  \leq 1, j=1,2, \ldots n_1. \notag \\
+& \quad \quad\sum_{i=1}^{n_2}  \Delta_{ij}  \leq 1, j=1,2, \ldots n_1. \notag
 \end{align}
 
-Equation \label{eqn:jaro} ensures that each record of $\bm{X}_2$ only matches with at most one record in $\bm{X}_1$ (and the reverse condition). This is commonly known as the \emph{maximum-weight bipartite matching problem} or a \emph{linear sum assignment problem}. The output of this algorithm is a bipartite matching that maximizes the sum of the weights among matched pairs, where the pairs are not matched are assumed to be non-matches. \cite{jaro1989} provided no theoretical justification for using this approach, however, \cite{} recently showed that under certain conditions, equation \ref{eqn:jaro} is the maximum likelihood estimate. 
+Equation \ref{eqn:jaro} ensures that each record of $\bm{X}_2$ only matches with at most one record in $\bm{X}_1$ (and the reverse condition). This is commonly known as the \emph{maximum-weight bipartite matching problem} or a \emph{linear sum assignment problem}. The output of this algorithm is a bipartite matching that maximizes the sum of the weights among matched pairs, where the pairs are not matched are assumed to be non-matches. \cite{jaro1989} provided no theoretical justification for using this approach, however, \cite{sadinle_bayesian_2017} recently showed that under certain conditions, equation \ref{eqn:jaro} is the maximum likelihood estimate. 
 
 \subsection{Model Estimation}
 In our review, we have assumed one knows $P(\cdot \mid \Delta_{ij} = 1)$ and $P(\cdot \mid \Delta_{ij} = 0),$ however, these are typically not known in practice and must be estimated. Assume the comparison vectors are independent given the bipartite matching and assume that the match status of the record pairs are independent. It then follows that we can model 
