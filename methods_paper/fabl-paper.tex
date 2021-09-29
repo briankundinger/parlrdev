@@ -509,52 +509,58 @@ framework.
 
 \section{Efficient and Scalable Implementation}
 \label{sec:efficiency}
-Broadly speaking, we increase our computational efficiency by
-recognizing that record pairs contribute to posterior calculations only
-through the agreement pattern of the \(\gamma_{ij}\) vector. Let
+In this section, we propose efficient and scalable proposals using hashing based methods that are similar in spirit to \citep{enamorado2019}, a fast and scalable implementation of the Fellegi-Sunter model. 
+ Specifically, one way we can improve our computational efficiency is by recognizing that record pairs contribute to posterior calculations only
+through the agreement pattern of the \(\gamma_{ij}\) vector. To make this more precise, let 
 \(\mathcal{H}\) be the set of unique agreement patterns in the data, let
 \(P = |\mathcal{H}|\) denote the total number of unique agreement
-patterns.  Note that \(P\) is bounded above by \(\prod_{f=1}^F L_f\), and
-that this bound does not scale with \(n_A\) or \(n_B\). Prior to
+patterns.  Observe that \(P\) is bounded above by \(\prod_{f=1}^F L_f\), and
+that this bound \textcolor{red}{does not depend on} \(n_1\) or \(n_2\). Prior to
 processing the data, we identify all \(P\) patterns in \(\mathcal{H}\)
-and enumerate them \(h_1, \ldots, h_P\), and map record pairs to this hashed value. When the \((i,j)\) pair
+and enumerate them as follows: \(h_1, \ldots, h_P\), which are called \emph{hashed values.}
+Next, we map record pairs to their corresponding hashed value. 
+More specifically, when the record pair \((i,j)\) 
 exhibits the \(p^{th}\) agreement pattern, we say \((i,j) \in h_p\).
-Wherever possible, we conduct calculations over these \(P\) agreement
-patterns rather than the \(n_A \times n_B\) record pairs. Some of these techniques are similar to those used by \citep{enamorado2019} to produce \texttt{fastlink}, a fast a scalable implementation of the Fellegi-Sunter model, and others have been created here for our particular context. 
+Whenever possible, we conduct calculations over these \(P\) agreement
+patterns, instead of the typical  \(n_1 \times n_2\) record pairs. 
+
+%Some of these techniques are similar to those used by \citep{enamorado2019} to produce \texttt{fastlink}, a fast a scalable implementation of the Fellegi-Sunter model, and others have been created here for our particular context. 
 
 \hypertarget{data-representation-hashing-and-storage}{%
 	\subsection{Data Representation, Hashing, and
 		Storage}\label{data-representation-hashing-and-storage}}
+		
+In this section, we describe the hashing function we propose. 		
 
-We first hash record pairs of the same agreement pattern to unique integer values. \citep{enamorado2019} accomplished this efficiently through the hashing function
+First, we hash record pairs of the same agreement pattern to unique integer values. \citep{enamorado2019} accomplished this efficiently through the hashing function
 $$\tilde{\gamma}_{ij} = \sum_{f = 1}^F I(\gamma_{ij}^f > 0)2^{\gamma_{ij}^f + I(k>1)\sum_{e=1}^{k-1}(L_e -1)}$$
-This function maps each agreement pattern to a unique integer, allowing us to store a scalar quanity instead of an entire vector for each record pair. For computational ease, we then map these integers to sequential integers from 1 to P. 
+This function maps each agreement pattern to a unique integer, allowing us to store a scalar quantity instead of an entire vector for each record pair. For computational ease, we then map these integers to sequential integers from $1, \ldots, P.$
 
 The classic Fellegi Sunter method represents the \(\gamma_{ij}\)
 comparison as a vector of length \(F\), with each component
-\(\gamma_{ij}^f\) taking on values in \(\{1, \ldots, L_f \}\). To ease
-computations, we instead use a one hot encoding of the comparison vector. For example, if
+\(\gamma_{ij}^f\) taking on values in \(\{1, \ldots, L_f \}\). 
+To ease our computational burden, we instead use a \emph{one hot encoding} of the comparison vector. For example, if
 \(L_1 = L_2 = 2\) and \(L_3 = 3\), then \(\gamma_{ij} = (2, 1, 3)\)
 under the classical framework becomes
 \(\gamma_{ij} = (0, 1, 1, 0, 0, 0, 1)\) under our framework. This is a
 bijective transformation that does not change the meaning of the data,
 but this representation eases calculations and posterior updates. This is also the form the data takes in the \texttt{BRL} package in \texttt{R}. 
 
-In the classic Fellegi Sunter framework, \(\Gamma\) is a
-\(n_A n_B \times F\) matrix, with each row providing the comparison
+In the classic Fellegi Sunter framework, $\bm{\Gamma}$ is a
+\(n_1 n_2 \times F\) matrix, with each row providing the comparison
 vector for a different \((i,j)\) pair. In contrast, we do not store
 these comparison vectors themselves, but instead only the hashed value $h_p$
 corresponding to the agreement pattern of the \((i, j)\) pair. We store
-this information in a nested list \(\tilde{\Gamma}\) where the
+this information in a nested list $\tilde{\bm{\Gamma}}$ where the
 \(p^{th}\) component of the \(j^{th}\) list contains a vector of records
-in \(A\) that share agreement pattern \(p\) with record \(j \in B\). For
+in \(\bm{X}_1\) that share agreement pattern \(p\) with record \(j \in \bm{X}_2\). For
 each \(p\), we also calculate
-\(H_p = \sum_{i=1}^{n_A}\sum_{j=1}^{n_B} \mathbf{1}_{(i,j) \in h_p}\),
+\(H_p = \sum_{i=1}^{n_1}\sum_{j=1}^{n_2} \mathbf{1}_{(i,j) \in h_p}\),
 the total instances of agreement pattern \(p\) throughout the data, and
 also for each \(j\), we calculate
-\(H_{p_j} = \sum_{i=1}^{n_A} \mathbf{1}_{{(i,j) \in h_p}}\) the
+\(H_{p_j} = \sum_{i=1}^{n_1} \mathbf{1}_{{(i,j) \in h_p}}\) the
 instances of agreement pattern \(p\) among the comparison vectors
-between record \(j \in B\) and each of the \(n_A\) records in \(A\).
+between record \(j \in \bm{X}_2\) and each of the \(n_1\) records in \(\bm{X}_1\).
 
 The hashing procedure described above considerably reduces the memory
 needed to store the comparison information: instead of storing
