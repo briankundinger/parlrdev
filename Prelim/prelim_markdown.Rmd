@@ -117,7 +117,7 @@ $$\lambda \sim \text{Beta}(\alpha_{\lambda}, \beta_{\lambda})$$
 
 # Managing Large Data
 
-- **Distributed Computing** - Partition data in to chunks $\{A_I\}$ and $\{B_J\}$. Compare records, hash results, compute summary statistics in parallel, and synthesize results
+- **Distributed Computing** - Partition data in to chunks $\{A_I\}$ and $\{B_J\}$. Compare records, hash results, compute summary statistics in parallel, and synthesize results.
 
 - **Storage Efficient Indexing (SEI)** - Store at most small number $R$ many record labels in each $r_{p_j}$, remove highly unlikely record labels from memory. Proper weights for calculations maintained through summary statistics $\{H_p\}$ and $\{H_{p_j}\}$.
 
