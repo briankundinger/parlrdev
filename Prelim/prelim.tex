@@ -40,24 +40,26 @@
 \section{Introduction to Record Linkage}
 
 	\begin{frame}{What is Record Linkage?}
-	\begin{enumerate}
+	\begin{itemize}
 		\item Record linkage is the task of identifying duplicate records over noisy datasets.
 		
 		\item Easy with unique identifiers, difficult when faced with errors
 		
 		\item Far ranging applications in business, public health, and human rights
-	\end{enumerate}
+		
+		\item \textbf{Bipartite matching} is the specific goal of matching one record in one dataset to most one match in another dataset
+	\end{itemize}
 	\end{frame}
 
 
 \begin{frame}{Record Linkage in Practice}
 	\begin{columns}
 		\begin{column}{0.48\textwidth}
-			\includegraphics<1->[width = \textwidth, height = 1.2\textwidth ]{ted_article2.png}
+			\includegraphics<1->[width = \textwidth, height = .9\textwidth ]{ted_article2.png}
 			
 		\end{column}
 		\begin{column}{0.48\textwidth}
-			\includegraphics<2->[width = \textwidth, height = 1.2\textwidth ]{dnc_header.png}
+			\includegraphics<2->[width = \textwidth, height = .9\textwidth ]{dnc_header.png}
 		\end{column}
 	\end{columns}
 \end{frame}
@@ -69,7 +71,7 @@
 \end{frame}
 
 	\begin{frame}{Linkage through Comparison Vectors}
-		\includegraphics[width = \textwidth, height = .7\textwidth ]{fs_graphic.png}
+		\includegraphics[width = \textwidth, height = .6\textwidth ]{fs_graphic.png}
 	\end{frame}
 
 \begin{frame}{Fellegi and Sunter (1969)}
@@ -135,7 +137,7 @@
 \section{Fast Beta Linkage}
 \begin{frame}{Notation}
 \begin{itemize}
-	\item File A with records indexed $i \in \{1, \ldots, n_A\}$ and file B with records $j \in \{1, \ldots, n_B\}$. We use $F$ features for linkage, with $L_f$ possible levels of agreement on feature $f$.
+	\item File A with records indexed $i \in \{1, \ldots, n_A\}$ and file B with records $j \in \{1, \ldots, n_B\}$, with $n_A \geq n_B$. We use $F$ features for linkage, with $L_f$ possible levels of agreement on feature $f$.
 	
 	\item $\Gamma \in \mathbb{R}^{n_A n_B \times F}$ matrix of comparison vectors where $\gamma_{ij}^f \in \{1, \ldots, L_f\}$
 	
@@ -195,14 +197,14 @@
 		
 		\item \textbf{Storage Efficient Indexing (SEI)} - Store at most small number $R$ many record labels in each $r_{p_j}$, remove highly unlikely record labels from memory. Proper weights for calculations maintained through summary statistics $\{H_p\}$ and $\{H_{p_j}\}$.
 		
-		\item Hashing plus SEI can reduce memory requirements by >99%
+		\item Hashing plus SEI can reduce memory requirements by $>99$.
 		\begin{itemize}
 			\item Simulation of $20,000 \times 20,000$ linkage task with 4 fields. Naive approach requires 6.4GB of storage for all-to-all comparisons, hashing and SEI requires 90MB.
 		\end{itemize}
 	\end{itemize}
 \end{frame}
 
-\section{Results}
+\section{Simulation Studies}
 
 \begin{frame}{Three Simulation Studies}
 	\begin{itemize}
@@ -226,6 +228,60 @@
 	\begin{frame}{Speed Simulation 2}
 	\includegraphics[width = \textwidth, height = .7\textwidth ]{../notes/figures/speed_plot_fixed_nB.png}
 \end{frame}
+
+\section{El Salvador Homicide Case Study}
+
+\begin{frame}{El Salvador Case Study}
+	\begin{itemize}
+		\item El Salvadoran Civil War (1980-1991)
+		\item Lists of casualties collected by multiple organizations
+		\begin{itemize}
+			\item Salvadoran Human Rights Commissions (CDHES), $n_A = 4420$
+			\item El Rescate - Tutela Regal (ERTL), $n_B = 1323$
+			\item Features include first name, last name, date and place of death
+		\end{itemize}
+		\item We aim to find duplicate records across files
+		\begin{itemize}
+			\item Particularly difficult because families are often killed together, and some children share names with parents
+		\end{itemize}
+
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Run Time}
+		\begin{columns}
+		\begin{column}{0.48\textwidth}
+			\centering
+			\includegraphics<1->[width = .6\textwidth, height = .6\textwidth ]{../notes/figures/el_salvador/time_table_big_P2.png}
+			
+		\end{column}
+		\begin{column}{0.48\textwidth}
+			\centering
+			\includegraphics<2>[width = .6\textwidth, height = .6\textwidth ]{../notes/figures/el_salvador/time_table_small_P2.png}	
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Posterior Inference}
+	\includegraphics[width = \textwidth, height = .6\textwidth ]{../notes/figures/el_salvador/m_posterior_smallP.png}
+\end{frame}
+
+\begin{frame}{Posterior Inference}
+	\includegraphics[width = \textwidth, height = .6\textwidth ]{../notes/figures/el_salvador/DID_distribution_smallP_bayes.png}
+\end{frame}
+
+\begin{frame}{Violations of One-to-One Matching}
+	\centering
+	\includegraphics[width = .9\textwidth, height = .4\textwidth ]{../notes/figures/el_salvador/rosa_records.png}
+\end{frame}
+
+\begin{frame}{Violations of One-to-One Matching}
+	\includegraphics[width = \textwidth, height = .6\textwidth ]{../notes/figures/el_salvador/bad_mixing.png}
+\end{frame}
+
+
+
+\section{Conclusion}
 
 \begin{frame}{Extensions and Directions}
 	\begin{itemize}
