@@ -257,31 +257,35 @@ While the rest of the model has been proposed previously, to our knowledge, this
 	1-\lambda &  z_j  = n_1 + j \\
 \end{cases}\]
 
-\[\lambda \sim \text{Beta}(\alpha_{\lambda}, \beta_{\lambda}) \] The
-prior for \(Z_j\) has equal probability of matching to all records
-\(i\in A\), and non-matching probability governed by \(\lambda\).
-Therefore a \(\lambda \sim \text{Beta}(1, 1)\) corresponds to a prior
-belief that nonmatches and matches are equally likely, and a
-\(\lambda \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\) prior
-corresponds to a uniform prior on the labeling of \(\mathbf{Z}\).
+\[\lambda \sim \text{Beta}(\alpha_{\lambda}, \beta_{\lambda}) \] 
 
-\begin{remark}
+{
+	\color{blue}
+	Intuitively, this set of priors says that record $j \in \bm{X}_2$ has some match in $\bm{X}_1$ with probability $\lambda$, and that each record $i \in \bm{X}_1$ is equally likely to be that match. $\lambda$ itself is given a prior distribution to reflect prior beliefs about the overall rate of matchingness in the data. One choice of uninformative prior might be \(\lambda \sim \text{Beta}(1, 1)\), which corresponds to a prior belief that nonmatches and matches are equally likely, and another might be \(\lambda \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\), which corresponds to a uniform prior on the labeling of \(\mathbf{Z}\).
+}
+
+%The prior for \(Z_j\) has equal probability of matching to all records
+%\(i\in A\), and non-matching probability governed by \(\lambda\).
+
+{
+\color{blue}
 There is a clear relationship between our proposed model and that of \cite{sadinle_bayesian_2017}. 
-\cite{sadinle_bayesian_2017} constructs a prior distribution on the entire \(\mathbf{Z}\) vector, 
-which induces a Gibbs
-sampler that strictly enforces one-to-one matching. In particular, this
-sampler removes previously matches records from the set of candidate
-records when sampling \(Z_j\), creating a dependency that makes the
-sampler \emph{inherently serial}. On the other hand, we propose 
- independent priors for
-each \(Z_j\), creating a sampler that is \emph{embarassingly parallel}, allowing for significant computational gains. 
-More importantly, since only the agreement pattern of \(Z_j\) is used for
+\cite{sadinle_bayesian_2017} constructs a prior distribution on the entire \(\mathbf{Z}\) vector, called the \emph{beta distribution for bipartite matching}, given by
+$$P(\mathbf{Z}|\alpha_{\pi}, \beta_{\pi}) = \frac{(n_1 - n_{12}(\mathbf{Z}))!}{n_1 !}\frac{\text{B}(n_{12}(\mathbf{Z}) + \alpha_{\pi}, n_2 - \mathbf{Z}) - \beta_{\pi}])}{\text{B}(\alpha_{\pi}, \beta_{\pi})}
+$$
+where $\text{B}(\cdot, \cdot)$ represents the Beta function. This prior induces a Gibbs sampler that strictly enforces one-to-one matching,  previously matched records from the set of candidate
+records when sampling \(Z_j\). This creates a dependency that makes the
+sampler \emph{inherently serial}. 
+
+On the other hand, we propose independent priors for each \(Z_j\), creating a sampler that is \emph{embarassingly parallel}, allowing for significant computational gains. More importantly, since only the agreement pattern of \(Z_j\) is used for
 calculations within the Gibbs sampler, and not the particular record
 label, this sampling is only needed at the level of the unique agreement patterns, which offers additional computational savings.  In doing so however, we thereby weaken the one-to-one requirement from
 \texttt{BRL}; our sampler does ensure that each record in \(\bm{X}_2\) can be
 matched to at most one record in \(\bm{X}_1\), but allows for the possibility
-that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\). We resolve contradictions via a post-processing step \textcolor{red}{state what the post-processing step is Brian}. 
-\end{remark}
+that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\). \textcolor{blue}{We resolve contradictions when calcuating the Bayes estimate, which is explained in Section 4.5}
+
+NOTE TO BEKA: I think it will be best to do the "post-processing step" along with the Bayes Estimate. Its equivalent to minimizing the posterior loss subject to the constraint that $Z_j \neq Z_{j'}, \forall j \neq j'$.
+}
 
 
 \newpage
