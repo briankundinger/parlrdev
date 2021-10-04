@@ -721,13 +721,14 @@ We first compare \texttt{fabl} against \texttt{BRL} on several simulated dataset
 
 
 \hypertarget{accuracy}{%
-	\subsection{Accuracy}\label{accuracy}}
-
-
+	\subsection{Precision, Recall, and F-measure}\label{accuracy}}
+	
+In this section, we compare \texttt{fabl} to 	\texttt{BRL} in terms of precision, recall, and f-measure, which are commonly defined record linkage evaluation metrics that are defined in \citep{christen_2012}. 
+%
 In cases when there are only one or two errors in matching records, and in cases with low to moderate duplication across records, we see that \texttt{fabl} provides approximately equivalent accuracy as \texttt{BRL}. 
 We find that our method only has weakened performance in the
 most extreme scenario of very high errors and very high overlap across
-files. In these situations, \texttt{BRL} is removing large numbers of records from consideration throughout the Gibbs Sampler, making its implementation most different from \texttt{fabl}. We note however that such extreme linkage tasks, which such high amounts of errors and overlap, are extremely rare in practice. 
+files. In these situations, \texttt{BRL} is removing large numbers of records from consideration throughout the Gibbs Sampler, making its implementation most different from \texttt{fabl}. However,  such extreme linkage tasks, which such high amounts of errors and overlap, are extremely rare in practice. 
 
 %\begin{figure}
 %	\[\text{Recall} = \frac{\text{Matches Correctly Identified}}{\text{True Matches in Data}}\]
@@ -760,6 +761,8 @@ files. In these situations, \texttt{BRL} is removing large numbers of records fr
 
 \hypertarget{speed}{%
 	\subsection{Speed}\label{speed}}
+	
+\textcolor{red}{Brian: I have some general questions here. Are you using blocking for BRL to scale? Could you use the hashing proposal for BRL. It's important that the scale comparison be as fair as possible or there will be some pushback here. My suggestion around all this is to look at the computational complexity of both methods as it's hard to attack this.}	
 
 To demonstrate speed, we generate comparison vectors from pre-specified
 distributions so that we can easily increase the size of the linkage
@@ -829,13 +832,19 @@ with paralellization for the hashing step and sampling the matching
 status of the record pairs should lead to even more computational gains.
 
 \hypertarget{scale}{%
-	\subsection{Scale}\label{scale}}
+	\subsection{Scaling to a Larger Simulation Study}\label{scale}}
 
 % Assuming a 16GB personal machine, standard record linkage methods using all-to-all comparisons can only function on tasks where the matrix of comparison vectors $\Gamma$ is less than 8GB. In the context of the above simulation, each comparison vector contains four integers, collectively requiring 16 bytes of memory; assuming files of equal lengths, this means the largest linkage task possible is around $7000 \times 7000$. 
+
+In this section, we investigate scaling to larger data sets using our proposed methodology. 
  
- In one final simulation, we demonstrate how partitioning and hashing the data through \texttt{fabl} method allows us undertake significantly larger linkage tasks We concatenate two sets of 40 simulated datasets from the Sadinle simulation to create two larger files, each of 20,000 records. Working on one machine, we sequentially compare records across chunks, hash results, and then synthesize summary statistics for the entire simulation. Under standard Fellegi Sunter procedures, this would require 400,000,000 comparison vectors, each consisting for four integers, resulting a final comparison matrix about 6.4 GB in size. 
+Specifically, we demonstrate how partitioning and hashing the data through \texttt{fabl} method allows us undertake significantly larger linkage tasks. We concatenate two sets of 40 simulated datasets from the original simulation studies of \cite{} to create two larger files, each of 20,000 records (40,000 records total). Working on one machine, we sequentially compare records across chunks, hash results, and then synthesize summary statistics for the entire simulation. Under standard Fellegi Sunter procedures, this would require 400,000,000 comparison vectors, each consisting for four integers, resulting a final comparison matrix about 6.4 GB in size. 
  
- For simplicity, we partition one dataset into 20 smaller chunks, and leave the second dataset fully intact. We then compare records, hash results, and then synthesize summary statistics for all 20 chunk comparisons. The resulting data object is only 90 MB, about 1\% the size of the object required under the standard method. Excecuted sequentially, these comparisons and the Gibbs sampler take about one hour to run; using distributed computing, it could be completed much faster. This simulation achieved 96.5\% recall and 97.7\% precision, with an overall F-measure of 97.1\% F-measure. The reader will note that this slightly worse performance than witnessed in the smaller simulation studies; this is expected because it is naturally more difficult to link more files with the same amount of information. With more linkage fields \texttt{fabl} maintains the high accuracy seen above. 
+For simplicity, we partition one dataset into 20 smaller chunks, and leave the second dataset fully intact. We compare records, hash results, and then synthesize summary statistics for all 20 chunk comparisons. The resulting data object is now only 90 MB, about 1\% the size of the object required under the standard method. Executed sequentially, these comparisons and the Gibbs sampler take about one hour to run; using distributed computing. However, this could be sped up. 
+
+Turning to evaluation metrics, this simulation achieved 96.5\% recall and 97.7\% precision, with an overall F-measure of 97.1\% F-measure. The reader will note that this slightly worse performance than witnessed in the smaller simulation studies; this is expected because it is naturally more difficult to link more files with the same amount of information. With more linkage fields \texttt{fabl} maintains the high accuracy seen above. \textcolor{red}{Brian: you should look to see if you fix these in the post-processing step as this would be interesting/important.}
+ 
+ \textcolor{red}{How long does it take on the same machine to run BRL. Can you run this? This can close this section out!}
  
  
 

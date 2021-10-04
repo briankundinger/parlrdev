@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.7.1)  4 OCT 2021 10:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.7.1)  4 OCT 2021 10:28
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -971,83 +971,83 @@ ne 715.
 Package natbib Warning: Citation `sadinle2017' on page 20 undefined on input li
 ne 719.
 
-<../notes/figures/sadinle_sim_plot.png, id=455, 505.89pt x 505.89pt>
+<../notes/figures/sadinle_sim_plot.png, id=457, 505.89pt x 505.89pt>
 File: ../notes/figures/sadinle_sim_plot.png Graphic file (type png)
 <use ../notes/figures/sadinle_sim_plot.png>
 Package pdftex.def Info: ../notes/figures/sadinle_sim_plot.png  used on input l
-ine 743.
+ine 744.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
 [20] [21 <../notes/figures/sadinle_sim_plot.png>]
-<../notes/figures/sadinle_speed_plot2.png, id=469, 416.2752pt x 256.5585pt>
+<../notes/figures/sadinle_speed_plot2.png, id=471, 416.2752pt x 256.5585pt>
 File: ../notes/figures/sadinle_speed_plot2.png Graphic file (type png)
 <use ../notes/figures/sadinle_speed_plot2.png>
 Package pdftex.def Info: ../notes/figures/sadinle_speed_plot2.png  used on inpu
-t line 800.
+t line 803.
 (pdftex.def)             Requested size: 277.3648pt x 170.95375pt.
-<../notes/figures/speed_plot_fixed_nB.png, id=470, 505.89pt x 505.89pt>
+ [22 <../notes/figures/sadinle_speed_plot2.png>]
+<../notes/figures/speed_plot_fixed_nB.png, id=481, 505.89pt x 505.89pt>
 File: ../notes/figures/speed_plot_fixed_nB.png Graphic file (type png)
 <use ../notes/figures/speed_plot_fixed_nB.png>
 Package pdftex.def Info: ../notes/figures/speed_plot_fixed_nB.png  used on inpu
-t line 817.
+t line 820.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
- [22] [23 <../notes/figures/sadinle_speed_plot2.png>] [24 <../notes/figures/spe
-ed_plot_fixed_nB.png>]
-<../notes/figures/el_salvador/m_posterior_smallP.png, id=492, 396.5214pt x 244.
+ [23 <../notes/figures/speed_plot_fixed_nB.png>] [24]
+[25]
+<../notes/figures/el_salvador/m_posterior_smallP.png, id=499, 396.5214pt x 244.
 5135pt>
 File: ../notes/figures/el_salvador/m_posterior_smallP.png Graphic file (type pn
 g)
 <use ../notes/figures/el_salvador/m_posterior_smallP.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/m_posterior_smallP.png  u
-sed on input line 892.
+sed on input line 901.
 (pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
-
-[25] [26 <../notes/figures/el_salvador/m_posterior_smallP.png>]
+ [26 <../notes/figures/el_salvador/m_posterior_smallP.png>]
 <../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png, id=509, 39
 6.5214pt x 244.5135pt>
 File: ../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png Graphi
 c file (type png)
 <use ../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/overlap_distribution_smal
-lP_bayes.png  used on input line 933.
+lP_bayes.png  used on input line 942.
 (pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
 <../notes/figures/el_salvador/rosa_records.png, id=510, 112.9821pt x 34.4487pt>
 
 File: ../notes/figures/el_salvador/rosa_records.png Graphic file (type png)
 <use ../notes/figures/el_salvador/rosa_records.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/rosa_records.png  used on
- input line 950.
+ input line 959.
 (pdftex.def)             Requested size: 277.3648pt x 84.57927pt.
 <../notes/figures/el_salvador/bad_mixing.png, id=511, 396.5214pt x 244.5135pt>
 File: ../notes/figures/el_salvador/bad_mixing.png Graphic file (type png)
 <use ../notes/figures/el_salvador/bad_mixing.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/bad_mixing.png  used on i
-nput line 959.
+nput line 968.
 (pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
- [27 <../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png> <../n
-otes/figures/el_salvador/rosa_records.png>] [28 <../notes/figures/el_salvador/b
+ [27 <../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png>] [28 
+<../notes/figures/el_salvador/rosa_records.png> <../notes/figures/el_salvador/b
 ad_mixing.png>]
-<../notes/figures/el_salvador/overlap_trace.png, id=530, 505.89pt x 505.89pt>
+<../notes/figures/el_salvador/overlap_trace.png, id=532, 505.89pt x 505.89pt>
 File: ../notes/figures/el_salvador/overlap_trace.png Graphic file (type png)
 <use ../notes/figures/el_salvador/overlap_trace.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/overlap_trace.png  used o
-n input line 1029.
+n input line 1038.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
-<../notes/figures/el_salvador/m_trace.png, id=531, 505.89pt x 505.89pt>
+<../notes/figures/el_salvador/m_trace.png, id=533, 505.89pt x 505.89pt>
 File: ../notes/figures/el_salvador/m_trace.png Graphic file (type png)
 <use ../notes/figures/el_salvador/m_trace.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/m_trace.png  used on inpu
-t line 1038.
+t line 1047.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
-<../notes/figures/el_salvador/u_trace.png, id=532, 505.89pt x 505.89pt>
+<../notes/figures/el_salvador/u_trace.png, id=534, 505.89pt x 505.89pt>
 File: ../notes/figures/el_salvador/u_trace.png Graphic file (type png)
 <use ../notes/figures/el_salvador/u_trace.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/u_trace.png  used on inpu
-t line 1047.
+t line 1056.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
 
-(./fabl-paper.bbl [29 <../notes/figures/el_salvador/overlap_trace.png>]
-[30 <../notes/figures/el_salvador/m_trace.png>] [31 <../notes/figures/el_salvad
-or/u_trace.png>] [32] [33])
+(./fabl-paper.bbl [29] [30 <../notes/figures/el_salvador/overlap_trace.png>]
+[31 <../notes/figures/el_salvador/m_trace.png>] [32 <../notes/figures/el_salvad
+or/u_trace.png>] [33])
 
 Package natbib Warning: There were undefined citations.
 
@@ -1058,17 +1058,23 @@ LaTeX Warning: There were undefined references.
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
-Package rerunfilecheck Info: File `fabl-paper.out' has not changed.
-(rerunfilecheck)             Checksum: F54F90B56651B4E6165DF1D9B12B6F14;3583.
+
+Package rerunfilecheck Warning: File `fabl-paper.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `fabl-paper.out':
+(rerunfilecheck)             Before: 69A731ED35ED1DA4BAA2D072F267226E;3806
+(rerunfilecheck)             After:  74A7CBD0D67A1C8932F3A9F79DC848C0;3882.
  ) 
 Here is how much of TeX's memory you used:
- 25850 strings out of 478994
- 494709 string characters out of 5858185
- 830293 words of memory out of 5000000
+ 25848 strings out of 478994
+ 494695 string characters out of 5858185
+ 830334 words of memory out of 5000000
  42415 multiletter control sequences out of 15000+600000
- 427285 words of font info for 214 fonts, out of 8000000 for 9000
+ 427236 words of font info for 213 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 87i,16n,89p,1662b,575s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 87i,16n,89p,1662b,573s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></
@@ -1093,10 +1099,10 @@ xlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/tex
 live/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texl
 ive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texli
 ve/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on fabl-paper.pdf (34 pages, 670344 bytes).
+Output written on fabl-paper.pdf (34 pages, 671566 bytes).
 PDF statistics:
- 683 PDF objects out of 1000 (max. 8388607)
- 581 compressed objects within 6 object streams
+ 685 PDF objects out of 1000 (max. 8388607)
+ 583 compressed objects within 6 object streams
  149 named destinations out of 1000 (max. 500000)
  44383 words of extra memory for PDF output out of 51595 (max. 10000000)
 
