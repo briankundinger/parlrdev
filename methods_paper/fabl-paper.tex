@@ -930,8 +930,13 @@ Figure~\ref{fig:m-and-u}.
 
 
 
-\paragraph{Violations of One-to-One Matching} Figure~\ref{fig:overlap-plot} shows the posterior distribution for \(D\), the number of
-duplicates found across file for both \texttt{fabl} and \texttt{BRL}. We
+\paragraph{Violations of One-to-One Matching} 
+
+In this section, we investigate violations of one-to-one matching of our method as compared to \texttt{BRL}.
+
+
+Figure~\ref{fig:overlap-plot} shows the posterior distribution for \(D\), the number of
+duplicates found in both databases for both \texttt{fabl} and \texttt{BRL}. We
 see that \texttt{fabl} consistently overmatches within each Gibbs
 iteration when compared to \texttt{BRL}, which is to be expected because
 \texttt{BRL} explicitly prevents matches that violate one-to-one
@@ -940,64 +945,95 @@ to the randomness in the sampling procedure, and they occur sporadically
 throughout the sampler in such a way that does not measurably influence
 the eventual Bayes estimate.
 
-\begin{figure}[t]
-	
-	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_distribution_smallP_bayes} 
-		
-	}
-	
-	\caption{Posterior distribution of overlap across the two files. The solid lines show the Bayes estimate for the amount of overlap, and the dashed line is the Bayes estimate under fabl before resolving violations of one-to-one matching}\label{fig:overlap-plot}
+\begin{figure}[htbp]
+\begin{center}
+ \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_distribution_smallP_bayes} 
+\caption{Posterior distribution of overlap across the two files. The solid lines show the Bayes estimate for the amount of overlap, and the dashed line is the Bayes estimate under fabl before resolving violations of one-to-one matching}
+\label{fig:overlap-plot}
+\end{center}
 \end{figure}
 
-Overall, both methods presented similar results. \texttt{fabl} yielded
-an initial Bayes estimate of 195 matches found across files, and after
-resolving matches that violated one-to-one requirements, yielded 180
-matches across files. This is acceptably close to the 181 matches found
+
+%\begin{figure}[t]
+%	
+%	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_distribution_smallP_bayes} 
+%		
+%	}
+%	
+%	\caption{Posterior distribution of overlap across the two files. The solid lines show the Bayes estimate for the amount of overlap, and the dashed line is the Bayes estimate under fabl before resolving violations of one-to-one matching}\label{fig:overlap-plot}
+%\end{figure}
+
+Overall, both methods present similar results. \texttt{fabl} yields
+an initial Bayes estimate of total 195 DID. After
+resolving matches that violated one-to-one requirements,  we estimate 180 DID. 
+\textcolor{red}{Can you report the posterior standard error for each one as we want uncertainty quantification.}
+
+
+This is very close to the 181 DID found
 by \texttt{BRL}. The main reason for this discrepancy is the difference
-in how each model handles situations in which one file in \(B\) has
-multiple plausible matches in \(A\).
+in how each model handles situations in which one file in \(\bm{X}_1\) has
+multiple plausible matches in \(\bm{X}_2\).
 
-\begin{figure}[t]
-	
-	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/rosa_records} 
-		
-	}
-	
-	\caption{Example of linkage situation with multiple plausible matches}\label{fig:rosa-maria}
-\end{figure}
 
-\begin{figure}[t]
-	
-	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/bad_mixing} 
-		
-	}
-	
-	\caption{Gibbs sampling in situation with multiple plausible matches.}\label{fig:mixing-plot}
-\end{figure}
+%
+%\begin{figure}[t]
+%	
+%	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/rosa_records} 
+%		
+%	}
+%	
+%	\caption{Example of linkage situation with multiple plausible matches}\label{fig:rosa-maria}
+%\end{figure}
 
-The records shown in Figure~\ref{fig:rosa-maria} provide one such instance. Note these
+
+
+Figure~\ref{fig:rosa-maria} illustrates an example. Note these
 records present a near violation of our assumption that there are no
 duplications within files; we continue to assume that records 825 and
 826 in ERTL correspond to different individuals, but their records are
-nearly identical. Additionally, using the modified Levenstein distance
-from Sadinle 2017, the comparison vectors \(\gamma_{2776, 825}\) and
+nearly identical. In addition, using the modified Levenstein distance, the comparison vectors \(\gamma_{2776, 825}\) and
 \(\gamma_{2776, 826}\) are exactly identical.
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/rosa_records} 
+\caption{Example of linkage situation with multiple plausible matches}\label{fig:rosa-maria}
+\end{center}
+\end{figure}
+
 
 Figure~\ref{fig:mixing-plot} shows the values that \(Z_{825}\) and \(Z_{826}\) take on
 throughout the Gibbs sampler, and demonstrates how each method handles
-this situation. Under \texttt{fabl}, both records in \(B\) match to the
-same record in \(A\) throughout the Gibbs process, creating consistent
+this situation. Under \texttt{fabl}, both records in \(\bm{X}_2\) match to the
+same record in \(\bm{X}_1\) throughout the Gibbs process, creating consistent
 violations of one-to-one matching. Under \texttt{BRL}, the Gibbs process
-creates one matching configuration stays there for a while. However, if
+creates one matching configuration and stays there for a while. However, if
 one pair ``unmatches,'' then the other record has a chance to latch on.
 Then, the Gibbs process is stuck with that matching status for a while,
-resulting in a Gibbs process with poor mixing. Additionally,
+resulting in a Gibbs process with poor mixing. In addition,
 \texttt{fabl} allows the modeler to inspect records with multiple
 plausible matches, and if they desire, to then choose the record pairing
 with the highest posterior probability. \texttt{BRL} in contrast, in
 strictly enforcing one-to-one matching throughout the sampler, can lead
 to situations where none of the plausible matches reach the threshold to
-be identified through the Bayes estimate.
+be identified through the Bayes estimate. In short, we have pointed out why one may not wish to imbed this constraint in a model, and proposed a simple alternative that performs about the same as \texttt{BRL}, while scaling to much larger data sets. 
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/bad_mixing} 
+\caption{Gibbs sampling in situation with multiple plausible matches.}\label{fig:mixing-plot}
+\end{center}
+\end{figure}
+
+
+%\begin{figure}[t]
+%	
+%	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/bad_mixing} 
+%		
+%	}
+%	
+%	\caption{Gibbs sampling in situation with multiple plausible matches.}\label{fig:mixing-plot}
+%\end{figure}
 
 %\subsection{National Long Term Care Survey}
 %\label{nltcs} 
