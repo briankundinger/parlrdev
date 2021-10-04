@@ -1,24 +1,24 @@
-\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
-\BOOKMARK [1][-]{section.2}{Bipartite Record Linkage and Related Work}{}% 2
-\BOOKMARK [1][-]{section.8}{Review of the Fellegi Sunter Method}{}% 3
-\BOOKMARK [2][-]{subsection.9}{Comparison Data}{section.8}% 4
-\BOOKMARK [2][-]{subsection.10}{Blocking}{section.8}% 5
-\BOOKMARK [2][-]{subsection.11}{Fellegi-Sunter Model}{section.8}% 6
-\BOOKMARK [2][-]{subsection.14}{Model Estimation}{section.8}% 7
-\BOOKMARK [1][-]{section.16}{Proposed Methodology}{}% 8
-\BOOKMARK [2][-]{subsection.17}{Beta Linkage Model}{section.16}% 9
-\BOOKMARK [2][-]{subsection.19}{New Model Specification}{section.16}% 10
-\BOOKMARK [2][-]{subsection.26}{Fast Beta Prior}{section.16}% 11
-\BOOKMARK [2][-]{subsection.27}{Gibbs Sampler}{section.16}% 12
-\BOOKMARK [2][-]{subsection.28}{Bayes Estimate}{section.16}% 13
-\BOOKMARK [1][-]{section.29}{Efficient and Scalable Implementation}{}% 14
-\BOOKMARK [2][-]{subsection.30}{Data Representation, Hashing, and Storage}{section.29}% 15
-\BOOKMARK [1][-]{section.31}{Efficient Posterior Inference}{}% 16
-\BOOKMARK [1][-]{section.33}{Simulation Studies}{}% 17
-\BOOKMARK [2][-]{subsection.34}{Accuracy}{section.33}% 18
-\BOOKMARK [2][-]{subsection.37}{Speed}{section.33}% 19
-\BOOKMARK [2][-]{subsection.44}{Scale}{section.33}% 20
-\BOOKMARK [1][-]{section.45}{Case Studies}{}% 21
-\BOOKMARK [2][-]{subsection.46}{El Salvadoran Civil War}{section.45}% 22
-\BOOKMARK [1][-]{section.56}{Discussion}{}% 23
-\BOOKMARK [1][-]{section.57}{Appendix}{}% 24
+\BOOKMARK [1][-]{section.1}{\376\377\000I\000n\000t\000r\000o\000d\000u\000c\000t\000i\000o\000n}{}% 1
+\BOOKMARK [1][-]{section.2}{\376\377\000B\000i\000p\000a\000r\000t\000i\000t\000e\000\040\000R\000e\000c\000o\000r\000d\000\040\000L\000i\000n\000k\000a\000g\000e\000\040\000a\000n\000d\000\040\000R\000e\000l\000a\000t\000e\000d\000\040\000W\000o\000r\000k}{}% 2
+\BOOKMARK [1][-]{section.8}{\376\377\000R\000e\000v\000i\000e\000w\000\040\000o\000f\000\040\000t\000h\000e\000\040\000F\000e\000l\000l\000e\000g\000i\000\040\000S\000u\000n\000t\000e\000r\000\040\000M\000e\000t\000h\000o\000d}{}% 3
+\BOOKMARK [2][-]{subsection.9}{\376\377\000C\000o\000m\000p\000a\000r\000i\000s\000o\000n\000\040\000D\000a\000t\000a}{section.8}% 4
+\BOOKMARK [2][-]{subsection.10}{\376\377\000B\000l\000o\000c\000k\000i\000n\000g}{section.8}% 5
+\BOOKMARK [2][-]{subsection.11}{\376\377\000F\000e\000l\000l\000e\000g\000i\000-\000S\000u\000n\000t\000e\000r\000\040\000M\000o\000d\000e\000l}{section.8}% 6
+\BOOKMARK [2][-]{subsection.14}{\376\377\000M\000o\000d\000e\000l\000\040\000E\000s\000t\000i\000m\000a\000t\000i\000o\000n}{section.8}% 7
+\BOOKMARK [1][-]{section.16}{\376\377\000P\000r\000o\000p\000o\000s\000e\000d\000\040\000M\000e\000t\000h\000o\000d\000o\000l\000o\000g\000y}{}% 8
+\BOOKMARK [2][-]{subsection.17}{\376\377\000B\000e\000t\000a\000\040\000L\000i\000n\000k\000a\000g\000e\000\040\000M\000o\000d\000e\000l}{section.16}% 9
+\BOOKMARK [2][-]{subsection.19}{\376\377\000N\000e\000w\000\040\000M\000o\000d\000e\000l\000\040\000S\000p\000e\000c\000i\000f\000i\000c\000a\000t\000i\000o\000n}{section.16}% 10
+\BOOKMARK [2][-]{subsection.26}{\376\377\000F\000a\000s\000t\000\040\000B\000e\000t\000a\000\040\000P\000r\000i\000o\000r}{section.16}% 11
+\BOOKMARK [2][-]{subsection.27}{\376\377\000G\000i\000b\000b\000s\000\040\000S\000a\000m\000p\000l\000e\000r}{section.16}% 12
+\BOOKMARK [2][-]{subsection.28}{\376\377\000B\000a\000y\000e\000s\000\040\000E\000s\000t\000i\000m\000a\000t\000e}{section.16}% 13
+\BOOKMARK [1][-]{section.29}{\376\377\000E\000f\000f\000i\000c\000i\000e\000n\000t\000\040\000a\000n\000d\000\040\000S\000c\000a\000l\000a\000b\000l\000e\000\040\000I\000m\000p\000l\000e\000m\000e\000n\000t\000a\000t\000i\000o\000n}{}% 14
+\BOOKMARK [2][-]{subsection.30}{\376\377\000D\000a\000t\000a\000\040\000R\000e\000p\000r\000e\000s\000e\000n\000t\000a\000t\000i\000o\000n\000,\000\040\000H\000a\000s\000h\000i\000n\000g\000,\000\040\000a\000n\000d\000\040\000S\000t\000o\000r\000a\000g\000e}{section.29}% 15
+\BOOKMARK [1][-]{section.31}{\376\377\000E\000f\000f\000i\000c\000i\000e\000n\000t\000\040\000P\000o\000s\000t\000e\000r\000i\000o\000r\000\040\000I\000n\000f\000e\000r\000e\000n\000c\000e}{}% 16
+\BOOKMARK [1][-]{section.33}{\376\377\000S\000i\000m\000u\000l\000a\000t\000i\000o\000n\000\040\000S\000t\000u\000d\000i\000e\000s}{}% 17
+\BOOKMARK [2][-]{subsection.34}{\376\377\000A\000c\000c\000u\000r\000a\000c\000y}{section.33}% 18
+\BOOKMARK [2][-]{subsection.37}{\376\377\000S\000p\000e\000e\000d}{section.33}% 19
+\BOOKMARK [2][-]{subsection.44}{\376\377\000S\000c\000a\000l\000e}{section.33}% 20
+\BOOKMARK [1][-]{section.45}{\376\377\000C\000a\000s\000e\000\040\000S\000t\000u\000d\000i\000e\000s}{}% 21
+\BOOKMARK [2][-]{subsection.46}{\376\377\000E\000l\000\040\000S\000a\000l\000v\000a\000d\000o\000r\000a\000n\000\040\000C\000i\000v\000i\000l\000\040\000W\000a\000r}{section.45}% 22
+\BOOKMARK [1][-]{section.56}{\376\377\000D\000i\000s\000c\000u\000s\000s\000i\000o\000n}{}% 23
+\BOOKMARK [1][-]{section.57}{\376\377\000A\000p\000p\000e\000n\000d\000i\000x}{}% 24
