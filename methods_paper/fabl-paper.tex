@@ -848,10 +848,11 @@ Turning to evaluation metrics, this simulation achieved 96.5\% recall and 97.7\%
  
  
 
-\section{Case Studies}
+\section{Application to Civilian Casualties from the El Salvadoran Civil War}
 \label{sex:case-studies}
 
-We now demonstrate the power of our method through a case study of documented identifiable deaths (DID) from the El Salvadoran Civil War. Though the data files used here are small, this study shows how the computational complexity of \texttt{fabl} depends on the number of unique agreement patterns, and how significant computational gains can be achieved by simplifying the construction of the comparison vectors. Secondly, the case study reveals the impact of independently sampling $Z_j$ rather than strictly enforcing one-to-one matching as done by \texttt{BRL}. 
+In this section, we revisit an application to the El Salvadoran Civil War, where we estimate the number of documented identifiable deaths (DID). Though the data files used here are small, this study shows how the computational complexity of \texttt{fabl} depends on the number of unique agreement patterns, and how significant computational gains can be achieved by simplifying the construction of the comparison vectors. This case study also considers the ramifications of 
+independently sampling $Z_j$ rather than strictly enforcing one-to-one matching as done by \texttt{BRL}. 
 
 %The second case study is the National Long Term Care Survey (NLTCS), a much larger linkage tasks which \texttt{BRL} is unable to complete but which we complete with \texttt{fabl} with relative ease. 
 
@@ -863,14 +864,15 @@ and throughout the time, several organizations attempted to document
 casualties of the conflict. When estimating the total number of
 casualties, one cannot simply sum the numbers recorded by each
 organization, as it is likely that the same individuals are recorded in
-multiple casualty lists. To obtain a more accurate estimate of the
-casualties then, we follow Sadinle's 2017 paper and link records of El
-Salvadoran civilian casualties from two sources: El Rescate - Tutela
+multiple casualty lists. Thanks to the Human Rights Data Analysis Group (HRDAG), we utilize 
+two different sources, namely,  El Rescate - Tutela
 Regal (ERTL) and the Salvadoran Human Rights Commission (CDHES, by its
 acronym in Spanish). The ERTL dataset consists of digitized reports that
 had been published throughout the conflict. The CDHES dataset consists
 of casualties that had been reported directly to the organization, and
 later digitized.
+
+\textcolor{red}{Beka: These data sets need more information regarding how the data sets were collected as this is quite important. See Sadinle (2017) and references for info). }
 
 There are several challenges with working with such data. Firstly, both
 datasets have been automatically digitized, which inherently leads to
@@ -884,48 +886,49 @@ nearly breaks the earlier mentioned assumption that there are no
 duplicates within files, and reveals a key difference between
 \texttt{BRL} and our proposed method.
 
-We only utilized records with nonmissing entries for given and last
-name, results in \(n_A = 4420\) files in CHDES and \(n_B = 1323\) files
-in ERTL. The names were standardized to account for common misspellings
-in the Spanish language, and then compared using a modified Levenstein
+In this paper, we utilize records that have non-missing entries for given and last name, which results 
+in \(n_1 = 4420\) files in CHDES and \(n_2 = 1323\) files
+in ERTL. We standardized names to account for common misspellings
+in the Spanish language. The string distance used is a modified Levenstein
 distance to account for the fact that second names are often omitted.
 Place of birth is recorded by municipality and department within that
 municipality; however, since department was missing in 95\% of records
-in CHDES and 80\% of records in ERTL, we excluded it from our linkage
-process. Thus we conduct linkage using given name, last name,
+in CHDES and 80\% of records in ERTL, this was excluded from our analyses. 
+Thus, we conduct record linkage using given name, last name,
 municipality, and day, month, and year of death. We again use flat
-priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters.
+priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters. To our knowledge, we have followed the same guidelines/settings in \cite{sadinle_bayesian_2017}.
 
-\begin{figure}[t]
-	
-	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_posterior_smallP} 
-		
-	}
-	
-	\caption{Posterior estimates of m parameters with 95\% credible intervals}\label{fig:m-and-u}
-\end{figure}
-
-To mirror the original implementation, we constructed the comparison
-vectors using 4 levels of agreement for each field, according to the
-thresholds provided in Figure XX. This took 422 seconds for our proposed
-method and 240 for \texttt{BRL}. However, we observed that posterior
+To mirror the original implementation of \cite{sadinle_bayesian_2017}, we construct the comparison
+vectors using four levels of agreement for each field, according to the
+thresholds provided in \textcolor{red}{Figure XX}. This took 422 seconds for our proposed
+method, \texttt{fabl}, and 240 for \texttt{BRL}. However, we observed that posterior
 distributions of several levels of the \(\mathbf{m}\) and \(\mathbf{u}\)
 parameters were nearly identical, and that of the
 \(4^5 \times 2 = 2048\) possible agreement patterns, only 1173 are
 realized in the data. This leads us to believe that such high number of
 agreement levels creates unnecessary distinctions in the data and makes
-the comparison vectors less interpretable. Therefore we re-ran our
-analysis with fewer agreement levels for each field (see Figure XX), and
+the comparison vectors less interpretable. 
+
+Therefore we re-ran our analysis with fewer agreement levels for each field \textcolor{red}{(see Figure XX)}, and
 obtained analogous results. With 216 possible agreement patterns, 159
-were realized in the data, and our proposed method became much faster,
+were realized in the data, and our proposed method, \texttt{fabl} became was faster,
 finishing in 124 seconds. Meanwhile \texttt{BRL} took 239 seconds,
 relatively unchanged from the first implementation. This demonstrates
 the way that the computational complexity of our method depends on the
 number of unique agreement patterns, and how significant computational
 gains can be made by simplifying the construction of the comparison
-vectors. We also note that estimates of the \(\mathbf{m}\) and
-\(\mathbf{u}\) parameters under each method are very similar, as shown in
+vectors. The estimates of the \(\mathbf{m}\) parameters under each method are very similar, as shown in
 Figure~\ref{fig:m-and-u}.
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_posterior_smallP} 
+\caption{Posterior estimates of m parameters with 95\% credible intervals}\label{fig:m-and-u}
+\label{fig:m-and-u}
+\end{center}
+\end{figure}
+
+
 
 \paragraph{Violations of One-to-One Matching} Figure~\ref{fig:overlap-plot} shows the posterior distribution for \(D\), the number of
 duplicates found across file for both \texttt{fabl} and \texttt{BRL}. We
