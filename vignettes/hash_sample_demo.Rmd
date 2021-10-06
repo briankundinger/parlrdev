@@ -1,0 +1,81 @@
+---
+title: "hash_sample_demo"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{hash_sample_demo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(parlrdev)
+```
+
+# Sampling Z with no hashing
+
+```{r}
+nB <- 500
+nA_vals <- c(1000, 10000, 100000, 200000)
+
+for(nA in nA_vals){
+  candidate_matches <- 1:nA
+  weights <- 1:nA 
+  
+  time <- system.time(
+    Z_records <- sapply(1:nB, function(x){
+      sample(candidate_matches, size = 1, prob = weights)
+    })
+  )
+  cat("Sampling among", nA, "records takes" , time[3], "seconds \n")
+}
+
+cat("\n Note: Sampling time scales with nA \n")
+```
+
+# Sampling Z with hashing
+
+## Sample agreement patterns
+
+```{r}
+P <- 32 # 2^5
+
+for(nA in nA_vals){
+  candidate_patterns <- 1:P
+  weights <- 1:P #Calculated using Hjp
+  
+  time <- system.time(
+    Z_agreement_patterns <- sapply(1:nB, function(x){
+      sample(candidate_patterns, size = 1, prob = weights)
+    })
+  )
+  cat("Sampling among", P, "patterns takes" , time[3], "seconds \n")
+}
+
+cat("\n Note: Sampling time does not depend on nA \n")
+```
+
+## Sample records conditional on pattern
+
+```{r}
+for(nA in nA_vals){
+  candidates_within_class <- 1:nA
+  weights <- NULL #Uniform at random
+  
+  time <- system.time(
+    Z <- sapply(1:nB, function(x){
+      sample(candidates_within_class, size = 1, prob = weights)
+    })
+  )
+  cat("Sampling uniformly among", nA, "records within class takes" , time[3], "seconds \n")
+}
+
+cat("\n Note: Sampling time does not depend on nA \n")
+```
+

@@ -19,6 +19,7 @@ library(devtools)
 load_all()
 library(parlrdev)
 library(tidyverse)
+rm(list = c("hash_field"))
 ```
 
 
@@ -34,14 +35,17 @@ fabl_acc_samps <- array(NA, dim = c(length(files), 5, 3))
 fabl_acc_samps_resolved <- array(NA, dim = c(length(files), 5, 3))
 sad_acc_samps <- array(NA, dim = c(length(files), 5, 3))
 
+fabl_acc_samps2 <- array(NA, dim = c(length(files), 5, 3))
+fabl_acc_samps_resolved2 <- array(NA, dim = c(length(files), 5, 3))
+sad_acc_samps2 <- array(NA, dim = c(length(files), 5, 3))
+
 for(j in seq_along(overlap_vals)){
   
   overlap <- overlap_vals[j]
   
 for(i in seq_along(files)){
-  suppressMessages(
+
 records <- read_csv(files[i], col_types = cols())
-)
 records$file <- rep(2:1, length.out = dim(records)[1])
 
 records <- records %>% 
@@ -52,7 +56,7 @@ n1 <- 500
 n2 <- 500
 #overlap <- n2/2
 
-Ztrue <- rep(n1 + 1, n2)
+Ztrue <- n1 + 1:n2
 Ztrue[1:overlap] <- 1:overlap
 
 file1 <- records %>% 
@@ -60,17 +64,24 @@ file1 <- records %>%
          rec_id <= n1) %>% 
   select(-rec_id) %>% 
   as.matrix(.) %>% 
-  data.frame(.)
+  data.frame(.) %>% 
+  mutate(occup = as.numeric(occup))
 
 file2 <- records %>% 
   filter(file == 2,
          rec_id %in% c(1:overlap, (n1 +1):(1000 - overlap))) %>% 
   select(-rec_id) %>% 
   as.matrix() %>% 
-  data.frame(.)
+  data.frame(.) %>% 
+  mutate(occup = as.numeric(occup))
 
-cd <- suppressMessages(BRL::compareRecords(file1, file2, c(2, 3, 4, 5), 
-                          types = c("lv", "lv", "bi", "bi") ))
+# #old
+# cd <- suppressMessages(BRL::compareRecords(file1, file2, c(2, 3, 4, 5), 
+#                           types = c("lv", "lv", "bi", "bi")))
+# cd[[1]] <- apply(cd[[1]], 2, as.numeric)
+
+cd <- suppressMessages(BRL::compareRecords(file1, file2, c(2, 3, 5, 6), 
+                          types = c("lv", "lv", "bi", "bi")))
 cd[[1]] <- apply(cd[[1]], 2, as.numeric)
 
 # cd[[1]] <- cd[[1]][, -c(10, 11, 13, 14)]
@@ -83,10 +94,18 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
   
+  # Resolution Step
   Zhat_resolved <- ResolveConflicts(Zhat)
   eval_resolved <- GetEvaluations(Zhat_resolved, Ztrue, n1)
   fabl_acc_samps_resolved[i, , j] <- c(eval_resolved, elapsed[3], overlap)
   fabl_acc_samps[i, ,j] <- c(eval, elapsed[3], overlap)
+  
+  #Partial Estimate
+  Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, .1)
+  Zhat <- ResolveConflicts(Zhat)
+  eval <- GetEvaluations(Zhat, Ztrue, n1)
+  eval[1] <- sum(Zhat == Ztrue & Ztrue > n1) / (sum(Zhat > n1))
+  fabl_acc_samps2[i, ,j] <- c(eval, elapsed[3], overlap)
   
   #Sadinle 2017 Method
   ptm <- proc.time()
@@ -96,6 +115,11 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
   sad_acc_samps[i, ,j] <- c(eval, elapsed[3], overlap)
+  
+  Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, .1)
+  eval <- GetEvaluations(Zhat, Ztrue, n1)
+  eval[1] <- sum(Zhat == Ztrue & Ztrue > n1) / (sum(Zhat > n1))
+  sad_acc_samps2[i, ,j] <- c(eval, elapsed[3], overlap)
   
   print(i)
 }

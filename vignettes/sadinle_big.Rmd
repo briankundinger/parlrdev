@@ -76,6 +76,11 @@ nonmatches <- c(rep(F, overlap), rep(T, n1 - overlap)) %>%
   rep(., number_of_files)
 Ztrue[nonmatches] <- nA + 1
 
+big_cd <- BRL::compareRecords(big_file1, 
+                         big_file2, 
+                         c(2, 3, 4, 5), 
+                         types = c("lv", "lv", "bi", "bi"))
+
 ```
 
 
