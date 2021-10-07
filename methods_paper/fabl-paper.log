@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7140 64-bit) (preloaded format=pdflatex 2019.8.26)  5 OCT 2021 12:21
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7140 64-bit) (preloaded format=pdflatex 2019.8.26)  7 OCT 2021 12:03
 entering extended mode
 **./fabl-paper.tex
 (fabl-paper.tex
@@ -1016,96 +1016,104 @@ ne 709.
 [19]
 
 Package natbib Warning: Citation `sadinle2017' on page 20 undefined on input li
-ne 723.
+ne 714.
 
 [20]
-<../notes/figures/sadinle_sim_plot.png, id=459, 505.89pt x 505.89pt>
-File: ../notes/figures/sadinle_sim_plot.png Graphic file (type png)
-<use ../notes/figures/sadinle_sim_plot.png>
-Package pdftex.def Info: ../notes/figures/sadinle_sim_plot.png  used on input l
-ine 748.
+<../notes/figures/sadinle_sim_plot2.png, id=465, 505.89pt x 505.89pt>
+File: ../notes/figures/sadinle_sim_plot2.png Graphic file (type png)
+<use ../notes/figures/sadinle_sim_plot2.png>
+Package pdftex.def Info: ../notes/figures/sadinle_sim_plot2.png  used on input 
+line 769.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
- [21 <../notes/figures/sadinle_sim_plot.png>]
-<../notes/figures/sadinle_speed_plot2.png, id=468, 416.2752pt x 256.5585pt>
+ [21] [22 <../notes/figures/sadinle_sim_plot2.png>]
+<../notes/figures/sadinle_sim_plot_partial.png, id=479, 505.89pt x 505.89pt>
+File: ../notes/figures/sadinle_sim_plot_partial.png Graphic file (type png)
+<use ../notes/figures/sadinle_sim_plot_partial.png>
+Package pdftex.def Info: ../notes/figures/sadinle_sim_plot_partial.png  used on
+ input line 802.
+(pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
+ [23 <../notes/figures/sadinle_sim_plot_partial.png>]
+<../notes/figures/sadinle_speed_plot2.png, id=488, 416.2752pt x 256.5585pt>
 File: ../notes/figures/sadinle_speed_plot2.png Graphic file (type png)
 <use ../notes/figures/sadinle_speed_plot2.png>
 Package pdftex.def Info: ../notes/figures/sadinle_speed_plot2.png  used on inpu
-t line 814.
+t line 857.
 (pdftex.def)             Requested size: 277.3648pt x 170.95375pt.
-<../notes/figures/speed_plot_fixed_nB.png, id=469, 505.89pt x 505.89pt>
+<../notes/figures/speed_plot_fixed_nB.png, id=489, 505.89pt x 505.89pt>
 File: ../notes/figures/speed_plot_fixed_nB.png Graphic file (type png)
 <use ../notes/figures/speed_plot_fixed_nB.png>
 Package pdftex.def Info: ../notes/figures/speed_plot_fixed_nB.png  used on inpu
-t line 831.
+t line 874.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
- [22] [23 <../notes/figures/sadinle_speed_plot2.png>] [24 <../notes/figures/spe
-ed_plot_fixed_nB.png>]
-[25] [26]
-<../notes/figures/el_salvador/m_posterior_smallP.png, id=505, 396.5214pt x 244.
+ [24] [25 <../notes/figures/sadinle_speed_plot2.png>] [26 <../notes/figures/spe
+ed_plot_fixed_nB.png>] [27] [28] [29]
+<../notes/figures/el_salvador/m_posterior_smallP.png, id=540, 396.5214pt x 244.
 5135pt>
 File: ../notes/figures/el_salvador/m_posterior_smallP.png Graphic file (type pn
 g)
 <use ../notes/figures/el_salvador/m_posterior_smallP.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/m_posterior_smallP.png  u
-sed on input line 940.
+sed on input line 1027.
 (pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
- [27 <../notes/figures/el_salvador/m_posterior_smallP.png>]
-<../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png, id=514, 39
+ [30 <../notes/figures/el_salvador/m_posterior_smallP.png>]
+<../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png, id=551, 39
 6.5214pt x 244.5135pt>
 File: ../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png Graphi
 c file (type png)
 <use ../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/overlap_distribution_smal
-lP_bayes.png  used on input line 965.
+lP_bayes.png  used on input line 1052.
 (pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
- [28 <../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png>]
-<../notes/figures/el_salvador/rosa_records.png, id=525, 112.9821pt x 34.4487pt>
+<../notes/figures/el_salvador/rosa_records.png, id=553, 112.9821pt x 34.4487pt>
 
 File: ../notes/figures/el_salvador/rosa_records.png Graphic file (type png)
 <use ../notes/figures/el_salvador/rosa_records.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/rosa_records.png  used on
- input line 1014.
+ input line 1101.
 (pdftex.def)             Requested size: 277.3648pt x 84.57927pt.
-<../notes/figures/el_salvador/bad_mixing.png, id=527, 396.5214pt x 244.5135pt>
+ [31 <../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png>]
+<../notes/figures/el_salvador/bad_mixing.png, id=564, 396.5214pt x 244.5135pt>
 File: ../notes/figures/el_salvador/bad_mixing.png Graphic file (type png)
 <use ../notes/figures/el_salvador/bad_mixing.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/bad_mixing.png  used on i
-nput line 1038.
+nput line 1125.
 (pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
- [29 <../notes/figures/el_salvador/rosa_records.png>]
-<../notes/figures/el_salvador/overlap_trace.png, id=535, 505.89pt x 505.89pt>
+ [32 <../notes/figures/el_salvador/rosa_records.png> <../notes/figures/el_salva
+dor/bad_mixing.png>]
+<../notes/figures/el_salvador/overlap_trace.png, id=573, 505.89pt x 505.89pt>
 File: ../notes/figures/el_salvador/overlap_trace.png Graphic file (type png)
 <use ../notes/figures/el_salvador/overlap_trace.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/overlap_trace.png  used o
-n input line 1092.
+n input line 1179.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
-<../notes/figures/el_salvador/m_trace.png, id=536, 505.89pt x 505.89pt>
+<../notes/figures/el_salvador/m_trace.png, id=574, 505.89pt x 505.89pt>
 File: ../notes/figures/el_salvador/m_trace.png Graphic file (type png)
 <use ../notes/figures/el_salvador/m_trace.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/m_trace.png  used on inpu
-t line 1101.
+t line 1188.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
-<../notes/figures/el_salvador/u_trace.png, id=537, 505.89pt x 505.89pt>
+<../notes/figures/el_salvador/u_trace.png, id=575, 505.89pt x 505.89pt>
 File: ../notes/figures/el_salvador/u_trace.png Graphic file (type png)
 <use ../notes/figures/el_salvador/u_trace.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/u_trace.png  used on inpu
-t line 1110.
+t line 1197.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
- (fabl-paper.bbl [30 <../notes/figures/el_salvador/bad_mixing.png>] [31 <../not
-es/figures/el_salvador/overlap_trace.png>] [32 <../notes/figures/el_salvador/m_
-trace.png>] [33 <../notes/figures/el_salvador/u_trace.png>] [34])
+ (fabl-paper.bbl
+[33] [34 <../notes/figures/el_salvador/overlap_trace.png>] [35 <../notes/figure
+s/el_salvador/m_trace.png>] [36 <../notes/figures/el_salvador/u_trace.png>]
+[37])
 
 Package natbib Warning: There were undefined citations.
 
-[35]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1125.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1125.
+[38]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1212.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1212.
  (fabl-paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1125.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1125.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1212.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1212.
 
 Package rerunfilecheck Info: File `fabl-paper.out' has not changed.
-(rerunfilecheck)             Checksum: 4FD0B999349ACB2DCF1449C5A6B9C452;1633.
+(rerunfilecheck)             Checksum: F2780DA6F92B9EF28BCE9677BB254ABC;1716.
 
 
 LaTeX Warning: There were undefined references.
@@ -1113,16 +1121,16 @@ LaTeX Warning: There were undefined references.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1125.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1212.
  ) 
 Here is how much of TeX's memory you used:
- 22607 strings out of 492895
- 451257 string characters out of 3123735
- 579848 words of memory out of 3000000
- 25734 multiletter control sequences out of 15000+200000
- 25440 words of font info for 165 fonts, out of 3000000 for 9000
+ 22611 strings out of 492895
+ 451403 string characters out of 3123735
+ 580190 words of memory out of 3000000
+ 25729 multiletter control sequences out of 15000+200000
+ 25439 words of font info for 165 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 55i,16n,83p,1665b,545s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 55i,16n,83p,1665b,549s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts
 /cm/cmbx10.pfb><C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pu
 blic/amsfonts/cm/cmbx12.pfb><C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/f
@@ -1153,9 +1161,9 @@ Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/b
 rian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt12.pf
 b><C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts
 /symbols/msbm10.pfb>
-Output written on fabl-paper.pdf (35 pages, 760714 bytes).
+Output written on fabl-paper.pdf (38 pages, 808105 bytes).
 PDF statistics:
- 690 PDF objects out of 1000 (max. 8388607)
- 150 named destinations out of 1000 (max. 500000)
- 24415 words of extra memory for PDF output out of 24883 (max. 10000000)
+ 724 PDF objects out of 1000 (max. 8388607)
+ 158 named destinations out of 1000 (max. 500000)
+ 24428 words of extra memory for PDF output out of 24883 (max. 10000000)
 

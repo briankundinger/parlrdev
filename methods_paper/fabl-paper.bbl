@@ -28,12 +28,6 @@ Christen, P. (2012), \enquote{A survey of indexing techniques for scalable
   record linkage and deduplication,} \emph{IEEE Transactions on Knowledge and
   Data Engineering}, 24, 1537--1555.
 
-\bibitem[Christophides et~al.(2021)Christophides, Efthymiou, Palpanas,
-  Papadakis, and Stefanidis]{Christophides2019}
-Christophides, V., Efthymiou, V., Palpanas, T., Papadakis, G., and Stefanidis,
-  K. (2021), \enquote{{An Overview of End-to-End Entity Resolution for Big
-  Data},} \emph{ACM Computing Surveys}, 53.
-
 \bibitem[Dalzell and Reiter(2018)Dalzell and Reiter]{dalzell2018regression}
 Dalzell, N.~M. and Reiter, J.~P. (2018), \enquote{Regression modeling and file
   matching using possibly erroneous matching variables,} \emph{Journal of
@@ -86,27 +80,14 @@ Gutman, R., Afendulis, C.~C., and Zaslavsky, A.~M. (2013), \enquote{A
   {Medical} {Costs},} \emph{Journal of the American Statistical Association},
   108, 34--47.
 
-\bibitem[Herzog et~al.(2007a)Herzog, Scheuren, and Winkler]{Herzog_2007}
-Herzog, T., Scheuren, F., and Winkler, W. (2007a), \emph{Data Quality and
-  Record Linkage Techniques}, Springer, New York.
-
-\bibitem[Herzog et~al.(2007b)Herzog, Scheuren, and Winkler]{herzog2007data}
-Herzog, T.~N., Scheuren, F.~J., and Winkler, W.~E. (2007b), \emph{Data quality
+\bibitem[Herzog et~al.(2007)Herzog, Scheuren, and Winkler]{herzog2007data}
+Herzog, T.~N., Scheuren, F.~J., and Winkler, W.~E. (2007), \emph{Data quality
   and record linkage techniques}, Springer Science \& Business Media.
 
 \bibitem[Jaro(1989)Jaro]{jaro1989}
 Jaro, M.~A. (1989), \enquote{Advances in Record-Linkage Methodology as Applied
   to Matching the 1985 Census of Tampa, Florida,} \emph{Journal of the American
   Statistical Association}, 84, 414--420.
-
-\bibitem[Jaro(1995)Jaro]{jaro1995}
-Jaro, M.~A. (1995), \enquote{Probabilistic linkage of large public health data
-  files,} \emph{Statistics in Medicine}, 14, 491--498.
-
-\bibitem[Jurek-Loughrey and P(2019)Jurek-Loughrey and P]{Jurek2019}
-Jurek-Loughrey, A. and P, D. (2019), \emph{Semi-supervised and Unsupervised
-  Approaches to Record Pairs Classification in Multi-Source Data Linkage}, pp.
-  55--78, Springer International Publishing, Cham.
 
 \bibitem[Larsen(2005)Larsen]{Larsen05}
 Larsen, M.~D. (2005), \enquote{{Advances in Record Linkage Theory: Hierarchical
@@ -128,10 +109,6 @@ Liseo, B. and Tancredi, A. (2011), \enquote{Bayesian estimation of population
   size via linkage of multivariate Normal data sets,} \emph{Journal of Official
   Statistics}, 27, 491--505.
 
-\bibitem[Liseo and Tancredi(2013)Liseo and Tancredi]{liseo_2013}
-Liseo, B. and Tancredi, A. (2013), \enquote{Some advances on {B}ayesian record
-  linkage and inference for linked data,} .
-
 \bibitem[Marchant et~al.(2019)Marchant, Steorts, Kaplan, Rubinstein, and
   Elazar]{marchant_distributed_2019}
 Marchant, N.~G., Steorts, R.~C., Kaplan, A., Rubinstein, B. I.~P., and Elazar,
@@ -152,6 +129,11 @@ Newcombe, H.~B., Kennedy, J.~M., Axford, S.~J., and James, A.~P. (1959),
 Sadinle, M. (2017), \enquote{Bayesian {Estimation} of {Bipartite} {Matchings}
   for {Record} {Linkage},} \emph{Journal of the American Statistical
   Association}, 112, 600--612.
+
+\bibitem[Sadinle(2018)Sadinle]{sadinle2018bayesian}
+Sadinle, M. (2018), \enquote{Bayesian Propagation of Record Linkage Uncertainty
+  Into Population Size Estimation of Human Rights Violations,} \emph{The Annals
+  of Applied Statistics}, 12, 1013--1038.
 
 \bibitem[Shan et~al.(2020)Shan, Thomas, and Gutman]{shan2020bayesian}
 Shan, M., Thomas, K., and Gutman, R. (2020), \enquote{A Bayesian Multi-Layered
@@ -211,10 +193,6 @@ Winkler, W.~E. (1988), \enquote{Using the EM Algorithm for Weight Computation
   in the Fellegi-Sunter Model of Record Linkage,} in \emph{Proceedings of the
   Section on Survey Research Methods}, pp. 667--671, American Statistical
   Association.
-
-\bibitem[Winkler(2014)Winkler]{Winkler2014}
-Winkler, W.~E. (2014), \enquote{Matching and Record Linkage,} \emph{Wiley
-  Interdisciplinary Reviews: Computational Statistics}, 6, 313--325.
 
 \bibitem[Winkler and Thibaudeau(1991)Winkler and
   Thibaudeau]{winkler1991application}

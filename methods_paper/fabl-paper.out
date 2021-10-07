@@ -15,10 +15,11 @@
 \BOOKMARK [2][-]{subsection.30}{Data Representation, Hashing, and Storage}{section.29}% 15
 \BOOKMARK [1][-]{section.31}{Efficient Posterior Inference}{}% 16
 \BOOKMARK [1][-]{section.33}{Simulation Studies}{}% 17
-\BOOKMARK [2][-]{subsection.34}{Precision, Recall, and F-measure}{section.33}% 18
-\BOOKMARK [2][-]{subsection.37}{Speed}{section.33}% 19
-\BOOKMARK [2][-]{subsection.44}{Scaling to a Larger Simulation Study}{section.33}% 20
-\BOOKMARK [1][-]{section.45}{Application to Civilian Casualties from the El Salvadoran Civil War}{}% 21
-\BOOKMARK [2][-]{subsection.46}{El Salvadoran Civil War}{section.45}% 22
-\BOOKMARK [1][-]{section.56}{Discussion}{}% 23
-\BOOKMARK [1][-]{section.57}{Appendix}{}% 24
+\BOOKMARK [2][-]{subsection.36}{Precision, Recall, and F-measure}{section.33}% 18
+\BOOKMARK [2][-]{subsection.39}{Accuracy under Partial Estimates}{section.33}% 19
+\BOOKMARK [2][-]{subsection.42}{Speed}{section.33}% 20
+\BOOKMARK [2][-]{subsection.49}{Scaling to a Larger Simulation Study}{section.33}% 21
+\BOOKMARK [1][-]{section.50}{Application to Civilian Casualties from the El Salvadoran Civil War}{}% 22
+\BOOKMARK [2][-]{subsection.51}{El Salvadoran Civil War}{section.50}% 23
+\BOOKMARK [1][-]{section.65}{Discussion}{}% 24
+\BOOKMARK [1][-]{section.66}{Appendix}{}% 25

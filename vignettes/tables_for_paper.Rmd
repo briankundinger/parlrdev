@@ -1,0 +1,61 @@
+---
+title: "tables_for_paper"
+output: rmarkdown::latex_document
+vignette: >
+  %\VignetteIndexEntry{tables_for_paper}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(parlrdev)
+library(knitr)
+library(kableExtra)
+```
+
+```{r}
+info <- matrix(c("First and Last Name", "Levenstein", 
+                 "0", "(0, .25]", "(.25, .5]","(5, .1]",
+                 "Age and Occupation", "Binary", "Agree", "Disagree", " ", " "),
+       nrow = 2, ncol = 6, byrow = TRUE)
+colnames(info) <- c("Fields", "Similarity", "1", "2", "3", "4")
+kbl(info, format = "latex") %>% 
+  kable_paper() %>% 
+  add_header_above(c(" " = 2, "Level of Disagreement" = 4))
+```
+
+```{r}
+info <- matrix(c("First and Last Name", "Modified Levenstein", 
+                 "0", "(0, .25]", "(.25, .5]","(5, 1]",
+                 "Year of Death", "Absolute Difference", "0", "1", "2", "3+",
+                 "Month of Death", "Absolute Difference", "0", "1", "2-3", "4+",
+                 "Day of Death", "Absolute Difference", "0", "1-2", "3-7", "8+",
+                 "Municipality", "Binary", "Agree", "Disagree", " ", " "),
+               nrow = 5, ncol = 6, byrow = TRUE)
+colnames(info) <- c("Fields", "Similarity", "1", "2", "3", "4")
+kbl(info, format = "latex") %>% 
+  #kable_classic() %>% 
+  add_header_above(c(" " = 2, "Level of Disagreement" = 4))
+```
+
+```{r}
+info <- matrix(c("First and Last Name", "Modified Levenstein", 
+                 "0", "(0, .25]", "(.25, 1]",
+                 "Year of Death", "Binary", "Agree", "Disagree", "",
+                 "Month of Death", "Binary", "Agree", "Disagree", "",
+                 "Day of Death", "Absolute Difference", "0", "1", "2+",
+                 "Municipality", "Binary", "Agree", "Disagree", " "),
+               nrow = 5, ncol = 5, byrow = TRUE)
+colnames(info) <- c("Fields", "Similarity", "1", "2", "3")
+kbl(info, format = "latex") %>% 
+  kable_classic() %>% 
+  add_header_above(c(" " = 2, "Level of Disagreement" = 3))
+```
+

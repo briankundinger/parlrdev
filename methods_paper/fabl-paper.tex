@@ -195,7 +195,7 @@ the comparison data using mixture models in the following way:
 where $p$ is the proportion of records that match. Note that $\bm{m}$ and $\bm{u}$ are vectors of the match/non-match parameters. One common way to estimate the unknown parameters of the aforementioned model is using the EM algorithm. 
 
 
-One criticism of using mixture models as proposed by \cite{jaro1989} is the fact that the decision rule will lead to ``many-to-many assignments (breaking transitive closures). One way of resolving this issue to incorporate the constraint directly into the model \citep{Fortinietal01, Matsakis10, liseo_jos_2011, liseo_2011, Larsen05, Larsen12, gutman_bayesian_2013, sadinle_bayesian_2017}, which is appealing as one then obtains uncertainty quantification under the Bayesian paradigm, but often has to sacrifice scaling to very large databases. On the other hand, one can turn to post-processing methods in practical situations. In this paper, we attempt to bridge the best of both approaches. Specifically, we propose a model in the spirit of \cite{sadinle_bayesian_2017} and \cite{enamorado_using_2019}. We relax the one-to-one matching constraint proposed by  \cite{sadinle_bayesian_2017} for purely computational reasons, and resolve this in a post-processing step. In addition, we propose our own computational speeds up and those in the spirit of \cite{enamorado_using_2019}. Our framework is then embarassingly parallel, available in the \text{fabl} package, and evaluated on a real case study and simulation studies illustrating that any loss in accuracy due to removing the constraint is minimal. 
+One criticism of using mixture models as proposed by \cite{jaro1989} is the fact that the decision rule will lead to ``many-to-many assignments (breaking transitive closures). One way of resolving this issue to incorporate the constraint directly into the model \citep{Fortinietal01, Matsakis10, liseo_jos_2011, liseo_2011, Larsen05, Larsen12, gutman_bayesian_2013, sadinle_bayesian_2017}, which is appealing as one then obtains uncertainty quantification under the Bayesian paradigm, but often has to sacrifice scaling to very large databases. On the other hand, one can turn to post-processing methods in practical situations. In this paper, we attempt to bridge the best of both approaches. Specifically, we propose a model in the spirit of \cite{sadinle_bayesian_2017} and \cite{enamorado_using_2019}. We relax the one-to-one matching constraint proposed by  \cite{sadinle_bayesian_2017} for purely computational reasons, and resolve this in a post-processing step. In addition, we propose our own computational speeds up and those in the spirit of \cite{enamorado_using_2019}. Our framework is then embarassingly parallel, available in the \texttt{fabl} package, and evaluated on a real case study and simulation studies illustrating that any loss in accuracy due to removing the constraint is minimal. 
 
 
 \section{Proposed Methodology}
@@ -707,20 +707,41 @@ To aid the reader, we provide summary of the \texttt{fabl} method through pseudo
 \section{Simulation Studies}
 \label{sec:simulations}
 In this section, we consider a simulation study, nearly identical to that in \cite{sadinle2017}. \textcolor{red}{Brian: can you explain how it's the same versus different than what it is given in Sadinle as this would be the most helpful. Do you utilize Mauricio's exact files and approach and then do something else? If so, I would state this for clarity.} 
+{
+\color{blue}For Beka: I have re-run the simulation exactly as Sadinle implemented it. Here is the rewritten paragraph.
 
-\textcolor{blue}{For Beka: The simulated files contain 6 fields of information, but he only uses 4 in his study. One of the fields was giving me problems, so I had been using a different one instead. I just figured out how to make the field work, so I can rerun the code. At that point, it will be a 100\% true replication.}
+\vspace{1em}
+In this section, we replicate a simulation study from \cite{sadinle2017} to compare \texttt{fabl} against \texttt{BRL} on several simulated datasets with varying amounts of error and overlap. We use first name, last name, age, and occupation for this linkage, and create comparison vectors according to the default settings of the \texttt{compareRecords} function from the \texttt{BRL} package. See Table~\ref{Tab:sadinle_simulation_cutoffs} for details on the construction of comparison vectors. Each simulation identifies duplicated individuals between two datasets, each with 500 records. We conduct linkage when matching records exhibit 1, 2, and 3 errors across the four fields, and when there are 50, 250, and 450 individuals in common across datasets. We use flat priors for all $m$ and $u$ parameters, run the Gibbs Sampler for 1000 iterations, and discard the first 100 as burn-in.
+\vspace{1em}
+}
+
+\begin{table}
+	\centering
+	\begin{tabular}[t]{ll|llll}
+		\hline
+		\multicolumn{2}{c|}{ } & \multicolumn{4}{c}{Level of Disagreement} \\
+		\cline{3-6}
+		Fields & Similarity & 1 & 2 & 3 & 4\\
+		\hline
+		First and Last Name & Levenstein & 0 & (0, .25] & (.25, .5] & (5, .1]\\
+		\hline
+		Age and Occupation & Binary & Agree & Disagree &  & \\
+		\hline
+	\end{tabular}
+\caption{Construction of comparison vectors for accuracy study with simulated datasets}
+\label{Tab:sadinle_simulation_cutoffs}
+\end{table}
 
 \textcolor{red}{Brian: If you look in Sadinle (2017), did you use Table 2 or something else? Can you construct something similar to Figure 3 and Figure 4 as it's likely a reviewer will look at this paper and ask why you didn't do this exact comparison.}
 
 
 {
-\color{blue}For Beka: Yes, I used Table 2 (those are default settings in BRL)
+\color{blue}For Beka: Yes, I used Table 2 (those are default settings in BRL). See above comment
 	
-My Figure 1 is equivalent to Sadinle's figure 3. He compares against Fellegi Sunter, whereas I compare against BRL. I found his style of graphic difficult to read, especcially because I wanted to show F-measure in addition to recall and precision. 
+My Figure 1 is equivalent to Sadinle's figure 3. He compares against Fellegi Sunter, whereas I compare against BRL. I found his style of graphic difficult to read, especially because I wanted to show F-measure in addition to recall and precision. 
 
-Sadinle's Figure 4 just shows the results when you add the option of not declaring matching status (leaving it undecided by the model). This didn't seem to be so relevant in my paper. I can make the plot by changing just a few lines of code, so I can do it if you think I need it!}
-
-We first compare \texttt{fabl} against \texttt{BRL} on several simulated datasets with varying amounts of error and overlap. We use first name, last name, age, and occupation for this linkage, and create comparison vectors according to the default settings of the \texttt{compareRecords} function from the \texttt{BRL} package. Each simulation identifies duplicated individuals between two datasets, each with 500 records. We conduct linkage when matching records exhibit 1, 2, and 3 errors across the four fields, and when there are 50, 250, and 450 individuals in common across datasets. We use flat priors for all $m$ and $u$ parameters, run the Gibbs Sampler for 1000 iterations, and discard the first 100 as burn-in. This is a near exact replication of the simulation study provided by \citep{sadinle2017}. 
+Sadinle's Figure 4 just shows the results when you add the option of not declaring matching status (leaving it undecided by the model). This didn't seem to be so relevant in my paper, so I didn't have it before. I just completed the simulation, and I'll include it under a seperate section.
+}
 
 
 
@@ -745,7 +766,7 @@ files. In these situations, \texttt{BRL} is removing large numbers of records fr
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_sim_plot} 
+\includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_sim_plot2} 
 \caption{Posterior means and credible intervals for accuracy metrics under the replication of simulation study from Sadinle 2017. For each level of overlap and each level of error, we have 100 paired sets of 500 records.}
 \label{fig:sadinle_simulation}
 \end{center}
@@ -762,6 +783,28 @@ files. In these situations, \texttt{BRL} is removing large numbers of records fr
 %	\caption{Posterior means and credible intervals for accuracy metrics under the replication of simulation study from Sadinle 2017. For each level of overlap and each level of error, we have 100 paired sets of 500 records.}\label{fig:sadinle_simulation}
 %	
 %\end{figure}
+
+\hypertarget{partial}{%
+	\subsection{Accuracy under Partial Estimates}\label{partial}}
+
+{
+\color{blue}
+Lastly, we review the performance of \texttt{fabl} and \texttt{BRL} using loss functions that allow partial estimates of the linkage parameter. By leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the \emph{negative predictive value} (NPV), defined as the proportion of non-links that are actual non-matches. Mathematically, $NPV = \sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j = n_1 + j)$/$\sum_{j=1}^{n_2} I(\hat{Z}_j = n_1 + j)$. We continue to use the precision, which is renamed the \emph{positive predictive value} in this context. Lastly, we also report that rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_2} I(\hat{Z}_j = R)$.
+
+We see that \texttt{fabl} maintains equivalently strong PPV as \texttt{BRL} across all linkage settings. However, with high amounts of overlap and high amounts of error, the rejection rate under \texttt{fabl} rises, leading to a decrease in NPV. This is reasonable because large numbers of errors lead to situations where one record in $\bf{X}_2$ has multiple plausible matches in $\bf{X}_1$, so that posterior match probability is split across more records. Since \texttt{BRL} removes previously matched records from the set of available records for a new match, it is able to retain higher confidence in matches. In practice, this partial estimate approach is not often used, so we remain confident in \texttt{fabl}'s performance. If one wishes to use partial estimates, \texttt{fabl} will possibly leave more linkages for the modeller to match by hand that would be left under \texttt{BRL}, but the decisions made by each method will have nearly equal accuracy. 
+
+NOTE: Sadinle only shows results for the 10\% overlap case. Should I inlcude all of this?
+NOTE: When I ran this, I didn't realize I needed to calculate Rejection Rate. I'll have to run the simulation again to get this. 
+}
+
+\begin{figure}[htbp]
+\begin{center}
+	\includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_sim_plot_partial} 
+	\caption{Negative predictive value (NPV) and positive predictive value (PPV) on simulated datasets}
+	\label{fig:sadinle_simulation_partial}
+\end{center}
+\end{figure}
+
 
 \hypertarget{speed}{%
 	\subsection{Speed}\label{speed}}
@@ -805,7 +848,7 @@ linearly with the size of both \(A\) and \(B\)) while run-time for
 		year & $\left(\frac{19}{20}, \frac{1}{20}\right)$ & $\left(\frac{1}{12}, \frac{11}{12}\right)$ \\ 
 		\hline
 	\end{tabular}
-\caption{Distributions used for $m$ and $u$ probabilties in simulation studies}\label{fig:distributions}
+\caption{Distributions used for $m$ and $u$ probabilties in simulation studies}\label{Tab:distributions}
 \end{table}
 
 
@@ -906,16 +949,60 @@ in \(n_1 = 4420\) files in CHDES and \(n_2 = 1323\) files
 in ERTL. We standardized names to account for common misspellings
 in the Spanish language. The string distance used is a modified Levenstein
 distance to account for the fact that second names are often omitted.
-Place of birth is recorded by municipality and department within that
+Place of death is recorded by municipality and department within that
 municipality; however, since department was missing in 95\% of records
 in CHDES and 80\% of records in ERTL, this was excluded from our analyses. 
 Thus, we conduct record linkage using given name, last name,
 municipality, and day, month, and year of death. We again use flat
 priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters. To our knowledge, we have followed the same guidelines/settings in \cite{sadinle_bayesian_2017}.
+\begin{table}
+\begin{tabular}[t]{ll|llll}
+	\hline
+	\multicolumn{2}{c|}{ } & \multicolumn{4}{c}{Level of Disagreement} \\
+	\cline{3-6}
+	Fields & Similarity & 1 & 2 & 3 & 4\\
+	\hline
+	First and Last Name & Modified Levenstein & 0 & (0, .25] & (.25, .5] & (5, 1]\\
+	\hline
+	Year of Death & Absolute Difference & 0 & 1 & 2 & 3+\\
+	\hline
+	Month of Death & Absolute Difference & 0 & 1 & 2-3 & 4+\\
+	\hline
+	Day of Death & Absolute Difference & 0 & 1-2 & 3-7 & 8+\\
+	\hline
+	Municipality & Binary & Agree & Disagree &  & \\
+	\hline
+\end{tabular}
+\caption{Construction of comparison vectors for El Salvador data resembling original implementation from \citep{sadinle2018bayesian}. This set up leads to 2048 possible agreement patterns in total}\label{Tab:el_salvador_cutoffs_1}
+\end{table}
+
+\vspace{1em}
+
+\begin{table}
+	\centering
+	\begin{tabular}[t]{ll|lll}
+		\hline
+		\multicolumn{2}{c|}{ } & \multicolumn{3}{c}{Level of Disagreement} \\
+		\cline{3-5}
+		Fields & Similarity & 1 & 2 & 3\\
+		\hline
+		First and Last Name & Modified Levenstein & 0 & (0, .25] & (.25, 1]\\
+		\hline
+		Year of Death & Binary & Agree & Disagree & \\
+		\hline
+		Month of Death & Binary & Agree & Disagree & \\
+		\hline
+		Day of Death & Absolute Difference & 0 & 1 & 2+\\
+		\hline
+		Municipality & Binary & Agree & Disagree & \\
+		\hline
+	\end{tabular}
+\caption{Construction of comparison vectors for El Salvador for increased speed under \texttt{fabl}. This set up leads to 216 possible agreement patterns in total}\label{Tab:el_salvador_cutoffs_2}
+\end{table}
 
 To mirror the original implementation of \cite{sadinle_bayesian_2017}, we construct the comparison
 vectors using four levels of agreement for each field, according to the
-thresholds provided in \textcolor{red}{Figure XX}. This took 422 seconds for our proposed
+thresholds provided in Table~\ref{Tab:el_salvador_cutoffs_1}. This took 422 seconds for our proposed
 method, \texttt{fabl}, and 240 for \texttt{BRL}. However, we observed that posterior
 distributions of several levels of the \(\mathbf{m}\) and \(\mathbf{u}\)
 parameters were nearly identical, and that of the
@@ -924,7 +1011,7 @@ realized in the data. This leads us to believe that such high number of
 agreement levels creates unnecessary distinctions in the data and makes
 the comparison vectors less interpretable. 
 
-Therefore we re-ran our analysis with fewer agreement levels for each field \textcolor{red}{(see Figure XX)}, and
+Therefore we re-ran our analysis with fewer agreement levels for each field according to Table~\ref{Tab:el_salvador_cutoffs_2}, and
 obtained analogous results. With 216 possible agreement patterns, 159
 were realized in the data, and our proposed method, \texttt{fabl} became was faster,
 finishing in 124 seconds. Meanwhile \texttt{BRL} took 239 seconds,

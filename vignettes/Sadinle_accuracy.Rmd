@@ -153,7 +153,7 @@ results_df <- df %>%
   pivot_longer(cols = 1:4, names_to = "metric") %>%
   group_by(method, metric, error_level, overlap) %>%
   summarize(avg = mean(value),
-            lower = quantile(value, .25),
+            lower = quantile(value, .025),
             upper = quantile(value, .975),
             .groups = "drop") %>%
   filter(metric != "time") %>% 
@@ -164,8 +164,8 @@ results_df <- df %>%
            overlap == 450 ~ "90% Overlap"
          ))
 
-#saveRDS(results_df, file = "Sadinle_Replication_Results")
-results_df <- readRDS("Sadinle_Replication_Results")
+saveRDS(results_df, file = "Sadinle_Replication_Results2")
+#results_df <- readRDS("Sadinle_Replication_Results2")
 results_df <- results_df %>% 
   filter(method != "fabl")
 
@@ -188,7 +188,7 @@ acc_plot <- results_df %>%
 
 acc_plot
 
-ggsave(filename = "../notes/figures/sadinle_sim_plot.png",
+ggsave(filename = "../notes/figures/sadinle_sim_plot2.png",
        plot = acc_plot)
 #   
 # simple_dist_table <- results_df %>%
@@ -240,6 +240,66 @@ acc_plot_pairwise
 
 # ggsave(filename = "../notes/figures/sadinle_pairwise_plot.png",
 #        plot = acc_plot_pairwise)
+
+```
+
+```{r}
+fabl_samps2 <- rbind(fabl_acc_samps2[,,1], fabl_acc_samps2[,,2], fabl_acc_samps2[,,3])
+
+# fabl_samps_resolved <- rbind(fabl_acc_samps_resolved[,,1], fabl_acc_samps_resolved[,,2], fabl_acc_samps_resolved[,,3])
+
+sad_samps2 <- rbind(sad_acc_samps2[,,1], sad_acc_samps2[,,2], sad_acc_samps[,,3])
+error_level <- rep(rep(c("One Error", "Two Errors", "Three Errors"), each = 100), 3)
+error_level <- factor(error_level, levels = c("One Error", "Two Errors", "Three Errors"))
+#error_level <- 3
+# error_level <- factor(error_level, levels = c("One Error", "Two Errors", "Three Errors"))
+
+fabl_df2 <- data.frame(fabl_samps2, error_level, "fabl")
+names(fabl_df2) <- c("NPV", "PPV", "Fmeasure", "time", "overlap", "error_level", "method")
+# fabl_resolved_df <- data.frame(fabl_samps_resolved, error_level, "fabl_resolved")
+# names(fabl_resolved_df) <- c("NPV", "PPV", "Fmeasure", "time", "overlap", "error_level", "method")
+sadinle_df2 <- data.frame(sad_samps2, error_level, "Sadinle17")
+names(sadinle_df2) <- c("NPV", "PPV", "Fmeasure", "time", "overlap", "error_level",  "method")
+
+df2 <- rbind(fabl_df2, sadinle_df2)
+results_df2 <- df2 %>%
+  pivot_longer(cols = 1:2, names_to = "metric") %>%
+  group_by(method, metric, error_level, overlap) %>%
+  summarize(avg = mean(value, na.rm = T),
+            lower = quantile(value, .025, na.rm = T),
+            upper = quantile(value, .975, na.rm = T),
+            .groups = "drop") %>% 
+  mutate(metric = factor(metric, c("NPV", "PPV", "Fmeasure")),
+         overlap = case_when(
+           overlap == 50 ~ "10% Overlap",
+           overlap == 250 ~ "50% Overlap",
+           overlap == 450 ~ "90% Overlap"
+         ))
+
+saveRDS(results_df2, file = "Sadinle_Replication_Results_Partial")
+
+results_df2$method[results_df2$method == "Sadinle17"] <- "BRL"
+
+# results_df$method[results_df$method == "fabl_resolved"] <- "fabl"
+
+acc_plot_partial <- results_df2 %>% 
+  ggplot(aes(x = metric, y = avg,
+             ymin  = lower, ymax = upper,
+             color = method)) +
+  geom_pointrange(position = position_dodge2(width = .5)) + 
+  facet_grid(overlap ~ error_level) +
+  labs(x = NULL, 
+       y = NULL,
+       color = "Method") +
+  theme_bw(base_size = 10) +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5)) + 
+  scale_color_brewer(palette="Set1")
+
+acc_plot_partial
+
+ggsave(filename = "../notes/figures/sadinle_sim_plot_partial.png",
+       plot = acc_plot_partial)
 
 ```
 
