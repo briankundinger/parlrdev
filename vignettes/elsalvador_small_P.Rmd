@@ -28,6 +28,7 @@ R <- NULL
 show_progress <- T
 fast <- F
 S <- 1000
+burn <- S * .1
 iter_count <- seq_len(S)
 
 cd <- readRDS("../data/comparison_elsalvador_smallP.rds")
@@ -52,7 +53,9 @@ overlap_resolved <- sum(Zhat_resolved < nA + 1)
 overlap_samples_fabl <- apply(Zchain_fabl[[1]], 2, function(x){
   sum(x < nA + 1)
 })
-credint_fabl_overlap <- quantile(overlap_samples_fabl - not_one2one_samps, c(.025, .975))
+overlap_samples_fabl_resolved <- overlap_samples_fabl - not_one2one_samps
+credint_fabl_overlap <- quantile(overlap_samples_fabl_resolved, c(.025, .975))
+
 not_one2one_samps <- apply(Zchain_fabl[[1]], 2, function(x){
   sum(duplicated(x[x < nA + 1]))
 })
@@ -101,24 +104,28 @@ results_image
 bayes <- results_table[,1]
 method <- rownames(results_table)
 bayes_df <- data.frame(bayes, method)
-bayes_df <- bayes_df[c(2, 3), ]
+#bayes_df <- bayes_df[c(2, 3), ]
 
 method <- c(rep("fabl", S), rep("BRL", S))
-overlap <- c(overlap_samples_fabl, overlap_samples_sadinle)
-iteration <- c(iter_count, iter_count)
+overlap <- c(overlap_samples_fabl_resolved, overlap_samples_sadinle)
+#iteration <- c(iter_count, iter_count)
 df <- data.frame(overlap, method)
+df <- df %>% 
+  group_by(method) %>% 
+  mutate(iteration = row_number())
 
 df %>% 
+  filter(iteration > burn) %>% 
+  #filter(method == "fabl") %>% 
   ggplot(aes(y = overlap, fill = method)) +
-  geom_histogram() + 
+  geom_histogram(position = 'identity', alpha = .9, binwidth = 5) + 
   geom_hline(yintercept = bayes_df$bayes,
              color = brewer.pal(n = 3, name = "Set1")[1:2]) + 
-  geom_hline(yintercept = bayes[1],
-             color = brewer.pal(n = 3, name = "Set1")[2],
-             linetype = "longdash") +
-  labs(y = "Overlap",
+  # geom_hline(yintercept = bayes[1],
+  #            color = brewer.pal(n = 3, name = "Set1")[2],
+  #            linetype = "longdash") +
+  labs(y = NULL,
        x = NULL,
-       title = "Posterior Distribution of Overlap",
        fill = "Method") +
   coord_flip() + 
   theme_bw() + 
@@ -128,33 +135,34 @@ df %>%
 
 overlap_trace <- df %>% 
   filter(method == "fabl") %>% 
-  ggplot(aes(x = iter_count, y = overlap)) +
+  ggplot(aes(x = iteration, y = overlap)) +
   geom_line() + 
   labs(x = NULL, 
        y = NULL) +
   theme_bw()
 
-ggsave("../notes/figures/el_salvador/overlap_trace.png")
+overlap_trace
+#ggsave("../notes/figures/el_salvador/overlap_trace.png")
 
-bayes_df$bayes <- nA + nB - bayes_df$bayes
-df$overlap <- nA + nB - df$overlap
+# bayes_df$bayes <- nA + nB - bayes_df$bayes
+# df$overlap <- nA + nB - df$overlap
 
-df %>% 
-  ggplot(aes(y = overlap, fill = method)) +
-  geom_histogram() + 
-  geom_hline(yintercept = bayes_df$bayes,
-             color = brewer.pal(n = 3, name = "Set1")[1:2]) + 
-  # geom_hline(yintercept = nA + nB - bayes[1],
-  #            color = brewer.pal(n = 3, name = "Set1")[2],
-  #            linetype = "longdash") +
-  labs(y = "Documented Identifiable Deaths",
-       x = NULL,
-       fill = "Method") +
-  coord_flip() + 
-  theme_bw() + 
-  scale_fill_brewer(palette="Set1")
+# df %>% 
+#   ggplot(aes(y = overlap, fill = method)) +
+#   geom_histogram() + 
+#   geom_hline(yintercept = bayes_df$bayes,
+#              color = brewer.pal(n = 3, name = "Set1")[1:2]) + 
+#   # geom_hline(yintercept = nA + nB - bayes[1],
+#   #            color = brewer.pal(n = 3, name = "Set1")[2],
+#   #            linetype = "longdash") +
+#   labs(y = "Documented Identifiable Deaths",
+#        x = NULL,
+#        fill = "Method") +
+#   coord_flip() + 
+#   theme_bw() + 
+#   scale_fill_brewer(palette="Set1")
 
-ggsave("../notes/figures/el_salvador/DID_distribution_smallP_bayes.png")
+#ggsave("../notes/figures/el_salvador/DID_distribution_smallP_bayes.png")
 ```
 
 ```{r}
