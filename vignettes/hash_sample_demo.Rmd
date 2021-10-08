@@ -22,7 +22,7 @@ library(parlrdev)
 
 ```{r}
 nB <- 500
-nA_vals <- c(1000, 10000, 100000, 200000)
+nA_vals <- c(1000, 10000, 100000)
 
 for(nA in nA_vals){
   candidate_matches <- 1:nA

@@ -41,37 +41,47 @@ Zchain_fabl <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns 
 elapsed_fabl <- proc.time() - ptm
 Zchain_fabl[[4]]
 Zhat_fabl <- LinkRecordsBK(Zchain_fabl[[1]], nA, 1, 1, 2, Inf)
+Zhat_fabl_partial <- LinkRecordsBK(Zchain_fabl[[1]], nA, 1, 1, 2, .1)
+
 overlap_fabl <- sum(Zhat_fabl[[1]] < nA + 1)
 results_fabl <- c(overlap_fabl, elapsed_fabl[3])
 
 Zhat_resolved <- ResolveConflicts(Zhat_fabl)
 overlap_resolved <- sum(Zhat_resolved < nA + 1)
-DID_resolved <- nA + nB - overlap_resolved
+#DID_resolved <- nA + nB - overlap_resolved
 overlap_samples_fabl <- apply(Zchain_fabl[[1]], 2, function(x){
   sum(x < nA + 1)
 })
+credint_fabl_overlap <- quantile(overlap_samples_fabl - not_one2one_samps, c(.025, .975))
 not_one2one_samps <- apply(Zchain_fabl[[1]], 2, function(x){
   sum(duplicated(x[x < nA + 1]))
 })
-results_fabl_resolved <- c(DID_resolved, elapsed_fabl[3])
-
+results_fabl_resolved <- c(overlap_resolved, elapsed_fabl[3])
+Zhat_fabl_partial_resolved <- ResolveConflicts(Zhat_fabl_partial)
+fabl_partial_lower <- sum(Zhat_fabl_partial_resolved < nA + 1 & Zhat_fabl_partial_resolved > 0)
+fabl_partial_higher <- sum(Zhat_fabl_partial_resolved == -1)
 
 ptm <- proc.time()
 Zchain_sadinle <- BRL::bipartiteGibbs(cd)
 elapsed_sadinle <- proc.time() - ptm
 Zhat_sadinle <- LinkRecordsBK(Zchain_sadinle[[1]], nA, 1, 1, 2, Inf)
+Zhat_sadinle_partial <- LinkRecordsBK(Zchain_sadinle[[1]], nA, 1, 1, 2, .1)
 overlap_sadinle <- sum(Zhat_sadinle[[1]] < nA +1)
-DID_sadinle <- nA + nB - overlap_sadinle
+#DID_sadinle <- nA + nB - overlap_sadinle
 
 overlap_samples_sadinle <- apply(Zchain_sadinle[[1]], 2, function(x){
   sum(x < nA + 1)
 })
+credint_sadinle_overlap <- quantile(overlap_samples_sadinle, c(.025, .975))
 
-results_sadinle <- c(DID_sadinle, elapsed_sadinle[3])
+sadinle_partial_lower <- sum(Zhat_sadinle_partial[[1]] < nA + 1 & Zhat_sadinle_partial[[1]] > 0)
+sadinle_partial_upper <- sum(Zhat_sadinle_partial[[1]] == -1)
+results_sadinle <- c(overlap_sadinle, elapsed_sadinle[3])
+
 
 results_table <- rbind(results_fabl_resolved,
                        results_sadinle)
-colnames(results_table) <- c("DID", "time (sec)")
+colnames(results_table) <- c("Overlap", "time (sec)")
 rownames(results_table) <- c("fabl",
                              "BRL")
 results_image <- results_table %>%
@@ -81,7 +91,7 @@ results_image <- results_table %>%
 
 results_image
 
-as_image(results_image, file = "../notes/figures/el_salvador/time_table_small_P2.png")
+# as_image(results_image, file = "../notes/figures/el_salvador/time_table_small_P2.png")
 
 
 ```
