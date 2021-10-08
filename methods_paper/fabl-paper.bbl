@@ -1,6 +1,13 @@
 \begin{thebibliography}{}
 \newcommand{\enquote}[1]{``#1''}
 
+\bibitem[Ball(2000)Ball]{ball2000salvadoran}
+Ball, P. (2000), \enquote{The {S}alvadoran Human Rights Commission: Data
+  Processing, Data Representation, and Generating Analytical Reports,} in
+  \emph{Making the Case: Investigating Large Scale Human Rights Violations
+  Using Information Systems and Data Analysis}, eds. P.~Ball, H.~F. Spirer, and
+  L.~Spirer, pp. 15--24, American Association for the Advancement of Science.
+
 \bibitem[Belin and Rubin(1995)Belin and Rubin]{belin_1995}
 Belin, T.~R. and Rubin, D.~B. (1995), \enquote{A {Method} for {Calibrating}
   {False}-{Match} {Rates} in {Record} {Linkage},} \emph{Journal of the American
@@ -84,6 +91,11 @@ Gutman, R., Afendulis, C.~C., and Zaslavsky, A.~M. (2013), \enquote{A
 Herzog, T.~N., Scheuren, F.~J., and Winkler, W.~E. (2007), \emph{Data quality
   and record linkage techniques}, Springer Science \& Business Media.
 
+\bibitem[Howland(2008)Howland]{howland2008rescate}
+Howland, T. (2008), \enquote{How El Rescate, a Small Nongovernmental
+  Organization, Contributed to the Transformation of the Human Rights Situation
+  in El Salvador,} \emph{Human Rights Quarterly}, 30, 703--757.
+
 \bibitem[Jaro(1989)Jaro]{jaro1989}
 Jaro, M.~A. (1989), \enquote{Advances in Record-Linkage Methodology as Applied
   to Matching the 1985 Census of Tampa, Florida,} \emph{Journal of the American
@@ -108,6 +120,11 @@ Larsen, M.~D. and Rubin, D.~B. (2001), \enquote{Iterative {Automated} {Record}
 Liseo, B. and Tancredi, A. (2011), \enquote{Bayesian estimation of population
   size via linkage of multivariate Normal data sets,} \emph{Journal of Official
   Statistics}, 27, 491--505.
+
+\bibitem[Lum et~al.(2013)Lum, Price, and Banks]{lum2013applications}
+Lum, K., Price, M.~E., and Banks, D. (2013), \enquote{Applications of multiple
+  systems estimation in human rights research,} \emph{The American
+  Statistician}, 67, 191--200.
 
 \bibitem[Marchant et~al.(2019)Marchant, Steorts, Kaplan, Rubinstein, and
   Elazar]{marchant_distributed_2019}

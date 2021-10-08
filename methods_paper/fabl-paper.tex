@@ -70,16 +70,15 @@
 
 \bigskip
 \begin{abstract}
-In this paper, we propose the \emph{fast beta linkage} (\texttt{fabl}) methods, which extends a recent Bayesian Fellegi Sunter model to allow for parallel computing. In addition, we propose using hashing techniques to hasten calculations and to reduce the overall computational complexity. To achieve a scalable model, we propose independent priors in order to create computational speeds and gains, where we relax the one-to-one matching assumption. Second, we resolve the one-to-one matching issue via a post processing step. Third, we derive conditional distributions, a Gibbs sampler, and corresponding Bayes estimates for our proposed model. Fourth, we explore other computational speeds up based upon storage efficient indexing. Finally, we explore a sensitivity analysis and revisit the case study of the El Salvadoran conflict to understand the practical ramifications regarding our proposed modeling choices, where we provide comparisons to the \text{BRL} package in CRAN. 
+%In this paper, we propose the \emph{fast beta linkage} (\texttt{fabl}) methods, which extends a recent Bayesian Fellegi Sunter model to allow for parallel computing. In addition, we propose using hashing techniques to hasten calculations and to reduce the overall computational complexity. To achieve a scalable model, we propose independent priors in order to create computational speeds and gains, where we relax the one-to-one matching assumption. Second, we resolve the one-to-one matching issue via a post processing step. Third, we derive conditional distributions, a Gibbs sampler, and corresponding Bayes estimates for our proposed model. Fourth, we explore other computational speeds up based upon storage efficient indexing. Finally, we explore a sensitivity analysis and revisit the case study of the El Salvadoran conflict to understand the practical ramifications regarding our proposed modeling choices, where we provide comparisons to the \text{BRL} package in CRAN. 
 
-\vspace{1ex}
 {
-\color{blue}
+	\color{blue} Thanks Beka for writing that first abstract. I think this one captures the idea better, even if its not exactly in "outline" form.
+	\vspace{1em}
+}
+
 In this paper, we propose \emph{fast beta linkage} (\texttt{fabl}), which extends a recent Bayesian Fellegi Sunter model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space. This allows us to employ hashing techniques that hasten calculations and reduce computational complexity, complete pairwise record comparisons over large datasets through parallel computing, and reduce memory costs through a new technique called \emph{storage efficient indexing}. Through simulation studies and a case study of homicides from the El Salvadoran Civil War, we show that our method has markedly increased speed with minimal loss of accuracy.
 
-\vspace{1ex}
-QUESTION: Does this abstract necessarily need to read like an outline?
-}
 \end{abstract}
 
 
@@ -106,7 +105,7 @@ The Fellegi-Sunter method and its extensions are widely popular mainly due to it
 To our knowledge, \cite{sadinle_bayesian_2017} was the first to propose correcting the Fellegi and Sunter model for the one-to-one constraint. Specifically, the authors propose a Bayesian variant of the original model that satisfies two goals. First, it allows one to quantify uncertainty regarding match or non-match status. In addition, posterior distributions are readily available to help estimate point estimates of interest (and quantity such estimates). Second, under the Bayesian paradigm, the one-to-one matching constraint is easily imbedded. The downside to this constraint is an added computational cost. The goal of our paper is proposing an extension of \cite{sadinle_bayesian_2017} that scales to large databases, but does not compromise much in terms of accuracy on the original case study considered by the author. 
 
 \textbf{Our Contribution} 
-In this paper, we propose a Bayesian extension of \cite{sadinle_bayesian_2017} (\text{BRL}) through a modification to the model specification that allows for parallel computing of the linkage parameter, using hashing techniques to hasten calculations, and to reduce computational complexity.  Specifically, \cite{sadinle_bayesian_2017} proposes a prior distribution that strictly enforces one-to-one matching. Instead, we propose independent priors (breaking the one-to-one matching) in order to create computational speeds and gains. Second, we resolve the one-to-one matching issue via a post processing step. Third, we derive conditional distributions, a Gibbs sampler, and corresponding Bayes estimates for our proposed model. Fourth, we explore other computational speeds up based upon storage efficient indexing. Finally, we explore a sensitivity analysis and revisit the case study of the El Salvadoran conflict to understand the practical ramifications regarding our proposed modeling choices. 
+In this paper, we propose a Bayesian extension of \cite{sadinle_bayesian_2017} (\texttt{BRL}) through a modification to the model specification that allows for parallel computing of the linkage parameter, using hashing techniques to hasten calculations, and to reduce computational complexity.  Specifically, \cite{sadinle_bayesian_2017} proposes a prior distribution that strictly enforces one-to-one matching. Instead, we propose independent priors (breaking the one-to-one matching) in order to create computational speeds and gains. Second, we resolve the one-to-one matching issue via a post processing step. Third, we derive conditional distributions, a Gibbs sampler, and corresponding Bayes estimates for our proposed model. Fourth, we explore other computational speeds up based upon storage efficient indexing. Finally, we explore a sensitivity analysis and revisit the case study of the El Salvadoran conflict to understand the practical ramifications regarding our proposed modeling choices. 
 To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{fast beta linkage} (\texttt{fabl},
 pronounced ``fable'')
 
@@ -194,7 +193,6 @@ the comparison data using mixture models in the following way:
 \end{align}
 where $p$ is the proportion of records that match. Note that $\bm{m}$ and $\bm{u}$ are vectors of the match/non-match parameters. One common way to estimate the unknown parameters of the aforementioned model is using the EM algorithm. 
 
-
 One criticism of using mixture models as proposed by \cite{jaro1989} is the fact that the decision rule will lead to ``many-to-many assignments (breaking transitive closures). One way of resolving this issue to incorporate the constraint directly into the model \citep{Fortinietal01, Matsakis10, liseo_jos_2011, liseo_2011, Larsen05, Larsen12, gutman_bayesian_2013, sadinle_bayesian_2017}, which is appealing as one then obtains uncertainty quantification under the Bayesian paradigm, but often has to sacrifice scaling to very large databases. On the other hand, one can turn to post-processing methods in practical situations. In this paper, we attempt to bridge the best of both approaches. Specifically, we propose a model in the spirit of \cite{sadinle_bayesian_2017} and \cite{enamorado_using_2019}. We relax the one-to-one matching constraint proposed by  \cite{sadinle_bayesian_2017} for purely computational reasons, and resolve this in a post-processing step. In addition, we propose our own computational speeds up and those in the spirit of \cite{enamorado_using_2019}. Our framework is then embarassingly parallel, available in the \texttt{fabl} package, and evaluated on a real case study and simulation studies illustrating that any loss in accuracy due to removing the constraint is minimal. 
 
 
@@ -254,11 +252,8 @@ and $b_{f\ell}(\bm{Z})$ denote the number of matches and non-matches with observ
 	\label{fast-beta-prior}}
 
 
-In this section, we deviate from the approach of \cite{sadinle_bayesian_2017}, and propose a more scalable prior on the matching labelings $\bm{Z} = (Z_1, Z_2, \ldots Z_{n_2}),$ where recall $Z_j \in \{1,2, 3, n_1, n_1 + j\}.$ 
+In this section, we deviate from the approach of \cite{sadinle_bayesian_2017}, and propose a more scalable prior on the matching labelings $\bm{Z} = (Z_1, Z_2, \ldots Z_{n_2}),$ where recall $Z_j \in \{1,2, 3, n_1, n_1 + j\}.$ While the rest of the model has been proposed previously, to our knowledge, this particular prior has not been proposed before. 
 
-While the rest of the model has been proposed previously, to our knowledge, this particular prior has not been proposed before. 
-
-\textcolor{red}{Brian: could you please lay out your proposal here more clear regarding the notation above and add as much details as possible regarding your approach. More detail is better than less. It will be important to contrast this with the prior that Sadinle uses and note that you're dropping the constraint. (Make sure to include any proofs/derivations that might not be obvious to a reader given this is a major contribution to the paper).}
 
 \[Z_j | \lambda =
 \begin{cases} 
@@ -268,16 +263,12 @@ While the rest of the model has been proposed previously, to our knowledge, this
 
 \[\lambda \sim \text{Beta}(\alpha_{\lambda}, \beta_{\lambda}) \] 
 
-{
-	\color{blue}
-	Intuitively, this set of priors says that record $j \in \bm{X}_2$ has some match in $\bm{X}_1$ with probability $\lambda$, and that each record $i \in \bm{X}_1$ is equally likely to be that match. $\lambda$ itself is given a prior distribution to reflect prior beliefs about the overall rate of matchingness in the data. One choice of uninformative prior might be \(\lambda \sim \text{Beta}(1, 1)\), which corresponds to a prior belief that nonmatches and matches are equally likely, and another might be \(\lambda \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\), which corresponds to a uniform prior on the labeling of \(\mathbf{Z}\).
-}
+
+Intuitively, this set of priors says that record $j \in \bm{X}_2$ has some match in $\bm{X}_1$ with probability $\lambda$, and that each record $i \in \bm{X}_1$ is equally likely to be that match. $\lambda$ itself is given a prior distribution to reflect prior beliefs about the overall rate of matchingness in the data. One choice of uninformative prior might be \(\lambda \sim \text{Beta}(1, 1)\), which corresponds to a prior belief that nonmatches and matches are equally likely, and another might be \(\lambda \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\), which corresponds to a uniform prior on the labeling of \(\mathbf{Z}\).
 
 %The prior for \(Z_j\) has equal probability of matching to all records
 %\(i\in A\), and non-matching probability governed by \(\lambda\).
 
-{
-\color{blue}
 There is a clear relationship between our proposed model and that of \cite{sadinle_bayesian_2017}. 
 \cite{sadinle_bayesian_2017} constructs a prior distribution on the entire \(\mathbf{Z}\) vector, called the \emph{beta distribution for bipartite matching}, given by
 $$P(\mathbf{Z}|\alpha_{\pi}, \beta_{\pi}) = \frac{(n_1 - n_{12}(\mathbf{Z}))!}{n_1 !}\frac{\text{B}(n_{12}(\mathbf{Z}) + \alpha_{\pi}, n_2 - \mathbf{Z}) - \beta_{\pi}])}{\text{B}(\alpha_{\pi}, \beta_{\pi})}
@@ -291,11 +282,7 @@ calculations within the Gibbs sampler, and not the particular record
 label, this sampling is only needed at the level of the unique agreement patterns, which offers additional computational savings.  In doing so however, we thereby weaken the one-to-one requirement from
 \texttt{BRL}; our sampler does ensure that each record in \(\bm{X}_2\) can be
 matched to at most one record in \(\bm{X}_1\), but allows for the possibility
-that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\). \textcolor{blue}{We resolve contradictions when calcuating the Bayes estimate, which is explained in Section 4.5}
-
-NOTE TO BEKA: I think it will be best to do the "post-processing step" along with the Bayes Estimate. Its equivalent to minimizing the posterior loss subject to the constraint that $Z_j \neq Z_{j'}, \forall j \neq j'$.
-}
-
+that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\).
 
 \newpage
 
@@ -507,12 +494,9 @@ We seek to minimize the posterior expected loss, given by $\mathbb{E}[L(\hat{\ma
 For a more in-depth explanation of this function and the induced Bayes
 estimate, see \citep{sadinle_bayesian_2017}.
 
-{
-\color{blue}
 Since our Gibbs procedure does not strictly enforce one-to-one matching, it is possible for this Bayes estimate to link multiple records in $\bm{X_2}$ to one record in $\bm{X_1}$. It is often desirable to see such matches, because they provide evidence of model misspecification; specifically, large numbers of "many to one" matches indicate that the assumption of no duplicates within files may not be reasonable. We will explore this issue more deeply through the El Salvador homicide case study. 
 
 To achieve a Bayes estimate that fulfills one-to-one matching requirement, we simply minimize the expected loss subject to the constraint that $\hat{Z}_j \neq \hat{Z}_{j'}$ for all $j \neq j'$. In the event that two matches. In the event that we have two records $j$ and $j'$ such that both $P(Z_j = i |\Gamma) > \frac{1}{2}$ and $ P(Z_{j'} = i |\Gamma) > \frac{1}{2}$, this constraint means we accept the match with the highest posterior probability, and declare the other to have no match.  A similar approach can be see in the most probable maximal matching sets used by \citep{steorts_2013} to match records to latent entities, and is justified within this Bayesian framework.
-}
 
 \section{Efficient and Scalable Implementation}
 \label{sec:efficiency}
@@ -611,10 +595,8 @@ chunk of data. With multiple cores or multiple machines, this can be
 done in parallel. Thus, the combination of hashing, SEI, and partitioning
 allows us to conduct linkage tasks over much larger datasets.
 
-\textcolor{red}{Brian: how large can we go and how fast can we go?}
-
-
-\section{Efficient Posterior Inference}\label{sec:efficient-posterior}
+\hypertarget{efficient-posterior}{%
+	\subsection{Efficient Posterior Inference }\label{efficient-posterior}}
 
 \underline{Updating $\mathbf{m}$ and $\mathbf{u}$:} After receiving
 matching statuses from \(\mathbf{Z}\), the Sadinle method calculates
@@ -674,7 +656,7 @@ step can also be parallelized when working with large data.
 
 To aid the reader, we provide summary of the \texttt{fabl} method through pseudocode:
 
-\begin{algorithm}
+\begin{algorithm}[h!]
 	\caption{Summary of fabl algorithm}
 	\begin{algorithmic}[1]
 		
@@ -702,20 +684,26 @@ To aid the reader, we provide summary of the \texttt{fabl} method through pseudo
 	\end{algorithmic}
 \end{algorithm}
 
+\hypertarget{computational-complexity}{%
+	\subsection{Computational Complexity}\label{computational-complexity}}
 
+{
+\color{blue}
+The computational complexity of \texttt{fabl} is determined by its two steps: constructing comparison vectors and Gibbs sampling. The computational complexity of all pairwise comparisons across files $\mathbf{X}_1$ and $\mathbf{X}_2$ is $O(F n_1 n_2)$. \textcolor{blue}{TALK TO BEKA. I CAN DO THE SAME TRICKS AS TED HERE TO REDUCE COMPLEXITY}. Since \texttt{fabl} is able to compute these comparisons in parallel, we can split these computations across $B$ equally sized partitions, so the complexity becomes $O(\frac{F}{B} n_1 n_2)$.
+
+Without hashing, the computational complexity of updating the $\mathbf{m}$ and $\mathbf{u}$ parameters is $O(F n_1 n_2)$. However, by doing calculations over the agreement patterns rather than the individual record, hashing reduces the complexity to $O(FP)$.
+
+The complexity of updating $Z$ sequentially at the record level is $O(n_1 n_2)$. With hashing, we split this sampling into two steps; first we sample that agreement pattern of the match with complexity $O(n_2 P)$, and then we sample the record that exhibits that pattern with complexity $O(n_2)$. Thus we have reduced the complexity of the Gibbs sampler under \texttt{BRL} from $O(F n_1 n_2)$ to $O(n_2 P)$.
+
+Overall, the computational complexity under the complete \texttt{fabl} framework is $O(\frac{F}{B} n_1 n_2) + O(n_2 P)$.
+}
 
 \section{Simulation Studies}
 \label{sec:simulations}
-In this section, we consider a simulation study, nearly identical to that in \cite{sadinle2017}. \textcolor{red}{Brian: can you explain how it's the same versus different than what it is given in Sadinle as this would be the most helpful. Do you utilize Mauricio's exact files and approach and then do something else? If so, I would state this for clarity.} 
-{
-\color{blue}For Beka: I have re-run the simulation exactly as Sadinle implemented it. Here is the rewritten paragraph.
 
-\vspace{1em}
 In this section, we replicate a simulation study from \cite{sadinle2017} to compare \texttt{fabl} against \texttt{BRL} on several simulated datasets with varying amounts of error and overlap. We use first name, last name, age, and occupation for this linkage, and create comparison vectors according to the default settings of the \texttt{compareRecords} function from the \texttt{BRL} package. See Table~\ref{Tab:sadinle_simulation_cutoffs} for details on the construction of comparison vectors. Each simulation identifies duplicated individuals between two datasets, each with 500 records. We conduct linkage when matching records exhibit 1, 2, and 3 errors across the four fields, and when there are 50, 250, and 450 individuals in common across datasets. We use flat priors for all $m$ and $u$ parameters, run the Gibbs Sampler for 1000 iterations, and discard the first 100 as burn-in.
-\vspace{1em}
-}
 
-\begin{table}
+\begin{table}[h!]
 	\centering
 	\begin{tabular}[t]{ll|llll}
 		\hline
@@ -731,18 +719,6 @@ In this section, we replicate a simulation study from \cite{sadinle2017} to comp
 \caption{Construction of comparison vectors for accuracy study with simulated datasets}
 \label{Tab:sadinle_simulation_cutoffs}
 \end{table}
-
-\textcolor{red}{Brian: If you look in Sadinle (2017), did you use Table 2 or something else? Can you construct something similar to Figure 3 and Figure 4 as it's likely a reviewer will look at this paper and ask why you didn't do this exact comparison.}
-
-
-{
-\color{blue}For Beka: Yes, I used Table 2 (those are default settings in BRL). See above comment
-	
-My Figure 1 is equivalent to Sadinle's figure 3. He compares against Fellegi Sunter, whereas I compare against BRL. I found his style of graphic difficult to read, especially because I wanted to show F-measure in addition to recall and precision. 
-
-Sadinle's Figure 4 just shows the results when you add the option of not declaring matching status (leaving it undecided by the model). This didn't seem to be so relevant in my paper, so I didn't have it before. I just completed the simulation, and I'll include it under a seperate section.
-}
-
 
 
 \hypertarget{accuracy}{%
@@ -764,7 +740,7 @@ files. In these situations, \texttt{BRL} is removing large numbers of records fr
 %\end{figure}
 
 
-\begin{figure}[htbp]
+\begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_sim_plot2} 
 \caption{Posterior means and credible intervals for accuracy metrics under the replication of simulation study from Sadinle 2017. For each level of overlap and each level of error, we have 100 paired sets of 500 records.}
@@ -787,17 +763,11 @@ files. In these situations, \texttt{BRL} is removing large numbers of records fr
 \hypertarget{partial}{%
 	\subsection{Accuracy under Partial Estimates}\label{partial}}
 
-{
-\color{blue}
 Lastly, we review the performance of \texttt{fabl} and \texttt{BRL} using loss functions that allow partial estimates of the linkage parameter. By leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the \emph{negative predictive value} (NPV), defined as the proportion of non-links that are actual non-matches. Mathematically, $NPV = \sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j = n_1 + j)$/$\sum_{j=1}^{n_2} I(\hat{Z}_j = n_1 + j)$. We continue to use the precision, which is renamed the \emph{positive predictive value} in this context. Lastly, we also report that rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_2} I(\hat{Z}_j = R)$.
 
 We see that \texttt{fabl} maintains equivalently strong PPV as \texttt{BRL} across all linkage settings. However, with high amounts of overlap and high amounts of error, the rejection rate under \texttt{fabl} rises, leading to a decrease in NPV. This is reasonable because large numbers of errors lead to situations where one record in $\bf{X}_2$ has multiple plausible matches in $\bf{X}_1$, so that posterior match probability is split across more records. Since \texttt{BRL} removes previously matched records from the set of available records for a new match, it is able to retain higher confidence in matches. In practice, this partial estimate approach is not often used, so we remain confident in \texttt{fabl}'s performance. If one wishes to use partial estimates, \texttt{fabl} will possibly leave more linkages for the modeller to match by hand that would be left under \texttt{BRL}, but the decisions made by each method will have nearly equal accuracy. 
 
-NOTE: Sadinle only shows results for the 10\% overlap case. Should I inlcude all of this?
-NOTE: When I ran this, I didn't realize I needed to calculate Rejection Rate. I'll have to run the simulation again to get this. 
-}
-
-\begin{figure}[htbp]
+\begin{figure}[h!]
 \begin{center}
 	\includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_sim_plot_partial} 
 	\caption{Negative predictive value (NPV) and positive predictive value (PPV) on simulated datasets}
@@ -808,15 +778,7 @@ NOTE: When I ran this, I didn't realize I needed to calculate Rejection Rate. I'
 
 \hypertarget{speed}{%
 	\subsection{Speed}\label{speed}}
-	
-\textcolor{red}{Brian: I have some general questions here. Are you using blocking for BRL to scale? Could you use the hashing proposal for BRL. It's important that the scale comparison be as fair as possible or there will be some pushback here. My suggestion around all this is to look at the computational complexity of both methods as it's hard to attack this.}	
 
-{
-\color{blue} For Beka: I'm not using any blocking for either method.
-
-Some of the hashing techniques could work for BRL (updating the m and u parameters), and they technically could be used for updating Z, but it would be much less useful because BRL requires knowing which exact record you match to, not just the agreement pattern for that record. Its not feasible for me try making those changes since its coded in C.
-
-I'll work out the computational complexity. That can be one of the things we nail down on Thursday!}
 
 To demonstrate speed, we generate comparison vectors from pre-specified
 distributions so that we can easily increase the size of the linkage
@@ -835,7 +797,7 @@ particular, run-time for \texttt{BRL} seems to grow quadratically (or
 linearly with the size of both \(A\) and \(B\)) while run-time for
 \texttt{fabl} seems to grow linearly (in the size of \(B\)).
 
-\begin{table}[t]
+\begin{table}[h!]
 	\centering
 	\begin{tabular}{rrr}
 		\hline
@@ -852,7 +814,7 @@ linearly with the size of both \(A\) and \(B\)) while run-time for
 \end{table}
 
 
-\begin{figure}[ht]
+\begin{figure}[h!]
 	
 	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_speed_plot2} 
 		
@@ -869,7 +831,7 @@ increases, with much more static run-time under \texttt{fabl}. The
 slight increases in run-time that we do see are due primarily to the
 hashing step, which again can be run in parallel for large data.
 
-\begin{figure}[t]
+\begin{figure}[h!]
 	
 	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/speed_plot_fixed_nB} 
 		
@@ -888,26 +850,19 @@ status of the record pairs should lead to even more computational gains.
 \hypertarget{scale}{%
 	\subsection{Scaling to a Larger Simulation Study}\label{scale}}
 
-% Assuming a 16GB personal machine, standard record linkage methods using all-to-all comparisons can only function on tasks where the matrix of comparison vectors $\Gamma$ is less than 8GB. In the context of the above simulation, each comparison vector contains four integers, collectively requiring 16 bytes of memory; assuming files of equal lengths, this means the largest linkage task possible is around $7000 \times 7000$. 
-
 In this section, we investigate scaling to larger data sets using our proposed methodology. 
  
-Specifically, we demonstrate how partitioning and hashing the data through \texttt{fabl} method allows us undertake significantly larger linkage tasks. We concatenate two sets of 40 simulated datasets from the original simulation studies of \cite{} to create two larger files, each of 20,000 records (40,000 records total). Working on one machine, we sequentially compare records across chunks, hash results, and then synthesize summary statistics for the entire simulation. Under standard Fellegi Sunter procedures, this would require 400,000,000 comparison vectors, each consisting for four integers, resulting a final comparison matrix about 6.4 GB in size. 
+Specifically, we demonstrate how partitioning and hashing the data through \texttt{fabl} method allows us undertake significantly larger linkage tasks. We concatenate two sets of 40 simulated datasets from the original simulation studies of \cite{} to create two larger files, each of 20,000 records (40,000 records total). Under standard Fellegi Sunter procedures, this would require 400,000,000 comparison vectors, each consisting for four integers, resulting a final comparison matrix about 6.4 GB in size. Under default settings on a personal computer, \texttt{R} does not allow storing an object this size, so \texttt{BRL} is not usable on this linkage task. Through \texttt{fabl} however, using just one machine, we sequentially compare records across chunks, hash results, and then synthesize summary statistics for the entire simulation.  
  
-For simplicity, we partition one dataset into 20 smaller chunks, and leave the second dataset fully intact. We compare records, hash results, and then synthesize summary statistics for all 20 chunk comparisons. The resulting data object is now only 90 MB, about 1\% the size of the object required under the standard method. Executed sequentially, these comparisons and the Gibbs sampler take about one hour to run; using distributed computing. However, this could be sped up. 
+For simplicity, we partition one dataset into 20 smaller chunks, and leave the second dataset fully intact. We compare records, hash results, and then synthesize summary statistics for all 20 chunk comparisons. The resulting data object is now only 90 MB, about 1\% the size of the object required under the standard method. Executed sequentially, these comparisons and the Gibbs sampler take about one hour to run. However, this could be substantially sped up using distributed computing.
 
-Turning to evaluation metrics, this simulation achieved 96.5\% recall and 97.7\% precision, with an overall F-measure of 97.1\% F-measure. The reader will note that this slightly worse performance than witnessed in the smaller simulation studies; this is expected because it is naturally more difficult to link more files with the same amount of information. With more linkage fields \texttt{fabl} maintains the high accuracy seen above. \textcolor{red}{Brian: you should look to see if you fix these in the post-processing step as this would be interesting/important.}
+Turning to evaluation metrics, this simulation achieved 96.5\% recall and 97.7\% precision, with an overall F-measure of 97.1\% F-measure. The reader will note that this slightly worse performance than witnessed in the smaller simulation studies; this is expected because it is naturally more difficult to link more files with the same amount of information. With more linkage fields \texttt{fabl} maintains the high accuracy seen above. 
 
-\textcolor{blue}{This is with post processing already. All I meant here was that is that small tasks require less information. If you do a $500 \times 500$ linkage task and you only have first and last name (for example), thats likely enough to get all the correct matches. However, once you do $20000 \times 20000$, its more likely that more than one person in the second file has the same first and last name, so you need more information to distinguish. I mentioned before that the simulated files actually have 6 fields of information, but I only used 4 originally because thats what Sadinle did. I can use all 6 though to see what happens?}
- 
- \textcolor{red}{How long does it take on the same machine to run BRL. Can you run this? This can close this section out!}
- 
- \textcolor{blue}{When I use the compareRecords from BRL to do the pairwise comparison on the concatenated files, its too  big for R to handle! One could do hashing, reduce the data down to summary statistics, and alter the BRL to use that new object, but that would be a whole different project!}
- 
- 
+%\textcolor{blue}{This is with post processing already. All I meant here was that is that small tasks require less information. If you do a $500 \times 500$ linkage task and you only have first and last name (for example), thats likely enough to get all the correct matches. However, once you do $20000 \times 20000$, its more likely that more than one person in the second file has the same first and last name, so you need more information to distinguish. I mentioned before that the simulated files actually have 6 fields of information, but I only used 4 originally because thats what Sadinle did. I can use all 6 though to see what happens?}
+
 
 \section{Application to Civilian Casualties from the El Salvadoran Civil War}
-\label{sex:case-studies}
+\label{sec:case-studies}
 
 In this section, we revisit an application to the El Salvadoran Civil War, where we estimate the number of documented identifiable deaths (DID). Though the data files used here are small, this study shows how the computational complexity of \texttt{fabl} depends on the number of unique agreement patterns, and how significant computational gains can be achieved by simplifying the construction of the comparison vectors. This case study also considers the ramifications of 
 independently sampling $Z_j$ rather than strictly enforcing one-to-one matching as done by \texttt{BRL}. 
@@ -917,20 +872,23 @@ independently sampling $Z_j$ rather than strictly enforcing one-to-one matching 
 \subsection{El Salvadoran Civil War}
 \label{el_salvador}
 
+{
+\color{blue} For Beka: You wrote that you wanted more detail here, and I added some of it (with some citations). I believe I have all the important informatoin, just more concise. If I included Sadinle's level of detail, I worried about plagarism.
+\vspace{1em}
+}
+
 The country of El Salvador was immersed in civil war from 1980 to 1991,
 and throughout the time, several organizations attempted to document
 casualties of the conflict. When estimating the total number of
 casualties, one cannot simply sum the numbers recorded by each
 organization, as it is likely that the same individuals are recorded in
-multiple casualty lists. Thanks to the Human Rights Data Analysis Group (HRDAG), we utilize 
+multiple casualty lists. This is an important step in estimating the total number of deaths from a conflict using multiple systems estimation \citep{lum2013applications} Thanks to the Human Rights Data Analysis Group (HRDAG), we utilize 
 two different sources, namely,  El Rescate - Tutela
 Regal (ERTL) and the Salvadoran Human Rights Commission (CDHES, by its
-acronym in Spanish). The ERTL dataset consists of digitized reports that
-had been published throughout the conflict. The CDHES dataset consists
+acronym in Spanish). The ERTL dataset consists of digitized denunciations that
+had been published throughout the conflict, and additional investigation was required before the ERTL recorded them as human rights abuses, giving us confidence in its accuracy \cite{howland2008rescate}. The CDHES dataset consists
 of casualties that had been reported directly to the organization, and
-later digitized.
-
-\textcolor{red}{Beka: These data sets need more information regarding how the data sets were collected as this is quite important. See Sadinle (2017) and references for info). }
+later digitized; since reports were taken soon after the events occured, this dataset is also thought to be fairly reliable. \cite{ball2000salvadoran}.
 
 There are several challenges with working with such data. Firstly, both
 datasets have been automatically digitized, which inherently leads to
@@ -956,7 +914,7 @@ Thus, we conduct record linkage using given name, last name,
 municipality, and day, month, and year of death. We again use flat
 priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters. To our knowledge, we have followed the same guidelines/settings in \cite{sadinle_bayesian_2017}.
 \begin{table}
-\begin{tabular}[t]{ll|llll}
+\begin{tabular}[h!]{ll|llll}
 	\hline
 	\multicolumn{2}{c|}{ } & \multicolumn{4}{c}{Level of Disagreement} \\
 	\cline{3-6}
@@ -980,7 +938,7 @@ priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters. To our knowledge, w
 
 \begin{table}
 	\centering
-	\begin{tabular}[t]{ll|lll}
+	\begin{tabular}[h!]{ll|lll}
 		\hline
 		\multicolumn{2}{c|}{ } & \multicolumn{3}{c}{Level of Disagreement} \\
 		\cline{3-5}
@@ -1002,7 +960,7 @@ priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters. To our knowledge, w
 
 To mirror the original implementation of \cite{sadinle_bayesian_2017}, we construct the comparison
 vectors using four levels of agreement for each field, according to the
-thresholds provided in Table~\ref{Tab:el_salvador_cutoffs_1}. This took 422 seconds for our proposed
+thresholds provided in Table~\ref{Tab:el_salvador_cutoffs_1}. Gibbs sampling for these comparison vectors took 422 seconds for our proposed
 method, \texttt{fabl}, and 240 for \texttt{BRL}. However, we observed that posterior
 distributions of several levels of the \(\mathbf{m}\) and \(\mathbf{u}\)
 parameters were nearly identical, and that of the
@@ -1013,8 +971,8 @@ the comparison vectors less interpretable.
 
 Therefore we re-ran our analysis with fewer agreement levels for each field according to Table~\ref{Tab:el_salvador_cutoffs_2}, and
 obtained analogous results. With 216 possible agreement patterns, 159
-were realized in the data, and our proposed method, \texttt{fabl} became was faster,
-finishing in 124 seconds. Meanwhile \texttt{BRL} took 239 seconds,
+were realized in the data, and our proposed method, \texttt{fabl} became much faster,
+finishing in 61 seconds. Meanwhile \texttt{BRL} took 239 seconds,
 relatively unchanged from the first implementation. This demonstrates
 the way that the computational complexity of our method depends on the
 number of unique agreement patterns, and how significant computational
@@ -1022,7 +980,23 @@ gains can be made by simplifying the construction of the comparison
 vectors. The estimates of the \(\mathbf{m}\) parameters under each method are very similar, as shown in
 Figure~\ref{fig:m-and-u}.
 
-\begin{figure}[htbp]
+{
+\color{blue}
+Through \texttt{fabl}, we arrive at a Bayes estimate of 179 individuals recorded in both datasets. We calcuate posterior samples of size of the overlap across files by summing the number of matches found in each iteration of the Gibbs sampler, and subtracting the number of matches that violate one-to-one matching. The posterior 95\% credible interval for the overlap across files is (206, 238), indicating that the Bayes estimate is quite conservative. This is because there a large number of records in ERTL for which there are multiple plausible matches in CDHES; \texttt{fabl} recognizes that a match exists among the several options, but is unable to definitely declare a specific pair a match in the Bayes estimate. We also compute a partial estimate of the linkage structure, using $\theta_{10} = \theta_{01} = 1$, $\theta_{11} = 2$, and $\theta_R = 0.1$ as in the simulation study. Here, the Bayes estimate provides 136 matches of which the model is quite confident, and 175 records to verify manually; this means that after clerical review, the number of individuals replicated across datasets would fall in the interval (136, 311), encapsulating the posterior credible interval. More or fewer records could be indentified for clerical review by decreasing or increasing $\theta_R$. 
+
+We see similar results under \texttt{BRL}, with a Bayes estimate of 181 individuals recorded in both datasets, a posterior 95\% credible interval of (211, 244), and a range of (140, 294) after the partial estimate and clerical review. 
+}
+
+\begin{figure}[h!]
+	\begin{center}
+		\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_distribution_smallP_bayes} 
+		\caption{Posterior distribution of overlap across the two files. The solid lines show the Bayes estimate for the amount of overlap, and the dashed line is the Bayes estimate under fabl before resolving violations of one-to-one matching}
+		\label{fig:overlap-plot}
+	\end{center}
+\end{figure}
+
+
+\begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_posterior_smallP} 
 \caption{Posterior estimates of m parameters with 95\% credible intervals}\label{fig:m-and-u}
@@ -1034,26 +1008,24 @@ Figure~\ref{fig:m-and-u}.
 
 \paragraph{Violations of One-to-One Matching} 
 
-In this section, we investigate violations of one-to-one matching of our method as compared to \texttt{BRL}.
+%In this section, we investigate violations of one-to-one matching of our method as compared to \texttt{BRL}.
+{
+\color{blue}
+As noted previously, the application exhibits many situations in which bipartite matching is difficult. To explore further, we calculate the number of matchings throughout the \texttt{fabl} Gibbs sampler that violate our one-to-one assumption, and find on average 26.17 matchings in violation. These matchings are impossible under the \texttt{BRL} Gibbs sampler, so examining these more closely can provide insight how each model handles situations in which one file in \(\bm{X}_1\) has
+multiple plausible matches in \(\bm{X}_2\). 
+}
+
+%Figure~\ref{fig:overlap-plot} shows the posterior distribution for \(D\), the number of
+%duplicates found in both databases for both \texttt{fabl} and \texttt{BRL}. We
+%see that \texttt{fabl} consistently overmatches within each Gibbs
+%iteration when compared to \texttt{BRL}, which is to be expected because
+%\texttt{BRL} explicitly prevents matches that violate one-to-one
+%matching throughout the entire sampler. Most of such matchings are due
+%to the randomness in the sampling procedure, and they occur sporadically
+%throughout the sampler in such a way that does not measurably influence
+%the eventual Bayes estimate.
 
 
-Figure~\ref{fig:overlap-plot} shows the posterior distribution for \(D\), the number of
-duplicates found in both databases for both \texttt{fabl} and \texttt{BRL}. We
-see that \texttt{fabl} consistently overmatches within each Gibbs
-iteration when compared to \texttt{BRL}, which is to be expected because
-\texttt{BRL} explicitly prevents matches that violate one-to-one
-matching throughout the entire sampler. Most of such matchings are due
-to the randomness in the sampling procedure, and they occur sporadically
-throughout the sampler in such a way that does not measurably influence
-the eventual Bayes estimate.
-
-\begin{figure}[htbp]
-\begin{center}
- \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_distribution_smallP_bayes} 
-\caption{Posterior distribution of overlap across the two files. The solid lines show the Bayes estimate for the amount of overlap, and the dashed line is the Bayes estimate under fabl before resolving violations of one-to-one matching}
-\label{fig:overlap-plot}
-\end{center}
-\end{figure}
 
 
 %\begin{figure}[t]
@@ -1065,16 +1037,16 @@ the eventual Bayes estimate.
 %	\caption{Posterior distribution of overlap across the two files. The solid lines show the Bayes estimate for the amount of overlap, and the dashed line is the Bayes estimate under fabl before resolving violations of one-to-one matching}\label{fig:overlap-plot}
 %\end{figure}
 
-Overall, both methods present similar results. \texttt{fabl} yields
-an initial Bayes estimate of total 195 DID. After
-resolving matches that violated one-to-one requirements,  we estimate 180 DID. 
-\textcolor{red}{Can you report the posterior standard error for each one as we want uncertainty quantification.}
-
-
-This is very close to the 181 DID found
-by \texttt{BRL}. The main reason for this discrepancy is the difference
-in how each model handles situations in which one file in \(\bm{X}_1\) has
-multiple plausible matches in \(\bm{X}_2\).
+%Overall, both methods present similar results. \texttt{fabl} yields
+%an initial Bayes estimate of total 195 DID. After
+%resolving matches that violated one-to-one requirements,  we estimate 180 DID. 
+%
+%
+%
+%This is very close to the 181 DID found
+%by \texttt{BRL}. The main reason for this discrepancy is the difference
+%in how each model handles situations in which one file in \(\bm{X}_1\) has
+%multiple plausible matches in \(\bm{X}_2\).
 
 
 %
@@ -1089,7 +1061,7 @@ multiple plausible matches in \(\bm{X}_2\).
 
 
 
-Figure~\ref{fig:rosa-maria} illustrates an example. Note these
+Figure~\ref{fig:rosa-maria} illustrates an example. Note that these
 records present a near violation of our assumption that there are no
 duplications within files; we continue to assume that records 825 and
 826 in ERTL correspond to different individuals, but their records are
@@ -1120,7 +1092,7 @@ strictly enforcing one-to-one matching throughout the sampler, can lead
 to situations where none of the plausible matches reach the threshold to
 be identified through the Bayes estimate. In short, we have pointed out why one may not wish to imbed this constraint in a model, and proposed a simple alternative that performs about the same as \texttt{BRL}, while scaling to much larger data sets. 
 
-\begin{figure}[htbp]
+\begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/bad_mixing} 
 \caption{Gibbs sampling in situation with multiple plausible matches.}\label{fig:mixing-plot}
@@ -1174,7 +1146,7 @@ future work.
 \section{Appendix}
 \label{sec:appendix}
 
-\begin{figure}[t]
+\begin{figure}[h!]
 	
 	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_trace} 
 		
@@ -1183,7 +1155,7 @@ future work.
 	\caption{Traceplot for number of matches found across datasets in El Salvador case study}\label{fig:overlap_trace}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[h!]
 	
 	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_trace} 
 		
@@ -1192,7 +1164,7 @@ future work.
 	\caption{Traceplot for m parameter in El Salvador case study}\label{fig:m_trace}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[h!]
 	
 	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/u_trace} 
 		
