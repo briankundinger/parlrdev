@@ -133,6 +133,22 @@ df %>%
 
 #ggsave("../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png")
 
+avg_violation <- mean(not_one2one_samps)
+
+not_one2one_samps %>% 
+  data.frame() %>% 
+  mutate(iteration = row_number()) %>% 
+  filter(iteration > burn) %>% 
+  ggplot(aes(y = .)) +
+  geom_histogram(binwidth = 3) + 
+  geom_hline(yintercept = avg_violation) +
+  labs(y = NULL,
+       x = NULL) +
+  coord_flip() +
+  theme_bw()
+
+ggsave("../notes/figures/el_salvador/violations_hist.png")
+
 overlap_trace <- df %>% 
   filter(method == "fabl") %>% 
   ggplot(aes(x = iteration, y = overlap)) +
