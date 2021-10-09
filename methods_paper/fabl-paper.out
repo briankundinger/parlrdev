@@ -1,26 +1,35 @@
 \BOOKMARK [1][-]{section.1}{Introduction}{}% 1
-\BOOKMARK [1][-]{section.2}{Bipartite Record Linkage and Related Work}{}% 2
-\BOOKMARK [1][-]{section.8}{Review of the Fellegi Sunter Method}{}% 3
-\BOOKMARK [2][-]{subsection.9}{Comparison Data}{section.8}% 4
-\BOOKMARK [2][-]{subsection.10}{Blocking}{section.8}% 5
-\BOOKMARK [2][-]{subsection.11}{Fellegi-Sunter Model}{section.8}% 6
-\BOOKMARK [2][-]{subsection.14}{Model Estimation}{section.8}% 7
-\BOOKMARK [1][-]{section.16}{Proposed Methodology}{}% 8
-\BOOKMARK [2][-]{subsection.17}{Beta Linkage Model}{section.16}% 9
-\BOOKMARK [2][-]{subsection.19}{New Model Specification}{section.16}% 10
-\BOOKMARK [2][-]{subsection.26}{Fast Beta Prior}{section.16}% 11
-\BOOKMARK [2][-]{subsection.27}{Gibbs Sampler}{section.16}% 12
-\BOOKMARK [2][-]{subsection.28}{Bayes Estimate}{section.16}% 13
-\BOOKMARK [1][-]{section.29}{Efficient and Scalable Implementation}{}% 14
-\BOOKMARK [2][-]{subsection.30}{Data Representation, Hashing, and Storage}{section.29}% 15
-\BOOKMARK [2][-]{subsection.31}{Efficient Posterior Inference }{section.29}% 16
-\BOOKMARK [2][-]{subsection.33}{Computational Complexity}{section.29}% 17
-\BOOKMARK [1][-]{section.34}{Simulation Studies}{}% 18
-\BOOKMARK [2][-]{subsection.37}{Precision, Recall, and F-measure}{section.34}% 19
-\BOOKMARK [2][-]{subsection.40}{Accuracy under Partial Estimates}{section.34}% 20
-\BOOKMARK [2][-]{subsection.43}{Speed}{section.34}% 21
-\BOOKMARK [2][-]{subsection.50}{Scaling to a Larger Simulation Study}{section.34}% 22
-\BOOKMARK [1][-]{section.51}{Application to Civilian Casualties from the El Salvadoran Civil War}{}% 23
-\BOOKMARK [2][-]{subsection.52}{El Salvadoran Civil War}{section.51}% 24
-\BOOKMARK [1][-]{section.66}{Discussion}{}% 25
-\BOOKMARK [1][-]{section.67}{Appendix}{}% 26
+\BOOKMARK [1][-]{section.2}{Review of Prior Work}{}% 2
+\BOOKMARK [2][-]{subsection.5}{Comparison Data}{section.2}% 3
+\BOOKMARK [2][-]{subsection.6}{Fellegi-Sunter Model}{section.2}% 4
+\BOOKMARK [2][-]{subsection.10}{Beta Linkage Model}{section.2}% 5
+\BOOKMARK [2][-]{subsection.12}{Blocking}{section.2}% 6
+\BOOKMARK [1][-]{section.13}{Fast Beta Linkage}{}% 7
+\BOOKMARK [2][-]{subsection.14}{Model Specification}{section.13}% 8
+\BOOKMARK [2][-]{subsection.15}{Gibbs Sampler}{section.13}% 9
+\BOOKMARK [2][-]{subsection.16}{Bayes Estimate}{section.13}% 10
+\BOOKMARK [1][-]{section.17}{Bipartite Record Linkage and Related Work}{}% 11
+\BOOKMARK [1][-]{section.23}{Review of the Fellegi Sunter Method}{}% 12
+\BOOKMARK [2][-]{subsection.24}{Comparison Data}{section.23}% 13
+\BOOKMARK [2][-]{subsection.25}{Blocking}{section.23}% 14
+\BOOKMARK [2][-]{subsection.26}{Fellegi-Sunter Model}{section.23}% 15
+\BOOKMARK [2][-]{subsection.29}{Model Estimation}{section.23}% 16
+\BOOKMARK [1][-]{section.31}{Proposed Methodology}{}% 17
+\BOOKMARK [2][-]{subsection.32}{Beta Linkage Model}{section.31}% 18
+\BOOKMARK [2][-]{subsection.34}{New Model Specification}{section.31}% 19
+\BOOKMARK [2][-]{subsection.41}{Fast Beta Prior}{section.31}% 20
+\BOOKMARK [2][-]{subsection.42}{Gibbs Sampler}{section.31}% 21
+\BOOKMARK [2][-]{subsection.43}{Bayes Estimate}{section.31}% 22
+\BOOKMARK [1][-]{section.44}{Efficient and Scalable Implementation}{}% 23
+\BOOKMARK [2][-]{subsection.45}{Data Representation, Hashing, and Storage}{section.44}% 24
+\BOOKMARK [2][-]{subsection.46}{Efficient Posterior Inference }{section.44}% 25
+\BOOKMARK [2][-]{subsection.48}{Computational Complexity}{section.44}% 26
+\BOOKMARK [1][-]{section.49}{Simulation Studies}{}% 27
+\BOOKMARK [2][-]{subsection.52}{Precision, Recall, and F-measure}{section.49}% 28
+\BOOKMARK [2][-]{subsection.55}{Accuracy under Partial Estimates}{section.49}% 29
+\BOOKMARK [2][-]{subsection.58}{Speed}{section.49}% 30
+\BOOKMARK [2][-]{subsection.65}{Scaling to a Larger Simulation Study}{section.49}% 31
+\BOOKMARK [1][-]{section.66}{Application to Civilian Casualties from the El Salvadoran Civil War}{}% 32
+\BOOKMARK [2][-]{subsection.67}{El Salvadoran Civil War}{section.66}% 33
+\BOOKMARK [1][-]{section.81}{Discussion}{}% 34
+\BOOKMARK [1][-]{section.82}{Appendix}{}% 35

@@ -75,6 +75,10 @@ Fortini, M., Liseo, B., Nuccitelli, A., and Scanu, M. (2001), \enquote{{On
   Bayesian Record Linkage},} \emph{Research in Official Statistics}, 4,
   185--198.
 
+\bibitem[Fortunato(2010)Fortunato]{fortunato_2010}
+Fortunato, S. (2010), \enquote{Community detection in graphs,} \emph{Physics
+  Reports}, 486, 75--174.
+
 \bibitem[Gill and Goldacre(2003)Gill and Goldacre]{gill2003english}
 Gill, L. and Goldacre, M. (2003), \enquote{English national record linkage of
   hospital episode statistics and death registration records,} \emph{Report to
@@ -101,11 +105,14 @@ Jaro, M.~A. (1989), \enquote{Advances in Record-Linkage Methodology as Applied
   to Matching the 1985 Census of Tampa, Florida,} \emph{Journal of the American
   Statistical Association}, 84, 414--420.
 
-\bibitem[Larsen(2005)Larsen]{Larsen05}
-Larsen, M.~D. (2005), \enquote{{Advances in Record Linkage Theory: Hierarchical
-  Bayesian Record Linkage Theory},} in \emph{Proceedings of the Joint
-  Statistical Meetings, Section on Survey Research Methods}, pp. 3277--3284,
-  The American Statistical Association.
+\bibitem[Larsen(2005a)Larsen]{larsen2005}
+Larsen, M. (2005a), \enquote{Hierarchical Bayesian Record Linkage Theory,} .
+
+\bibitem[Larsen(2005b)Larsen]{Larsen05}
+Larsen, M.~D. (2005b), \enquote{{Advances in Record Linkage Theory:
+  Hierarchical Bayesian Record Linkage Theory},} in \emph{Proceedings of the
+  Joint Statistical Meetings, Section on Survey Research Methods}, pp.
+  3277--3284, The American Statistical Association.
 
 \bibitem[Larsen(2012)Larsen]{Larsen12}
 Larsen, M.~D. (2012), \enquote{{An Experiment with Hierarchical Bayesian Record
@@ -135,6 +142,10 @@ Marchant, N.~G., Steorts, R.~C., Kaplan, A., Rubinstein, B. I.~P., and Elazar,
 \bibitem[Matsakis(2010)Matsakis]{Matsakis10}
 Matsakis, N.~E. (2010), \enquote{{Active Duplicate Detection with Bayesian
   Nonparametric Models},} Ph.D. thesis, Massachusetts Institute of Technology.
+
+\bibitem[Newcombe and Rhynas(1962)Newcombe and Rhynas]{Newcombe1962b}
+Newcombe, H.~B. and Rhynas, P. O.~W. (1962), \enquote{Child Spacing Following
+  Stillbirth and Infant Death,} \emph{Eugenics Quarterly}, 9, 25--35.
 
 \bibitem[Newcombe et~al.(1959)Newcombe, Kennedy, Axford, and
   James]{newcombe_automatic_1959}
