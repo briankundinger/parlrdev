@@ -193,17 +193,16 @@ The solution to this problem, for which several simple algorithms exist, is a bi
 
 %One criticism of using mixture models as proposed by \cite{jaro1989} is the fact that the decision rule will lead to ``many-to-many assignments (breaking transitive closures). One way of resolving this issue to incorporate the constraint directly into the model \citep{Fortinietal01, Matsakis10, liseo_jos_2011, liseo_2011, Larsen05, Larsen12, gutman_bayesian_2013, sadinle_bayesian_2017}, which is appealing as one then obtains uncertainty quantification under the Bayesian paradigm, but often has to sacrifice scaling to very large databases. On the other hand, one can turn to post-processing methods in practical situations. In this paper, we attempt to bridge the best of both approaches. Specifically, we propose a model in the spirit of \cite{sadinle_bayesian_2017} and \cite{enamorado_using_2019}. We relax the one-to-one matching constraint proposed by  \cite{sadinle_bayesian_2017} for purely computational reasons, and resolve this in a post-processing step. In addition, we propose our own computational speeds up and those in the spirit of \cite{enamorado_using_2019}. Our framework is then embarassingly parallel, available in the \texttt{fabl} package, and evaluated on a real case study and simulation studies illustrating that any loss in accuracy due to removing the constraint is minimal.
 
-\subsection{Beta Linkage Model}
+\subsection{Beta Record Linkage Model}
 
-One criticism of using mixture models is that the decision rule will lead to "many-to-many assignments," breaking one-to-one matching assumptions. One way of resolving this issue to incorporate the constraint directly into the model as follows
-
+One criticism of using mixture models is that the decision rule will lead to "many-to-many assignments," breaking one-to-one matching assumptions. One way of resolving this issue to incorporate the constraint directly into the model as follows:
 %our model can be written as a Bayesian model for comparison data. In general, it has the same form of \cite{sadinle_bayesian_2017} and can be written as follows:
 \begin{align}
 	&\bm{\Gamma}_{ij} \mid Z_j =i \stackrel{iid}{\sim} \mathcal{M}(\bm{m})  \\
 	&\bm{\Gamma}_{ij} \mid Z_j \neq i \stackrel{iid}{\sim} \mathcal{U}(\bm{u}) \notag \\
 	& \bm{Z} \sim \mathcal{B}, \notag
 \end{align}
-where $\mathcal{B}$ represents a prior on the space of bipartite matchings, and $\mathcal{M}(\bm{m}), \mathcal{U}(\bm{u})$ are models for the comparison vectors of matches and non-matches. For \texttt{BRL} \cite{sadinle_bayesian_2017} proposed the \emph{beta distribution for bipartite matching}, given by
+where $\mathcal{B}$ represents a prior on the space of bipartite matchings, and $\mathcal{M}(\bm{m}), \mathcal{U}(\bm{u})$ are models for the comparison vectors of matches and non-matches. For \texttt{BRL}, \cite{sadinle_bayesian_2017} proposed the \emph{beta distribution for bipartite matching}, given by
 $$P(\mathbf{Z}|\alpha_{\pi}, \beta_{\pi}) = \frac{(n_1 - n_{12}(\mathbf{Z}))!}{n_1 !}\frac{\text{B}(n_{12}(\mathbf{Z}) + \alpha_{\pi}, n_2 - \mathbf{Z}) - \beta_{\pi}])}{\text{B}(\alpha_{\pi}, \beta_{\pi})}
 $$
 where $\text{B}(\cdot, \cdot)$ represents the Beta function, and hyper parameters $\alpha_{\pi}$ and $\beta_{\pi}$ encode prior beliefs about the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}$. This prior induces a Gibbs sampler that strictly enforces one-to-one matching, removing previously matched records from the set of candidate
@@ -216,13 +215,13 @@ In practice, it is not feasible to make all-to-all record comparisons as the com
 
 In this paper, we use hashing and new technique called storage efficient indexing to increase the scale of the linkage tasks we can undertake without the need for blocking. This is useful when there is no reliable blocking field available, or one desires estimates of model parameters for the entire sample in question. In practice, the method the follows can be combined with blocking for even greater computational gains, but all derivations, simulations, and case studies are presented without blocking. 
 
-------------------------------------------------------
-
-\textcolor{black}{I think its best just not to mention probabalistic blocking. My method doesn't use it, and introducing it is really confusing (Sadinle 2017, Enamorado 2019, and Steorts 2014/2015 don't mention it).}
-
-We note here that the word "hashing" is also used in probabalistic blocking, which uses techniques from machine learning to cluster records together before attempting to link records. The use of such probabalistic blocking to provide even greater computational gains will be explored in future work. 
-
--------------------------------------------------------
+%------------------------------------------------------
+%
+%\textcolor{black}{I think its best just not to mention probabalistic blocking. My method doesn't use it, and introducing it is really confusing (Sadinle 2017, Enamorado 2019, and Steorts 2014/2015 don't mention it).}
+%
+%We note here that the word "hashing" is also used in probabalistic blocking, which uses techniques from machine learning to cluster records together before attempting to link records. The use of such probabalistic blocking to provide even greater computational gains will be explored in future work. 
+%
+%-------------------------------------------------------
 
 \section{Fast Beta Linkage}
 \label{sec:fast-beta-linkage}
