@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.7.1)  10 OCT 2021 18:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021) (preloaded format=pdflatex 2021.7.1)  10 OCT 2021 18:32
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -962,15 +962,15 @@ Package microtype Info: Loading generic protrusion settings for font family
 
 {/usr/local/texlive/2021/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
  [4]
-[5] [6] [7] [8] [9] [10]
-Overfull \hbox (6.76172pt too wide) in paragraph at lines 280--283
+[5] [6] [7] [8] [9]
+Overfull \hbox (6.76172pt too wide) in paragraph at lines 284--287
 []$[]$ \OT1/cmr/m/n/12 (-20) The $\OT1/cmr/bx/n/12 (-20) m$ \OT1/cmr/m/n/12 (-2
 0) and $\OT1/cmr/bx/n/12 (-20) u$ \OT1/cmr/m/n/12 (-20) pa-ram-e-ters are up-da
 ted through stan-dard multinomial-
  []
 
-[11] [12]
-Overfull \hbox (47.87772pt too wide) in paragraph at lines 376--378
+[10] [11] [12]
+Overfull \hbox (47.87772pt too wide) in paragraph at lines 380--382
 []\OT1/cmr/m/n/12 (-20) We seek to min-i-mize the pos-te-rior ex-pected loss, g
 iven by $\U/msb/m/n/12 E\OT1/cmr/m/n/12 (-20) [\OML/cmm/m/it/12 L\OT1/cmr/m/n/1
 2 (-20) ([]\OML/cmm/m/it/12 ; \OT1/cmr/bx/n/12 (-20) Z\OT1/cmr/m/n/12 (-20) )\O
@@ -982,26 +982,26 @@ m/n/12 (-20) ([]\OML/cmm/m/it/12 ; Z[]\OT1/cmr/m/n/12 (-20) )\OML/cmm/m/it/12 P
 
 [13] [14] [15]
 
-LaTeX Warning: Reference `sec:bipartite' on page 16 undefined on input line 417
+LaTeX Warning: Reference `sec:bipartite' on page 16 undefined on input line 421
 .
 
 
-LaTeX Warning: Reference `sec:fs' on page 16 undefined on input line 417.
+LaTeX Warning: Reference `sec:fs' on page 16 undefined on input line 421.
 
 [16] [17] [18] [19] [20] [21] [22] [23] [24]pdfTeX warning (ext4): destination 
 with the same identifier (name{posterior-sampling}) has been already used, dupl
 icate ignored
 <to be read again> 
                    \relax 
-l.682 	\label{gibbs_sampling}}
+l.686 	\label{gibbs_sampling}}
                                [25] [26]pdfTeX warning (ext4): destination with
  the same identifier (name{bayes-estimate}) has been already used, duplicate ig
 nored
 <to be read again> 
                    \relax 
-l.768 	\label{bayes-estimate}}
+l.772 	\label{bayes-estimate}}
                               
-Overfull \hbox (47.87772pt too wide) in paragraph at lines 790--792
+Overfull \hbox (47.87772pt too wide) in paragraph at lines 794--796
 []\OT1/cmr/m/n/12 (-20) We seek to min-i-mize the pos-te-rior ex-pected loss, g
 iven by $\U/msb/m/n/12 E\OT1/cmr/m/n/12 (-20) [\OML/cmm/m/it/12 L\OT1/cmr/m/n/1
 2 (-20) ([]\OML/cmm/m/it/12 ; \OT1/cmr/bx/n/12 (-20) Z\OT1/cmr/m/n/12 (-20) )\O
@@ -1014,20 +1014,20 @@ m/n/12 (-20) ([]\OML/cmm/m/it/12 ; Z[]\OT1/cmr/m/n/12 (-20) )\OML/cmm/m/it/12 P
 [27]
 
 Package natbib Warning: Citation `enamorado2019' on page 28 undefined on input 
-line 807.
+line 811.
 
 [28]
 
 Package natbib Warning: Citation `enamorado2019' on page 29 undefined on input 
-line 830.
+line 834.
 
 [29] [30] [31]
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 964.
+put line 968.
  [32]
 
 Package natbib Warning: Citation `sadinle2017' on page 33 undefined on input li
-ne 1008.
+ne 1012.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
@@ -1037,7 +1037,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 File: ../notes/figures/sadinle_sim_plot2.png Graphic file (type png)
 <use ../notes/figures/sadinle_sim_plot2.png>
 Package pdftex.def Info: ../notes/figures/sadinle_sim_plot2.png  used on input 
-line 1049.
+line 1053.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
 
 
@@ -1048,7 +1048,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 File: ../notes/figures/sadinle_sim_plot_partial.png Graphic file (type png)
 <use ../notes/figures/sadinle_sim_plot_partial.png>
 Package pdftex.def Info: ../notes/figures/sadinle_sim_plot_partial.png  used on
- input line 1076.
+ input line 1080.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
 
 
@@ -1062,7 +1062,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 File: ../notes/figures/sadinle_speed_plot2.png Graphic file (type png)
 <use ../notes/figures/sadinle_speed_plot2.png>
 Package pdftex.def Info: ../notes/figures/sadinle_speed_plot2.png  used on inpu
-t line 1123.
+t line 1127.
 (pdftex.def)             Requested size: 277.3648pt x 170.95375pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
@@ -1071,7 +1071,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 File: ../notes/figures/speed_plot_fixed_nB.png Graphic file (type png)
 <use ../notes/figures/speed_plot_fixed_nB.png>
 Package pdftex.def Info: ../notes/figures/speed_plot_fixed_nB.png  used on inpu
-t line 1140.
+t line 1144.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
 [36 <../notes/figures/sadinle_sim_plot_partial.png>]
 
@@ -1085,7 +1085,7 @@ File: ../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png Graphi
 c file (type png)
 <use ../notes/figures/el_salvador/overlap_distribution_smallP_bayes.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/overlap_distribution_smal
-lP_bayes.png  used on input line 1296.
+lP_bayes.png  used on input line 1300.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
 <../notes/figures/el_salvador/m_posterior_smallP.png, id=729, 396.5214pt x 244.
 5135pt>
@@ -1093,7 +1093,7 @@ File: ../notes/figures/el_salvador/m_posterior_smallP.png Graphic file (type pn
 g)
 <use ../notes/figures/el_salvador/m_posterior_smallP.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/m_posterior_smallP.png  u
-sed on input line 1305.
+sed on input line 1309.
 (pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
 
 
@@ -1105,7 +1105,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 File: ../notes/figures/el_salvador/rosa_records.png Graphic file (type png)
 <use ../notes/figures/el_salvador/rosa_records.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/rosa_records.png  used on
- input line 1377.
+ input line 1381.
 (pdftex.def)             Requested size: 277.3648pt x 84.57927pt.
 
 [44 <../notes/figures/el_salvador/m_posterior_smallP.png> <../notes/figures/el_
@@ -1114,20 +1114,20 @@ salvador/rosa_records.png>]
 File: ../notes/figures/el_salvador/bad_mixing.png Graphic file (type png)
 <use ../notes/figures/el_salvador/bad_mixing.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/bad_mixing.png  used on i
-nput line 1401.
+nput line 1405.
 (pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
  [45 <../notes/figures/el_salvador/bad_mixing.png>]
 <../notes/figures/el_salvador/overlap_trace.png, id=759, 505.89pt x 505.89pt>
 File: ../notes/figures/el_salvador/overlap_trace.png Graphic file (type png)
 <use ../notes/figures/el_salvador/overlap_trace.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/overlap_trace.png  used o
-n input line 1455.
+n input line 1459.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
 <../notes/figures/el_salvador/m_trace.png, id=760, 505.89pt x 505.89pt>
 File: ../notes/figures/el_salvador/m_trace.png Graphic file (type png)
 <use ../notes/figures/el_salvador/m_trace.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/m_trace.png  used on inpu
-t line 1464.
+t line 1468.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
 
 
@@ -1137,7 +1137,7 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 File: ../notes/figures/el_salvador/u_trace.png Graphic file (type png)
 <use ../notes/figures/el_salvador/u_trace.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/u_trace.png  used on inpu
-t line 1473.
+t line 1477.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
@@ -1159,11 +1159,11 @@ Package rerunfilecheck Info: File `fabl-paper.out' has not changed.
 (rerunfilecheck)             Checksum: D32CD2AC970379A3AA04F72E1C620479;5862.
  ) 
 Here is how much of TeX's memory you used:
- 25919 strings out of 478994
- 496031 string characters out of 5858185
+ 25923 strings out of 478994
+ 496063 string characters out of 5858185
  831183 words of memory out of 5000000
  42444 multiletter control sequences out of 15000+600000
- 427108 words of font info for 210 fonts, out of 8000000 for 9000
+ 427326 words of font info for 212 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  87i,16n,89p,1662b,583s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
@@ -1191,7 +1191,7 @@ live/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/local/texl
 ive/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texli
 ve/2021/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb></usr/local/texliv
 e/2021/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on fabl-paper.pdf (51 pages, 781209 bytes).
+Output written on fabl-paper.pdf (51 pages, 779278 bytes).
 PDF statistics:
  920 PDF objects out of 1000 (max. 8388607)
  794 compressed objects within 8 object streams

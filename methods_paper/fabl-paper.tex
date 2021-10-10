@@ -83,7 +83,7 @@ In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), w
 
 
 \noindent%
-{\it Keywords:} record linkage, bipartite record linkage, Bayesian methods, Gibbs sampling, hashing techniques, Markov chain Monte carlo, parallel/distributed computing
+{\it Keywords:} bipartite record linkage, Bayesian methods, Gibbs sampling, hashing techniques, Markov chain Monte carlo, parallel/distributed computing
 
 \newpage
 \spacingset{1.5}
@@ -94,18 +94,18 @@ In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), w
 {
 	\color{blue}
 	
-	I have some proposed revisions for the first part of the paper. In the introduction, I reordered things and changed some topic sentences to highlight that the main contribution here is speed and scale. 
+%	I have some proposed revisions for the first part of the paper. In the introduction, I reordered things and changed some topic sentences to highlight that the main contribution here is speed and scale. 
+%	
+%	Also, in the prior version, we didn't get to any of the proposed material until Section 4.3, which did not seem reasonable to me.
+%	I know you recommended splitting the review of the literature between the Introduction and Section 2 on bipartite matching, but since we needed the mathemetical overview of FS and Sadinle, I decided to move all of the literature review into the introduction. I've seen this done in many papers. 
+%	
+%	Almost all of the content is still there, but it's moved around in a way that makes more sense to me. Let me know your thoughts! (But please avoid hard edits until we talk on Monday!)
+%	
+%	I have some additional edits in the later part of the paper about the partial Bayes estimate, computational complexity, and added detail for the case study. All of that is in blue as well. 
 	
-	Also, in the prior version, we didn't get to any of the proposed material until Section 4.3, which did not seem reasonable to me.
-	I know you recommended splitting the review of the literature between the Introduction and Section 2 on bipartite matching, but since we needed the mathemetical overview of FS and Sadinle, I decided to move all of the literature review into the introduction. I've seen this done in many papers. 
+
 	
-	Almost all of the content is still there, but it's moved around in a way that makes more sense to me. Let me know your thoughts! (But please avoid hard edits until we talk on Monday!)
-	
-	I have some additional edits in the later part of the paper about the partial Bayes estimate, computational complexity, and added detail for the case study. All of that is in blue as well. 
-	
-	---------------------------------------------
-	
-	Record linkage is the task of identifying duplicate records across multiple data sources, often in the absence of a unique identifier \citep{christen_2012}. This is an increasingly important task in "data cleaning," and is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others. In this paper, we consider bipartite record linkage, which is the merging two databases that contain duplication across the two databases, but do not contain any duplications within each database. 
+	Record linkage is the task of identifying duplicate records across multiple data sources, often in the absence of a unique identifier \citep{christen_2012}. This is an increasingly important task in ``data cleaning," and is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others. In this paper, we consider bipartite record linkage, which is merging two databases that contain duplication across the two databases, but do not contain any duplications within each database. 
 	
 	%Much of the statistical literature focuses on bipartite record linkage \citep{fellegi_theory_1969, jaro1989, Winkler1988, belin_1995, larsen_2001, liseo_2011,  herzog2007data, gutman_bayesian_2013, sadinle_bayesian_2017}. 
 	
@@ -115,16 +115,20 @@ In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), w
 	
 	Alternatively, one can embed one-to-one matching requirements into the model specification itself, at an additional computational cost. \cite{larsen2005} employed a Metropolis-Hastings algorithm to only allow sampling matches that respected one-to-one assumptions, but such algorithms exhibit slow mixing due to the combinatorial nature of the constrained matching space. \cite{fortunato_2010} used simulated annealing to target the space of permitted matches under the one-to-one constraint, but the method was so computationally intensive it could used to link databases of less than 100 records. Most recently, \cite{sadinle_bayesian_2017} proposed \emph{Beta Record Linkage} (BRL), using an innovative prior over the space of bipartite matchings to strictly enforce one-to-one reqiurements throughout his Gibbs sampler. Additionally, he introduced a class of loss functions that allows for a flexible estimation of the linkage structure, such that the modeller can weight the relative importance of false positives and false negatives, and identify records pairings to be be decided through clerical review. Although it was shown to work on larger tasks than previous one-to-one methods, \texttt{BRL} becomes slow when working with larger datasets, and unusable when the number of pairwise record comparisons becomes too large. 
 	
-	In this paper, we propose \emph{fast beta linkage} (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space, creating a "many-to-one" model for record linkage. This allows us to employ hashing techniques that hasten calculations and reduce computational complexity, complete pairwise record comparisons over large datasets through parallel computing, and reduce memory costs through a new technique called \emph{storage efficient indexing}. Throughout, we argue that even in cases where a bipartite matching is desired, this relaxed model (with a simple post-processing procedure) provides equivalently accurate estimation of the linkage structure and other parameters, more information through which to asses model misspecification, and greatly enhanced speed. To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{fast beta linkage} (\texttt{fabl},
-	pronounced ``fable'')
+	In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space, creating a ``many-to-one" model for record linkage. This allows us to employ hashing techniques that hasten calculations and reduce computational costs. Furthermore, we can compute the pairwise record comparisons over large datasets via parallel computing and reduce memory costs through our proposed method of \emph{storage efficient indexing}. Throughout, we argue that even in cases where a bipartite matching is desired, \textcolor{red}{our proposed approach and relaxation} (with a simple post-processing procedure) provides equivalently accurate estimation of the linkage structure and other parameters, more information through which to asses model misspecification, and greatly enhanced speed. We illustrate our results via simulation studies and a real case study of homicides from the El Salvadoran Civil War. 
 	
-	In what follows, we first review more thoroughly the Fellegi Sunter and Beta Record Linkage methods. Then, we provide the model specification under \texttt{fabl} and derive the Gibbs sampler for posterior inference. Next, we introduce the hashing technique and storage efficient indexing used to increase the speed of calculations and the scale of the linkage tasks we can undertake. Lastly, we use simulation studies and a case study of homicides from the El Salvadoran Civil War to show that our method has markedly increased speed with minimal loss of accuracy when compared to \texttt{BRL}.
+	
+\textcolor{red}{BK: I would layout all the sections, section by section once they have been set for the reader and I can help you do this.}	
+	% I think this is clear and has already been said. 
+%	To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{fast beta linkage} (\texttt{fabl}, pronounced ``fable'')
+	
+%	In what follows, we first review more thoroughly the Fellegi Sunter and Beta Record Linkage methods. Then, we provide the model specification under \texttt{fabl} and derive the Gibbs sampler for posterior inference. Next, we introduce the hashing technique and storage efficient indexing used to increase the speed of calculations and the scale of the linkage tasks we can undertake. Lastly, we use simulation studies and a case study of homicides from the El Salvadoran Civil War to show that our method has markedly increased speed with minimal loss of accuracy when compared to \texttt{BRL}.
 	
 
 \section{Review of Prior Work}
 \label{sec:review-of_prior-work}
 
-Consider two databases $\bm{X}_1$ and $\bm{X}_2$ with respective sizes $n_1$ and $n_2$. Without loss of generality, denote files suchs that $n_1 \geq n_2$. In the context of bipartite matching, we assume that there are duplications across, but not within, each database. Under this framework, the set of matches across datasets can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_1 \times n_2}$, where
+Consider two databases $\bm{X}_1$ and $\bm{X}_2$ with respective sizes $n_1$ and $n_2$. Without loss of generality, denote files such that $n_1 \geq n_2$. In the context of bipartite matching, we assume that there are duplications across, but not within, each database. Under this framework, the set of matches across datasets can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_1 \times n_2}$, where
 \begin{align}
 	\Delta_{ij} =
 	\begin{cases}
