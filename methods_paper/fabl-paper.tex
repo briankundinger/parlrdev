@@ -72,12 +72,12 @@
 \begin{abstract}
 %In this paper, we propose the \emph{fast beta linkage} (\texttt{fabl}) methods, which extends a recent Bayesian Fellegi Sunter model to allow for parallel computing. In addition, we propose using hashing techniques to hasten calculations and to reduce the overall computational complexity. To achieve a scalable model, we propose independent priors in order to create computational speeds and gains, where we relax the one-to-one matching assumption. Second, we resolve the one-to-one matching issue via a post processing step. Third, we derive conditional distributions, a Gibbs sampler, and corresponding Bayes estimates for our proposed model. Fourth, we explore other computational speeds up based upon storage efficient indexing. Finally, we explore a sensitivity analysis and revisit the case study of the El Salvadoran conflict to understand the practical ramifications regarding our proposed modeling choices, where we provide comparisons to the \text{BRL} package in CRAN. 
 
-{
-	\color{blue} Thanks Beka for writing that first abstract. I think this one captures the idea better, even if its not exactly in "outline" form.
-	\vspace{1em}
-}
+%{
+%	\color{blue} Thanks Beka for writing that first abstract. I think this one captures the idea better, even if its not exactly in "outline" form.
+%	\vspace{1em}
+%}
 
-In this paper, we propose \emph{fast beta linkage} (\texttt{fabl}), which extends a recent Bayesian Fellegi Sunter model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space. This allows us to employ hashing techniques that hasten calculations and reduce computational complexity, complete pairwise record comparisons over large datasets through parallel computing, and reduce memory costs through a new technique called \emph{storage efficient indexing}. Through simulation studies and a case study of homicides from the El Salvadoran Civil War, we show that our method has markedly increased speed with minimal loss of accuracy.
+In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), which extends a recent Bayesian Fellegi Sunter model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space. This allows us to employ hashing techniques that hasten calculations and reduce the overall computational complexity. In addition, we are able to complete pairwise record comparisons over large datasets through parallel computing and reduce memory costs through a new technique called \emph{storage efficient indexing}. Through simulation studies and a case study of homicides from the El Salvadoran Civil War, we show that our method has markedly increased speed with minimal loss of accuracy. Finally, we discuss our work and future directions. 
 
 \end{abstract}
 
