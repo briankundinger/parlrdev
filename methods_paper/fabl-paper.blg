@@ -1,58 +1,73 @@
-This is BibTeX, Version 0.99dThe top-level auxiliary file: fabl-paper.aux
+This is BibTeX, Version 0.99d (TeX Live 2021)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: fabl-paper.aux
 The style file: jasa.bst
 Database file #1: biblio.bib
-Repeated entry---line 2332 of file biblio.bib
- : @article{shan2020bayesian
- :                          ,
-I'm skipping whatever remains of this entry
 Warning--I didn't find a database entry for "enamorado2019"
 Warning--I didn't find a database entry for "sadinle2017"
 Warning--I didn't find a database entry for ""
 Bibliography style `jasa.bst' by Russ Lenth, April 1996 (rev. Mar. 1999)
 [ball2000salvadoran]
-[belin_1995]
 [bilenko2006riddle]
-[Bilenko2006]
-[Christen2008]
 [christen_2012]
-[dalzell2018regression]
 [elmagarmid_duplicate_2007]
 [enamorado2019using]
-[enamorado_using_2019]
 [fair2004generalized]
 [fellegi_theory_1969]
-[Fortinietal01]
 [fortunato_2010]
 [gill2003english]
-[gutman_bayesian_2013]
-[herzog2007data]
 [howland2008rescate]
 [jaro1989]
 [larsen2005]
 Warning--empty journal in larsen2005
-[Larsen05]
-[Larsen12]
-[larsen_2001]
-[liseo_jos_2011]
 [lum2013applications]
-[marchant_distributed_2019]
-[Matsakis10]
 [Newcombe1962b]
 [newcombe_automatic_1959]
 [sadinle_bayesian_2017]
 [sadinle2018bayesian]
-[shan2020bayesian]
 [steorts_2013]
-[steorts_entity_2015]
-[steorts_bayesian_2016]
-[steorts2018generalized]
-[liseo_2011]
-[tancredi_2015_regression]
-[tancredi2020unified]
-[ventura2015seeing]
 [wagner2014person]
-[Winkler1988]
 [winkler1991application]
 Warning--empty publisher in winkler1991application
-[zanella_flexible_2016]
-(There was 1 error message)
+You've used 20 entries,
+            2332 wiz_defined-function locations,
+            666 strings with 7537 characters,
+and the built_in function-call counts, 8389 in all, are:
+= -- 838
+> -- 377
+< -- 16
++ -- 115
+- -- 105
+* -- 765
+:= -- 1465
+add.period$ -- 39
+call.type$ -- 20
+change.case$ -- 106
+chr.to.int$ -- 20
+cite$ -- 42
+duplicate$ -- 340
+empty$ -- 558
+format.name$ -- 135
+if$ -- 1626
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 19
+newline$ -- 64
+num.names$ -- 82
+pop$ -- 115
+preamble$ -- 1
+purify$ -- 125
+quote$ -- 0
+skip$ -- 237
+stack$ -- 21
+substring$ -- 608
+swap$ -- 63
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 177
+warning$ -- 2
+while$ -- 89
+width$ -- 0
+write$ -- 217
+(There were 5 warnings)
