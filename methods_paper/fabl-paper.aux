@@ -33,10 +33,10 @@
 \newlabel{sec:introduction}{{1}{2}{Introduction}{section.1}{}}
 \citation{sadinle_bayesian_2017}
 \citation{fellegi_theory_1969}
-\citation{bilenko2006riddle,elmagarmid_duplicate_2007}
 \@writefile{toc}{\contentsline {section}{\numberline {2}Review of Prior Work}{4}{section.2}\protected@file@percent }
 \newlabel{sec:review-of_prior-work}{{2}{4}{Review of Prior Work}{section.2}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Comparison Data}{4}{subsection.5}\protected@file@percent }
+\citation{bilenko2006riddle,elmagarmid_duplicate_2007}
 \citation{fellegi_theory_1969}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Fellegi-Sunter Model}{5}{subsection.6}\protected@file@percent }
 \newlabel{eqn:wts}{{3}{5}{Fellegi-Sunter Model}{equation.7}{}}
@@ -44,8 +44,8 @@
 \citation{jaro1989}
 \citation{sadinle_bayesian_2017}
 \newlabel{eqn:jaro}{{5}{6}{Fellegi-Sunter Model}{equation.9}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Beta Record Linkage Model}{6}{subsection.10}\protected@file@percent }
 \citation{sadinle_bayesian_2017}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.3}Beta Record Linkage Model}{7}{subsection.10}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.4}Blocking}{7}{subsection.12}\protected@file@percent }
 \citation{sadinle_bayesian_2017}
 \@writefile{toc}{\contentsline {section}{\numberline {3}Fast Beta Linkage}{8}{section.13}\protected@file@percent }
@@ -55,6 +55,7 @@
 \newlabel{model-specification}{{3.1}{9}{Model Specification}{subsection.14}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Gibbs Sampler}{10}{subsection.15}\protected@file@percent }
 \newlabel{gibbs_sampling}{{3.2}{10}{Gibbs Sampler}{subsection.15}{}}
+\citation{sadinle_bayesian_2017}
 \citation{sadinle_bayesian_2017}
 \@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Bayes Estimate}{12}{subsection.16}\protected@file@percent }
 \newlabel{bayes-estimate}{{3.3}{12}{Bayes Estimate}{subsection.16}{}}
@@ -72,19 +73,21 @@
 \newlabel{efficient-posterior}{{4.3}{16}{Efficient Posterior Inference}{subsection.20}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Computational Complexity}{17}{subsection.22}\protected@file@percent }
 \newlabel{computational-complexity}{{4.4}{17}{Computational Complexity}{subsection.22}{}}
-\citation{sadinle2017}
+\citation{sadinle_bayesian_2017}
 \@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Summary of fabl algorithm}}{18}{algorithm.21}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {5}Simulation Studies}{18}{section.23}\protected@file@percent }
 \newlabel{sec:simulations}{{5}{18}{Simulation Studies}{section.23}{}}
 \citation{christen_2012}
+\citation{sadinle_bayesian_2017}
+\citation{sadinle_bayesian_2017}
 \@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Construction of comparison vectors for accuracy study with simulated datasets}}{19}{table.25}\protected@file@percent }
 \newlabel{Tab:sadinle_simulation_cutoffs}{{1}{19}{Construction of comparison vectors for accuracy study with simulated datasets}{table.25}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Precision, Recall, and F-measure}{19}{subsection.26}\protected@file@percent }
 \newlabel{accuracy}{{5.1}{19}{Precision, Recall, and F-measure}{subsection.26}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Accuracy under Partial Estimates}{19}{subsection.29}\protected@file@percent }
 \newlabel{partial}{{5.2}{19}{Accuracy under Partial Estimates}{subsection.29}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Posterior means and credible intervals for accuracy metrics under the replication of simulation study from Sadinle 2017. For each level of overlap and each level of error, we have 100 paired sets of 500 records.}}{20}{figure.28}\protected@file@percent }
-\newlabel{fig:sadinle_simulation}{{1}{20}{Posterior means and credible intervals for accuracy metrics under the replication of simulation study from Sadinle 2017. For each level of overlap and each level of error, we have 100 paired sets of 500 records}{figure.28}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Posterior means and credible intervals for accuracy metrics under the replication of simulation study from \cite  {sadinle_bayesian_2017}. For each level of overlap and each level of error, we have 100 paired sets of 500 records.}}{20}{figure.28}\protected@file@percent }
+\newlabel{fig:sadinle_simulation}{{1}{20}{Posterior means and credible intervals for accuracy metrics under the replication of simulation study from \cite {sadinle_bayesian_2017}. For each level of overlap and each level of error, we have 100 paired sets of 500 records}{figure.28}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Negative predictive value (NPV) and positive predictive value (PPV) on simulated datasets}}{21}{figure.31}\protected@file@percent }
 \newlabel{fig:sadinle_simulation_partial}{{2}{21}{Negative predictive value (NPV) and positive predictive value (PPV) on simulated datasets}{figure.31}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Speed}{21}{subsection.32}\protected@file@percent }
@@ -115,10 +118,10 @@
 \newlabel{Tab:el_salvador_cutoffs_2}{{4}{26}{Construction of comparison vectors for El Salvador for increased speed under \texttt {fabl}. This set up leads to 216 possible agreement patterns in total}{table.45}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Posterior distribution of overlap across the two files. The solid lines show the Bayes estimate for the amount of overlap, and the dashed line is the Bayes estimate under fabl before resolving violations of one-to-one matching}}{28}{figure.47}\protected@file@percent }
 \newlabel{fig:overlap-plot}{{5}{28}{Posterior distribution of overlap across the two files. The solid lines show the Bayes estimate for the amount of overlap, and the dashed line is the Bayes estimate under fabl before resolving violations of one-to-one matching}{figure.47}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Posterior estimates of m parameters with 95\% credible intervals}}{28}{figure.49}\protected@file@percent }
-\newlabel{fig:m-and-u}{{6}{28}{Posterior estimates of m parameters with 95\% credible intervals}{figure.49}{}}
-\newlabel{fig:m-and-u}{{6}{28}{Posterior estimates of m parameters with 95\% credible intervals}{figure.49}{}}
-\@writefile{toc}{\contentsline {paragraph}{Violations of One-to-One Matching}{29}{section*.50}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Violations of One-to-One Matching}{28}{section*.50}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Posterior estimates of m parameters with 95\% credible intervals}}{29}{figure.49}\protected@file@percent }
+\newlabel{fig:m-and-u}{{6}{29}{Posterior estimates of m parameters with 95\% credible intervals}{figure.49}{}}
+\newlabel{fig:m-and-u}{{6}{29}{Posterior estimates of m parameters with 95\% credible intervals}{figure.49}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Example of linkage situation with multiple plausible matches}}{29}{figure.52}\protected@file@percent }
 \newlabel{fig:rosa-maria}{{7}{29}{Example of linkage situation with multiple plausible matches}{figure.52}{}}
 \@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Gibbs sampling in situation with multiple plausible matches.}}{30}{figure.54}\protected@file@percent }

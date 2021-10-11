@@ -1,8 +1,8 @@
-This is BibTeX, Version 0.99dThe top-level auxiliary file: fabl-paper.aux
+This is BibTeX, Version 0.99d (TeX Live 2021)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: fabl-paper.aux
 The style file: jasa.bst
 Database file #1: biblio.bib
-Warning--I didn't find a database entry for "enamorado2019"
-Warning--I didn't find a database entry for "sadinle2017"
 Warning--I didn't find a database entry for ""
 Bibliography style `jasa.bst' by Russ Lenth, April 1996 (rev. Mar. 1999)
 [ball2000salvadoran]
@@ -27,4 +27,45 @@ Warning--empty journal in larsen2005
 [wagner2014person]
 [winkler1991application]
 Warning--empty publisher in winkler1991application
-(There were 5 warnings)
+You've used 20 entries,
+            2332 wiz_defined-function locations,
+            664 strings with 7513 characters,
+and the built_in function-call counts, 8389 in all, are:
+= -- 838
+> -- 377
+< -- 16
++ -- 115
+- -- 105
+* -- 765
+:= -- 1465
+add.period$ -- 39
+call.type$ -- 20
+change.case$ -- 106
+chr.to.int$ -- 20
+cite$ -- 42
+duplicate$ -- 340
+empty$ -- 558
+format.name$ -- 135
+if$ -- 1626
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 19
+newline$ -- 64
+num.names$ -- 82
+pop$ -- 115
+preamble$ -- 1
+purify$ -- 125
+quote$ -- 0
+skip$ -- 237
+stack$ -- 21
+substring$ -- 608
+swap$ -- 63
+text.length$ -- 1
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 177
+warning$ -- 2
+while$ -- 89
+width$ -- 0
+write$ -- 217
+(There were 3 warnings)
