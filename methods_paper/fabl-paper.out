@@ -1,0 +1,24 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Review of Prior Work}{}% 2
+\BOOKMARK [2][-]{subsection.5}{Comparison Data}{section.2}% 3
+\BOOKMARK [2][-]{subsection.6}{Fellegi-Sunter Model}{section.2}% 4
+\BOOKMARK [2][-]{subsection.10}{Beta Record Linkage Model}{section.2}% 5
+\BOOKMARK [2][-]{subsection.12}{Blocking}{section.2}% 6
+\BOOKMARK [1][-]{section.13}{Fast Beta Linkage}{}% 7
+\BOOKMARK [2][-]{subsection.14}{Model Specification}{section.13}% 8
+\BOOKMARK [2][-]{subsection.15}{Gibbs Sampler}{section.13}% 9
+\BOOKMARK [2][-]{subsection.16}{Bayes Estimate}{section.13}% 10
+\BOOKMARK [1][-]{section.17}{Efficient and Scalable Implementation}{}% 11
+\BOOKMARK [2][-]{subsection.18}{Data Representation, Hashing, and Storage}{section.17}% 12
+\BOOKMARK [2][-]{subsection.19}{Working with Large Data}{section.17}% 13
+\BOOKMARK [2][-]{subsection.20}{Efficient Posterior Inference }{section.17}% 14
+\BOOKMARK [2][-]{subsection.22}{Computational Complexity}{section.17}% 15
+\BOOKMARK [1][-]{section.23}{Simulation Studies}{}% 16
+\BOOKMARK [2][-]{subsection.26}{Precision, Recall, and F-measure}{section.23}% 17
+\BOOKMARK [2][-]{subsection.29}{Accuracy under Partial Estimates}{section.23}% 18
+\BOOKMARK [2][-]{subsection.32}{Speed}{section.23}% 19
+\BOOKMARK [2][-]{subsection.39}{Scaling to a Larger Simulation Study}{section.23}% 20
+\BOOKMARK [1][-]{section.40}{Application to Civilian Casualties from the El Salvadoran Civil War}{}% 21
+\BOOKMARK [2][-]{subsection.41}{El Salvadoran Civil War}{section.40}% 22
+\BOOKMARK [1][-]{section.55}{Discussion}{}% 23
+\BOOKMARK [1][-]{section.56}{Appendix}{}% 24
