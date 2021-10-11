@@ -72,18 +72,18 @@
 \begin{abstract}
 %In this paper, we propose the \emph{fast beta linkage} (\texttt{fabl}) methods, which extends a recent Bayesian Fellegi Sunter model to allow for parallel computing. In addition, we propose using hashing techniques to hasten calculations and to reduce the overall computational complexity. To achieve a scalable model, we propose independent priors in order to create computational speeds and gains, where we relax the one-to-one matching assumption. Second, we resolve the one-to-one matching issue via a post processing step. Third, we derive conditional distributions, a Gibbs sampler, and corresponding Bayes estimates for our proposed model. Fourth, we explore other computational speeds up based upon storage efficient indexing. Finally, we explore a sensitivity analysis and revisit the case study of the El Salvadoran conflict to understand the practical ramifications regarding our proposed modeling choices, where we provide comparisons to the \text{BRL} package in CRAN. 
 
-{
-	\color{blue} Thanks Beka for writing that first abstract. I think this one captures the idea better, even if its not exactly in "outline" form.
-	\vspace{1em}
-}
+%{
+%	\color{blue} Thanks Beka for writing that first abstract. I think this one captures the idea better, even if its not exactly in "outline" form.
+%	\vspace{1em}
+%}
 
-In this paper, we propose \emph{fast beta linkage} (\texttt{fabl}), which extends a recent Bayesian Fellegi Sunter model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space. This allows us to employ hashing techniques that hasten calculations and reduce computational complexity, complete pairwise record comparisons over large datasets through parallel computing, and reduce memory costs through a new technique called \emph{storage efficient indexing}. Through simulation studies and a case study of homicides from the El Salvadoran Civil War, we show that our method has markedly increased speed with minimal loss of accuracy.
+In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), which extends a recent Bayesian Fellegi Sunter model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space. This allows us to employ hashing techniques that hasten calculations and reduce the overall computational complexity. In addition, we are able to complete pairwise record comparisons over large datasets through parallel computing and reduce memory costs through a new technique called \emph{storage efficient indexing}. Through simulation studies and a case study of homicides from the El Salvadoran Civil War, we show that our method has markedly increased speed with minimal loss of accuracy. Finally, we discuss our work and future directions. 
 
 \end{abstract}
 
 
 \noindent%
-{\it Keywords:} record linkage, bipartite record linkage, Bayesian methods, Gibbs sampling, hashing techniques, Markov chain Monte carlo, parallel/distributed computing
+{\it Keywords:} bipartite record linkage, Bayesian methods, Gibbs sampling, hashing techniques, Markov chain Monte carlo, parallel/distributed computing
 
 \newpage
 \spacingset{1.5}
@@ -94,18 +94,18 @@ In this paper, we propose \emph{fast beta linkage} (\texttt{fabl}), which extend
 {
 	\color{blue}
 	
-	I have some proposed revisions for the first part of the paper. In the introduction, I reordered things and changed some topic sentences to highlight that the main contribution here is speed and scale. 
+%	I have some proposed revisions for the first part of the paper. In the introduction, I reordered things and changed some topic sentences to highlight that the main contribution here is speed and scale. 
+%	
+%	Also, in the prior version, we didn't get to any of the proposed material until Section 4.3, which did not seem reasonable to me.
+%	I know you recommended splitting the review of the literature between the Introduction and Section 2 on bipartite matching, but since we needed the mathemetical overview of FS and Sadinle, I decided to move all of the literature review into the introduction. I've seen this done in many papers. 
+%	
+%	Almost all of the content is still there, but it's moved around in a way that makes more sense to me. Let me know your thoughts! (But please avoid hard edits until we talk on Monday!)
+%	
+%	I have some additional edits in the later part of the paper about the partial Bayes estimate, computational complexity, and added detail for the case study. All of that is in blue as well. 
 	
-	Also, in the prior version, we didn't get to any of the proposed material until Section 4.3, which did not seem reasonable to me.
-	I know you recommended splitting the review of the literature between the Introduction and Section 2 on bipartite matching, but since we needed the mathemetical overview of FS and Sadinle, I decided to move all of the literature review into the introduction. I've seen this done in many papers. 
+
 	
-	Almost all of the content is still there, but it's moved around in a way that makes more sense to me. Let me know your thoughts! (But please avoid hard edits until we talk on Monday!)
-	
-	I have some additional edits in the later part of the paper about the partial Bayes estimate, computational complexity, and added detail for the case study. All of that is in blue as well. 
-	
-	---------------------------------------------
-	
-	Record linkage is the task of identifying duplicate records across multiple data sources, often in the absence of a unique identifier \citep{christen_2012}. This is an increasingly important task in "data cleaning," and is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others. In this paper, we consider bipartite record linkage, which is the merging two databases that contain duplication across the two databases, but do not contain any duplications within each database. 
+	Record linkage is the task of identifying duplicate records across multiple data sources, often in the absence of a unique identifier \citep{christen_2012}. This is an increasingly important task in ``data cleaning," and is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others. In this paper, we consider bipartite record linkage, which is merging two databases that contain duplication across the two databases, but do not contain any duplications within each database. 
 	
 	%Much of the statistical literature focuses on bipartite record linkage \citep{fellegi_theory_1969, jaro1989, Winkler1988, belin_1995, larsen_2001, liseo_2011,  herzog2007data, gutman_bayesian_2013, sadinle_bayesian_2017}. 
 	
@@ -115,16 +115,20 @@ In this paper, we propose \emph{fast beta linkage} (\texttt{fabl}), which extend
 	
 	Alternatively, one can embed one-to-one matching requirements into the model specification itself, at an additional computational cost. \cite{larsen2005} employed a Metropolis-Hastings algorithm to only allow sampling matches that respected one-to-one assumptions, but such algorithms exhibit slow mixing due to the combinatorial nature of the constrained matching space. \cite{fortunato_2010} used simulated annealing to target the space of permitted matches under the one-to-one constraint, but the method was so computationally intensive it could used to link databases of less than 100 records. Most recently, \cite{sadinle_bayesian_2017} proposed \emph{Beta Record Linkage} (BRL), using an innovative prior over the space of bipartite matchings to strictly enforce one-to-one reqiurements throughout his Gibbs sampler. Additionally, he introduced a class of loss functions that allows for a flexible estimation of the linkage structure, such that the modeller can weight the relative importance of false positives and false negatives, and identify records pairings to be be decided through clerical review. Although it was shown to work on larger tasks than previous one-to-one methods, \texttt{BRL} becomes slow when working with larger datasets, and unusable when the number of pairwise record comparisons becomes too large. 
 	
-	In this paper, we propose \emph{fast beta linkage} (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space, creating a "many-to-one" model for record linkage. This allows us to employ hashing techniques that hasten calculations and reduce computational complexity, complete pairwise record comparisons over large datasets through parallel computing, and reduce memory costs through a new technique called \emph{storage efficient indexing}. Throughout, we argue that even in cases where a bipartite matching is desired, this relaxed model (with a simple post-processing procedure) provides equivalently accurate estimation of the linkage structure and other parameters, more information through which to asses model misspecification, and greatly enhanced speed. To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{fast beta linkage} (\texttt{fabl},
-	pronounced ``fable'')
+	In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space, creating a ``many-to-one" model for record linkage. This allows us to employ hashing techniques that hasten calculations and reduce computational costs. Furthermore, we can compute the pairwise record comparisons over large datasets via parallel computing and reduce memory costs through our proposed method of \emph{storage efficient indexing}. Throughout, we argue that even in cases where a bipartite matching is desired, \textcolor{red}{our proposed approach and relaxation} (with a simple post-processing procedure) provides equivalently accurate estimation of the linkage structure and other parameters, more information through which to asses model misspecification, and greatly enhanced speed. We illustrate our results via simulation studies and a real case study of homicides from the El Salvadoran Civil War. 
 	
-	In what follows, we first review more thoroughly the Fellegi Sunter and Beta Record Linkage methods. Then, we provide the model specification under \texttt{fabl} and derive the Gibbs sampler for posterior inference. Next, we introduce the hashing technique and storage efficient indexing used to increase the speed of calculations and the scale of the linkage tasks we can undertake. Lastly, we use simulation studies and a case study of homicides from the El Salvadoran Civil War to show that our method has markedly increased speed with minimal loss of accuracy when compared to \texttt{BRL}.
+	
+\textcolor{red}{BK: I would layout all the sections, section by section once they have been set for the reader and I can help you do this.}	
+	% I think this is clear and has already been said. 
+%	To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{fast beta linkage} (\texttt{fabl}, pronounced ``fable'')
+	
+%	In what follows, we first review more thoroughly the Fellegi Sunter and Beta Record Linkage methods. Then, we provide the model specification under \texttt{fabl} and derive the Gibbs sampler for posterior inference. Next, we introduce the hashing technique and storage efficient indexing used to increase the speed of calculations and the scale of the linkage tasks we can undertake. Lastly, we use simulation studies and a case study of homicides from the El Salvadoran Civil War to show that our method has markedly increased speed with minimal loss of accuracy when compared to \texttt{BRL}.
 	
 
 \section{Review of Prior Work}
 \label{sec:review-of_prior-work}
 
-Consider two databases $\bm{X}_1$ and $\bm{X}_2$ with respective sizes $n_1$ and $n_2$. Without loss of generality, denote files suchs that $n_1 \geq n_2$. In the context of bipartite matching, we assume that there are duplications across, but not within, each database. Under this framework, the set of matches across datasets can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_1 \times n_2}$, where
+Consider two databases $\bm{X}_1$ and $\bm{X}_2$ with respective sizes $n_1$ and $n_2$. Without loss of generality, denote files such that $n_1 \geq n_2$. In the context of bipartite matching, we assume that there are duplications across, but not within, each database. Under this framework, the set of matches across datasets can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_1 \times n_2}$, where
 \begin{align}
 	\Delta_{ij} =
 	\begin{cases}
@@ -189,17 +193,16 @@ The solution to this problem, for which several simple algorithms exist, is a bi
 
 %One criticism of using mixture models as proposed by \cite{jaro1989} is the fact that the decision rule will lead to ``many-to-many assignments (breaking transitive closures). One way of resolving this issue to incorporate the constraint directly into the model \citep{Fortinietal01, Matsakis10, liseo_jos_2011, liseo_2011, Larsen05, Larsen12, gutman_bayesian_2013, sadinle_bayesian_2017}, which is appealing as one then obtains uncertainty quantification under the Bayesian paradigm, but often has to sacrifice scaling to very large databases. On the other hand, one can turn to post-processing methods in practical situations. In this paper, we attempt to bridge the best of both approaches. Specifically, we propose a model in the spirit of \cite{sadinle_bayesian_2017} and \cite{enamorado_using_2019}. We relax the one-to-one matching constraint proposed by  \cite{sadinle_bayesian_2017} for purely computational reasons, and resolve this in a post-processing step. In addition, we propose our own computational speeds up and those in the spirit of \cite{enamorado_using_2019}. Our framework is then embarassingly parallel, available in the \texttt{fabl} package, and evaluated on a real case study and simulation studies illustrating that any loss in accuracy due to removing the constraint is minimal.
 
-\subsection{Beta Linkage Model}
+\subsection{Beta Record Linkage Model}
 
-One criticism of using mixture models is that the decision rule will lead to "many-to-many assignments," breaking one-to-one matching assumptions. One way of resolving this issue to incorporate the constraint directly into the model as follows
-
+One criticism of using mixture models is that the decision rule will lead to "many-to-many assignments," breaking one-to-one matching assumptions. One way of resolving this issue to incorporate the constraint directly into the model as follows:
 %our model can be written as a Bayesian model for comparison data. In general, it has the same form of \cite{sadinle_bayesian_2017} and can be written as follows:
 \begin{align}
 	&\bm{\Gamma}_{ij} \mid Z_j =i \stackrel{iid}{\sim} \mathcal{M}(\bm{m})  \\
 	&\bm{\Gamma}_{ij} \mid Z_j \neq i \stackrel{iid}{\sim} \mathcal{U}(\bm{u}) \notag \\
 	& \bm{Z} \sim \mathcal{B}, \notag
 \end{align}
-where $\mathcal{B}$ represents a prior on the space of bipartite matchings, and $\mathcal{M}(\bm{m}), \mathcal{U}(\bm{u})$ are models for the comparison vectors of matches and non-matches. For \texttt{BRL} \cite{sadinle_bayesian_2017} proposed the \emph{beta distribution for bipartite matching}, given by
+where $\mathcal{B}$ represents a prior on the space of bipartite matchings, and $\mathcal{M}(\bm{m}), \mathcal{U}(\bm{u})$ are models for the comparison vectors of matches and non-matches. For \texttt{BRL}, \cite{sadinle_bayesian_2017} proposed the \emph{beta distribution for bipartite matching}, given by
 $$P(\mathbf{Z}|\alpha_{\pi}, \beta_{\pi}) = \frac{(n_1 - n_{12}(\mathbf{Z}))!}{n_1 !}\frac{\text{B}(n_{12}(\mathbf{Z}) + \alpha_{\pi}, n_2 - \mathbf{Z}) - \beta_{\pi}])}{\text{B}(\alpha_{\pi}, \beta_{\pi})}
 $$
 where $\text{B}(\cdot, \cdot)$ represents the Beta function, and hyper parameters $\alpha_{\pi}$ and $\beta_{\pi}$ encode prior beliefs about the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}$. This prior induces a Gibbs sampler that strictly enforces one-to-one matching, removing previously matched records from the set of candidate
@@ -212,13 +215,13 @@ In practice, it is not feasible to make all-to-all record comparisons as the com
 
 In this paper, we use hashing and new technique called storage efficient indexing to increase the scale of the linkage tasks we can undertake without the need for blocking. This is useful when there is no reliable blocking field available, or one desires estimates of model parameters for the entire sample in question. In practice, the method the follows can be combined with blocking for even greater computational gains, but all derivations, simulations, and case studies are presented without blocking. 
 
-------------------------------------------------------
-
-\textcolor{black}{I think its best just not to mention probabalistic blocking. My method doesn't use it, and introducing it is really confusing (Sadinle 2017, Enamorado 2019, and Steorts 2014/2015 don't mention it).}
-
-We note here that the word "hashing" is also used in probabalistic blocking, which uses techniques from machine learning to cluster records together before attempting to link records. The use of such probabalistic blocking to provide even greater computational gains will be explored in future work. 
-
--------------------------------------------------------
+%------------------------------------------------------
+%
+%\textcolor{black}{I think its best just not to mention probabalistic blocking. My method doesn't use it, and introducing it is really confusing (Sadinle 2017, Enamorado 2019, and Steorts 2014/2015 don't mention it).}
+%
+%We note here that the word "hashing" is also used in probabalistic blocking, which uses techniques from machine learning to cluster records together before attempting to link records. The use of such probabalistic blocking to provide even greater computational gains will be explored in future work. 
+%
+%-------------------------------------------------------
 
 \section{Fast Beta Linkage}
 \label{sec:fast-beta-linkage}
@@ -390,417 +393,138 @@ To achieve a Bayes estimate that fulfills one-to-one matching requirement, we si
 
 }
 
-\newpage
-{
-\color{red}
-Here is the previous version of everything. Note that the numbering of the sections is off at the moment. 
-}
 
 
-%% Reworking introduction for Brian's paper.
 
-Record linkage is the task of identifying duplicate records across multiple data sources, often in the absence of a unique identifier \citep{christen_2012}. Record linkage is an increasingly important task in ``data cleaning," that is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others. Many statistical record linkage methods and case studies are extensions of seminal work of \cite{fellegi_theory_1969} and \cite{newcombe_automatic_1959}. Specifically, \cite{fellegi_theory_1969} created comparison vectors for each pair of records in the data and independently classified those pairs as a match or a non-match using a likelihood ratio test (or hypothesis test). Recent work in the statistical literature has extended the aforementioned work \citep{winkler1991application, fair2004generalized, wagner2014person, gill2003english}. 
 
-%While this independence assumption may not always be reasonable, it is appealing for its mathematical simplicity and relative computational ease. Many recent work in the statistical literature has extended the aforementioned work [Brian: add citations here: 
 
-In this paper, we consider bipartite record linkage, which is commonly known as merging two databases that contain duplication across the two databases, but do not contain any duplications within each database \citep{sadinle_bayesian_2017}. Much of the statistical literature focuses on bipartite record linkage \citep{fellegi_theory_1969, jaro1989, Winkler1988, belin_1995, larsen_2001, liseo_2011,  herzog2007data, gutman_bayesian_2013, sadinle_bayesian_2017}. 
 
-The Fellegi-Sunter method and its extensions are widely popular mainly due to its simplicity and computational scalability. Despite this, like any method, it has limitations, that are well known in the literature. Specifically, the assumption of no duplications within a database implies a maximum one-to-one constraint. That is, a record from one database can be linked with only one record in the other database. Modern methods of Fellegi-Sunter either ignore this restriction \citep{Winkler1988, belin_1995, larsen_2001}, include this as a post-processing step \citep{jaro1989}, or include it directly in the modeling framework \citep{sadinle_bayesian_2017}. It is important to note that \cite{fellegi_theory_1969} ignored this restriction as well. In practice, it seems that one should either directly include it in the modeling framework or correct for this in a post-processing step. 
-
-To our knowledge, \cite{sadinle_bayesian_2017} was the first to propose correcting the Fellegi and Sunter model for the one-to-one constraint. Specifically, the authors propose a Bayesian variant of the original model that satisfies two goals. First, it allows one to quantify uncertainty regarding match or non-match status. In addition, posterior distributions are readily available to help estimate point estimates of interest (and quantity such estimates). Second, under the Bayesian paradigm, the one-to-one matching constraint is easily embedded. The downside to this constraint is an added computational cost. The goal of our paper is proposing an extension of \cite{sadinle_bayesian_2017} that scales to large databases, but does not compromise much in terms of accuracy on the original case study considered by the author. 
-
-\textbf{Our Contribution} 
-In this paper, we propose a Bayesian extension of \cite{sadinle_bayesian_2017} (\texttt{BRL}) through a modification to the model specification that allows for parallel computing of the linkage parameter, using hashing techniques to hasten calculations and to reduce computational complexity.  Specifically, \cite{sadinle_bayesian_2017} proposes a prior distribution that strictly enforces one-to-one matching. Instead, we propose independent priors (breaking the one-to-one matching) in order to create computational speeds and gains. Second, we resolve the one-to-one matching issue via a post processing step. Third, we derive conditional distributions, a Gibbs sampler, and corresponding Bayes estimates for our proposed model. Fourth, we explore other computational speeds up based upon storage efficient indexing. Finally, we explore a sensitivity analysis and revisit the case study of the El Salvadoran conflict to understand the practical ramifications regarding our proposed modeling choices. 
-To recognize the lineage from the original \texttt{BRL} method, we name our method \emph{fast beta linkage} (\texttt{fabl},
-pronounced ``fable'')
-
-The remainder of the paper is as follows. Section~\ref{sec:bipartite} reviews bipartite record linkage; section \ref{sec:fs} reviews the traditional approach of the Fellegi and Sunter framework before introducing our proposed work. 
-
-\section{Bipartite Record Linkage and Related Work}
-As already mentioned, bipartite record linkage is the traditional set up studied in record linkage, where we assume there are two databases $\bm{X}_1$ and $\bm{X}_2$ such that there are duplications across the databases but not within each databases. We assume that each database has $n_1$ and $n_2$ records, and that $n_1 \leq n_2.$ Denote the number of entities simultaneously recorded by \emph{both databases} by $n_{12}$ such that $0 \leq n_{12} \leq n_2.$ Given this set up, as explained by \cite{steorts_bayesian_2016} and \cite{sadinle_bayesian_2017}, this can be viewed as bipartite record linkage. This is important as it allows one to view the matching matrix or linkage structure in the following way:
-\begin{align}
-\Delta_{ij} =
-\begin{cases}
-1 \quad \text{if records}\;  i \in \bm{X}_1 \; \text{and}\; j\in \bm{X}_2 \; \text{refer to the same entity}; \\
-0 \quad \text{otherwise}.\\
-\end{cases}
-\end{align}
-Bipartite matching can also be viewed as a matching labeling $\bm{Z} = (Z_1, \ldots, Z_{n_2})$ for the records in database $\bm{X}_2$ such that 
-\begin{align}
-Z_{j} =
-\begin{cases}
-i \quad \text{if records}\;  i \in \bm{X}_1 \; \text{and}\; j\in \bm{X}_2 \; \text{refer to the same entity}; \\
-n_1 + j \quad  \quad \text{if records}\;  j \in \bm{X}_2 \; \text{does not have a match in database}\; \bm{X}_1. \\
-\end{cases}
-\end{align}
-Depending on which representation is the most convenient, we can go back and forth between the two using $\Delta_{ij} = I(Z_j = i),$ where $I(\cdot)$ is the indicator function. 
-
-There are many approaches to bipartite record linkage, and we review some of the most common approaches below.
-
-\paragraph{Fellegi and Sunter}
-As already mentioned, the most common approach is the original approach of \cite{fellegi_theory_1969}. \cite{enamorado2019using} have extended this approach using computational speeds ups to allow for a much more scalable and practical approach, providing open source code for the community. 
-
-%These approaches have led to downstream tasks, such as regression approaches in the literature \citep{tang2020}. 
-
-\paragraph{Directly Modeling the Data} Instead of relying on comparison vectors, some authors will incorporate the data directly into their bipartite record linkage model \citep{Fortinietal01, Matsakis10, liseo_jos_2011, liseo_2011, gutman_bayesian_2013, shan2020bayesian}. These approaches have led to extensions regarding downstream tasks in the literature or joint models, such as regression approaches \citep{dalzell2018regression, steorts2018generalized, tancredi2020unified}.  There have been extensions to directly model the data in this literature where authors consider merging multiple databases (more than two) \citep{steorts_bayesian_2016, steorts_entity_2015, zanella_flexible_2016, marchant_distributed_2019, tancredi_2015_regression}. 
-We do not review this literature given that it is not directly/fairly comparable with the case of bipartite record linkage.
-
-\paragraph{Classification Approaches} 
-One common way of approaching the record linkage task, especially in computer science and machine learning is using a classification approach. One uses a model (such as random forests) to classify records into matches/non-matches. When access to unique identifiers is available, one can create a training data (or reference data) set of record pairs (where the true match status is known).  Finally, one can train a classifier using the reference data set to predict the match status on any record pairs that were not included in the reference data set \citep{Bilenko2006, Christen2008, ventura2015seeing}. 
-
-\section{Review of the Fellegi Sunter Method}
-In this section, we review notation, terminology, and the classical approach of Fellegi and Sunter. 
-
-Consider ordered record pairs $\bm{X}_1 \times \bm{X}_2,$ where the size of the databases are $n_1$ and $n_2,$ respectively. 
-Denote the set of matches by $\bm{M} = \{(i,j): i \in \bm{X}_1, j \in \bm{X}_2, \Delta_{ij} = 1\}.$ Denote the set of non-matches 
-$\bm{U} =  \{(i,j): i \in \bm{X}_1, j \in \bm{X}_2, \Delta_{ij} = 0\}.$ An alternative way of merging two databases and removing 
-duplications can be viewed as identifying the sets of matches/non-matches, or rather $\bm{M}, \bm{U}.$ In the literature, it is well known that record pairs that are estimated as matches are known as links; record pairs that are estimated as non-matches are known as non-links. \cite{fellegi_theory_1969} proposed using all-to-all pairwise comparison of records to estimate the matches/non-matches.
-
-\subsection{Comparison Data}
-In this section, we review the notion of \emph{comparison data}. Intuitively, records that are co-referent or rather refer to the same entity should be similar; records that are non co-referent and refer to different entities should not be similar. A common way to encode this is using a comparison vector $\bm{\gamma}_{ij}$ which is computed for each record pair $(i,j)$ in $\bm{X}_1 \times \bm{X}_2.$ Denote $F$ as the criteria for compare the records such that 
-$\bm{\gamma}_{ij} = (\gamma_{ij}^1, \gamma_{ij}^2, \ldots, \gamma_{ij}^f, \ldots \gamma_{ij}^F).$ In most cases, $F$ represents to a single comparison per feature that the databases share, such as gender. 
+%\newpage
 %
-The simplest way to compare two records is check for agreement or disagreement, and this is commonly used for nominal variables such as gender. For more complex measurements, such as textual or numeric feature information, we can take into account partial agreement patterns using common string metrics, such as the Edit, Jaro, or Jaro-Winkler distance functions. This allows us to divide our records into a set of similarity values into different levels of disagreement \citep{bilenko2006riddle, elmagarmid_duplicate_2007}. 
-
-Let $\mathcal{S}_f(i,j)$ denote a general similarity measure for feature $f$ of records $i$ and $j,$ where the range of $\mathcal{S}_f$ can be divided into $L_f +1$ intervals denoted by $I_{f0}, I_{f1}, \ldots, I_{fL_f},$ representing disagreement levels. Following convention, $I_{f0}$ represents the highest level of agreement (inclusive of complete agreement) and $I_{fL_f}$ represents the highest level of disagreement (including complete disagreement). Thus, we can construct comparison vectors in the following way: 
-$$\gamma_{ij} = \ell \; \text{if} \; \mathcal{S}_f(i,j) \in I_{f\ell}.$$ The choice of $I_{f\ell}$ are application specific, which we discuss in our simulation and case study. 
-
-\subsection{Blocking}
-In practice, it is not feasible to make all-to-all record comparisons as the computationally complexity is of the order $O(n_1 \times n_2).$ The most common solution is utilize blocking, which places similar records into partitions, clusters, or ``blocks" to reduces this computational burden. Blocking can be deterministic, such as reducing the dimensionality of the comparison space on a highly reliable feature, such a gender. Blocking can be probabilistic, such as utilizing machine learning methods, known as hashing, which seek to use probabilistic functions (with low computational cost) to place similar records into the same bin. We propose hashing base methods for Bayesian bipartite record linkage, illustrating their ability to improve upon computational scalability. We emphasize that depending on the size of the problem, our proposed methodology can be used with or without hashing.
-
-
-
-
-\subsection{Fellegi-Sunter Model}
-In this section, we review the Fellegi-Sunter model. While we have introduced comparison data, $\bm{\gamma}_{ij}$, this is not sufficient to determine whether a record is a match/non-match given errors that naturally occur in the data. This motivated \cite{fellegi_theory_1969} to consider the following likelihood ratio
-\begin{align}
-\label{eqn:wts}
-w_{ij} = \log \frac{P(\gamma_{ij} \mid \Delta_{ij} = 1)}{P(\gamma_{ij} \mid \Delta_{ij} = 0)}
-\end{align}
-as a weight to estimate if record pairs are a match/non-match. Assume $\bm{\Gamma}_{ij}$ is a random vector, whose distribution depends on $\Delta_{ij}.$ Then equation \ref{eqn:wts} is a representative value of $\bm{\Gamma}_{ij} \mid \Delta_{ij}.$ The ratio will be large if we favor the pair being a match. This is a problem in practice as transitive closures are violated. For example, suppose records $i$ and $j$ in $\bm{X}_1$ are extremely similar but are known to be non-matches. Suppose that both records $i$ and $j$ in $\bm{X}_1$ are very similar to record $k$ in $\bm{X}_2.$ By transitive closures, this implies that $i$ and $j$ are a match, which cannot be true by assumption. 
-
-\cite{jaro1989} proposed addressing this issue via an optimization approach as follows:
-\begin{align}
-\label{eqn:jaro}
-&\max_{\Delta} \sum_{i=1}^{n_1} \sum_{j=1}^{n_2} w_{ij} \Delta_{ij} 
-\quad \text{subject to} \quad \Delta_{ij} \in \{0,1\}; \\
-& \quad \quad \sum_{i=1}^{n_1}  \Delta_{ij}  \leq 1, j=1,2, \ldots n_2; \; \text{and} \notag\\
-& \quad \quad\sum_{i=1}^{n_2}  \Delta_{ij}  \leq 1, j=1,2, \ldots n_1. \notag
-\end{align}
-
-Equation \ref{eqn:jaro} ensures that each record of $\bm{X}_2$ only matches with at most one record in $\bm{X}_1$ (and the reverse condition). This is commonly known as the \emph{maximum-weight bipartite matching problem} or a \emph{linear sum assignment problem}. The output of this algorithm is a bipartite matching that maximizes the sum of the weights among matched pairs, where the pairs are not matched are assumed to be non-matches. \cite{jaro1989} provided no theoretical justification for using this approach, however, \cite{sadinle_bayesian_2017} recently showed that under certain conditions, equation \ref{eqn:jaro} is the maximum likelihood estimate. 
-
-\subsection{Model Estimation}
-In our review, we have assumed one knows $P(\cdot \mid \Delta_{ij} = 1)$ and $P(\cdot \mid \Delta_{ij} = 0),$ however, these are typically not known in practice and must be estimated. Assume the comparison vectors are independent given the bipartite matching and assume that the match status of the record pairs are independent. It then follows that we can model 
-the comparison data using mixture models in the following way:
-\begin{align}
-&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 1 \stackrel{iid}{\sim} \mathcal{M}(\bm{m}), \\
-&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 0  \stackrel{iid}{\sim} \mathcal{U}(\bm{u}), \notag\\
-& \Delta_{ij}   \stackrel{iid}{\sim} \text{Bernoulli}(p), \notag
-\end{align}
-where $p$ is the proportion of records that match. Note that $\bm{m}$ and $\bm{u}$ are vectors of the match/non-match parameters. One common way to estimate the unknown parameters of the aforementioned model is using the EM algorithm. 
-
-One criticism of using mixture models as proposed by \cite{jaro1989} is the fact that the decision rule will lead to ``many-to-many assignments (breaking transitive closures). One way of resolving this issue to incorporate the constraint directly into the model \citep{Fortinietal01, Matsakis10, liseo_jos_2011, liseo_2011, Larsen05, Larsen12, gutman_bayesian_2013, sadinle_bayesian_2017}, which is appealing as one then obtains uncertainty quantification under the Bayesian paradigm, but often has to sacrifice scaling to very large databases. On the other hand, one can turn to post-processing methods in practical situations. In this paper, we attempt to bridge the best of both approaches. Specifically, we propose a model in the spirit of \cite{sadinle_bayesian_2017} and \cite{enamorado_using_2019}. We relax the one-to-one matching constraint proposed by  \cite{sadinle_bayesian_2017} for purely computational reasons, and resolve this in a post-processing step. In addition, we propose our own computational speeds up and those in the spirit of \cite{enamorado_using_2019}. Our framework is then embarassingly parallel, available in the \texttt{fabl} package, and evaluated on a real case study and simulation studies illustrating that any loss in accuracy due to removing the constraint is minimal. 
-
-
-\section{Proposed Methodology}
-\label{sec:model}
-
-In this section, we propose the fast beta linkage method (fabl) for bipartite record linkage, extending the work of \cite{sadinle_bayesian_2017}.  Specifically, we review the general approach of \cite{sadinle_bayesian_2017} and then provide our extensions for scalability. 
-
-%Specifically, the author used the same comparison vector approach as Fellegi and Sunter, but proposed a prior distribution for the set of matches that strictly enforced one-to-one matching without the need for any post-hoc processing procedures. In each iteration of his Gibbs sampler, the author considered each record \(j\in \bm{X}_2\), and then removed from consideration the records \(i\in \bm{X}_1\) that have already been matched. Then a potential link is sampled. While this leads to a sampler that is more accurate than the classical Fellegi-Sunter approach, accounting for such dependencies throughout the linkage process is computationally burdensome, and this method is only suitable for small databases. 
-%As such, we propose a framework for efficient computation in large linkage tasks. 
-
-\subsection{Beta Linkage Model}
-In this section, we review the Beta Linkage Model, which can be written as follows: 
-%our model can be written as a Bayesian model for comparison data. In general, it has the same form of \cite{sadinle_bayesian_2017} and can be written as follows:
-\begin{align}
-&\bm{\Gamma}_{ij} \mid Z_j =i \stackrel{iid}{\sim} \mathcal{M}(\bm{m})  \\
-&\bm{\Gamma}_{ij} \mid Z_j \neq i \stackrel{iid}{\sim} \mathcal{U}(\bm{u}) \notag \\
-& \bm{Z} \sim \mathcal{B}, \notag
-\end{align}
-where $\mathcal{B}$ represents a prior on the space of bipartite matchings and $\mathcal{M}(\bm{m}), \mathcal{M}(\bm{u})$ are models for the comparison vectors of matches and non-matches.
-
-\hypertarget{model-specification}{%
-	\subsection{New Model Specification}
-	\label{model-specification}}
-	
-In this section, we provide the specification for the models of $\mathcal{M}(\bm{m})$ and $\mathcal{U}(\bm{u}),$ which follows from assuming that the features are conditionally independent of the level of agreement of another. The likelihood can be written as follows:
-
-\begin{align}
-\mathcal{L}(\bm{Z}, \Phi \mid \bm{\Gamma}) = \prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)}, 
-\end{align}
-where $m_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j = i)$ denotes the probability of a match have level $\ell$ of disagreement in feature $f$ and 
-$u_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j \neq i)$ represents the same probability for non-matches. 
-In addition, denote $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$, $\bm{u}_f = (u_{f1}, \ldots, u_{fL_f})$, 
-$\bm{m}= (m_1, \ldots m_F)$, $\bm{u}= (u_1, \ldots u_F)$, and $\Phi = (\bm{m}, \bm{u})$.
-
-Next, we allow for missing values or rather missing comparisons for corresponding record pairs. As commonly done in the record linkage literature, we assume that these occur missing at random [CITE: Little and Rubin (2002), Sadinle (2017), Steorts et al (2016)]. 
-
-The likelihood becomes 
-\begin{align}
-\mathcal{L}(\bm{Z}, \Phi \mid \bm{\Gamma}^{obs}) = 
-\prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{a_{f\ell}(\bm{Z})}u_{fl}^{a_{f\ell}(\bm{Z})}\right], 
-\end{align}
-where 
-\begin{align}
-&a_{f\ell}(\bm{Z}) = \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = \ell) I(Z_j = i) \\
-&b_{f\ell}(\bm{Z}) = \sum_{i,j} I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = \ell) I(Z_j \neq i),
-\end{align}
-where $I_{obs}$ denotes if a value is observed or not. Next, for a particular matching configuration $\bm{Z}$, $a_{f\ell}(\bm{Z})$
-and $b_{f\ell}(\bm{Z})$ denote the number of matches and non-matches with observed disagreement level $\ell$ for comparison feature $f.$ Using this parameterization, we specify independent conjugate priors for all features $f$:
-\begin{align}
-&\bm{m}_f \sim \text{Dirichlet}(\alpha_{f0}, \ldots, \alpha_{f L_f}) \\
-&\bm{u}_f \sim \text{Dirichlet}(\beta_{f0}, \ldots, \beta_{f L_f}).
-\end{align}
-
-\hypertarget{fast-beta-prior}{%
-	\subsection{Fast Beta Prior}
-	\label{fast-beta-prior}}
-
-
-In this section, we deviate from the approach of \cite{sadinle_bayesian_2017}, and propose a more scalable prior on the matching labelings $\bm{Z} = (Z_1, Z_2, \ldots Z_{n_2}),$ where recall $Z_j \in \{1,2, 3, n_1, n_1 + j\}.$ While the rest of the model has been proposed previously, to our knowledge, this particular prior has not been proposed before. 
-
-
-\[Z_j | \lambda =
-\begin{cases} 
-	\frac{1}{n_1}\lambda  & z_j \leq n_1; \\
-	1-\lambda &  z_j  = n_1 + j \\
-\end{cases}\]
-
-\[\lambda \sim \text{Beta}(\alpha_{\lambda}, \beta_{\lambda}) \] 
-
-
-Intuitively, this set of priors says that record $j \in \bm{X}_2$ has some match in $\bm{X}_1$ with probability $\lambda$, and that each record $i \in \bm{X}_1$ is equally likely to be that match. $\lambda$ itself is given a prior distribution to reflect prior beliefs about the overall rate of matchingness in the data. One choice of uninformative prior might be \(\lambda \sim \text{Beta}(1, 1)\), which corresponds to a prior belief that nonmatches and matches are equally likely, and another might be \(\lambda \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\), which corresponds to a uniform prior on the labeling of \(\mathbf{Z}\).
-
-There is a clear relationship between our proposed model and that of \cite{sadinle_bayesian_2017}. 
-\cite{sadinle_bayesian_2017} constructs a prior distribution on the entire \(\mathbf{Z}\) vector, called the \emph{beta distribution for bipartite matching}, given by
-$$P(\mathbf{Z}|\alpha_{\pi}, \beta_{\pi}) = \frac{(n_1 - n_{12}(\mathbf{Z}))!}{n_1 !}\frac{\text{B}(n_{12}(\mathbf{Z}) + \alpha_{\pi}, n_2 - \mathbf{Z}) - \beta_{\pi}])}{\text{B}(\alpha_{\pi}, \beta_{\pi})}
-$$
-where $\text{B}(\cdot, \cdot)$ represents the Beta function. This prior induces a Gibbs sampler that strictly enforces one-to-one matching,  previously matched records from the set of candidate
-records when sampling \(Z_j\). This creates a dependency that makes the
-sampler \emph{inherently serial}. 
-
-On the other hand, we propose independent priors for each \(Z_j\), creating a sampler that is \emph{embarassingly parallel}, allowing for significant computational gains. More importantly, since only the agreement pattern of \(Z_j\) is used for
-calculations within the Gibbs sampler, and not the particular record
-label, this sampling is only needed at the level of the unique agreement patterns, which offers additional computational savings.  In doing so however, we thereby weaken the one-to-one requirement from
-\texttt{BRL}; our sampler does ensure that each record in \(\bm{X}_2\) can be
-matched to at most one record in \(\bm{X}_1\), but allows for the possibility
-that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\).
-
-\newpage
-
-%\textcolor{red}{I think my notation is OK from earlier.} 
-
-%Denote two files as \(A\) and \(B\), with \(n_A\) and \(n_B\) records
-%respectively, and with records indexed as \(i \in \{1, \ldots, n_A\}\)
-%in \(A\) and \(j \in \{1, \ldots, n_B\}\) in \(B\). Without loss of
-%generality, label the files such that \(n_A \geq n_B\). We assume there
-%are no duplicates within files, only across. For each record pair under
-%consideration, we generate a comparison vector
-%\(\boldsymbol{\gamma}_{ij} = \{\gamma_{ij}^1, \ldots, \gamma_{ij}^F\}\),
-%where \(F\) is the number of fields used in the linkage and each
-%\(\gamma_{ij}^f\) takes on a value \(l \in \{1, \ldots, L_f\}\)
-%indicating the level agreement between the two records on a specified
-%field.
-
-%To indicate matching status, we adopt the \emph{linkage structure
-%	parameter} \(\mathbf{Z} = (Z_1, \ldots, Z_{n_B})\) from Sadinle 2017,
-%defined as \[Z_j=\begin{cases} 
-%	i,  & \text{if records } i\in A \text{ and } j\in B \text{ refer to the same entity}; \\
-%	n_A + 1,  & \text{if record } j\in B \text{ does not have a match in file } A; \\
-%\end{cases}\] This parameter is vector of length $n_B$, providing more memory efficient storage for the
-%linkage information than a \(n_A \times n_B\) sparse matrix of
-%indicators.
+%\hypertarget{posterior-sampling}{%
+%	\subsection{Gibbs Sampler}
+%	\label{gibbs_sampling}}
+%We work with the following factorization of the joint posterior distribution:
 %
-%\textcolor{red}{Brian: This does not match what Sadinle has, so this needs to be justified regarding the change or if this is a typo. Could you please check this?} 
+%\textcolor{red}{Brian: The Gibbs sampler has some minor typos. It should be written in terms of $\bm{Z}, \Phi, \lambda \mid \gamma_{obs}.$ Also, just make the rest of the notation match please:)}
 %
+%\begin{align*}
+%p(\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda|\Gamma) &\propto \mathcal{L}(\bm{Z}, \Phi \mid \bm{\gamma}^{obs}) p(\mathbf{Z} | \lambda) p(\Phi) p(\lambda) \\
+%&\propto \prod_{j=1}^{n_2}  \prod_{i=1}^{n_1}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)} \\
+%&\times  \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{\alpha_{fl} - 1}  \times\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{\beta_{fl} - 1} \\
+%&\times \prod_{j=1}^{n_B} \left[I(Z_j \leq n_1)\frac{1}{n_1}\lambda + I(Z_j > n_1)(1 - \lambda)\right]
+%\end{align*}
+%This factorization leads to following Gibbs Sampler:
 %
-%\textcolor{blue}{Define \(m^{f\ell}:= P(\Gamma_{ij}^f = l |Z_j = i)\) as  the probability of a match having level $\ell$ of disagreement for feature $f.$ Define \(u^{f\ell}:= P(\gamma_{ij}^f = l |Z_j \neq i)\) as the corresponding probability for non-matches. Next, we adopt Fellegi and Sunter's conditionally independent fields assumption
-%that the level of agreement on one feature is independent of the level of
-%agreement on another.\footnote{Though this assumption is often not reasonable
-%(for example, two individuals of a different genders are more likely to have different names than two individuals of the same gender),
-%but it is common within the record linkage literature and generally
-%leads to models that perform well in practice; see discussion for
-%further remarks.} Denote \(\lambda\) to be the (marginal)
-%probability that some record \(j \in \bm{X}_2\) has a match in \(\bm{X}_1\). In addition, denote $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$, $\bm{u}_f = (u_{f1}, \ldots, u_{fL_f})$, 
-%$\bm{m}= (m_1, \ldots m_F)$, $\bm{u}= (u_1, \ldots u_F)$, and $\Phi = (\bm{m}, \bm{u})$}.
+%\underline{Sample $\mathbf{m}^{(s+1)}$ $\mathbf{u}^{(s+1)}|\Gamma, \mathbf{Z}^{(s)}$:}
+%The \(\mathbf{m}\) and \(\mathbf{u}\) parameters are updated through
+%standard multinomial-dirichlet mechanics. Thus we have
 %
-%\begin{enumerate}
-%\item Let's first write out the likelihood, which should be the same as in Sadinle
-%\item Then we should write out the Beta Prior, which should deviate and needs its own section in my opinion so the reader understands why it's a deviation
-%\item My understanding, is that section 4.1 and section 4.2 should look as they are, so these just need to be explained to the reader. The innovation is in the beta prior and making it more efficient. 
-%\end{enumerate}
-
-%Following the Fellegi Sunter framework, we define
-%\(m^{fl}:= P(\gamma_{ij}^f = l |Z_j = i)\) to be the probability of
-%observing agreement level \(l\) in field \(f\) for records \(i\) and
-%\(j\) given that the records are a match, and similarly define
-%\(u^{fl}:= P(\gamma_{ij}^f = l |Z_j \neq i)\), for non-matches. We also
-%adopt Fellegi and Sunter's conditionally independent fields assumption
-%that the level of agreement on one field is independent of the level of
-%agreement on another. Though this assumption is often not reasonable
-%(for example, two individuals of a different genders are more likely to have different names than two individuals of the same gender),
-%but it is common within the record linkage literature and generally
-%leads to models that perform well in practice; see discussion for
-%further remarks. Lastly, we define \(\lambda\) to be the (marginal)
-%probability that some record \(j \in B\) has a match in \(A\).
-
-%Wherever possible, we reserve superscripts for denoting field and level,
-%while reserving subscripts for record indices. For example,
-%\(\mathbf{m}^f = (m^{f1}, \ldots, m^{fL_f})\) is the probability
-%distribution governing field \(f\) for matching records, and
-%\(\mathbf{m}_{ij}= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(m^{fl}\right)^{\mathbf{1}_{\gamma_{ij}^f = l}} = P(\boldsymbol{\gamma}_{ij}|Z_j = i)\)
-%is product of the relevant of the appropriate \(\mathbf{m}\) parameters
-%for record pair \((i,j)\). We hope that these conventions avoid
-%overloaded notation in the likelihood and subsequent derivations.
-
-
-%\hypertarget{model-specification}{%
-%	\subsection{Model Specification}
-%	\label{model-specification}}
+%\[\mathbf{m}_f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\alpha_{f1}(\mathbf{Z}), \ldots, \alpha_{fL_f}(\mathbf{Z}))\]
+%\[\mathbf{u}_f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\beta_{f1}(\mathbf{Z}), \ldots, \beta_{fL_f}(\mathbf{Z}))\]
+%where
+%\(\alpha_{fl}(\mathbf{Z})= \alpha_{fl} + \sum_{i,j} I(\gamma_{ij}^f = l) I(z_j = i)\)
+%and
+%\(\beta_{fl}(\mathbf{Z})= \beta_{fl} + I(\gamma_{ij}^f = l) I(z_j \neq i)\).
 %
-%For fields \(f \in \{1, \ldots, F\}\) and levels
-%\(l\in \{1, \ldots, L_f\}\) we adopt the following likelihood and prior
-%distributions.
-
-
-%$$P(\Gamma|\mathbf{Z}, \mathbf{m}, \mathbf{u}) = \prod_{j=1}^{n_B}  \prod_{i=1}^{n_A}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)}$$
-
-%\textcolor{red}{It seems to me that this should be $P(\bm{Z}, \Phi \mid \bm{\Gamma})$ above and not what is currently written. }
+%\underline{Sample $\lambda^{(s+1)}|\mathbf{Z}^{(s)}$:} As a function of
+%\(\lambda\), the linkage structure parameter \(\mathbf{Z}\) is sequence
+%of successes (when \(z_j < n_A + 1\)) and failures (when
+%\(z_j = n_A + 1\)), and therefore
+%\(p(\mathbf{Z}|\lambda) = \mathcal{L}(\lambda|\mathbf{Z})\) is
+%determined only by the number of duplicates
+%$n_{12}(\mathbf{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + 1)$ encoded by
+%$\mathbf{Z}$. Thus we have
 %
-%\textcolor{red}{Are you handling missing values the way that Sadinle does? This isn't clear. It would he helpful to follow the Sadinle paper regarding structure as closely as possible given that it's very clear. I might recommend that you work on some details here regarding pages 12---13 as some important details are skipped over regarding what's random and observed that may not be obvious to the AE/reviewer.}
+%\[p(\lambda | \mathbf{Z}) \propto p(\mathbf{Z}|\lambda)p(\lambda)\]
+%\[\propto \lambda^{n_{12}(\mathbf{Z})} (1-\lambda)^{n_2 - (n_{12}(\mathbf{Z})} \lambda^{\alpha_{\lambda} -1} (1-\lambda)^{\beta_{\lambda} -1}\]
+%\[ \propto \lambda^{n_{12}(\mathbf{Z}) + \alpha_{\lambda} - 1} (1-\lambda)^{n_1 - n_{12}(\mathbf{Z}) + \beta_{\lambda} -1}\]
+%\[\implies \lambda^{(s+1)}|\mathbf{Z}^{(s+1)} \sim \text{Beta}(D + \alpha_{\lambda}, n_2 - n_{12}(\mathbf{Z}) + \beta_{\lambda})\]
 %
-%\[\mathbf{m^{f}} \sim \text{Dirichlet}(\alpha^{f1}, \ldots, \alpha^{fL_f})\]
-%\[\mathbf{u^{f}} \sim \text{Dirichlet}(\beta^{f1}, \ldots, \beta^{fL_f})\]
-
-
-\newpage
-
-\hypertarget{posterior-sampling}{%
-	\subsection{Gibbs Sampler}
-	\label{gibbs_sampling}}
-We work with the following factorization of the joint posterior distribution:
-
-\textcolor{red}{Brian: The Gibbs sampler has some minor typos. It should be written in terms of $\bm{Z}, \Phi, \lambda \mid \gamma_{obs}.$ Also, just make the rest of the notation match please:)}
-
-\begin{align*}
-p(\mathbf{Z}, \mathbf{m}, \mathbf{u}, \lambda|\Gamma) &\propto \mathcal{L}(\bm{Z}, \Phi \mid \bm{\gamma}^{obs}) p(\mathbf{Z} | \lambda) p(\Phi) p(\lambda) \\
-&\propto \prod_{j=1}^{n_2}  \prod_{i=1}^{n_1}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)} \\
-&\times  \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{\alpha_{fl} - 1}  \times\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{\beta_{fl} - 1} \\
-&\times \prod_{j=1}^{n_B} \left[I(Z_j \leq n_1)\frac{1}{n_1}\lambda + I(Z_j > n_1)(1 - \lambda)\right]
-\end{align*}
-This factorization leads to following Gibbs Sampler:
-
-\underline{Sample $\mathbf{m}^{(s+1)}$ $\mathbf{u}^{(s+1)}|\Gamma, \mathbf{Z}^{(s)}$:}
-The \(\mathbf{m}\) and \(\mathbf{u}\) parameters are updated through
-standard multinomial-dirichlet mechanics. Thus we have
-
-\[\mathbf{m}_f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\alpha_{f1}(\mathbf{Z}), \ldots, \alpha_{fL_f}(\mathbf{Z}))\]
-\[\mathbf{u}_f|\mathbf{Z}, \Gamma \sim \text{Dirichlet}(\beta_{f1}(\mathbf{Z}), \ldots, \beta_{fL_f}(\mathbf{Z}))\]
-where
-\(\alpha_{fl}(\mathbf{Z})= \alpha_{fl} + \sum_{i,j} I(\gamma_{ij}^f = l) I(z_j = i)\)
-and
-\(\beta_{fl}(\mathbf{Z})= \beta_{fl} + I(\gamma_{ij}^f = l) I(z_j \neq i)\).
-
-\underline{Sample $\lambda^{(s+1)}|\mathbf{Z}^{(s)}$:} As a function of
-\(\lambda\), the linkage structure parameter \(\mathbf{Z}\) is sequence
-of successes (when \(z_j < n_A + 1\)) and failures (when
-\(z_j = n_A + 1\)), and therefore
-\(p(\mathbf{Z}|\lambda) = \mathcal{L}(\lambda|\mathbf{Z})\) is
-determined only by the number of duplicates
-$n_{12}(\mathbf{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + 1)$ encoded by
-$\mathbf{Z}$. Thus we have
-
-\[p(\lambda | \mathbf{Z}) \propto p(\mathbf{Z}|\lambda)p(\lambda)\]
-\[\propto \lambda^{n_{12}(\mathbf{Z})} (1-\lambda)^{n_2 - (n_{12}(\mathbf{Z})} \lambda^{\alpha_{\lambda} -1} (1-\lambda)^{\beta_{\lambda} -1}\]
-\[ \propto \lambda^{n_{12}(\mathbf{Z}) + \alpha_{\lambda} - 1} (1-\lambda)^{n_1 - n_{12}(\mathbf{Z}) + \beta_{\lambda} -1}\]
-\[\implies \lambda^{(s+1)}|\mathbf{Z}^{(s+1)} \sim \text{Beta}(D + \alpha_{\lambda}, n_2 - n_{12}(\mathbf{Z}) + \beta_{\lambda})\]
-
-\underline{Sample $\mathbf{Z}^{(s+1)}|\Gamma, \mathbf{m}^{(s+1)}, \mathbf{u}^{(s+1)}, \lambda^{(s+1)}$:}
-Because we sample \(Z_j\) independently of all other \(Z_{j'}\), we use
-only the full conditional for an individual \(Z_j\). Let \(\Gamma_{.j}\)
-denote the set of \(n_A\) comparison vectors with \(j \in B\), and note
-that as a function of \(Z_j\), the likelihood
-\(p(\Gamma_{.j}|Z_j, \mathbf{m}, \mathbf{u}) = \mathcal{L}(Z_j|\Gamma_{.j}, \mathbf{m}, \mathbf{u})\)
-is a discrete distribution with probabilities proportional to
-
-\begin{align*}
-	p(\Gamma_{.j}|Z_j = z_j, \mathbf{m}, \mathbf{u}) &\propto \prod_{i=1}^{n_1}\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)}\\
-	&\propto \prod_{i=1}^{n_1}\left(\prod_{f=1}^{F}\prod_{l=1}^{L_f} \frac{m_{fl}}{u_{fl}}\right)^{I(z_j = i, \gamma_{ij}^f = l)} \\
-	&=
-	\begin{cases} 
-		w_{ij}  & z_j \leq n_1; \\
-		1 &  z_j  = n_1 + j \\
-	\end{cases}\\
-\end{align*}
-
-where
-\(w_{ij} = \left(\frac{\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}}{\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}}\right)^{I(\gamma_{ij}^f = l)} = \frac{P(\boldsymbol{\gamma_{ij}}|Z_j = i)}{P(\boldsymbol{\gamma_{ij}} |Z_j \neq i)}\).
-The interested reader should note that these are precisely the
-likelihood ratios used in the Fellegi-Sunter model to classify matches
-and non-matches, and we therefore refer to \(w_{ij}\) as the
-\emph{Fellegi Sunter weights}.
-
-With the likelihood in this form, we can derive the full conditional
-\[p(Z_j|\Gamma_{.j}, \mathbf{m} ,\mathbf{u}, \lambda) \propto p(\Gamma_{.j}| Z_j, \mathbf{m} ,\mathbf{u}) P(Z_j|\lambda)\]
-
-\[\propto \left(\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i} + \mathbf{1}_{z_j = n_A + 1}\right)\left(\lambda\sum_{i=1}^{n_A}\frac{1}{n_A}\mathbf{1}_{z_j = i} + (1-\lambda)\mathbf{1}_{z_j = n_A + 1}\right)\]
-\[= \frac{\lambda}{n_A}\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i} + (1-\lambda)\mathbf{1}_{z_j = n_A + 1} \]
-\[ \implies Z_j^{(s+1)} | \mathbf{m}, \mathbf{u}, \Gamma, \lambda \propto
-\begin{cases} 
-	\frac{\lambda}{n_A}w_{ij}   & z_j \leq n_A; \\
-	1-\lambda &  z_j  = n_A + 1 \\
-\end{cases}\]
-
-In order to make fair comparisons against the \citep{sadinle_bayesian_2017} model, we
-integrate over the posterior of \(\lambda\) and rearrange terms to
-produce the final full conditional:
-
-\[p\left(Z_j^{(s+1)}  = i| \mathbf{m}, \mathbf{u}, \mathbf{Z^{(s)}}\right) \propto
-\begin{cases} 
-	w_{ij}  & i \leq n_A; \\
-	n_A \frac{n_B - D + \beta_{\lambda}}{D + \alpha_{\lambda}} & i  = n_A + 1 \\
-\end{cases}\]
-
-\hypertarget{bayes-estimate}{%
-	\subsection{Bayes Estimate}
-	\label{bayes-estimate}}
-
-We calculate a Bayes estimate \(\hat{\mathbf{Z}}\) for the linkage
-parameter \(\mathbf{Z}\) by assigning different positive losses to
-different types of errors, and minimizing posterior expected loss. We
-adopt the loss function proposed in Sadinle 2017, in which
-\(\hat{Z}_j \in \{1, \ldots, n_A + 1, R\}\), with \(R\) representing the
-option to leave the matching undetermined by the model. Specifically, we have
-
-\[L(\hat{Z_j}, Z_j)=\begin{cases} 
-	0  & \text{if } Z_j = \hat{Z_j}; \\
-	\theta_R,  & \text{if } \hat{Z_j} = R; \\
-	\theta_{10},  & \text{if } Z_j \leq n_A,\hat{Z_j} = n_A + 1 ; \\
-	\theta_{01},  & \text{if } Z_j = n_A + 1,\hat{Z_j} \leq n_A ; \\
-	\theta_{11},  & \text{if } Z_j, \hat{Z}_j \leq n_A, Z_j \neq \hat{Z_j} ; \\
-\end{cases}\] Here, \(\theta_R\) is the loss from not making a decision
-on the linkage status, \(\theta_{10}\) is the loss from a false
-non-match, \(\theta_{01}\) is the loss from a false match, and
-\(\theta_{11}\) is the loss from the special case of a false match in
-which the record has a true match other than the one estimated by the
-model. 
-
-We seek to minimize the posterior expected loss, given by $\mathbb{E}[L(\hat{\mathbf{Z}}, \mathbf{Z})|\Gamma^{obs}] = \sum_{\mathbf{Z}} L(\hat{Z_j}, Z_j)P(\mathbf{Z}|\Gamma^{obs})$. In this paper, we adopt losses
-\(\theta_R = \infty, \theta_{10} = 1, \theta_{01} = 1, \theta_{11} = 2\), inducing the intuitive decision rule
-
-\[\hat{Z}_j =\begin{cases} 
-	i,  & \text{if } P(Z_j = i |\Gamma) > \frac{1}{2}; \\
-	0,  & \text{otherwise} ; \\
-\end{cases}\]
-
-For a more in-depth explanation of this function and the induced Bayes
-estimate, see \citep{sadinle_bayesian_2017}.
-
-Since our Gibbs procedure does not strictly enforce one-to-one matching, it is possible for this Bayes estimate to link multiple records in $\bm{X_2}$ to one record in $\bm{X_1}$. It is often desirable to see such matches, because they provide evidence of model misspecification; specifically, large numbers of "many to one" matches indicate that the assumption of no duplicates within files may not be reasonable. We will explore this issue more deeply through the El Salvador homicide case study. 
-
-To achieve a Bayes estimate that fulfills one-to-one matching requirement, we simply minimize the expected loss subject to the constraint that $\hat{Z}_j \neq \hat{Z}_{j'}$ for all $j \neq j'$. In the event that two matches. In the event that we have two records $j$ and $j'$ such that both $P(Z_j = i |\Gamma) > \frac{1}{2}$ and $ P(Z_{j'} = i |\Gamma) > \frac{1}{2}$, this constraint means we accept the match with the highest posterior probability, and declare the other to have no match.  A similar approach can be see in the most probable maximal matching sets used by \citep{steorts_2013} to match records to latent entities, and is justified within this Bayesian framework.
+%\underline{Sample $\mathbf{Z}^{(s+1)}|\Gamma, \mathbf{m}^{(s+1)}, \mathbf{u}^{(s+1)}, \lambda^{(s+1)}$:}
+%Because we sample \(Z_j\) independently of all other \(Z_{j'}\), we use
+%only the full conditional for an individual \(Z_j\). Let \(\Gamma_{.j}\)
+%denote the set of \(n_A\) comparison vectors with \(j \in B\), and note
+%that as a function of \(Z_j\), the likelihood
+%\(p(\Gamma_{.j}|Z_j, \mathbf{m}, \mathbf{u}) = \mathcal{L}(Z_j|\Gamma_{.j}, \mathbf{m}, \mathbf{u})\)
+%is a discrete distribution with probabilities proportional to
+%
+%\begin{align*}
+%	p(\Gamma_{.j}|Z_j = z_j, \mathbf{m}, \mathbf{u}) &\propto \prod_{i=1}^{n_1}\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)}\\
+%	&\propto \prod_{i=1}^{n_1}\left(\prod_{f=1}^{F}\prod_{l=1}^{L_f} \frac{m_{fl}}{u_{fl}}\right)^{I(z_j = i, \gamma_{ij}^f = l)} \\
+%	&=
+%	\begin{cases} 
+%		w_{ij}  & z_j \leq n_1; \\
+%		1 &  z_j  = n_1 + j \\
+%	\end{cases}\\
+%\end{align*}
+%
+%where
+%\(w_{ij} = \left(\frac{\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}}{\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}}\right)^{I(\gamma_{ij}^f = l)} = \frac{P(\boldsymbol{\gamma_{ij}}|Z_j = i)}{P(\boldsymbol{\gamma_{ij}} |Z_j \neq i)}\).
+%The interested reader should note that these are precisely the
+%likelihood ratios used in the Fellegi-Sunter model to classify matches
+%and non-matches, and we therefore refer to \(w_{ij}\) as the
+%\emph{Fellegi Sunter weights}.
+%
+%With the likelihood in this form, we can derive the full conditional
+%\[p(Z_j|\Gamma_{.j}, \mathbf{m} ,\mathbf{u}, \lambda) \propto p(\Gamma_{.j}| Z_j, \mathbf{m} ,\mathbf{u}) P(Z_j|\lambda)\]
+%
+%\[\propto \left(\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i} + \mathbf{1}_{z_j = n_A + 1}\right)\left(\lambda\sum_{i=1}^{n_A}\frac{1}{n_A}\mathbf{1}_{z_j = i} + (1-\lambda)\mathbf{1}_{z_j = n_A + 1}\right)\]
+%\[= \frac{\lambda}{n_A}\sum_{i=1}^{n_A}w_{ij}\mathbf{1}_{z_j = i} + (1-\lambda)\mathbf{1}_{z_j = n_A + 1} \]
+%\[ \implies Z_j^{(s+1)} | \mathbf{m}, \mathbf{u}, \Gamma, \lambda \propto
+%\begin{cases} 
+%	\frac{\lambda}{n_A}w_{ij}   & z_j \leq n_A; \\
+%	1-\lambda &  z_j  = n_A + 1 \\
+%\end{cases}\]
+%
+%In order to make fair comparisons against the \citep{sadinle_bayesian_2017} model, we
+%integrate over the posterior of \(\lambda\) and rearrange terms to
+%produce the final full conditional:
+%
+%\[p\left(Z_j^{(s+1)}  = i| \mathbf{m}, \mathbf{u}, \mathbf{Z^{(s)}}\right) \propto
+%\begin{cases} 
+%	w_{ij}  & i \leq n_A; \\
+%	n_A \frac{n_B - D + \beta_{\lambda}}{D + \alpha_{\lambda}} & i  = n_A + 1 \\
+%\end{cases}\]
+%
+%\hypertarget{bayes-estimate}{%
+%	\subsection{Bayes Estimate}
+%	\label{bayes-estimate}}
+%
+%We calculate a Bayes estimate \(\hat{\mathbf{Z}}\) for the linkage
+%parameter \(\mathbf{Z}\) by assigning different positive losses to
+%different types of errors, and minimizing posterior expected loss. We
+%adopt the loss function proposed in Sadinle 2017, in which
+%\(\hat{Z}_j \in \{1, \ldots, n_A + 1, R\}\), with \(R\) representing the
+%option to leave the matching undetermined by the model. Specifically, we have
+%
+%\[L(\hat{Z_j}, Z_j)=\begin{cases} 
+%	0  & \text{if } Z_j = \hat{Z_j}; \\
+%	\theta_R,  & \text{if } \hat{Z_j} = R; \\
+%	\theta_{10},  & \text{if } Z_j \leq n_A,\hat{Z_j} = n_A + 1 ; \\
+%	\theta_{01},  & \text{if } Z_j = n_A + 1,\hat{Z_j} \leq n_A ; \\
+%	\theta_{11},  & \text{if } Z_j, \hat{Z}_j \leq n_A, Z_j \neq \hat{Z_j} ; \\
+%\end{cases}\] Here, \(\theta_R\) is the loss from not making a decision
+%on the linkage status, \(\theta_{10}\) is the loss from a false
+%non-match, \(\theta_{01}\) is the loss from a false match, and
+%\(\theta_{11}\) is the loss from the special case of a false match in
+%which the record has a true match other than the one estimated by the
+%model. 
+%
+%We seek to minimize the posterior expected loss, given by $\mathbb{E}[L(\hat{\mathbf{Z}}, \mathbf{Z})|\Gamma^{obs}] = \sum_{\mathbf{Z}} L(\hat{Z_j}, Z_j)P(\mathbf{Z}|\Gamma^{obs})$. In this paper, we adopt losses
+%\(\theta_R = \infty, \theta_{10} = 1, \theta_{01} = 1, \theta_{11} = 2\), inducing the intuitive decision rule
+%
+%\[\hat{Z}_j =\begin{cases} 
+%	i,  & \text{if } P(Z_j = i |\Gamma) > \frac{1}{2}; \\
+%	0,  & \text{otherwise} ; \\
+%\end{cases}\]
+%
+%For a more in-depth explanation of this function and the induced Bayes
+%estimate, see \citep{sadinle_bayesian_2017}.
+%
+%Since our Gibbs procedure does not strictly enforce one-to-one matching, it is possible for this Bayes estimate to link multiple records in $\bm{X_2}$ to one record in $\bm{X_1}$. It is often desirable to see such matches, because they provide evidence of model misspecification; specifically, large numbers of "many to one" matches indicate that the assumption of no duplicates within files may not be reasonable. We will explore this issue more deeply through the El Salvador homicide case study. 
+%
+%To achieve a Bayes estimate that fulfills one-to-one matching requirement, we simply minimize the expected loss subject to the constraint that $\hat{Z}_j \neq \hat{Z}_{j'}$ for all $j \neq j'$. In the event that two matches. In the event that we have two records $j$ and $j'$ such that both $P(Z_j = i |\Gamma) > \frac{1}{2}$ and $ P(Z_{j'} = i |\Gamma) > \frac{1}{2}$, this constraint means we accept the match with the highest posterior probability, and declare the other to have no match.  A similar approach can be see in the most probable maximal matching sets used by \citep{steorts_2013} to match records to latent entities, and is justified within this Bayesian framework.
 
 \section{Efficient and Scalable Implementation}
 \label{sec:efficiency}
