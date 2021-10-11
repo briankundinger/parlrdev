@@ -505,13 +505,13 @@ To achieve a Bayes estimate that fulfills one-to-one matching requirement, we si
 \section{Efficient and Scalable Implementation}
 \label{sec:efficiency}
 
-To increase the speed of our Gibbs sampler and expand the scale of the linkage tasks we can undertake, we employ hashing methods similar to those used by \cite{enamorado2019using} in the creation of \texttt{fastlink}, a fast and scalable implementation of the Fellegi Sunter method. The key insight is to recognize that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. To make this more precise, let 
-\(\mathcal{H}\) be the set of unique agreement patterns in the data, let
-\(P = |\mathcal{H}|\) denote the total number of unique agreement
-patterns.  Observe that \(P\) is bounded above by \(\prod_{f=1}^F L_f\), and that this bound does not depend on \(n_1\) or \(n_2\).  Prior to
-processing the data, we identify all \(P\) patterns in \(\mathcal{H}\)
-and enumerate them \(1, \ldots, P\), which are called \emph{hashed values}. Additionally, we store ``one-hot encodings'' of these patterns rather than the original Fellegi Sunter comparison vectors, to aid in vectorized computations. Whenever possible, we conduct calculations over these \(P\) agreement
-patterns, instead of the typical \(n_1 \times n_2\) record pairs. 
+To increase the speed of our Gibbs sampler and expand the scale of the linkage tasks we can undertake, we employ hashing methods similar to those used by \cite{enamorado2019using} in the creation of \texttt{fastlink}, a fast and scalable implementation of the Fellegi Sunter method. The key insight is to recognize that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. To make this more precise, let $h_1, \ldots, h_P$ denote the unique agreement patterns, collect these unique patterns in the set $\mathcal{P} = \{h_1, \ldots, h_P\}$. Here, 
+$P = |\mathcal{P}|$ is the total number of unique agreement
+patterns; observe that \(P\) is bounded above by \(\prod_{f=1}^F L_f\), and that this bound does not depend on \(n_1\) or \(n_2\). In this context, the integers $1, \ldots, P$ serve as \emph{hashed values} that encode the same information as the orignial vectors themselves. Whenever possible, we conduct calculations over these \(P\) agreement
+patterns, instead of the typical \(n_1 \times n_2\) record pairs.
+
+
+Additionally, we store ``one-hot encodings'' of these patterns rather than the original Fellegi Sunter comparison vectors, to aid in vectorized computations.  
 
 %In this section, we propose efficient and scalable proposals using hashing based methods that are similar in spirit to \citep{enamorado2019}, a fast and scalable implementation of the Fellegi-Sunter model. 
 % Specifically, one way we can improve our computational efficiency is by recognizing that record pairs contribute to posterior calculations only
@@ -536,16 +536,15 @@ First, we hash record pairs of the same agreement pattern to unique integer valu
 
 $$h^{*}(i, j) = \sum_{f = 1}^F I(\gamma_{ij}^f > 0)2^{\gamma_{ij}^f + I(k>1)\sum_{e=1}^{k-1}(L_e -1)}$$
 
-This function maps each agreement pattern to a unique integer, allowing us to store a scalar quantity instead of an entire vector for each record pair. For computational ease, we then map these integers to sequential integers from $1, \ldots, P$ corresponding to the enumerated patterns $\mathcal{H}$. When the $(i, j)$ pair exhbits the $p^{th}$ pattern, we say $h(i,j) = p$.
+This function maps each agreement pattern to a unique integer, allowing us to store a scalar quantity instead of an entire vector for each record pair. For computational ease, we then map these integers to sequential integers from $1, \ldots, P$ corresponding to the enumerated patterns in $\mathcal{P}$. When the $(i, j)$ pair exhibits the $p^{th}$ pattern, we say $(i, j) \in h_p$.
 
 With all record pairs converted to hashed values, we can create a more compact nested list 
 $$\mathcal{R} = \left\{\{r_{j_p} \}_{p=1}^{P} \right\}_{j = 1}^{n_2}$$
-where $r_{j_p} = \{i \in \bm{X_1} | h(i,j) = p\}$. Note that the pair $(\mathcal{H}, \mathcal{R})$ fully characterizes the comparison matrix $\Gamma$ with no loss of information. This representation is useful because it allows us to easily compute sufficient statistics
-$$H_{j_p} = \sum_{i} I(h(i,j) = p) = ||r_{j_p}||$$
+where $r_{j_p} = \{i \in \bm{X_1} | (i, j) \in h_p\}$. This representation is useful because it allows us to easily compute sufficient statistics
+$$H_{j_p} = \sum_{i} I((i, j) \in h_p) = ||r_{j_p}||$$
 and
-$$H_p =  \sum_{i, j} I(h(i,j) = \sum_{j} H_{j_p}$$
-As will be shown in Section \ref{efficient-posterior}, all posterior calculations are conducted through these sufficient statistics.
-
+$$H_p =  \sum_{i, j} I((i, j) \in h_p) = \sum_{j} H_{j_p}$$
+As will be shown in Section \ref{efficient-posterior}, all posterior calculations are conducted through these sufficient statistics. Note that $\mathcal{P}$ and $\mathcal{R}$ fully characterize the comparison matrix $\Gamma$ with no loss of information, so we proceed with $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}\}$ for our efficient posterior inference. 
 
 \hypertarget{large-data}{%
 	\subsection{Working with Large Data}\label{large-data}}
@@ -612,14 +611,14 @@ allows us to conduct linkage tasks over much larger datasets.
 \hypertarget{efficient-posterior}{%
 	\subsection{Efficient Posterior Inference }\label{efficient-posterior}}
 
-\underline{Sample $\Phi^{(s+1)}|\mathcal{H}, \mathcal{R}, \mathbf{Z}^{(s)}$:} Calculated at the level of the record pairs, updating  \(\alpha_{fl}(\mathbf{Z})\) and \(\beta_{fl}(\mathbf{Z})\) for each field and level in the linkage task constitutes \(2 \times \sum L_f\) many summations over \(n_A \times n_B\) quantities. These are simple calculations, but become computationally burdensome when working on large linkage tasks. 
+\underline{Sample $\Phi^{(s+1)}|\tilde{\Gamma}, \mathbf{Z}^{(s)}$:} Calculated at the level of the record pairs, updating  \(\alpha_{fl}(\mathbf{Z})\) and \(\beta_{fl}(\mathbf{Z})\) for each field and level in the linkage task constitutes \(2 \times \sum L_f\) many summations over \(n_A \times n_B\) quantities. These are simple calculations, but become computationally burdensome when working on large linkage tasks. 
 
-Instead, we use one-hot encodings of the agreement patterns $\mathcal{H}$ for more efficient calculations. Denote
+Instead, we use one-hot encodings of the agreement patterns $\mathcal{P}$ for more efficient calculations. Denote
 $H_p^m = \sum_{j=1}^{n_B} \mathbf{1}_{(Z_j, j) \in h_p}$ to be the
 number of matching record pairs with agreement pattern $p$. We can also easily calculate the number of nonmatching record pairs with agreement pattern $p$ as \(H_p^u = H_p - H_p^m\). Then, if $\mathbf{\alpha_0}$ and $\mathbf{\beta_0}$ are vectors of prior parameters for the $\mathbf{m}$ and $\mathbf{u}$ distributions respectively, the posterior update becomes simply
 
-$$\alpha(\mathbf{Z}) = \mathbf{\alpha_0} + \sum_{p=1}^P H_p^m \times h_p$$
-$$\beta(\mathbf{Z}) = \mathbf{\beta_0} + \sum_{p=1}^P H_p^u \times h_p$$
+$$\alpha(\mathbf{Z}) = \bm{\alpha_0} + \sum_{p=1}^P H_p^m \times h_p$$
+$$\beta(\mathbf{Z}) = \bm{\beta_0} + \sum_{p=1}^P H_p^u \times h_p$$
 
 Note that these constitute \(P\) many summations over \(n_B\) quantities, and thus avoid the \(n_A \times n_B\) summation from the original method.
 
@@ -646,11 +645,9 @@ Note that these constitute \(P\) many summations over \(n_B\) quantities, and th
 %that these constitute \(P\) many summations over \(n_B\) quantities, and
 %thus avoid the \(n_A \times n_B\) summation from the original method.
 
-\underline{Sample $\mathbf{Z}^{(s+1)}|\mathcal{H}, \mathcal{R}, \Phi^{(s+1)}$:} Although sampling \(Z_j\) from a the
+\underline{Sample $\mathbf{Z}^{(s+1)}|\tilde{\Gamma}, \Phi^{(s+1)}$:} Although sampling \(Z_j\) from a the
 full conditional provided earlier is conceptually straightforward, it
-becomes computational burdensome when \(n_A\) is larger. The reader can
-confirm that sampling a value from a large set of unequal probabilities
-becomes difficult in most programming languages. To speed up
+becomes computational burdensome when $n_1$ is large. This is because sampling a value from $n_1$ many options with unequal weights requires normalizing the weights to probabilities, which has a computational cost that scales with $n_1$. To speed up
 computation, we break this sampling step into two simpler steps. First,
 we calculate the Fellegi Sunter weight \(w_{p}\) associated with each
 unique pattern and sample the agreement pattern between \(j\) and its
@@ -660,24 +657,23 @@ records associated with that agreement pattern for that particular
 pattern between \(j\) and its potential match, and say
 \(h(Z_j) = h_{P+1}\) when \(Z_j = n_A + 1\). Then,
 
-\[P\left(h\left(Z_j^{(s+1)}\right) = p | \mathbf{m}, \mathbf{u}, \mathbf{Z^{(s)}}\right) \propto
+$$P\left(h\left(Z_j^{(s+1)}\right) = p \mid \Phi, \mathbf{Z^{(s)}}\right) \propto
 \begin{cases} 
-	w_{p}\times H_{p_j}  & p \leq P; \\
+	w_{p}\times H_{j_p}  & p \leq P; \\
 	n_A \frac{n_B - D + \beta_{\lambda}}{D + \alpha_{\lambda}} &   p = P + 1 \\
-\end{cases}\]
-\[P\left(Z_j^{(s+1)} = i\bigg|\;\; h\left(Z_j^{(s+1)}\right) = p\right) = \begin{cases} 
-	\frac{1}{H_{p_j}} & (i, j) \in h_p \\
+\end{cases}$$
+$$P\left(Z_j^{(s+1)} = i \mid h\left(Z_j^{(s+1)}\right) = p\right) \begin{cases} 
+	\frac{1}{H_{j_p}} & (i, j) \in h_p \\
 	0 & \text{otherwise} \\
-\end{cases}\]
+\end{cases}$$
 
 Lastly, we recognize that all posterior updates are governed by the
 agreement patterns of the record pairs rather than the record labels
 themselves. Thus we complete the entire Gibbs procedure first at the
 level of the \(P\) agreement patterns with the first equation above.
-After, we can back-fill the records corresponding to the agreement
-patterns through the second equation. Sampling uniformly is
-computationally simple even for large sets of candidate records, but this
-step can also be parallelized when working with large data.
+After all Gibbs iterations are complete, we can back-fill the records corresponding to the agreement patterns through the second equation.
+
+We emphasize the computational gains of this split sampler: the first step is a sample from $P$ many options, where $P$ does not scale with the size of the linkage task; and the second step is sampling uniformly at random, which is computationally simple even for large sets of candidate records. These changes in themselves drastically improves the speed of the sampler, and each can be parallelized if desired for additional computational gains. 
 
 To aid the reader, we provide summary of the \texttt{fabl} method through pseudocode:
 
@@ -714,7 +710,7 @@ To aid the reader, we provide summary of the \texttt{fabl} method through pseudo
 
 {
 \color{blue}
-The computational complexity of \texttt{fabl} is determined by its two steps: constructing comparison vectors and Gibbs sampling. The computational complexity of all pairwise comparisons across files $\mathbf{X}_1$ and $\mathbf{X}_2$ is $O(F n_1 n_2)$. \textcolor{blue}{TALK TO BEKA. I CAN DO THE SAME TRICKS AS TED HERE TO REDUCE COMPLEXITY}. Since \texttt{fabl} is able to compute these comparisons in parallel, we can split these computations across $B$ equally sized partitions, so the complexity becomes $O(\frac{F}{B} n_1 n_2)$.
+The computational complexity of \texttt{fabl} is determined by its two steps: constructing comparison vectors and Gibbs sampling. The computational complexity of all pairwise comparisons across files $\mathbf{X}_1$ and $\mathbf{X}_2$ is $O(F n_1 n_2)$. Since \texttt{fabl} is able to compute these comparisons in parallel, we can split these computations across $B$ equally sized partitions, so the complexity becomes $O(\frac{F}{B} n_1 n_2)$.
 
 Without hashing, the computational complexity of updating the $\mathbf{m}$ and $\mathbf{u}$ parameters is $O(F n_1 n_2)$. However, by doing calculations over the agreement patterns rather than the individual record, hashing reduces the complexity to $O(FP)$.
 
@@ -889,18 +885,10 @@ Turning to evaluation metrics, this simulation achieved 96.5\% recall and 97.7\%
 \section{Application to Civilian Casualties from the El Salvadoran Civil War}
 \label{sec:case-studies}
 
-In this section, we revisit an application to the El Salvadoran Civil War, where we estimate the number of documented identifiable deaths (DID). Though the data files used here are small, this study shows how the computational complexity of \texttt{fabl} depends on the number of unique agreement patterns, and how significant computational gains can be achieved by simplifying the construction of the comparison vectors. This case study also considers the ramifications of 
-independently sampling $Z_j$ rather than strictly enforcing one-to-one matching as done by \texttt{BRL}. 
-
-%The second case study is the National Long Term Care Survey (NLTCS), a much larger linkage tasks which \texttt{BRL} is unable to complete but which we complete with \texttt{fabl} with relative ease. 
+In this section, we revisit an application to the El Salvadoran Civil War, where we estimate the number of individuals recorded in each dataset. Though the data files used here are small, this study shows how the computational complexity of \texttt{fabl} depends on the number of unique agreement patterns found in the data, and how significant computational gains can be achieved by simplifying the construction of the comparison vectors. This case study also considers the ramifications of independently sampling $Z_j$ rather than strictly enforcing one-to-one matching as done by \texttt{BRL}. 
 
 \subsection{El Salvadoran Civil War}
 \label{el_salvador}
-
-{
-\color{blue} For Beka: You wrote that you wanted more detail here, and I added some of it (with some citations). I believe I have all the important informatoin, just more concise. If I included Sadinle's level of detail, I worried about plagarism.
-\vspace{1em}
-}
 
 The country of El Salvador was immersed in civil war from 1980 to 1991,
 and throughout the time, several organizations attempted to document
@@ -1005,17 +993,14 @@ gains can be made by simplifying the construction of the comparison
 vectors. The estimates of the \(\mathbf{m}\) parameters under each method are very similar, as shown in
 Figure~\ref{fig:m-and-u}.
 
-{
-\color{blue}
 Through \texttt{fabl}, we arrive at a Bayes estimate of 179 individuals recorded in both datasets. We calcuate posterior samples of size of the overlap across files by summing the number of matches found in each iteration of the Gibbs sampler, and subtracting the number of matches that violate one-to-one matching. The posterior 95\% credible interval for the overlap across files is (206, 238), indicating that the Bayes estimate is quite conservative. This is because there a large number of records in ERTL for which there are multiple plausible matches in CDHES; \texttt{fabl} recognizes that a match exists among the several options, but is unable to definitely declare a specific pair a match in the Bayes estimate. We also compute a partial estimate of the linkage structure, using $\theta_{10} = \theta_{01} = 1$, $\theta_{11} = 2$, and $\theta_R = 0.1$ as in the simulation study. Here, the Bayes estimate provides 136 matches of which the model is quite confident, and 175 records to verify manually; this means that after clerical review, the number of individuals replicated across datasets would fall in the interval (136, 311), encapsulating the posterior credible interval. More or fewer records could be indentified for clerical review by decreasing or increasing $\theta_R$. 
 
 We see similar results under \texttt{BRL}, with a Bayes estimate of 181 individuals recorded in both datasets, a posterior 95\% credible interval of (211, 244), and a range of (140, 294) after the partial estimate and clerical review. 
-}
 
 \begin{figure}[h!]
 	\begin{center}
 		\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_distribution_smallP_bayes} 
-		\caption{Posterior distribution of overlap across the two files. The solid lines show the Bayes estimate for the amount of overlap, and the dashed line is the Bayes estimate under fabl before resolving violations of one-to-one matching}
+		\caption{Posterior distribution and Bayes estimate of overlap across the two files. We note they are quite similar under both methods.}
 		\label{fig:overlap-plot}
 	\end{center}
 \end{figure}
@@ -1024,7 +1009,7 @@ We see similar results under \texttt{BRL}, with a Bayes estimate of 181 individu
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_posterior_smallP} 
-\caption{Posterior estimates of m parameters with 95\% credible intervals}\label{fig:m-and-u}
+\caption{Posterior estimates of m parameters with 95\% credible intervals. We note they are quite similar across the two methods. }\label{fig:m-and-u}
 \label{fig:m-and-u}
 \end{center}
 \end{figure}
@@ -1033,12 +1018,8 @@ We see similar results under \texttt{BRL}, with a Bayes estimate of 181 individu
 
 \paragraph{Violations of One-to-One Matching} 
 
-%In this section, we investigate violations of one-to-one matching of our method as compared to \texttt{BRL}.
-{
-\color{blue}
 As noted previously, the application exhibits many situations in which bipartite matching is difficult. To explore further, we calculate the number of matchings throughout the \texttt{fabl} Gibbs sampler that violate our one-to-one assumption, and find on average 26.17 matchings in violation. These matchings are impossible under the \texttt{BRL} Gibbs sampler, so examining these more closely can provide insight how each model handles situations in which one file in \(\bm{X}_1\) has
 multiple plausible matches in \(\bm{X}_2\). 
-}
 
 %Figure~\ref{fig:overlap-plot} shows the posterior distribution for \(D\), the number of
 %duplicates found in both databases for both \texttt{fabl} and \texttt{BRL}. We
@@ -1050,56 +1031,28 @@ multiple plausible matches in \(\bm{X}_2\).
 %throughout the sampler in such a way that does not measurably influence
 %the eventual Bayes estimate.
 
-
-
-
-%\begin{figure}[t]
-%	
-%	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_distribution_smallP_bayes} 
-%		
-%	}
-%	
-%	\caption{Posterior distribution of overlap across the two files. The solid lines show the Bayes estimate for the amount of overlap, and the dashed line is the Bayes estimate under fabl before resolving violations of one-to-one matching}\label{fig:overlap-plot}
-%\end{figure}
-
-%Overall, both methods present similar results. \texttt{fabl} yields
-%an initial Bayes estimate of total 195 DID. After
-%resolving matches that violated one-to-one requirements,  we estimate 180 DID. 
-%
-%
-%
-%This is very close to the 181 DID found
-%by \texttt{BRL}. The main reason for this discrepancy is the difference
-%in how each model handles situations in which one file in \(\bm{X}_1\) has
-%multiple plausible matches in \(\bm{X}_2\).
-
-
-%
-%\begin{figure}[t]
-%	
-%	{\centering \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/rosa_records} 
-%		
-%	}
-%	
-%	\caption{Example of linkage situation with multiple plausible matches}\label{fig:rosa-maria}
-%\end{figure}
-
-
-
-Figure~\ref{fig:rosa-maria} illustrates an example. Note that these
+Figure~\ref{Tab:rosa-maria} illustrates an example. Note that these
 records present a near violation of our assumption that there are no
 duplications within files; we continue to assume that records 825 and
 826 in ERTL correspond to different individuals, but their records are
 nearly identical. In addition, using the modified Levenstein distance, the comparison vectors \(\gamma_{2776, 825}\) and
 \(\gamma_{2776, 826}\) are exactly identical.
 
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/rosa_records} 
-\caption{Example of linkage situation with multiple plausible matches}\label{fig:rosa-maria}
-\end{center}
-\end{figure}
-
+\begin{table}
+	\centering
+	\begin{tabular}[h!]{llllllll}
+		\hline
+		Record Number & dataset & lastname & firstname & day & month & year & dept \\
+		\hline
+		825 & CDHES & Pineda & Rosa & 6 & 4 & 1984 & NA\\
+		\hline
+		826 & CDHES & Pineda & Rosa Maria & 6 & 4 & 1984 & NA\\
+		\hline
+		2776 & ERTL & Pineda & Rosa Maria & 4 & 4 & 1984 & NA\\
+		\hline
+	\end{tabular}
+	\caption{Example of linkage situation in which record 2776 in ERTL has multiple plausible matches in CDHES, leading to undesirable behavior both \texttt{fabl} and \texttt{BRL}.} \label{Tab:rosa_maria}
+\end{table}
 
 Figure~\ref{fig:mixing-plot} shows the values that \(Z_{825}\) and \(Z_{826}\) take on
 throughout the Gibbs sampler, and demonstrates how each method handles
@@ -1120,7 +1073,7 @@ be identified through the Bayes estimate. In short, we have pointed out why one 
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/bad_mixing} 
-\caption{Gibbs sampling in situation with multiple plausible matches.}\label{fig:mixing-plot}
+\caption{Gibbs sampling in situation with multiple plausible matches. Under \texttt{BRL}, two records in ERTL compete for their most similar record, splitting the posterior probability. Under \texttt{fabl}, both record consistently match with their most similar record, consistently violating one-to-one matching.} \label{fig:mixing-plot}
 \end{center}
 \end{figure}
 
@@ -1166,12 +1119,12 @@ there is duplication both across and within datasets. Tuning
 \texttt{fabl} for use in these scenarios is one potential avenue for
 future work.
 
-\bigskip
+\clearpage
 
 \section{Appendix}
 \label{sec:appendix}
 
-\begin{figure}[htbp]
+\begin{figure}[h]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_trace} 
 \caption{Traceplot for number of matches found across datasets in El Salvador case study}\label{fig:overlap_trace}
@@ -1180,14 +1133,14 @@ future work.
 
 
 
-\begin{figure}[htbp]
+\begin{figure}[h]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_trace} 
 \caption{Traceplot for m parameter in El Salvador case study}\label{fig:m_trace}
 \end{center}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[h]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/u_trace} 
 \caption{Traceplot for u parameter in El Salvador case study}\label{fig:u_trace}
@@ -1196,7 +1149,8 @@ future work.
 
 
 
-\newpage
+\clearpage
+
 \bigskip
 
 \bibliographystyle{jasa}
