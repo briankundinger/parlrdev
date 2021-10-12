@@ -678,13 +678,10 @@ We emphasize the computational gains of this split sampler: the first step is a 
 
 To aid the reader, we provide summary of the \texttt{fabl} method through pseudocode in Appendix \ref{app:fabl-psuedocode}.
 
-
-
 \hypertarget{computational-complexity}{%
 	\subsection{Computational Complexity}\label{computational-complexity}}
-In this section, we provide the computational complexity of \texttt{fabl} in Lemma \ref{lemma:fabl}. 
+In this section, we provide the computational complexity of \texttt{fabl} in Lemma \ref{lemma:fabl}. Let $L^{*} = \sum_{f=1}^F L_f$ denote the total number of levels used across all features in the linkage task. 
 
-\newpage
 \begin{lemma}
 The overall computational complexity of \texttt{fabl} is $O(\frac{F}{B} n_1 n_2) + O(n_2 P).$
 \end{lemma}
@@ -692,8 +689,9 @@ The overall computational complexity of \texttt{fabl} is $O(\frac{F}{B} n_1 n_2)
 \begin{proof}
 To prove the computational complexity, we consider two steps --- constructing the comparison vectors and the Gibbs sampler. 
 %
-The computational complexity of all pairwise comparisons across the two databases $\mathbf{X}_1$ and $\mathbf{X}_2$ is $O(F n_1 n_2)$. Since \texttt{fabl} is able to compute these comparisons in parallel, we can split these computations across $B$ equally sized partitions, so the complexity becomes $O(\frac{F}{B} n_1 n_2)$.\footnote{Without hashing, the computational complexity of updating the $\mathbf{m}$ and $\mathbf{u}$ parameters is $O(F n_1 n_2)$. However, by doing calculations over the agreement patterns rather than the individual record, hashing reduces the overall complexity to $O(FP)$, where $F$ is the total number of features and $P$ is the total number of agreement patterns.}
-The complexity of updating $Z$ sequentially at the record level is $O(n_1 n_2)$. With hashing, we split this sampling into two steps. First we sample that agreement pattern of the match with complexity $O(n_2 P).$ Next,  we sample the record that exhibits that pattern with complexity $O(n_2)$. Thus we have reduced the complexity of the Gibbs sampler (under \texttt{BRL})from $O(F n_1 n_2)$ to $O(n_2 P)$.
+The computational complexity of all pairwise comparisons across the two databases $\mathbf{X}_1$ and $\mathbf{X}_2$ is $O(F n_1 n_2)$. The hashing procedure for all pairwise comparisons is also of complexity $O(F n_1 n_2)$. Since \texttt{fabl} is able to compute these comparisons in parallel, we can split these computations across $B$ equally sized partitions, so the complexity becomes $O(\frac{F}{B} n_1 n_2)$. There are then minimal computational costs associated with synthesizing summary statistics across these partitions. 
+
+Without hashing, the computational complexity of updating the $\mathbf{m}$ and $\mathbf{u}$ parameters is $O(F n_1 n_2)$. However, by doing calculations over the agreement patterns rather than the individual record, hashing reduces the overall complexity to $O(L^{*}P)$, where $L^{*} = \sum_{f=1}^F L_f$ is the total number of levels used across all features in the linkage task and $P$ is the total number of agreement patterns.The complexity of updating $Z$ sequentially at the record level is $O(n_1 n_2)$. With hashing, we split this sampling into two steps. First we sample that agreement pattern of the match with complexity $O(n_2 P).$ Next, we sample the record that exhibits that pattern with complexity $O(n_2)$. Since $L^{*} << n_1$ in all reasonable applications, we have reduced the complexity of the Gibbs sampler from $O(F n_1 n_2)$ under \texttt{BRL} to $O(n_2 P)$ under \texttt{fabl}.
 In summary, the total computational complexity is $O(\frac{F}{B} n_1 n_2) + O(n_2 P).$
 \end{proof} 
 
@@ -711,7 +709,14 @@ In summary, the total computational complexity is $O(\frac{F}{B} n_1 n_2) + O(n_
 \section{Simulation Studies}
 \label{sec:simulations}
 
-In this section, we replicate a simulation study from \cite{sadinle_bayesian_2017} to compare \texttt{fabl} against \texttt{BRL} on several simulated datasets with varying amounts of error and overlap. We use first name, last name, age, and occupation for this linkage, and create comparison vectors according to the default settings of the \texttt{compareRecords} function from the \texttt{BRL} package. See Table~\ref{Tab:sadinle_simulation_cutoffs} for details on the construction of comparison vectors. Each simulation identifies duplicated individuals between two datasets, each with 500 records. We conduct linkage when matching records exhibit 1, 2, and 3 errors across the four fields, and when there are 50, 250, and 450 individuals in common across datasets. We use flat priors for all $m$ and $u$ parameters, run the Gibbs Sampler for 1000 iterations, and discard the first 100 as burn-in. Traceplots for parameters of interest for one example simulation are provided in Appendix \ref{app:appendix-sim}.
+We demonstrate the accuracy, speed, and scale of \texttt{fabl} as compared to \texttt{BRL} through several simulation studies. 
+
+%Sections \ref{accuracy} and \ref{partial} utilize simulated datasets from \cite{sadinle_bayesian_2017} made available by the author to show the similarity of both methods across several accuracy metrics. These same datasets are used in Section \ref{scale} to create a larger linkage test to demonstrate the scale of problems \texttt{fabl} can undertake. Finally, Section \ref{speed} demonstrates the computational gains. 
+
+\hypertarget{accuracy}{%
+	\subsection{Accuracy under Full Estimates}\label{accuracy}}
+
+We replicate a simulation study from \cite{sadinle_bayesian_2017} to compare \texttt{fabl} against \texttt{BRL} on several simulated datasets with varying amounts of error and overlap. We use first name, last name, age, and occupation for this linkage, where age and occupation take on 9 and 10 unique values respectively. We creage comparison vectors according to the default settings of the \texttt{compareRecords} function from the \texttt{BRL} package, shown in Table~\ref{Tab:sadinle_simulation_cutoffs}. Each simulation identifies duplicated individuals between two datasets, each with 500 records. We conduct linkage when matching records exhibit 1, 2, and 3 errors across the four fields, and when there are 50, 250, and 450 individuals in common across datasets. We use flat priors for all $m$ and $u$ parameters, run the Gibbs Sampler for 1000 iterations, and discard the first 100 as burn-in. Traceplots for parameters of interest for one example simulation are provided in Appendix \ref{app:appendix-sim}.
 
 \begin{table}[h!]
 	\centering
@@ -729,17 +734,13 @@ In this section, we replicate a simulation study from \cite{sadinle_bayesian_201
 \caption{Construction of comparison vectors for accuracy study with simulated datasets}
 \label{Tab:sadinle_simulation_cutoffs}
 \end{table}
-
-
-\hypertarget{accuracy}{%
-	\subsection{Precision, Recall, and F-measure}\label{accuracy}}
 	
-In this section, we compare \texttt{fabl} to 	\texttt{BRL} in terms of precision, recall, and f-measure, which are commonly defined record linkage evaluation metrics that are defined in \citep{christen_2012}. 
-%
-In cases when there are only one or two errors in matching records, and in cases with low to moderate duplication across records, we see that \texttt{fabl} provides approximately equivalent accuracy as \texttt{BRL}. 
-We find that our method only has weakened performance in the
-most extreme scenario of very high errors and very high overlap across
-files. In these situations, \texttt{BRL} is removing large numbers of records from consideration throughout the Gibbs Sampler, making its implementation most different from \texttt{fabl}. However,  such extreme linkage tasks, which such high amounts of errors and overlap, are extremely rare in practice. 
+We compare \texttt{fabl} to \texttt{BRL} in terms of precision, recall, and f-measure, which are commonly defined record linkage evaluation metrics that are defined in \citep{christen_2012}. At all levels of error and overlap, we see that the two methods have comparable performance. In the specific case of high error and high overlap, widely regarded as the most difficult linkage scenario, we see that \texttt{fabl} performs slightly worse on average; however, since both methods exhibit high variance in performance in this setting, we remain confident in \texttt{fabl}'s overal accuracy. 
+
+%In cases when there are only one or two errors in matching records, and in cases with low to moderate duplication across records, we see that \texttt{fabl} provides approximately equivalent accuracy as \texttt{BRL}. 
+%We find that our method only has weakened performance in the
+%most extreme scenario of very high errors and very high overlap across
+%files. In these situations, \texttt{BRL} is removing large numbers of records from consideration throughout the Gibbs Sampler, making its implementation most different from \texttt{fabl}. However,  such extreme linkage tasks, which such high amounts of errors and overlap, are extremely rare in practice. 
 
 %\begin{figure}
 %	\[\text{Recall} = \frac{\text{Matches Correctly Identified}}{\text{True Matches in Data}}\]
@@ -773,7 +774,7 @@ files. In these situations, \texttt{BRL} is removing large numbers of records fr
 \hypertarget{partial}{%
 	\subsection{Accuracy under Partial Estimates}\label{partial}}
 
-Lastly, we review the performance of \texttt{fabl} and \texttt{BRL} using loss functions that allow partial estimates of the linkage parameter. By leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the \emph{negative predictive value} (NPV), defined as the proportion of non-links that are actual non-matches. Mathematically, $NPV = \sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j = n_1 + j)$/$\sum_{j=1}^{n_2} I(\hat{Z}_j = n_1 + j)$. We continue to use the precision, which is renamed the \emph{positive predictive value} in this context. Lastly, we also report that rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_2} I(\hat{Z}_j = R)$.
+By leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the \emph{negative predictive value} (NPV), defined as the proportion of non-links that are actual non-matches. Mathematically, $NPV = \sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j = n_1 + j)$/$\sum_{j=1}^{n_2} I(\hat{Z}_j = n_1 + j)$. We continue to use the precision, which is renamed the \emph{positive predictive value} in this context. Lastly, we also report that rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_2} I(\hat{Z}_j = R)$.
 
 We see that \texttt{fabl} maintains equivalently strong PPV as \texttt{BRL} across all linkage settings. However, with high amounts of overlap and high amounts of error, the rejection rate under \texttt{fabl} rises, leading to a decrease in NPV. This is reasonable because large numbers of errors lead to situations where one record in $\bf{X}_2$ has multiple plausible matches in $\bf{X}_1$, so that posterior match probability is split across more records. Since \texttt{BRL} removes previously matched records from the set of available records for a new match, it is able to retain higher confidence in matches. In practice, this partial estimate approach is not often used, so we remain confident in \texttt{fabl}'s performance. If one wishes to use partial estimates, \texttt{fabl} will possibly leave more linkages for the modeller to match by hand that would be left under \texttt{BRL}, but the decisions made by each method will have nearly equal accuracy. 
 
@@ -914,7 +915,8 @@ municipality; however, since department was missing in 95\% of records
 in CHDES and 80\% of records in ERTL, this was excluded from our analyses. 
 Thus, we conduct record linkage using given name, last name,
 municipality, and day, month, and year of death. We again use flat
-priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters. To our knowledge, we have followed the same guidelines/settings in \cite{sadinle_bayesian_2017}.
+priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters.
+
 \begin{table}
 \begin{tabular}[h!]{ll|llll}
 	\hline
@@ -923,20 +925,14 @@ priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters. To our knowledge, w
 	Fields & Similarity & 1 & 2 & 3 & 4\\
 	\hline
 	First and Last Name & Modified Levenstein & 0 & (0, .25] & (.25, .5] & (5, 1]\\
-	\hline
 	Year of Death & Absolute Difference & 0 & 1 & 2 & 3+\\
-	\hline
 	Month of Death & Absolute Difference & 0 & 1 & 2-3 & 4+\\
-	\hline
 	Day of Death & Absolute Difference & 0 & 1-2 & 3-7 & 8+\\
-	\hline
 	Municipality & Binary & Agree & Disagree &  & \\
 	\hline
 \end{tabular}
 \caption{Construction of comparison vectors for El Salvador data resembling original implementation from \citep{sadinle2018bayesian}. This set up leads to 2048 possible agreement patterns in total}\label{Tab:el_salvador_cutoffs_1}
 \end{table}
-
-\vspace{1em}
 
 \begin{table}
 	\centering
@@ -947,20 +943,16 @@ priors for the \(\mathbf{m}\) and \(\mathbf{u}\) parameters. To our knowledge, w
 		Fields & Similarity & 1 & 2 & 3\\
 		\hline
 		First and Last Name & Modified Levenstein & 0 & (0, .25] & (.25, 1]\\
-		\hline
 		Year of Death & Binary & Agree & Disagree & \\
-		\hline
 		Month of Death & Binary & Agree & Disagree & \\
-		\hline
 		Day of Death & Absolute Difference & 0 & 1 & 2+\\
-		\hline
 		Municipality & Binary & Agree & Disagree & \\
 		\hline
 	\end{tabular}
 \caption{Construction of comparison vectors for El Salvador for increased speed under \texttt{fabl}. This set up leads to 216 possible agreement patterns in total}\label{Tab:el_salvador_cutoffs_2}
 \end{table}
 
-To mirror the original implementation of \cite{sadinle_bayesian_2017}, we construct the comparison
+To mirror the original implementation of \cite{sadinle_bayesian_2017}, we first construct the comparison
 vectors using four levels of agreement for each field, according to the
 thresholds provided in Table~\ref{Tab:el_salvador_cutoffs_1}. Gibbs sampling for these comparison vectors took 422 seconds for our proposed
 method, \texttt{fabl}, and 240 for \texttt{BRL}. However, we observed that posterior
@@ -1005,7 +997,8 @@ We see similar results under \texttt{BRL}, with a Bayes estimate of 181 individu
 
 
 
-\paragraph{Violations of One-to-One Matching} 
+\hypertarget{violations}{%
+	\subsection{Violations of One-to-One Matching}\label{violations}}
 
 As noted previously, the application exhibits many situations in which bipartite matching is difficult. To explore further, we calculate the number of matchings throughout the \texttt{fabl} Gibbs sampler that violate our one-to-one assumption, and find on average 26.17 matchings in violation. These matchings are impossible under the \texttt{BRL} Gibbs sampler, so examining these more closely can provide insight how each model handles situations in which one file in \(\bm{X}_1\) has
 multiple plausible matches in \(\bm{X}_2\). 
@@ -1020,7 +1013,7 @@ multiple plausible matches in \(\bm{X}_2\).
 %throughout the sampler in such a way that does not measurably influence
 %the eventual Bayes estimate.
 
-Figure~\ref{Tab:rosa-maria} illustrates an example. Note that these
+Table ~\ref{Tab:rosa-maria} illustrates an example. Note that these
 records present a near violation of our assumption that there are no
 duplications within files; we continue to assume that records 825 and
 826 in ERTL correspond to different individuals, but their records are
@@ -1031,16 +1024,14 @@ nearly identical. In addition, using the modified Levenstein distance, the compa
 	\centering
 	\begin{tabular}[h!]{llllllll}
 		\hline
-		Record Number & dataset & lastname & firstname & day & month & year & dept \\
+		Record No. & Dataset & Last Name & First Name & Day & Month & Year & Dept \\
 		\hline
 		825 & CDHES & Pineda & Rosa & 6 & 4 & 1984 & NA\\
-		\hline
 		826 & CDHES & Pineda & Rosa Maria & 6 & 4 & 1984 & NA\\
-		\hline
-		2776 & ERTL & Pineda & Rosa Maria & 4 & 4 & 1984 & NA\\
+		2776 & ERTL & Pineda & Rosa Maria & 4 & 4 & 1984 & Cuscatlan\\
 		\hline
 	\end{tabular}
-	\caption{Example of linkage situation in which record 2776 in ERTL has multiple plausible matches in CDHES, leading to undesirable behavior both \texttt{fabl} and \texttt{BRL}.} \label{Tab:rosa_maria}
+	\caption{Example of linkage situation in which record 2776 in ERTL has multiple plausible matches in CDHES, leading to undesirable behavior both \texttt{fabl} and \texttt{BRL}.}\label{Tab:rosa-maria}
 \end{table}
 
 Figure~\ref{fig:mixing-plot} shows the values that \(Z_{825}\) and \(Z_{826}\) take on
@@ -1120,73 +1111,78 @@ future work.
 	\begin{algorithmic}[1]
 		
 		\Procedure{Hashing and Preprocessing}{}
-		\State Partition files $A$ and $B$ into chunks $\{A_I\}, \{B_J\}$
-		\For{each $I$, $J$}
-		\State Create comparison vectors between $A_I$ and $B_J$
-		\State Hash results and calculate summary statistics
-		\State Use SEI to reduce memory usage
+		\State Construct and enumerate set of unique pattern $\mathcal{P}$ from $F$ and $\{L_f\}$
+		\State Partition files $\bm{X_1}$ and $\bm{X_1}$ into chunks $\{\bm{X_{1n}}\}$, $\{\bm{X_{2m}}\}$
+		\For{each $n$, $m$}
+		\State Create comparison vectors between $\bm{X_{1n}}$ and $\bm{X_{2m}}$
+		\State Hash records to $\mathcal{R}_{nm}$ and calculate summary statistics $\mathcal{H}_{nm}$
+		\State Use SEI to reduce memory usage; $\mathcal{R}_{nm} \to \mathcal{R}_{nm}^{\text{SEI}}$
 		\EndFor
-		\State Synthesize results across pairings
+		\State Synthesize results across pairings to get $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{H} \}$
 		\EndProcedure
 		
 		\Procedure{Gibbs Sampling}{}
 		\State Initialize $m$, $u$, and $Z$ parameters
 		
 		\For{$t \in \{1, \ldots, T\}$} 
-		\State Sample $m^{t+1}|Z^{t}, \Gamma$ and  $u^{t+1}|Z^{t}, \Gamma$ 
-		\State Sample $H\left(Z^{t+1}\right)|m^{t+1}, u^{t+1}, \Gamma$  \Comment{Sample agreement pattern, not record}
+		\State Sample $\Phi^{t+1}|Z^{t}, \tilde{\Gamma}$
+		\State Sample $h\left(Z^{t+1}\right)|\Phi^{t+1}, \tilde{\Gamma}$  \Comment{Sample agreement pattern, not record}
 		\EndFor
-		\State Sample $Z | H(Z), \Gamma$ \Comment{Fills in record label based on agreement pattern}
+		\State Sample $Z | h(Z), \Gamma$ \Comment{Fills in record label based on agreement pattern}
 		
 		\EndProcedure
 		
 	\end{algorithmic}
 \end{algorithm}
+\clearpage
 
 \hypertarget{appendix-sim}{%
 	\subsection{Traceplots for Simulation Study}\label{app:appendix-sim}}
+Below are traceplots for one 900 linkage tasks that comprise the simulation in Section \ref{accuracy}. It is set up with one error across the linkage fields and 50 duplicates across files. 
 
-\begin{figure}[h]
+\begin{figure}[!h]
 	\begin{center}
 		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_overlap_trace} 
-		\caption{Representative traceplot of overlap between files from simulation study in \ref{accuracy}}\label{fig:sim_overlap_trace}
+		\caption{Representative traceplot of overlap between files from simulation study in Section \ref{accuracy}}\label{fig:sim_overlap_trace}
 	\end{center}
 \end{figure}
 
 
 
-\begin{figure}[h]
+\begin{figure}[!h]
 	\begin{center}
 		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_m_trace} 
-		\caption{Representative traceplot of m parameter from simulation study in \ref{accuracy}}\label{fig:sim_m_trace}
+		\caption{Representative traceplot of m parameter from simulation study in Section \ref{accuracy}}\label{fig:sim_m_trace}
 	\end{center}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[!h]
 	\begin{center}
 		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_u_trace} 
-		\caption{Representative traceplot of u parameters from simulation study in \ref{accuracy}}\label{fig:sim_u_trace}
+		\caption{Representative traceplot of u parameters from simulation study in Section \ref{accuracy}}\label{fig:sim_u_trace}
 	\end{center}
 \end{figure}
+
+\clearpage
 
 \hypertarget{appendix-es}{%
 	\subsection{Traceplots for El Salvador Case Study}\label{app:appendix-es}}
 
-\begin{figure}[h]
+\begin{figure}[!h]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_trace} 
 \caption{Traceplot for number of matches found across datasets in El Salvador case study}\label{fig:overlap_trace}
 \end{center}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[!h]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_trace} 
 \caption{Traceplot for m parameter in El Salvador case study}\label{fig:m_trace}
 \end{center}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[!h]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/u_trace} 
 \caption{Traceplot for u parameter in El Salvador case study}\label{fig:u_trace}
