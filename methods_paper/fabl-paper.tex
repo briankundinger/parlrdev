@@ -46,6 +46,7 @@
 \newtheorem*{remark}{Remark}
 \newtheorem{proposition}{Proposition}
 \newtheorem*{definition}{Definition}
+\newtheorem*{lemma}{Lemma}
 
 % DON'T change margins - should be 1 inch all around.
 \addtolength{\oddsidemargin}{-.5in}%
@@ -681,17 +682,31 @@ To aid the reader, we provide summary of the \texttt{fabl} method through pseudo
 
 \hypertarget{computational-complexity}{%
 	\subsection{Computational Complexity}\label{computational-complexity}}
+In this section, we provide the computational complexity of \texttt{fabl} in Lemma \ref{lemma:fabl}. 
 
-{
-\color{blue}
-The computational complexity of \texttt{fabl} is determined by its two steps: constructing comparison vectors and Gibbs sampling. The computational complexity of all pairwise comparisons across files $\mathbf{X}_1$ and $\mathbf{X}_2$ is $O(F n_1 n_2)$. Since \texttt{fabl} is able to compute these comparisons in parallel, we can split these computations across $B$ equally sized partitions, so the complexity becomes $O(\frac{F}{B} n_1 n_2)$.
+\newpage
+\begin{lemma}
+The overall computational complexity of \texttt{fabl} is $O(\frac{F}{B} n_1 n_2) + O(n_2 P).$
+\end{lemma}
 
-Without hashing, the computational complexity of updating the $\mathbf{m}$ and $\mathbf{u}$ parameters is $O(F n_1 n_2)$. However, by doing calculations over the agreement patterns rather than the individual record, hashing reduces the complexity to $O(FP)$.
+\begin{proof}
+To prove the computational complexity, we consider two steps --- constructing the comparison vectors and the Gibbs sampler. 
+%
+The computational complexity of all pairwise comparisons across the two databases $\mathbf{X}_1$ and $\mathbf{X}_2$ is $O(F n_1 n_2)$. Since \texttt{fabl} is able to compute these comparisons in parallel, we can split these computations across $B$ equally sized partitions, so the complexity becomes $O(\frac{F}{B} n_1 n_2)$.\footnote{Without hashing, the computational complexity of updating the $\mathbf{m}$ and $\mathbf{u}$ parameters is $O(F n_1 n_2)$. However, by doing calculations over the agreement patterns rather than the individual record, hashing reduces the overall complexity to $O(FP)$, where $F$ is the total number of features and $P$ is the total number of agreement patterns.}
+The complexity of updating $Z$ sequentially at the record level is $O(n_1 n_2)$. With hashing, we split this sampling into two steps. First we sample that agreement pattern of the match with complexity $O(n_2 P).$ Next,  we sample the record that exhibits that pattern with complexity $O(n_2)$. Thus we have reduced the complexity of the Gibbs sampler (under \texttt{BRL})from $O(F n_1 n_2)$ to $O(n_2 P)$.
+In summary, the total computational complexity is $O(\frac{F}{B} n_1 n_2) + O(n_2 P).$
+\end{proof} 
 
-The complexity of updating $Z$ sequentially at the record level is $O(n_1 n_2)$. With hashing, we split this sampling into two steps; first we sample that agreement pattern of the match with complexity $O(n_2 P)$, and then we sample the record that exhibits that pattern with complexity $O(n_2)$. Thus we have reduced the complexity of the Gibbs sampler under \texttt{BRL} from $O(F n_1 n_2)$ to $O(n_2 P)$.
-
-Overall, the computational complexity under the complete \texttt{fabl} framework is $O(\frac{F}{B} n_1 n_2) + O(n_2 P)$.
-}
+%{
+%\color{blue}
+%The computational complexity of \texttt{fabl} is determined by its two steps: constructing comparison vectors and Gibbs sampling. The computational complexity of all pairwise comparisons across files $\mathbf{X}_1$ and $\mathbf{X}_2$ is $O(F n_1 n_2)$. Since \texttt{fabl} is able to compute these comparisons in parallel, we can split these computations across $B$ equally sized partitions, so the complexity becomes $O(\frac{F}{B} n_1 n_2)$.
+%
+%Without hashing, the computational complexity of updating the $\mathbf{m}$ and $\mathbf{u}$ parameters is $O(F n_1 n_2)$. However, by doing calculations over the agreement patterns rather than the individual record, hashing reduces the complexity to $O(FP)$.
+%
+%The complexity of updating $Z$ sequentially at the record level is $O(n_1 n_2)$. With hashing, we split this sampling into two steps; first we sample that agreement pattern of the match with complexity $O(n_2 P)$, and then we sample the record that exhibits that pattern with complexity $O(n_2)$. Thus we have reduced the complexity of the Gibbs sampler under \texttt{BRL} from $O(F n_1 n_2)$ to $O(n_2 P)$.
+%
+%Overall, the computational complexity under the complete \texttt{fabl} framework is $O(\frac{F}{B} n_1 n_2) + O(n_2 P)$.
+%}
 
 \section{Simulation Studies}
 \label{sec:simulations}
