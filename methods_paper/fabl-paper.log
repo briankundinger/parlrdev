@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7140 64-bit) (preloaded format=pdflatex 2019.8.26)  11 OCT 2021 18:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7140 64-bit) (preloaded format=pdflatex 2019.8.26)  11 OCT 2021 20:08
 entering extended mode
 **./fabl-paper.tex
 (fabl-paper.tex
@@ -1082,43 +1082,72 @@ Package pdftex.def Info: ../notes/figures/el_salvador/bad_mixing.png  used on i
 nput line 1075.
 (pdftex.def)             Requested size: 277.3648pt x 171.04262pt.
  [30 <../notes/figures/el_salvador/bad_mixing.png>] [31]
-<../notes/figures/el_salvador/overlap_trace.png, id=467, 505.89pt x 505.89pt>
-File: ../notes/figures/el_salvador/overlap_trace.png Graphic file (type png)
-<use ../notes/figures/el_salvador/overlap_trace.png>
-Package pdftex.def Info: ../notes/figures/el_salvador/overlap_trace.png  used o
-n input line 1129.
+<../notes/figures/sim_overlap_trace.png, id=467, 505.89pt x 505.89pt>
+File: ../notes/figures/sim_overlap_trace.png Graphic file (type png)
+<use ../notes/figures/sim_overlap_trace.png>
+Package pdftex.def Info: ../notes/figures/sim_overlap_trace.png  used on input 
+line 1129.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
-<../notes/figures/el_salvador/m_trace.png, id=468, 505.89pt x 505.89pt>
-File: ../notes/figures/el_salvador/m_trace.png Graphic file (type png)
-<use ../notes/figures/el_salvador/m_trace.png>
-Package pdftex.def Info: ../notes/figures/el_salvador/m_trace.png  used on inpu
-t line 1138.
+<../notes/figures/sim_m_trace.png, id=469, 505.89pt x 505.89pt>
+File: ../notes/figures/sim_m_trace.png Graphic file (type png)
+<use ../notes/figures/sim_m_trace.png>
+Package pdftex.def Info: ../notes/figures/sim_m_trace.png  used on input line 1
+138.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<../notes/figures/el_salvador/u_trace.png, id=469, 505.89pt x 505.89pt>
+<../notes/figures/sim_u_trace.png, id=471, 505.89pt x 505.89pt>
+File: ../notes/figures/sim_u_trace.png Graphic file (type png)
+<use ../notes/figures/sim_u_trace.png>
+Package pdftex.def Info: ../notes/figures/sim_u_trace.png  used on input line 1
+145.
+(pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<../notes/figures/el_salvador/overlap_trace.png, id=473, 505.89pt x 505.89pt>
+File: ../notes/figures/el_salvador/overlap_trace.png Graphic file (type png)
+<use ../notes/figures/el_salvador/overlap_trace.png>
+Package pdftex.def Info: ../notes/figures/el_salvador/overlap_trace.png  used o
+n input line 1152.
+(pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<../notes/figures/el_salvador/m_trace.png, id=474, 505.89pt x 505.89pt>
+File: ../notes/figures/el_salvador/m_trace.png Graphic file (type png)
+<use ../notes/figures/el_salvador/m_trace.png>
+Package pdftex.def Info: ../notes/figures/el_salvador/m_trace.png  used on inpu
+t line 1159.
+(pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<../notes/figures/el_salvador/u_trace.png, id=475, 505.89pt x 505.89pt>
 File: ../notes/figures/el_salvador/u_trace.png Graphic file (type png)
 <use ../notes/figures/el_salvador/u_trace.png>
 Package pdftex.def Info: ../notes/figures/el_salvador/u_trace.png  used on inpu
-t line 1145.
+t line 1166.
 (pdftex.def)             Requested size: 277.3648pt x 277.36807pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [32
 
- <../notes/figures/el_salvador/overlap_trace.png>] [33 <../notes/figures/el_sal
-vador/m_trace.png>] [34 <../notes/figures/el_salvador/u_trace.png>]
-(fabl-paper.bbl [35
+ <../notes/figures/sim_overlap_trace.png>] [33 <../notes/figures/sim_m_trace.pn
+g>] [34 <../notes/figures/sim_u_trace.png>] [35 <../notes/figures/el_salvador/o
+verlap_trace.png>] [36 <../notes/figures/el_salvador/m_trace.png>] [37 <../note
+s/figures/el_salvador/u_trace.png>] (fabl-paper.bbl [38
 
-]) [36]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1162.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 1162.
- (fabl-paper.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1162.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1162.
+]) [39]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1181.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 1181.
+
+(fabl-paper.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1181.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1181.
 
 Package rerunfilecheck Info: File `fabl-paper.out' has not changed.
 (rerunfilecheck)             Checksum: 1E5E47A67EDC36826E2AF4B9C79B2E00;1652.
@@ -1129,13 +1158,13 @@ LaTeX Warning: There were undefined references.
 
 LaTeX Warning: There were multiply-defined labels.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1162.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 1181.
  ) 
 Here is how much of TeX's memory you used:
- 22492 strings out of 492895
- 449222 string characters out of 3123735
- 579490 words of memory out of 3000000
- 25671 multiletter control sequences out of 15000+200000
+ 22519 strings out of 492895
+ 449870 string characters out of 3123735
+ 579804 words of memory out of 3000000
+ 25686 multiletter control sequences out of 15000+200000
  24513 words of font info for 149 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  55i,16n,83p,1665b,503s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1169,9 +1198,9 @@ Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/b
 rian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt12.pf
 b><C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts
 /symbols/msbm10.pfb>
-Output written on fabl-paper.pdf (36 pages, 789632 bytes).
+Output written on fabl-paper.pdf (39 pages, 909754 bytes).
 PDF statistics:
- 605 PDF objects out of 1000 (max. 8388607)
- 130 named destinations out of 1000 (max. 500000)
- 24415 words of extra memory for PDF output out of 24883 (max. 10000000)
+ 637 PDF objects out of 1000 (max. 8388607)
+ 139 named destinations out of 1000 (max. 500000)
+ 24430 words of extra memory for PDF output out of 24883 (max. 10000000)
 

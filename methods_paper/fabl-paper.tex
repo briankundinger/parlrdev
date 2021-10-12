@@ -109,7 +109,7 @@ In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), w
 	
 	Alternatively, one can embed one-to-one matching requirements into the model specification itself, at an additional computational cost. \cite{larsen2005} employed a Metropolis-Hastings algorithm to only allow sampling matches that respected one-to-one assumptions, but such algorithms exhibit slow mixing due to the combinatorial nature of the constrained matching space. \cite{fortunato_2010} used simulated annealing to target the space of permitted matches under the one-to-one constraint, but the method was so computationally intensive it could used to link databases of less than 100 records. Most recently, \cite{sadinle_bayesian_2017} proposed \emph{Beta Record Linkage} (BRL), using an innovative prior over the space of bipartite matchings to strictly enforce one-to-one reqiurements throughout his Gibbs sampler. Additionally, he introduced a class of loss functions that allows for a flexible estimation of the linkage structure, such that the modeller can weight the relative importance of false positives and false negatives, and identify records pairings to be be decided through clerical review. Although it was shown to work on larger tasks than previous one-to-one methods, \texttt{BRL} becomes slow when working with larger datasets, and unusable when the number of pairwise record comparisons becomes too large. 
 	
-	In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space, creating a ``many-to-one'' model for record linkage. This allows us to employ hashing techniques that hasten calculations and reduce computational costs. Furthermore, we can compute the pairwise record comparisons over large datasets via parallel computing and reduce memory costs through our proposed method of \emph{storage efficient indexing}. Throughout, we argue that even in cases where a bipartite matching is desired, \textcolor{red}{our proposed approach and relaxation} (with a simple post-processing procedure) provides equivalently accurate estimation of the linkage structure and other parameters, more information through which to asses model misspecification, and greatly enhanced speed. 
+	In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space, creating a ``many-to-one'' model for record linkage. This allows us to employ hashing techniques that hasten calculations and reduce computational costs. Furthermore, we can compute the pairwise record comparisons over large datasets via parallel computing and reduce memory costs through our proposed method of \emph{storage efficient indexing}. Throughout, we argue that even in cases where a bipartite matching is desired, \textcolor{red}{our proposed approach and relaxation} (with a simple post-processing procedure) provides equivalently accurate estimation of the linkage structure and other parameters, more information through which to asses model misspecification, and greatly enhanced speed. Open source software to use \texttt{fabl} in \texttt{R} is available through Github. 
 	
 	In what follows, Section \ref{sec:review-of_prior-work} reviews more thoroughly the Fellegi Sunter and Beta Record Linkage methods. Then, Section \ref{sec:fast-beta-linkage} provides the model specification under \texttt{fabl} and derives the Gibbs sampler for posterior inference. Next, Section \ref{sec:efficiency} introduces the hashing technique and storage efficient indexing used to increase the speed of calculations and the scale of the linkage tasks we can undertake. Lastly, in Sections \ref{sec:simulations} and \ref{sec:case-studies} we use simulation studies and a case study of homicides from the El Salvadoran Civil War to show that our method has markedly increased speed with minimal loss of accuracy when compared to \texttt{BRL}. We conclude in Section \ref{discussion} with a discussion of directions for future work. 
 	
@@ -544,7 +544,7 @@ where $r_{j_p} = \{i \in \bm{X_1} | (i, j) \in h_p\}$. This representation is us
 $$H_{j_p} = \sum_{i} I((i, j) \in h_p) = ||r_{j_p}||$$
 and
 $$H_p =  \sum_{i, j} I((i, j) \in h_p) = \sum_{j} H_{j_p}$$
-As will be shown in Section \ref{efficient-posterior}, all posterior calculations are conducted through these sufficient statistics. Note that $\mathcal{P}$ and $\mathcal{R}$ fully characterize the comparison matrix $\Gamma$ with no loss of information, so we proceed with $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}\}$ for our efficient posterior inference. 
+For convenience, denote this set of sufficient statistics $\mathcal{H} = \left\{\{H_{j_p}\}, \{H_{j_p}\}\right\}$As will be shown in Section \ref{efficient-posterior}, all posterior calculations are conducted through these sufficient statistics. Note that $\mathcal{P}$, $\mathcal{R}$, and $\mathcal{H}$  fully characterize the comparison matrix $\Gamma$ with no loss of information, so we proceed with $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{H}\}$ for our efficient posterior inference. 
 
 \hypertarget{large-data}{%
 	\subsection{Working with Large Data}\label{large-data}}
@@ -595,9 +595,9 @@ requires knowledge of the problem and invites room for human error.
 
 With SEI however, we can reduce comparison space, and its associated storage costs, while avoiding these drawbacks. Observe that all records of the same agreement pattern have the same probability when sampling \(Z_j\). Therefore we know that records $\i in r_{j_p}$  such that
 \(H_{j_p}\) is large are very unlikely to be sampled consistently enough
-to be deemed a match through the Bayes estimate. We know this regardless of the form of the agreement pattern itself, or its associated probabilities. Therefore, rather than store all of these unlikely record labels, we choose to store only a small number \(S\) of them in a new nested listed $\mathcal{R}^{\text{SEI}}$. Posterior calculations still attribute the appropriate weight to all records through the summary statistics \(H_p\), and \(H_{j_p}\). Rather than storing
+to be deemed a match through the Bayes estimate. We know this regardless of the form of the agreement pattern itself, or its associated probabilities. Therefore, rather than store all of these unlikely record labels, we choose to store only a small number \(S\) of them in a new nested listed $\mathcal{R}^{\text{SEI}}$. Rather than storing
 \(n_1 \times n_2\) record labels, SEI allows us to store at most
-\(n_2 \times P \times S\) labels, regardless of how large \(n_1\) might be.
+\(n_2 \times P \times S\) labels, regardless of how large \(n_1\) might be. Posterior calculations still attribute the appropriate weight to all records through the summary statistics in $\mathcal{H}$, and thus we can proceed with posterior inference through the memory reduced $\tilde{\Gamma}^{\text{SEI}} = \{\mathcal{P}, \mathcal{R}^{\text{SEI}}, \mathcal{H}\}$. For simplicty, we suppress ``SEI'' in future notation, and use $\tilde{\Gamma}$ without loss of generality. 
 
 Lastly, for large data, we can partition the two datasets \(\bm{X}_1\) and
 \(\bm{X}_2\) into smaller blocks \(\{\bm{X}_{1m}\}\) and \(\{\bm{X}_{2n}\}\) for more
@@ -1125,13 +1125,34 @@ future work.
 \label{sec:appendix}
 
 \begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_overlap_trace} 
+		\caption{Representative traceplot of overlap between files from simulation study in \ref{accuracy}}\label{fig:sim_overlap_trace}
+	\end{center}
+\end{figure}
+
+
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_m_trace} 
+		\caption{Representative traceplot of m parameter from simulation study in \ref{accuracy}}\label{fig:sim_m_trace}
+	\end{center}
+\end{figure}
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_u_trace} 
+		\caption{Representative traceplot of u parameters from simulation study in \ref{accuracy}}\label{fig:sim_u_trace}
+	\end{center}
+\end{figure}
+
+\begin{figure}[h]
 \begin{center}
 \includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_trace} 
 \caption{Traceplot for number of matches found across datasets in El Salvador case study}\label{fig:overlap_trace}
 \end{center}
 \end{figure}
-
-
 
 \begin{figure}[h]
 \begin{center}
@@ -1146,8 +1167,6 @@ future work.
 \caption{Traceplot for u parameter in El Salvador case study}\label{fig:u_trace}
 \end{center}
 \end{figure}
-
-
 
 \clearpage
 
