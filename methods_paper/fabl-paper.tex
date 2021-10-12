@@ -675,35 +675,9 @@ After all Gibbs iterations are complete, we can back-fill the records correspond
 
 We emphasize the computational gains of this split sampler: the first step is a sample from $P$ many options, where $P$ does not scale with the size of the linkage task; and the second step is sampling uniformly at random, which is computationally simple even for large sets of candidate records. These changes in themselves drastically improves the speed of the sampler, and each can be parallelized if desired for additional computational gains. 
 
-To aid the reader, we provide summary of the \texttt{fabl} method through pseudocode:
+To aid the reader, we provide summary of the \texttt{fabl} method through pseudocode in Appendix \ref{app:fabl-psuedocode}.
 
-\begin{algorithm}[h!]
-	\caption{Summary of fabl algorithm}
-	\begin{algorithmic}[1]
-		
-		\Procedure{Hashing and Preprocessing}{}
-		\State Partition files $A$ and $B$ into chunks $\{A_I\}, \{B_J\}$
-		\For{each $I$, $J$}
-		\State Create comparison vectors between $A_I$ and $B_J$
-		\State Hash results and calculate summary statistics
-		\State Use SEI to reduce memory usage
-		\EndFor
-		\State Synthesize results across pairings
-		\EndProcedure
-		
-		\Procedure{Gibbs Sampling}{}
-		\State Initialize $m$, $u$, and $Z$ parameters
-		
-		\For{$t \in \{1, \ldots, T\}$} 
-		\State Sample $m^{t+1}|Z^{t}, \Gamma$ and  $u^{t+1}|Z^{t}, \Gamma$ 
-		\State Sample $H\left(Z^{t+1}\right)|m^{t+1}, u^{t+1}, \Gamma$  \Comment{Sample agreement pattern, not record}
-		\EndFor
-		\State Sample $Z | H(Z), \Gamma$ \Comment{Fills in record label based on agreement pattern}
 
-		\EndProcedure
-		
-	\end{algorithmic}
-\end{algorithm}
 
 \hypertarget{computational-complexity}{%
 	\subsection{Computational Complexity}\label{computational-complexity}}
@@ -722,7 +696,7 @@ Overall, the computational complexity under the complete \texttt{fabl} framework
 \section{Simulation Studies}
 \label{sec:simulations}
 
-In this section, we replicate a simulation study from \cite{sadinle_bayesian_2017} to compare \texttt{fabl} against \texttt{BRL} on several simulated datasets with varying amounts of error and overlap. We use first name, last name, age, and occupation for this linkage, and create comparison vectors according to the default settings of the \texttt{compareRecords} function from the \texttt{BRL} package. See Table~\ref{Tab:sadinle_simulation_cutoffs} for details on the construction of comparison vectors. Each simulation identifies duplicated individuals between two datasets, each with 500 records. We conduct linkage when matching records exhibit 1, 2, and 3 errors across the four fields, and when there are 50, 250, and 450 individuals in common across datasets. We use flat priors for all $m$ and $u$ parameters, run the Gibbs Sampler for 1000 iterations, and discard the first 100 as burn-in.
+In this section, we replicate a simulation study from \cite{sadinle_bayesian_2017} to compare \texttt{fabl} against \texttt{BRL} on several simulated datasets with varying amounts of error and overlap. We use first name, last name, age, and occupation for this linkage, and create comparison vectors according to the default settings of the \texttt{compareRecords} function from the \texttt{BRL} package. See Table~\ref{Tab:sadinle_simulation_cutoffs} for details on the construction of comparison vectors. Each simulation identifies duplicated individuals between two datasets, each with 500 records. We conduct linkage when matching records exhibit 1, 2, and 3 errors across the four fields, and when there are 50, 250, and 450 individuals in common across datasets. We use flat priors for all $m$ and $u$ parameters, run the Gibbs Sampler for 1000 iterations, and discard the first 100 as burn-in. Traceplots for parameters of interest for one example simulation are provided in Appendix \ref{app:appendix-sim}.
 
 \begin{table}[h!]
 	\centering
@@ -991,7 +965,7 @@ the way that the computational complexity of our method depends on the
 number of unique agreement patterns, and how significant computational
 gains can be made by simplifying the construction of the comparison
 vectors. The estimates of the \(\mathbf{m}\) parameters under each method are very similar, as shown in
-Figure~\ref{fig:m-and-u}.
+Figure~\ref{fig:m-and-u}. Additionally, traceplots for parameters of interest are provided in Appendix \ref{app:appendix-es}
 
 Through \texttt{fabl}, we arrive at a Bayes estimate of 179 individuals recorded in both datasets. We calcuate posterior samples of size of the overlap across files by summing the number of matches found in each iteration of the Gibbs sampler, and subtracting the number of matches that violate one-to-one matching. The posterior 95\% credible interval for the overlap across files is (206, 238), indicating that the Bayes estimate is quite conservative. This is because there a large number of records in ERTL for which there are multiple plausible matches in CDHES; \texttt{fabl} recognizes that a match exists among the several options, but is unable to definitely declare a specific pair a match in the Bayes estimate. We also compute a partial estimate of the linkage structure, using $\theta_{10} = \theta_{01} = 1$, $\theta_{11} = 2$, and $\theta_R = 0.1$ as in the simulation study. Here, the Bayes estimate provides 136 matches of which the model is quite confident, and 175 records to verify manually; this means that after clerical review, the number of individuals replicated across datasets would fall in the interval (136, 311), encapsulating the posterior credible interval. More or fewer records could be indentified for clerical review by decreasing or increasing $\theta_R$. 
 
@@ -1124,6 +1098,39 @@ future work.
 \section{Appendix}
 \label{sec:appendix}
 
+\hypertarget{app:fabl-psuedocode}{%
+	\subsection{Summary of Fast Beta Linkage Method}\label{app:fabl-psuedocode}}
+
+\begin{algorithm}[h!]
+	\begin{algorithmic}[1]
+		
+		\Procedure{Hashing and Preprocessing}{}
+		\State Partition files $A$ and $B$ into chunks $\{A_I\}, \{B_J\}$
+		\For{each $I$, $J$}
+		\State Create comparison vectors between $A_I$ and $B_J$
+		\State Hash results and calculate summary statistics
+		\State Use SEI to reduce memory usage
+		\EndFor
+		\State Synthesize results across pairings
+		\EndProcedure
+		
+		\Procedure{Gibbs Sampling}{}
+		\State Initialize $m$, $u$, and $Z$ parameters
+		
+		\For{$t \in \{1, \ldots, T\}$} 
+		\State Sample $m^{t+1}|Z^{t}, \Gamma$ and  $u^{t+1}|Z^{t}, \Gamma$ 
+		\State Sample $H\left(Z^{t+1}\right)|m^{t+1}, u^{t+1}, \Gamma$  \Comment{Sample agreement pattern, not record}
+		\EndFor
+		\State Sample $Z | H(Z), \Gamma$ \Comment{Fills in record label based on agreement pattern}
+		
+		\EndProcedure
+		
+	\end{algorithmic}
+\end{algorithm}
+
+\hypertarget{appendix-sim}{%
+	\subsection{Traceplots for Simulation Study}\label{app:appendix-sim}}
+
 \begin{figure}[h]
 	\begin{center}
 		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_overlap_trace} 
@@ -1146,6 +1153,9 @@ future work.
 		\caption{Representative traceplot of u parameters from simulation study in \ref{accuracy}}\label{fig:sim_u_trace}
 	\end{center}
 \end{figure}
+
+\hypertarget{appendix-es}{%
+	\subsection{Traceplots for El Salvador Case Study}\label{app:appendix-es}}
 
 \begin{figure}[h]
 \begin{center}
