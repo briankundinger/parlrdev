@@ -43,10 +43,10 @@
 \def\spacingset#1{\renewcommand{\baselinestretch}%
   {#1}\small\normalsize} \spacingset{1}
 
-\newtheorem*{remark}{Remark}
+\newtheorem{remark}{Remark}
 \newtheorem{proposition}{Proposition}
-\newtheorem*{definition}{Definition}
-\newtheorem*{lemma}{Lemma}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
 
 % DON'T change margins - should be 1 inch all around.
 \addtolength{\oddsidemargin}{-.5in}%
@@ -376,7 +376,7 @@ To achieve a Bayes estimate that fulfills one-to-one matching requirement, we si
 \section{Efficient and Scalable Implementation}
 \label{sec:efficiency}
 
-To increase the speed of our Gibbs sampler and expand the scale of the linkage tasks we can undertake, we employ hashing methods similar to those used by \cite{enamorado2019using} in the creation of \texttt{fastlink}, a fast and scalable implementation of the Fellegi Sunter method. The key insight is to recognize that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. To make this more precise, let $h_1, \ldots, h_P$ denote the unique agreement patterns, and collect these unique patterns in the set $\mathcal{P} = \{h_1, \ldots, h_P\}$. Here, 
+To increase the speed of our Gibbs sampler and expand the scale of the linkage tasks we can undertake, we \textcolor{red}{propose} hashing methods similar to those used by \cite{enamorado2019using} in the creation of \texttt{fastlink}, a fast and scalable implementation of the Fellegi Sunter method. The key insight is to recognize that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. To make this more precise, let $h_1, \ldots, h_P$ denote the unique agreement patterns, and collect these unique patterns in the set $\mathcal{P} = \{h_1, \ldots, h_P\}$. Here, 
 $P = |\mathcal{P}|$ is the total number of unique agreement
 patterns; observe that \(P\) is bounded above by \(\prod_{f=1}^F L_f\), and that this bound does not depend on \(n_1\) or \(n_2\). In this context, the integers $\{1, \ldots, P\}$ serve as \emph{hashed values} that encode the same information as the orignial vectors themselves. Whenever possible, we conduct calculations over these \(P\) agreement
 patterns, instead of the typical \(n_1 \times n_2\) record pairs.
@@ -399,7 +399,7 @@ where $r_{j_p} = \{i \in \bm{X_1} | (i, j) \in h_p\}$. This representation is us
 $$H_{j_p} = \sum_{i} I((i, j) \in h_p) = ||r_{j_p}||$$
 and
 $$H_p =  \sum_{i, j} I((i, j) \in h_p) = \sum_{j} H_{j_p}$$
-For convenience, denote this set of sufficient statistics $\mathcal{H} = \left\{\{H_{j_p}\}, \{H_{p}\}\right\}$As will be shown in Section \ref{efficient-posterior}, all posterior calculations are conducted through these sufficient statistics. Note that $\mathcal{P}$, $\mathcal{R}$, and $\mathcal{H}$  fully characterize the comparison matrix $\Gamma$ with no loss of information, so we proceed with $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{H}\}$ for our efficient posterior inference. 
+For convenience, denote this set of sufficient statistics $\mathcal{H} = \left\{\{H_{j_p}\}, \{H_{p}\}\right\}.$ As we will shown in Section \ref{efficient-posterior}, all posterior calculations are conducted through these sufficient statistics. Note that $\mathcal{P}$, $\mathcal{R}$, and $\mathcal{H}$  fully characterize the comparison matrix $\Gamma$ with no loss of information, so we proceed with $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{H}\}$ for our efficient posterior inference. 
 
 \hypertarget{SEI}{%
 	\subsection{Storage Efficient Indexing}\label{SEI}}
@@ -484,11 +484,11 @@ In this section, we provide the computational complexity of \texttt{fabl} in Lem
 
 \begin{lemma}
 The overall computational complexity of \texttt{fabl} is $O(\frac{F}{B} n_1 n_2) + O(n_2 P).$
+\label{lemma:fabl}
 \end{lemma}
 
 \begin{proof}
 To prove the computational complexity, we consider two steps --- constructing the comparison vectors and the Gibbs sampler. 
-
 The computational complexity of all pairwise comparisons across the two databases $\bm{X}_1$ and $\bm{X}_2$ is $O(F n_1 n_2)$. The hashing procedure for all pairwise comparisons is also of complexity $O(F n_1 n_2)$. Since \texttt{fabl} is able to compute these comparisons in parallel, we can split these computations across $B$ equally sized partitions, so the complexity becomes $O(\frac{F}{B} n_1 n_2)$. There are then trivial computational costs associated with synthesizing summary statistics across these partitions. 
 
 Without hashing, the computational complexity of updating the $\bm{m}$ and $\bm{u}$ parameters is $O(F n_1 n_2)$. However, by doing calculations over the agreement patterns rather than the individual record, hashing reduces the overall complexity to $O(\tilde{L}^{*}P)$, where $\tilde{L} = \sum_{f=1}^F L_f$ is the total number of levels used across all features in the linkage task. The complexity of updating $Z$ sequentially at the record level is $O(n_1 n_2)$. With hashing, we split this sampling into two steps. First we sample that agreement pattern of the match with complexity $O(n_2 P)$, and then we sample the record exhibiting that pattern with complexity $O(n_2)$. Thus the complexity of sampling $\bm{Z}$ is $O(n_2 P)$. Since $\tilde{L} << n_1$ in all reasonable applications, we have reduced the complexity of the Gibbs sampler from $O(F n_1 n_2)$ under \texttt{BRL} to $O(n_2 P)$ under \texttt{fabl}.
