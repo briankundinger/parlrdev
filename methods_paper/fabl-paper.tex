@@ -75,7 +75,7 @@
 
 In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), which extends a recent Bayesian Fellegi Sunter model for increased efficiency and scalability. Specifically, we relax the one-to-one matching requirement of the Beta Record Linkage method of \citep{sadinle_bayesian_2017} and propose independent priors over the matching space. \textcolor{red}{We derive the associated conditional distributions and provide a Gibbs sampling algorithm for our proposed framework.}
 \textcolor{red}{Our modified prior} allows us to employ hashing techniques that hasten calculations and reduce the overall computational complexity.  In addition, we are able to complete pairwise record comparisons over large datasets through parallel computing and reduce memory costs through a new technique called \emph{storage efficient indexing}. \textcolor{red}{We derive the associated conditional distributions and provide a Gibbs sampling algorithm for our proposed framework.}
-\textcolor{red}{Moreover, we provide the computational complexity of \texttt{fabl}.} Through simulation studies and a case study of homicides from the El Salvadoran Civil War, we show that our method has markedly increased speed with minimal loss of accuracy. Finally, we discuss our work and future directions. 
+\textcolor{red}{Moreover, we prove the computational complexity of \texttt{fabl}.} Through simulation studies and a case study of homicides from the El Salvadoran Civil War, we show that our method has markedly increased speed with minimal loss of accuracy. Finally, we discuss our work and future directions. 
 \end{abstract}
 
 
@@ -480,7 +480,7 @@ To aid the reader, we provide summary of the \texttt{fabl} method through pseudo
 
 \hypertarget{computational-complexity}{%
 	\subsection{Computational Complexity}\label{computational-complexity}}
-In this section, we provide the computational complexity of \texttt{fabl} in Lemma \ref{lemma:fabl}. Let $L^{*} = \sum_{f=1}^F L_f$ denote the total number of levels used across all features in the linkage task. 
+In this section, we prove the computational complexity of \texttt{fabl} in Lemma \ref{lemma:fabl}. Let $L^{*} = \sum_{f=1}^F L_f$ denote the total number of levels used across all features in the linkage task. 
 
 \begin{lemma}
 The overall computational complexity of \texttt{fabl} is $O(\frac{F}{B} n_1 n_2) + O(n_2 P).$
@@ -522,7 +522,7 @@ We replicate a simulation study from \cite{sadinle_bayesian_2017} to compare \te
 \label{Tab:sadinle_simulation_cutoffs}
 \end{table}
 	
-We compare \texttt{fabl} to \texttt{BRL} in terms of precision, recall, and f-measure, which are commonly defined record linkage evaluation metrics that are defined in \citep{christen_2012}. In Figure~\ref{fig:sadinle_simulation}, we see that we see that the two methods have comparable performance at all levels of error and overlap, . In the specific case of high error and high overlap, widely regarded as the most difficult linkage scenario, we see that \texttt{fabl} performs slightly worse on average; however, since both methods exhibit high variance in performance in this setting, we remain confident in \texttt{fabl}'s overall accuracy. 
+We compare \texttt{fabl} to \texttt{BRL} in terms of precision, recall, and f-measure, which are commonly defined record linkage evaluation metrics that are defined in \citep{christen_2012}. In Figure~\ref{fig:sadinle_simulation}, we see that we see that the two methods have comparable performance at all levels of error and overlap. In the specific case of high error and high overlap, widely regarded as the most difficult linkage scenario, we see that \texttt{fabl} performs slightly worse on average; however, since both methods exhibit high variance in performance in this setting, we remain confident in \texttt{fabl}'s overall accuracy. 
 
 \begin{figure}[h!]
 	\begin{center}
@@ -754,12 +754,15 @@ Through its independent sampling,\texttt{fabl} allows the modeler to inspect rec
 \section{Discussion}
 \label{discussion}
 
-We have presented a method for Bayesian record linkage that is feasible for large datasets. In particular, our hashing procedure and model assumptions allow for a linkage procedure whose computational complexity does not scale with the size of the larger dataset, making this method particularly powerful in linking records when one datafile is
-substantially smaller than the other.
+\textcolor{red}{In this paper, we have proposed \texttt{fabl}, a Bayesian record linkage method that scales to large data sets. Specifically, our proposed hashing method}
+%We have presented a method for Bayesian record linkage that is feasible for large datasets. In particular, our hashing procedure 
+and model assumptions allow for a linkage procedure whose computational complexity does not scale with the size of the larger dataset, making our approach particularly powerful in linking records when one datafile is substantially smaller than the other.
+\textcolor{red}{In our paper, we have provided details regarding derivations of conditional distributions and our proposed Gibbs sampler. In addition, we prove the computational complexity of our algorithm. In addition, we provided both simulation studies and revisited the same case study of the main methodology that we build upon.}  In our case study, we included an exploration of how to conduct record linkage when modeling assumptions are not met in practice. We explored ``one-to-many'' scenarios in which one record in $\bm{X}_2$ has multiple plausible matches in $\bm{X}_1$, and showed how both \texttt{fabl} and \texttt{BRL} demonstrated undesirable qualities. Other issues arise under ``many-to-one'' scenarios, where one record in $\bm{X}_2$ has multiple plausible matches in $\bm{X}_1$, and ``many-to-many'' scenarios in which there is duplication both across and within datasets. Extending \texttt{fabl} in such scenarios is currently investigation by the authors regarding future work. 
 
-In our case study, we included an exploration of how to conduct record linkage when modeling assumptions are not met in practice. We explored ``one-to-many'' scenarios in which one record in $\bm{X}_2$ has multiple plausible matches in $\bm{X}_1$, and showed how both \texttt{fabl} and \texttt{BRL} demonstrated undesirable qualities. Other issues arise under ``many-to-one'' scenarios, where one record in $\bm{X}_2$ has multiple
-plausible matches in $\bm{X}_1$, and ``many-to-many'' scenarios in which there is duplication both across and within datasets. Tuning \texttt{fabl} for use in these scenarios is one potential avenue for
-future work.
+\textcolor{red}{Brian: could you talk about a few other directions that might be useful to take your work as this will come up in your prelim. For example, how might you extend beyond bipartite and still scale? Or what ideas do you think are the most exciting to take your work in next. This is your opportunity to talk about anything here and give a comment to the community about what you think is most important!} 
+
+%Tuning \texttt{fabl} for use in these scenarios is one potential avenue for
+%future work.
 
 %\begin{figure}[t]
 %	
@@ -783,8 +786,10 @@ future work.
 
 \clearpage
 
-\section{Appendix}
+\section*{Appendix}
 \label{sec:appendix}
+
+
 
 \hypertarget{app:fabl-psuedocode}{%
 	\subsection{Summary of Fast Beta Linkage Method}\label{app:fabl-psuedocode}}
