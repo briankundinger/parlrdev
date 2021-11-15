@@ -30,6 +30,7 @@ fast <- F
 S <- 1000
 burn <- S * .1
 iter_count <- seq_len(S)
+empirical <- TRUE
 
 cd <- readRDS("../data/comparison_elsalvador_smallP.rds")
 nA <- cd$n1
@@ -38,27 +39,36 @@ levels <- cd[[4]]
 P <- prod(levels) 
 var_names <- cd$compFields[,1]
 ptm <- proc.time()
-Zchain_fabl <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE)
+Zchain_fabl <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE, empirical = FALSE)
+#Zchain_empirical <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE, empirical = TRUE)
 elapsed_fabl <- proc.time() - ptm
 Zchain_fabl[[4]]
 Zhat_fabl <- LinkRecordsBK(Zchain_fabl[[1]], nA, 1, 1, 2, Inf)
+#Zhat_empirical <- LinkRecordsBK(final_gibbs, nA, 1, 1, 2, Inf)
 Zhat_fabl_partial <- LinkRecordsBK(Zchain_fabl[[1]], nA, 1, 1, 2, .1)
 
 overlap_fabl <- sum(Zhat_fabl[[1]] < nA + 1)
+#overlap_empirical <- sum(Zhat_empirical[[1]] < nA + 1)
 results_fabl <- c(overlap_fabl, elapsed_fabl[3])
 
 Zhat_resolved <- ResolveConflicts(Zhat_fabl)
 overlap_resolved <- sum(Zhat_resolved < nA + 1)
+#Zhat_resolved_emp <- ResolveConflicts(Zhat_empirical)
+#overlap_resolved <- sum(Zhat_resolved_emp < nA + 1)
+
+
 #DID_resolved <- nA + nB - overlap_resolved
 overlap_samples_fabl <- apply(Zchain_fabl[[1]], 2, function(x){
   sum(x < nA + 1)
 })
-overlap_samples_fabl_resolved <- overlap_samples_fabl - not_one2one_samps
-credint_fabl_overlap <- quantile(overlap_samples_fabl_resolved, c(.025, .975))
 
 not_one2one_samps <- apply(Zchain_fabl[[1]], 2, function(x){
   sum(duplicated(x[x < nA + 1]))
 })
+overlap_samples_fabl_resolved <- overlap_samples_fabl - not_one2one_samps
+credint_fabl_overlap <- quantile(overlap_samples_fabl_resolved, c(.025, .975))
+
+
 results_fabl_resolved <- c(overlap_resolved, elapsed_fabl[3])
 Zhat_fabl_partial_resolved <- ResolveConflicts(Zhat_fabl_partial)
 fabl_partial_lower <- sum(Zhat_fabl_partial_resolved < nA + 1 & Zhat_fabl_partial_resolved > 0)
@@ -96,6 +106,9 @@ results_image
 
 # as_image(results_image, file = "../notes/figures/el_salvador/time_table_small_P2.png")
 
+
+colSums(final_gibbs < nA + 1) %>% 
+  quantile(., c(.025, .975))
 
 ```
 

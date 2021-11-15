@@ -67,6 +67,7 @@ for(i in seq_along(n1_vals)){
   ptm <- proc.time()
   #Zchain <- BKSimple_hash2_pat(cd, R = R)
   Zchain <- BKSimple_hash2(cd, all_patterns = all_patterns)
+  Zchain <- FellegiSunter(cd)
   Zchain <- Zchain[[1]]
   elapsed <- proc.time() - ptm
   #Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
@@ -117,18 +118,17 @@ speed_plot <- df %>%
   filter(method != "fabl_resolved") %>% 
   ggplot(aes(x = n, y = time, color = method)) +
   geom_line(size = 1) +
-  labs(x = "Size of each dataset",
+  labs(x = expression(n[A] *","* n[B]),
        y = "Time (seconds)",
        color = "Method") + 
-  theme_bw() +
-  theme(plot.title = element_text(hjust = .5),
-        plot.subtitle = element_text(hjust = .5)) +
+  theme_bw(base_size = 14) +
+  theme(legend.position = "bottom") +
   scale_color_brewer(palette="Set1")
 
 speed_plot
 
-ggsave(filename = "../notes/figures/sadinle_speed_plot2.png",
-       plot = speed_plot)
+# ggsave(filename = "../notes/figures/sadinle_speed_plot_slides.png",
+#        plot = speed_plot)
 
 # results_df <- df %>% 
 #   pivot_longer(cols = 1:4, names_to = "metric") %>% 

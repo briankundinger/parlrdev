@@ -1,0 +1,131 @@
+---
+title: "Bouncing Around"
+output: pdf_document
+vignette: >
+  %\VignetteIndexEntry{bouncing_around}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(devtools)
+load_all()
+library(parlrdev)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(RColorBrewer)
+```
+
+# Run the Model
+
+```{r cache = TRUE}
+rm(list=ls())
+set.seed(2)
+R <- NULL
+show_progress <- T
+fast <- F
+S <- 1000
+burn <- S * .1
+iter_count <- seq_len(S)
+
+cd <- readRDS("../data/comparison_elsalvador_smallP.rds")
+nA <- cd$n1
+nB <- cd$n2
+levels <- cd[[4]]
+P <- prod(levels) 
+var_names <- cd$compFields[,1]
+ptm <- proc.time()
+Zchain_fabl <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE)
+elapsed_fabl <- proc.time() - ptm
+Zchain_fabl[[4]]
+Zhat_fabl <- LinkRecordsBK(Zchain_fabl[[1]], nA, 1, 1, 2, Inf)
+```
+
+# Exploring "Bouncing" Matches
+
+The object \texttt{Zhat} below contains the Bayes estimate for each component $Z_j$ and the posterior probability of that decision. Here, $n_A$ = `r nA`, so everything where $Z_j >$ `r nA` indicates a nonmatch. 
+
+I single out examples where the posterior probability is less than 0.5, because those are situations where record $j$ was matched to some record more than 50\% of the time, but it was not matched to the same record consistently enough for the Bayes estimate. 
+
+```{r}
+Zhat <- cbind(Zhat_fabl[[1]], Zhat_fabl[[2]])
+bouncing_matches <- which(Zhat[, 2] < .5)
+examples <- Zhat[bouncing_matches, ]
+rownames(examples) <- bouncing_matches
+colnames(examples) <- c("Zhat", "probability")
+
+examples[1:5, ]
+```
+
+# Examples of "Bouncing Matches"
+
+In this first example, record $253 \in ER$ is declared a nonmatch in the sampler with probability 0.47. So it is declared "a match" with probability .53, but that is split across 65 records!
+
+```{r}
+
+probs_for_bouncing_matches <- lapply(bouncing_matches, function(x){
+  Zchain_fabl[[1]][x, ] %>% 
+    table()/S
+})
+names(probs_for_bouncing_matches) <- bouncing_matches
+
+sapply(probs_for_bouncing_matches, length) - 1
+
+probs_for_bouncing_matches["374"]
+
+```
+
+More egregiously, record $254 \in ER$ is declared a nonmatch with probability 0.03, and is declared a match 97\% of the time! However, that is split across many many records, so the Bayes esimate is declares a nonmatch. 
+
+```{r}
+probs_for_bouncing_matches[2]
+```
+\clearpage
+
+# Looking at the Records
+
+Here, we inspect one record in ER and the multiple records it is matched to. 
+
+```{r}
+CDHES <- readRDS("../data/CDHES.rds")
+ER <- readRDS("../data/ER.rds")
+
+ER[254, ]
+```
+
+
+```{r}
+fleeting_matches <- names(probs_for_bouncing_matches[[2]]) %>% 
+  as.numeric() %>% 
+  .[1:10]
+
+CDHES[fleeting_matches, ]
+```
+
+# Reasons for "Bouncing Matches"
+
+Some of this occurs because of the construction of the comparison vectors. Because of the way that Sadinle designed the string distance metric and the thresholds for the comparison vectors, both "CHICAS" and "DIAS" are coded as full agreements with "CHICAS DIAS."  This code shows the comparison vectors for all these pairs, but since BRL uses a one-hot-encoding of the comparison vector, its a little hard to read, so I'm commenting out. I can show you when we meet though if you want!
+
+
+```{r}
+# index <- expand.grid(1:nA, 1:nB)
+# index_cd <- which(index[, 2] == 254 & index[, 1] %in% fleeting_matches)
+# cd[[1]][index_cd, ]
+```
+
+If the vectors are not made poorly, they can smooth over meaningful distinctions in the data, or make distinctions when they don't really exist. I don't want the paper to get into the weeds of how Sadinle makes his comparison vectors (there are different ways that may prove better), but this does seem to be a problem intrinsic to \texttt{BRL} and \texttt{fabl} frameworks.
+
+(I still note that the majority of matches are made with very high confidence! This only occurs for a small portion of matches.)
+
+# Interpretation of Posterior Distribution
+
+The Bayes estimate is designed to declare records that "bounce around" the matching space to be nonmatches. It seems like the overcounting is inherent to the method. I have seen that the posterior probabilities of the matches is well calibrated and meaningful, but it seems like the model does not give reasonable uncertainty quantification about the *number* of matches.
+
+I am not too concerned about this because many times, this is not a relevant quantity. If you're estimating casualty counts, its super relevant. But I don't think the DNC (for example) is ever interested in estimating the number of individuals that can be linked to the voterfile; they're interested in getting a set of links, and uncertainty quantification on those links. 
+
+I'm curious to hear your thoughts on this!

@@ -1,6 +1,5 @@
 \beamer@sectionintoc {1}{Introduction to Record Linkage}{2}{0}{1}
-\beamer@subsectionintoc {1}{1}{Background}{3}{0}{1}
-\beamer@sectionintoc {2}{Fast Beta Linkage}{25}{0}{2}
-\beamer@sectionintoc {3}{Simulation Studies}{30}{0}{3}
-\beamer@sectionintoc {4}{El Salvador Homicide Case Study}{35}{0}{4}
-\beamer@sectionintoc {5}{Conclusion}{43}{0}{5}
+\beamer@sectionintoc {2}{Fast Beta Linkage}{31}{0}{2}
+\beamer@sectionintoc {3}{Simulation Studies}{53}{0}{3}
+\beamer@sectionintoc {4}{Conclusion}{58}{0}{4}
+\beamer@sectionintoc {5}{Appendix}{61}{0}{5}

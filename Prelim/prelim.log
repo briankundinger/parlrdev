@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7140 64-bit) (preloaded format=pdflatex 2019.8.26)  30 SEP 2021 09:43
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (MiKTeX 2.9.7140 64-bit) (preloaded format=pdflatex 2019.8.26)  8 NOV 2021 15:20
 entering extended mode
 **./prelim.tex
 (prelim.tex
@@ -947,369 +947,551 @@ Package hyperref Warning: Option `pdfauthor' has already been used,
 ] [3
 
 ]
-<ted_article2.png, id=125, 340.27126pt x 295.1025pt>
-File: ted_article2.png Graphic file (type png)
-<use ted_article2.png>
-Package pdftex.def Info: ted_article2.png  used on input line 66.
-(pdftex.def)             Requested size: 147.49757pt x 132.74986pt.
-LaTeX Font Info:    Try loading font information for U+msa on input line 66.
+<graphics/syria_article_big.png, id=125, 470.25688pt x 412.54124pt>
+File: graphics/syria_article_big.png Graphic file (type png)
+<use graphics/syria_article_big.png>
+Package pdftex.def Info: graphics/syria_article_big.png  used on input line 68.
+
+(pdftex.def)             Requested size: 245.83376pt x 184.37657pt.
+ [4
+
+ <./graphics/syria_article_big.png>]
+<graphics/dnc_big.png, id=153, 492.84125pt x 268.50313pt>
+File: graphics/dnc_big.png Graphic file (type png)
+<use graphics/dnc_big.png>
+Package pdftex.def Info: graphics/dnc_big.png  used on input line 72.
+(pdftex.def)             Requested size: 307.30307pt x 184.37419pt.
+ [5
+
+ <./graphics/dnc_big.png>]
+<graphics/Slide1.png, id=180, 963.6pt x 542.025pt>
+File: graphics/Slide1.png Graphic file (type png)
+<use graphics/Slide1.png>
+Package pdftex.def Info: graphics/Slide1.png  used on input line 78.
+(pdftex.def)             Requested size: 307.28496pt x 215.1024pt.
+
+Overfull \vbox (8.29329pt too high) detected at line 78
+ []
+
+[6
+
+ <./graphics/Slide1.png>]
+<graphics/Slide2.png, id=208, 963.6pt x 542.025pt>
+File: graphics/Slide2.png Graphic file (type png)
+<use graphics/Slide2.png>
+Package pdftex.def Info: graphics/Slide2.png  used on input line 78.
+(pdftex.def)             Requested size: 307.28496pt x 215.1024pt.
+ [7
+
+ <./graphics/Slide2.png>]
+<graphics/Slide3.png, id=235, 963.6pt x 542.025pt>
+File: graphics/Slide3.png Graphic file (type png)
+<use graphics/Slide3.png>
+Package pdftex.def Info: graphics/Slide3.png  used on input line 84.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [8
+
+ <./graphics/Slide3.png>]
+<graphics/Slide4.png, id=263, 963.6pt x 542.025pt>
+File: graphics/Slide4.png Graphic file (type png)
+<use graphics/Slide4.png>
+Package pdftex.def Info: graphics/Slide4.png  used on input line 84.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [9
+
+ <./graphics/Slide4.png>]
+<graphics/Slide5.png, id=288, 963.6pt x 542.025pt>
+File: graphics/Slide5.png Graphic file (type png)
+<use graphics/Slide5.png>
+Package pdftex.def Info: graphics/Slide5.png  used on input line 84.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [10
+
+ <./graphics/Slide5.png>]
+LaTeX Font Info:    Try loading font information for U+msa on input line 94.
 
 ("C:\Users\brian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsa.fd"
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 66.
+LaTeX Font Info:    Try loading font information for U+msb on input line 94.
 ("C:\Users\brian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/amsfonts\umsb.fd"
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Try loading font information for OT1+mathkerncmss on input 
-line 66.
+line 94.
 
 ("C:\Users\brian\AppData\Local\Programs\MiKTeX 2.9\tex/latex/sansmathaccent\ot1
 mathkerncmss.fd"
 File: ot1mathkerncmss.fd 2013/03/27 Fontinst v1.933 font definitions for OT1/ma
 thkerncmss.
-) [4
+) [11
 
- <./ted_article2.png>]
-File: ted_article2.png Graphic file (type png)
-<use ted_article2.png>
-Package pdftex.def Info: ted_article2.png  used on input line 66.
-(pdftex.def)             Requested size: 147.49757pt x 132.74986pt.
-<dnc_header.png, id=154, 466.24188pt x 262.48062pt>
-File: dnc_header.png Graphic file (type png)
-<use dnc_header.png>
-Package pdftex.def Info: dnc_header.png  used on input line 66.
-(pdftex.def)             Requested size: 147.49301pt x 132.74991pt.
- [5
-
- <./dnc_header.png>]
-<datasets.png, id=180, 963.6pt x 542.025pt>
-File: datasets.png Graphic file (type png)
-<use datasets.png>
-Package pdftex.def Info: datasets.png  used on input line 72.
-(pdftex.def)             Requested size: 307.28496pt x 215.1024pt.
-
-Overfull \vbox (8.29329pt too high) detected at line 72
- []
-
-[6
-
- <./datasets.png>]
-<datasets_linked.png, id=208, 963.6pt x 542.025pt>
-File: datasets_linked.png Graphic file (type png)
-<use datasets_linked.png>
-Package pdftex.def Info: datasets_linked.png  used on input line 72.
-(pdftex.def)             Requested size: 307.28496pt x 215.1024pt.
- [7
-
- <./datasets_linked.png>]
-<fs_graphic.png, id=235, 963.6pt x 542.025pt>
-File: fs_graphic.png Graphic file (type png)
-<use fs_graphic.png>
-Package pdftex.def Info: fs_graphic.png  used on input line 76.
+]
+<graphics/Slide6.png, id=343, 963.6pt x 542.025pt>
+File: graphics/Slide6.png Graphic file (type png)
+<use graphics/Slide6.png>
+Package pdftex.def Info: graphics/Slide6.png  used on input line 98.
 (pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
- [8
+ [12
 
- <./fs_graphic.png>]
-<rl_graphics_all/Slide1.png, id=261, 505.89pt x 505.89pt>
-File: rl_graphics_all/Slide1.png Graphic file (type png)
-<use rl_graphics_all/Slide1.png>
-Package pdftex.def Info: rl_graphics_all/Slide1.png  used on input line 95.
+ <./graphics/Slide6.png>]
+<graphics_square/Slide1.png, id=369, 505.89pt x 505.89pt>
+File: graphics_square/Slide1.png Graphic file (type png)
+<use graphics_square/Slide1.png>
+Package pdftex.def Info: graphics_square/Slide1.png  used on input line 116.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (14.44002pt too high) detected at line 95
- []
-
-[9
-
- <./rl_graphics_all/Slide1.png>]
-<rl_graphics_all/Slide2.png, id=291, 505.89pt x 505.89pt>
-File: rl_graphics_all/Slide2.png Graphic file (type png)
-<use rl_graphics_all/Slide2.png>
-Package pdftex.def Info: rl_graphics_all/Slide2.png  used on input line 95.
-(pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
-
-Overfull \vbox (1.84001pt too high) detected at line 95
- []
-
-[10
-
- <./rl_graphics_all/Slide2.png>]
-File: rl_graphics_all/Slide2.png Graphic file (type png)
-<use rl_graphics_all/Slide2.png>
-Package pdftex.def Info: rl_graphics_all/Slide2.png  used on input line 95.
-(pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
-
-Overfull \vbox (1.84001pt too high) detected at line 95
- []
-
-[11
-
-]
-File: rl_graphics_all/Slide2.png Graphic file (type png)
-<use rl_graphics_all/Slide2.png>
-Package pdftex.def Info: rl_graphics_all/Slide2.png  used on input line 95.
-(pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
-
-Overfull \vbox (1.84001pt too high) detected at line 95
- []
-
-[12
-
-]
-File: rl_graphics_all/Slide2.png Graphic file (type png)
-<use rl_graphics_all/Slide2.png>
-Package pdftex.def Info: rl_graphics_all/Slide2.png  used on input line 95.
-(pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
-
-Overfull \vbox (1.84001pt too high) detected at line 95
+Overfull \vbox (14.44002pt too high) detected at line 116
  []
 
 [13
 
-]
-File: rl_graphics_all/Slide1.png Graphic file (type png)
-<use rl_graphics_all/Slide1.png>
-Package pdftex.def Info: rl_graphics_all/Slide1.png  used on input line 119.
+ <./graphics_square/Slide1.png>]
+<graphics_square/Slide2.png, id=400, 505.89pt x 505.89pt>
+File: graphics_square/Slide2.png Graphic file (type png)
+<use graphics_square/Slide2.png>
+Package pdftex.def Info: graphics_square/Slide2.png  used on input line 116.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (14.44002pt too high) detected at line 119
+Overfull \vbox (1.84001pt too high) detected at line 116
  []
 
 [14
 
-]
-<rl_graphics_all/Slide3.png, id=418, 505.89pt x 505.89pt>
-File: rl_graphics_all/Slide3.png Graphic file (type png)
-<use rl_graphics_all/Slide3.png>
-Package pdftex.def Info: rl_graphics_all/Slide3.png  used on input line 119.
+ <./graphics_square/Slide2.png>]
+File: graphics_square/Slide2.png Graphic file (type png)
+<use graphics_square/Slide2.png>
+Package pdftex.def Info: graphics_square/Slide2.png  used on input line 116.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (15.44002pt too high) detected at line 119
+Overfull \vbox (1.84001pt too high) detected at line 116
  []
 
 [15
 
- <./rl_graphics_all/Slide3.png>]
-<rl_graphics_all/Slide4.png, id=444, 505.89pt x 505.89pt>
-File: rl_graphics_all/Slide4.png Graphic file (type png)
-<use rl_graphics_all/Slide4.png>
-Package pdftex.def Info: rl_graphics_all/Slide4.png  used on input line 119.
+]
+File: graphics_square/Slide2.png Graphic file (type png)
+<use graphics_square/Slide2.png>
+Package pdftex.def Info: graphics_square/Slide2.png  used on input line 116.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (15.44002pt too high) detected at line 119
+Overfull \vbox (1.84001pt too high) detected at line 116
  []
 
 [16
 
- <./rl_graphics_all/Slide4.png>]
-<rl_graphics_all/Slide5.png, id=470, 505.89pt x 505.89pt>
-File: rl_graphics_all/Slide5.png Graphic file (type png)
-<use rl_graphics_all/Slide5.png>
-Package pdftex.def Info: rl_graphics_all/Slide5.png  used on input line 119.
+]
+File: graphics_square/Slide2.png Graphic file (type png)
+<use graphics_square/Slide2.png>
+Package pdftex.def Info: graphics_square/Slide2.png  used on input line 116.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (1.84001pt too high) detected at line 119
+Overfull \vbox (1.84001pt too high) detected at line 116
  []
 
 [17
 
- <./rl_graphics_all/Slide5.png>]
-File: rl_graphics_all/Slide5.png Graphic file (type png)
-<use rl_graphics_all/Slide5.png>
-Package pdftex.def Info: rl_graphics_all/Slide5.png  used on input line 119.
+]
+File: graphics_square/Slide1.png Graphic file (type png)
+<use graphics_square/Slide1.png>
+Package pdftex.def Info: graphics_square/Slide1.png  used on input line 139.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (1.84001pt too high) detected at line 119
+Overfull \vbox (14.44002pt too high) detected at line 139
  []
 
 [18
 
 ]
-File: rl_graphics_all/Slide5.png Graphic file (type png)
-<use rl_graphics_all/Slide5.png>
-Package pdftex.def Info: rl_graphics_all/Slide5.png  used on input line 119.
+<graphics_square/Slide3.png, id=526, 505.89pt x 505.89pt>
+File: graphics_square/Slide3.png Graphic file (type png)
+<use graphics_square/Slide3.png>
+Package pdftex.def Info: graphics_square/Slide3.png  used on input line 139.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (1.84001pt too high) detected at line 119
+Overfull \vbox (15.44002pt too high) detected at line 139
  []
 
 [19
 
-]
-File: rl_graphics_all/Slide5.png Graphic file (type png)
-<use rl_graphics_all/Slide5.png>
-Package pdftex.def Info: rl_graphics_all/Slide5.png  used on input line 119.
+ <./graphics_square/Slide3.png>]
+<graphics_square/Slide4.png, id=553, 505.89pt x 505.89pt>
+File: graphics_square/Slide4.png Graphic file (type png)
+<use graphics_square/Slide4.png>
+Package pdftex.def Info: graphics_square/Slide4.png  used on input line 139.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (1.84001pt too high) detected at line 119
+Overfull \vbox (15.44002pt too high) detected at line 139
  []
 
 [20
 
-]
-File: rl_graphics_all/Slide1.png Graphic file (type png)
-<use rl_graphics_all/Slide1.png>
-Package pdftex.def Info: rl_graphics_all/Slide1.png  used on input line 136.
+ <./graphics_square/Slide4.png>]
+<graphics_square/Slide5.png, id=579, 505.89pt x 505.89pt>
+File: graphics_square/Slide5.png Graphic file (type png)
+<use graphics_square/Slide5.png>
+Package pdftex.def Info: graphics_square/Slide5.png  used on input line 139.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (14.44002pt too high) detected at line 136
+Overfull \vbox (1.84001pt too high) detected at line 139
  []
 
 [21
 
-]
-<rl_graphics_all/Slide6.png, id=595, 505.89pt x 505.89pt>
-File: rl_graphics_all/Slide6.png Graphic file (type png)
-<use rl_graphics_all/Slide6.png>
-Package pdftex.def Info: rl_graphics_all/Slide6.png  used on input line 136.
+ <./graphics_square/Slide5.png>]
+File: graphics_square/Slide5.png Graphic file (type png)
+<use graphics_square/Slide5.png>
+Package pdftex.def Info: graphics_square/Slide5.png  used on input line 139.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (1.84001pt too high) detected at line 136
+Overfull \vbox (1.84001pt too high) detected at line 139
  []
 
 [22
 
- <./rl_graphics_all/Slide6.png>]
-File: rl_graphics_all/Slide6.png Graphic file (type png)
-<use rl_graphics_all/Slide6.png>
-Package pdftex.def Info: rl_graphics_all/Slide6.png  used on input line 136.
+]
+File: graphics_square/Slide5.png Graphic file (type png)
+<use graphics_square/Slide5.png>
+Package pdftex.def Info: graphics_square/Slide5.png  used on input line 139.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (1.84001pt too high) detected at line 136
+Overfull \vbox (1.84001pt too high) detected at line 139
  []
 
 [23
 
 ]
-File: rl_graphics_all/Slide6.png Graphic file (type png)
-<use rl_graphics_all/Slide6.png>
-Package pdftex.def Info: rl_graphics_all/Slide6.png  used on input line 136.
+File: graphics_square/Slide5.png Graphic file (type png)
+<use graphics_square/Slide5.png>
+Package pdftex.def Info: graphics_square/Slide5.png  used on input line 139.
 (pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-Overfull \vbox (1.84001pt too high) detected at line 136
+Overfull \vbox (1.84001pt too high) detected at line 139
  []
 
 [24
 
-] (prelim.toc) [25
+]
+File: graphics_square/Slide1.png Graphic file (type png)
+<use graphics_square/Slide1.png>
+Package pdftex.def Info: graphics_square/Slide1.png  used on input line 159.
+(pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-] [26
+Overfull \vbox (14.44002pt too high) detected at line 159
+ []
 
-] [27
-
-] [28
-
-] [29
-
-] (prelim.toc) [30
-
-] [31
+[25
 
 ]
-<../notes/figures/sadinle_sim_plot.png, id=864, 505.89pt x 505.89pt>
-File: ../notes/figures/sadinle_sim_plot.png Graphic file (type png)
-<use ../notes/figures/sadinle_sim_plot.png>
-Package pdftex.def Info: ../notes/figures/sadinle_sim_plot.png  used on input l
-ine 223.
-(pdftex.def)             Requested size: 307.29561pt x 215.1046pt.
- [32
+<graphics_square/Slide6.png, id=704, 505.89pt x 505.89pt>
+File: graphics_square/Slide6.png Graphic file (type png)
+<use graphics_square/Slide6.png>
+Package pdftex.def Info: graphics_square/Slide6.png  used on input line 159.
+(pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
- <../notes/figures/sadinle_sim_plot.png>]
-<../notes/figures/sadinle_speed_plot2.png, id=891, 416.2752pt x 256.5585pt>
-File: ../notes/figures/sadinle_speed_plot2.png Graphic file (type png)
-<use ../notes/figures/sadinle_speed_plot2.png>
-Package pdftex.def Info: ../notes/figures/sadinle_speed_plot2.png  used on inpu
-t line 227.
-(pdftex.def)             Requested size: 307.30202pt x 215.10837pt.
- [33
+Overfull \vbox (15.44002pt too high) detected at line 159
+ []
 
- <../notes/figures/sadinle_speed_plot2.png>]
-<../notes/figures/speed_plot_fixed_nB.png, id=917, 505.89pt x 505.89pt>
-File: ../notes/figures/speed_plot_fixed_nB.png Graphic file (type png)
-<use ../notes/figures/speed_plot_fixed_nB.png>
-Package pdftex.def Info: ../notes/figures/speed_plot_fixed_nB.png  used on inpu
-t line 231.
-(pdftex.def)             Requested size: 307.29561pt x 215.1046pt.
-[34
+[26
 
- <../notes/figures/speed_plot_fixed_nB.png>] (prelim.toc) [35
+ <./graphics_square/Slide6.png>]
+File: graphics_square/Slide6.png Graphic file (type png)
+<use graphics_square/Slide6.png>
+Package pdftex.def Info: graphics_square/Slide6.png  used on input line 159.
+(pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
-] [36
+Overfull \vbox (15.44002pt too high) detected at line 159
+ []
+
+[27
 
 ]
-<../notes/figures/el_salvador/time_table_big_P2.png, id=999, 33.2442pt x 35.412
-3pt>
-File: ../notes/figures/el_salvador/time_table_big_P2.png Graphic file (type png
-)
-<use ../notes/figures/el_salvador/time_table_big_P2.png>
-Package pdftex.def Info: ../notes/figures/el_salvador/time_table_big_P2.png  us
-ed on input line 264.
-(pdftex.def)             Requested size: 88.50452pt x 88.51425pt.
- [37
+File: graphics_square/Slide6.png Graphic file (type png)
+<use graphics_square/Slide6.png>
+Package pdftex.def Info: graphics_square/Slide6.png  used on input line 159.
+(pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
- <../notes/figures/el_salvador/time_table_big_P2.png>]
-File: ../notes/figures/el_salvador/time_table_big_P2.png Graphic file (type png
-)
-<use ../notes/figures/el_salvador/time_table_big_P2.png>
-Package pdftex.def Info: ../notes/figures/el_salvador/time_table_big_P2.png  us
-ed on input line 264.
-(pdftex.def)             Requested size: 88.50452pt x 88.51425pt.
-<../notes/figures/el_salvador/time_table_small_P2.png, id=1028, 33.2442pt x 35.
-4123pt>
-File: ../notes/figures/el_salvador/time_table_small_P2.png Graphic file (type p
-ng)
-<use ../notes/figures/el_salvador/time_table_small_P2.png>
-Package pdftex.def Info: ../notes/figures/el_salvador/time_table_small_P2.png  
-used on input line 264.
-(pdftex.def)             Requested size: 88.50452pt x 88.51425pt.
- [38
+Overfull \vbox (15.44002pt too high) detected at line 159
+ []
 
- <../notes/figures/el_salvador/time_table_small_P2.png>]
-<../notes/figures/el_salvador/m_posterior_smallP.png, id=1054, 396.5214pt x 244
-.5135pt>
-File: ../notes/figures/el_salvador/m_posterior_smallP.png Graphic file (type pn
-g)
-<use ../notes/figures/el_salvador/m_posterior_smallP.png>
-Package pdftex.def Info: ../notes/figures/el_salvador/m_posterior_smallP.png  u
-sed on input line 268.
-(pdftex.def)             Requested size: 307.30089pt x 184.38457pt.
- [39
+[28
 
- <../notes/figures/el_salvador/m_posterior_smallP.png>]
-<../notes/figures/el_salvador/DID_distribution_smallP_bayes.png, id=1081, 396.5
-214pt x 244.5135pt>
-File: ../notes/figures/el_salvador/DID_distribution_smallP_bayes.png Graphic fi
-le (type png)
-<use ../notes/figures/el_salvador/DID_distribution_smallP_bayes.png>
-Package pdftex.def Info: ../notes/figures/el_salvador/DID_distribution_smallP_b
-ayes.png  used on input line 272.
-(pdftex.def)             Requested size: 307.30089pt x 184.38457pt.
- [40
+]
+<graphics_square/Slide7.png, id=780, 505.89pt x 505.89pt>
+File: graphics_square/Slide7.png Graphic file (type png)
+<use graphics_square/Slide7.png>
+Package pdftex.def Info: graphics_square/Slide7.png  used on input line 159.
+(pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
 
- <../notes/figures/el_salvador/DID_distribution_smallP_bayes.png>]
-<../notes/figures/el_salvador/rosa_records.png, id=1108, 112.9821pt x 34.4487pt
->
-File: ../notes/figures/el_salvador/rosa_records.png Graphic file (type png)
-<use ../notes/figures/el_salvador/rosa_records.png>
-Package pdftex.def Info: ../notes/figures/el_salvador/rosa_records.png  used on
- input line 277.
-(pdftex.def)             Requested size: 276.58958pt x 122.92554pt.
- [41
+Overfull \vbox (15.44002pt too high) detected at line 159
+ []
 
- <../notes/figures/el_salvador/rosa_records.png>]
-<../notes/figures/el_salvador/bad_mixing.png, id=1134, 396.5214pt x 244.5135pt>
+[29
 
-File: ../notes/figures/el_salvador/bad_mixing.png Graphic file (type png)
-<use ../notes/figures/el_salvador/bad_mixing.png>
-Package pdftex.def Info: ../notes/figures/el_salvador/bad_mixing.png  used on i
-nput line 281.
-(pdftex.def)             Requested size: 307.30089pt x 184.38457pt.
+ <./graphics_square/Slide7.png>]
+<graphics_square/Slide8.png, id=805, 505.89pt x 505.89pt>
+File: graphics_square/Slide8.png Graphic file (type png)
+<use graphics_square/Slide8.png>
+Package pdftex.def Info: graphics_square/Slide8.png  used on input line 159.
+(pdftex.def)             Requested size: 184.37427pt x 221.24913pt.
+
+Overfull \vbox (1.84001pt too high) detected at line 159
+ []
+
+[30
+
+ <./graphics_square/Slide8.png>] (prelim.toc) [31
+
+] [32
+
+] [33
+
+]
+<graphics/unique_patterns.png, id=916, 215.30438pt x 233.87375pt>
+File: graphics/unique_patterns.png Graphic file (type png)
+<use graphics/unique_patterns.png>
+Package pdftex.def Info: graphics/unique_patterns.png  used on input line 211.
+(pdftex.def)             Requested size: 116.77513pt x 140.1326pt.
+ [34
+
+ <./graphics/unique_patterns.png>]
+File: graphics/unique_patterns.png Graphic file (type png)
+<use graphics/unique_patterns.png>
+Package pdftex.def Info: graphics/unique_patterns.png  used on input line 211.
+(pdftex.def)             Requested size: 116.77513pt x 140.1326pt.
+ [35
+
+]
+File: graphics/unique_patterns.png Graphic file (type png)
+<use graphics/unique_patterns.png>
+Package pdftex.def Info: graphics/unique_patterns.png  used on input line 211.
+(pdftex.def)             Requested size: 116.77513pt x 140.1326pt.
+ [36
+
+]
+<graphics/Slide17.png, id=991, 963.6pt x 542.025pt>
+File: graphics/Slide17.png Graphic file (type png)
+<use graphics/Slide17.png>
+Package pdftex.def Info: graphics/Slide17.png  used on input line 220.
+(pdftex.def)             Requested size: 338.01492pt x 184.37703pt.
+
+Overfull \hbox (30.72505pt too wide) in paragraph at lines 220--220
+ [][] 
+ []
+
+[37
+
+ <./graphics/Slide17.png>]
+<graphics/Slide18.png, id=1021, 963.6pt x 542.025pt>
+File: graphics/Slide18.png Graphic file (type png)
+<use graphics/Slide18.png>
+Package pdftex.def Info: graphics/Slide18.png  used on input line 220.
+(pdftex.def)             Requested size: 338.01492pt x 184.37703pt.
+
+Overfull \hbox (30.72505pt too wide) in paragraph at lines 220--220
+ [][] 
+ []
+
+[38
+
+ <./graphics/Slide18.png>]
+<graphics/Slide19.png, id=1047, 963.6pt x 542.025pt>
+File: graphics/Slide19.png Graphic file (type png)
+<use graphics/Slide19.png>
+Package pdftex.def Info: graphics/Slide19.png  used on input line 220.
+(pdftex.def)             Requested size: 338.01492pt x 184.37703pt.
+
+Overfull \hbox (30.72505pt too wide) in paragraph at lines 220--220
+ [][] 
+ []
+
+[39
+
+ <./graphics/Slide19.png>]
+<graphics/Slide20.png, id=1073, 963.6pt x 542.025pt>
+File: graphics/Slide20.png Graphic file (type png)
+<use graphics/Slide20.png>
+Package pdftex.def Info: graphics/Slide20.png  used on input line 220.
+(pdftex.def)             Requested size: 338.01492pt x 184.37703pt.
+
+Overfull \hbox (30.72505pt too wide) in paragraph at lines 220--220
+ [][] 
+ []
+
+[40
+
+ <./graphics/Slide20.png>]
+<graphics/Slide21.png, id=1098, 963.6pt x 542.025pt>
+File: graphics/Slide21.png Graphic file (type png)
+<use graphics/Slide21.png>
+Package pdftex.def Info: graphics/Slide21.png  used on input line 220.
+(pdftex.def)             Requested size: 338.01492pt x 184.37703pt.
+
+Overfull \hbox (30.72505pt too wide) in paragraph at lines 220--220
+ [][] 
+ []
+
+[41
+
+ <./graphics/Slide21.png>]
+<graphics/Slide23.png, id=1123, 963.6pt x 542.025pt>
+File: graphics/Slide23.png Graphic file (type png)
+<use graphics/Slide23.png>
+Package pdftex.def Info: graphics/Slide23.png  used on input line 228.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
  [42
 
- <../notes/figures/el_salvador/bad_mixing.png>] (prelim.toc) [43
+ <./graphics/Slide23.png>]
+<graphics/Slide24.png, id=1151, 963.6pt x 542.025pt>
+File: graphics/Slide24.png Graphic file (type png)
+<use graphics/Slide24.png>
+Package pdftex.def Info: graphics/Slide24.png  used on input line 228.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [43
 
-] [44
+ <./graphics/Slide24.png>]
+<graphics/Slide25.png, id=1178, 963.6pt x 542.025pt>
+File: graphics/Slide25.png Graphic file (type png)
+<use graphics/Slide25.png>
+Package pdftex.def Info: graphics/Slide25.png  used on input line 228.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [44
+
+ <./graphics/Slide25.png>]
+<graphics/Slide26.png, id=1204, 963.6pt x 542.025pt>
+File: graphics/Slide26.png Graphic file (type png)
+<use graphics/Slide26.png>
+Package pdftex.def Info: graphics/Slide26.png  used on input line 228.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [45
+
+ <./graphics/Slide26.png>]
+<graphics/Slide27.png, id=1229, 963.6pt x 542.025pt>
+File: graphics/Slide27.png Graphic file (type png)
+<use graphics/Slide27.png>
+Package pdftex.def Info: graphics/Slide27.png  used on input line 228.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [46
+
+ <./graphics/Slide27.png>]
+<graphics/Slide37.png, id=1254, 963.6pt x 542.025pt>
+File: graphics/Slide37.png Graphic file (type png)
+<use graphics/Slide37.png>
+Package pdftex.def Info: graphics/Slide37.png  used on input line 237.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [47
+
+ <./graphics/Slide37.png>]
+<graphics/Slide38.png, id=1280, 963.6pt x 542.025pt>
+File: graphics/Slide38.png Graphic file (type png)
+<use graphics/Slide38.png>
+Package pdftex.def Info: graphics/Slide38.png  used on input line 237.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [48
+
+ <./graphics/Slide38.png>]
+<graphics/Slide39.png, id=1306, 963.6pt x 542.025pt>
+File: graphics/Slide39.png Graphic file (type png)
+<use graphics/Slide39.png>
+Package pdftex.def Info: graphics/Slide39.png  used on input line 237.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [49
+
+ <./graphics/Slide39.png>]
+<graphics/Slide40.png, id=1333, 963.6pt x 542.025pt>
+File: graphics/Slide40.png Graphic file (type png)
+<use graphics/Slide40.png>
+Package pdftex.def Info: graphics/Slide40.png  used on input line 237.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [50
+
+ <./graphics/Slide40.png>]
+<graphics/Slide41.png, id=1359, 963.6pt x 542.025pt>
+File: graphics/Slide41.png Graphic file (type png)
+<use graphics/Slide41.png>
+Package pdftex.def Info: graphics/Slide41.png  used on input line 237.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [51
+
+ <./graphics/Slide41.png>]
+<graphics/Slide42.png, id=1384, 963.6pt x 542.025pt>
+File: graphics/Slide42.png Graphic file (type png)
+<use graphics/Slide42.png>
+Package pdftex.def Info: graphics/Slide42.png  used on input line 237.
+(pdftex.def)             Requested size: 307.28496pt x 184.37703pt.
+ [52
+
+ <./graphics/Slide42.png>] (prelim.toc) [53
+
+]
+LaTeX Font Info:    Try loading font information for OMS+cmss on input line 281
+.
+LaTeX Font Info:    No file OMScmss.fd. on input line 281.
+
+
+LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
+(Font)              using `OMS/cmsy/m/n' instead
+(Font)              for symbol `textbraceleft' on input line 281.
+
+<../notes/figures/sadinle_speed_plot_slides.png, id=1440, 505.89pt x 505.89pt>
+File: ../notes/figures/sadinle_speed_plot_slides.png Graphic file (type png)
+<use ../notes/figures/sadinle_speed_plot_slides.png>
+Package pdftex.def Info: ../notes/figures/sadinle_speed_plot_slides.png  used o
+n input line 281.
+(pdftex.def)             Requested size: 178.22975pt x 178.22975pt.
+[54
+
+ <../notes/figures/sadinle_speed_plot_slides.png>]
+<../notes/figures/speed_plot_fixed_nB_slides.png, id=1467, 505.89pt x 505.89pt>
+
+File: ../notes/figures/speed_plot_fixed_nB_slides.png Graphic file (type png)
+<use ../notes/figures/speed_plot_fixed_nB_slides.png>
+Package pdftex.def Info: ../notes/figures/speed_plot_fixed_nB_slides.png  used 
+on input line 297.
+(pdftex.def)             Requested size: 178.22975pt x 178.22975pt.
+ [55
+
+ <../notes/figures/speed_plot_fixed_nB_slides.png>] [56
+
+]
+<../notes/figures/sadinle_sim_plot2.png, id=1519, 505.89pt x 505.89pt>
+File: ../notes/figures/sadinle_sim_plot2.png Graphic file (type png)
+<use ../notes/figures/sadinle_sim_plot2.png>
+Package pdftex.def Info: ../notes/figures/sadinle_sim_plot2.png  used on input 
+line 311.
+(pdftex.def)             Requested size: 307.29561pt x 215.1046pt.
+ [57
+
+ <../notes/figures/sadinle_sim_plot2.png>] (prelim.toc) [58
+
+] [59
+
+] [60
+
+] (prelim.toc) [61
+
+]
+<graphics/before_SEI.png, id=1655, 492.33937pt x 68.255pt>
+File: graphics/before_SEI.png Graphic file (type png)
+<use graphics/before_SEI.png>
+Package pdftex.def Info: graphics/before_SEI.png  used on input line 408.
+(pdftex.def)             Requested size: 307.28987pt x 42.60301pt.
+ [62
+
+ <./graphics/before_SEI.png>]
+<graphics/after_SEI2.png, id=1682, 497.35812pt x 115.93312pt>
+File: graphics/after_SEI2.png Graphic file (type png)
+<use graphics/after_SEI2.png>
+Package pdftex.def Info: graphics/after_SEI2.png  used on input line 408.
+(pdftex.def)             Requested size: 307.28987pt x 71.63013pt.
+ [63
+
+ <./graphics/after_SEI2.png>]
+File: graphics/after_SEI2.png Graphic file (type png)
+<use graphics/after_SEI2.png>
+Package pdftex.def Info: graphics/after_SEI2.png  used on input line 408.
+(pdftex.def)             Requested size: 307.28987pt x 71.63013pt.
+ [64
 
 ]
 \tf@nav=\write6
@@ -1321,29 +1503,26 @@ nput line 281.
 \tf@snm=\write8
 \openout8 = `prelim.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 297.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 297.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 430.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 430.
  (prelim.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 297.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 297.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 430.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 430.
+Package rerunfilecheck Info: File `prelim.out' has not changed.
+(rerunfilecheck)             Checksum: DAD8FD089D2F6651693E0B021A9223CE;263.
 
 
-Package rerunfilecheck Warning: File `prelim.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package rerunfilecheck Info: Checksums for `prelim.out':
-(rerunfilecheck)             Before: CA99A8F8529FF358106D8B3E8E55DAD3;286
-(rerunfilecheck)             After:  515B2628E44DAB4DC3246F7D0E94520B;346.
  ) 
 Here is how much of TeX's memory you used:
- 17612 strings out of 492895
- 343854 string characters out of 3123735
- 411943 words of memory out of 3000000
- 21001 multiletter control sequences out of 15000+200000
- 16116 words of font info for 59 fonts, out of 3000000 for 9000
+ 17744 strings out of 492895
+ 345743 string characters out of 3123735
+ 409943 words of memory out of 3000000
+ 21079 multiletter control sequences out of 15000+200000
+ 16285 words of font info for 60 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 56i,14n,55p,795b,577s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 56i,14n,55p,795b,765s stack positions out of 5000i,500n,10000p,200000b,50000s
 <C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts
 /cm/cmex10.pfb><C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/pu
 blic/amsfonts/cm/cmmi10.pfb><C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/f
@@ -1358,11 +1537,11 @@ onts/type1/public/amsfonts/cm/cmssi8.pfb><C:/Users/brian/AppData/Local/Programs
 /MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/brian/AppData/L
 ocal/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/bri
 an/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-<C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/s
-ymbols/msbm10.pfb>
-Output written on prelim.pdf (44 pages, 1472000 bytes).
+<C:/Users/brian/AppData/Local/Programs/MiKTeX 2.9/fonts/type1/public/amsfonts/c
+m/cmtt12.pfb>
+Output written on prelim.pdf (64 pages, 3107913 bytes).
 PDF statistics:
- 1279 PDF objects out of 1440 (max. 8388607)
- 95 named destinations out of 1000 (max. 500000)
- 183 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1805 PDF objects out of 2073 (max. 8388607)
+ 134 named destinations out of 1000 (max. 500000)
+ 273 words of extra memory for PDF output out of 10000 (max. 10000000)
 

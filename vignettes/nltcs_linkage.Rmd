@@ -24,17 +24,26 @@ library(furrr)
 ```
 
 ```{r}
+S <- 900
 nltcs <- read.csv("../data/proc_nltcs.csv")
 df82 <- nltcs %>% 
-  filter(FILE == 82)
+  filter(FILE == 82) %>% 
+  select(-FILE, -SEQ) %>% 
+  mutate(unique_ID = str_sub(REC, start = 3L))
 df89 <- nltcs %>% 
-  filter(FILE == 89)
+  filter(FILE == 89) %>% 
+  select(-FILE, -SEQ) %>% 
+  mutate(unique_ID = str_sub(REC, start = 3L))
 
+Ztrue <- sapply(df89$unique_ID, function(x){
+  match <- which(df82$unique_ID == x)
+  if (length(match) == 0){
+    match <- nA + 1
+  }
+  match
+}) %>% 
+  unname()
 
-# All to all comparisons
-# cd <- compareRecords(df82, df89,
-#                      flds = c(2, 3, 4, 5, 6, 7),
-#                      types = c("bi", "bi", "bi", "bi", "bi", "bi"))
 
 ```
 
@@ -110,33 +119,24 @@ Zchain <- chain$Z
 nA <- cd[[1]][[2]]
 nB <- cd[[1]][[3]]
 Zhat <- LinkRecordsBK(Zchain, nA, 1, 1, 2, Inf)
+post_probs <- Zhat[[2]]
 Zhat_resolved <- ResolveConflicts(Zhat)
+eval <- GetEvaluations(Zhat_resolved, Ztrue, nA)
 Zhat <- Zhat[[1]]
 overlap_samps <- apply(Zchain, 2, function(x){
   sum(x < nA + 1)
 })
 
+
+png(file="../notes/figures/nltcs/postprobs_hist1.png")
+hist(post_probs)
+dev.off()
+
+hist(post_probs)
 #hist(overlap_samps)
 # hist(Zhat[[2]][Zhat[[1]] < nA + 1])
 ```
 
-```{r}
-B_matches <- which(Zhat_resolved < nA + 1)
-A_matches <- Zhat[which(Zhat_resolved < nA + 1)]
-
-B_records <- df89[B_matches, ]
-A_records <- df82[A_matches, ]
-```
-
-```{r}
-
-differences <- sapply(fields, function(x){
-  sum(A_files[, x] != B_files[, x])
-})
-names(differences) <- names(df82)[fields]
-differences
-
-```
 
 
 ```{r}
@@ -148,10 +148,10 @@ overlap_samps <- data.frame(overlap_samps)
 overlap_samps %>% 
   ggplot(aes(x = overlap_samps)) +
   geom_histogram() + 
-  geom_vline(xintercept = bayes_initial) + 
-  geom_vline(xintercept = bayes_resolved,
-             linetype = "longdash") +
+  geom_vline(xintercept = bayes_resolved) + 
   theme_bw()
+
+ggsave("../notes/figures/nltcs/overlap_posterior1.png")
 ```
 
 ```{r m_and_u}
@@ -179,10 +179,12 @@ m_summary %>%
   ggplot(aes(x = params, y = avg,
              ymin = lower, ymax = upper)) +
   geom_pointrange(position = position_dodge2(width = .5)) +
-  facet_wrap(~field, scales = "free_x") + 
+  facet_wrap(~ field, scales = "free_x") + 
   labs(y = "Probability",
        x = "Agreement Level") + 
   theme_bw()
+
+ggsave("../notes/figures/nltcs/m_posterior1.png")
 
 u_summary %>% 
   ggplot(aes(x = params, y = avg,
@@ -197,3 +199,62 @@ u_summary %>%
 
 ```
 
+```{r}
+Zhat_bind <- cbind(Zhat[[1]], Zhat[[2]])
+bouncing_matches <- which(Zhat_bind[, 2] < .5)
+examples <- Zhat_bind[bouncing_matches, ]
+rownames(examples) <- bouncing_matches
+colnames(examples) <- c("Zhat", "probability")
+
+probs_for_bouncing_matches <- lapply(bouncing_matches, function(x){
+  Zchain[x, ] %>% 
+    table()/S
+})
+
+names(probs_for_bouncing_matches) <- bouncing_matches
+
+sapply(probs_for_bouncing_matches, length) - 1
+
+probs_for_bouncing_matches["2"]
+```
+
+```{r}
+df89_true <- df89 %>% 
+  filter(Ztrue < nA + 1)
+
+df82_true <- df82[Ztrue[Ztrue < nA + 1], ]
+df89_true$unique_ID == df82_true$unique_ID
+
+MLEs <- sapply(1:6, function(x){
+  sum(df82_true[, x] == df89_true[, x]) / nrow(df82_true)
+})
+
+MLEs
+```
+
+```{r}
+df82 %>% 
+  mutate(REGOFF = as.factor(REGOFF),
+         STATE = as.factor(STATE)) %>% 
+  group_by(STATE, REGOFF) %>% 
+  count()
+```
+
+
+<!-- ```{r} -->
+<!-- B_matches <- which(Zhat_resolved < nA + 1) -->
+<!-- A_matches <- Zhat[which(Zhat_resolved < nA + 1)] -->
+
+<!-- B_records <- df89[B_matches, ] -->
+<!-- A_records <- df82[A_matches, ] -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+
+<!-- differences <- sapply(fields, function(x){ -->
+<!--   sum(A_files[, x] != B_files[, x]) -->
+<!-- }) -->
+<!-- names(differences) <- names(df82)[fields] -->
+<!-- differences -->
+
+<!-- ``` -->

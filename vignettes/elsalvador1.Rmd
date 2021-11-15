@@ -29,7 +29,8 @@ set.seed(2)
 R <- NULL
 show_progress <- T
 fast <- F
-S <- 1000
+S <- iter <- 1000
+burn <- S * .1
 iter_count <- seq_len(S)
 
 cd <- readRDS("../data/comparison_elsalvador.rds")
@@ -83,7 +84,7 @@ results_image <- results_table %>%
 
 results_image
 
-#as_image(results_image, file = "../notes/figures/el_salvador/time_table_big_P2.png")
+as_image(results_image, file = "../notes/figures/el_salvador/time_table_big_P2.png")
 
 
 
@@ -91,7 +92,7 @@ results_image
 
 ```{r}
 method <- c(rep("parlr", iter - burn), rep("sadinle", iter - burn))
-overlap <- c(overlap_samples_parlr, overlap_samples_sadinle)
+overlap <- c(overlap_samples_fabl, overlap_samples_sadinle)
 df <- data.frame(overlap, method)
 
 df %>% 
@@ -105,7 +106,7 @@ df %>%
   theme_bw() + 
   scale_fill_brewer(palette="Set1")
 
-ggsave("../notes/figures/el_salvador/overlap_distribution_bigP.png")
+#ggsave("../notes/figures/el_salvador/overlap_distribution_bigP.png")
 ```
 
 ```{r}
@@ -142,7 +143,7 @@ df %>%
   theme_bw() + 
   scale_color_brewer(palette="Set1")
 
-ggsave("../notes/figures/el_salvador/m_posterior_bigP.png")
+#ggsave("../notes/figures/el_salvador/m_posterior_bigP.png")
 
 
 ```

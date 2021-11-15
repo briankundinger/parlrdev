@@ -28,7 +28,7 @@ rm(list=ls())
 gc()
 set.seed(3)
 
-n1_vals <- c(500, 1000, 2000, 3000, 4000, 5000)
+n1_vals <- c(500, 1000, 2000, 3000, 4000, 5000, 6000, 7000)
 n2 <- 500
 show_progress <- T
 fast = F
@@ -99,12 +99,16 @@ speed_plot_fixed_nB <- df %>%
   labs(x = expression(n[A]),
        y = "Time (seconds)",
        color = "Method") +
-  theme_bw() + 
+  # labs(x = NULL, 
+  #      y = NULL,
+  #      color = "Method") +
+  theme_bw(base_size = 22) + 
+  theme(legend.position = "bottom") +
   scale_color_brewer(palette="Set1")
 
 speed_plot_fixed_nB
 
-# ggsave(filename = "../notes/figures/speed_plot_fixed_nB.png", plot = speed_plot_fixed_nB)
+ggsave(filename = "../notes/figures/speed_plot_fixed_nB_slides.png", plot = speed_plot_fixed_nB)
 
 
 # results_df <- df %>% 
