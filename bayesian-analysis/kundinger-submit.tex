@@ -1,0 +1,173 @@
+\documentclass[ba]{imsart}
+%
+\pubyear{0000}
+\volume{00}
+\issue{0}
+\doi{0000}
+%\arxiv{}
+\firstpage{1}
+\lastpage{1}
+
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{natbib}
+\usepackage[colorlinks,citecolor=blue,urlcolor=blue,filecolor=blue,backref=page]{hyperref}
+\usepackage{graphicx}
+
+\startlocaldefs
+\input{subfiles/preamble.tex}
+\endlocaldefs
+
+\begin{document}
+
+%% *** Frontmatter *** 
+
+\begin{frontmatter}
+\title{Efficient and Scalable Bipartite Matching with Fast Beta Linkage  (fabl)}
+%\title{A Sample Document\thanksref{T1}}
+%\thankstext{T1}{<thanks text>}
+\runtitle{Efficient and Scalable Bipartite Matching with Fast Beta Linkage  (fabl)}
+
+\begin{aug}
+\author{\fnms{Brian} \snm{Kundinger}\thanksref{addr1}\ead[label=e1]{brian.kundinger@duke.edu}},
+\author{\fnms{Jerome} \snm{Reiter}\thanksref{addr1}\ead[label=e2]{jreiter@duke.edu}}
+\and
+\author{\fnms{Rebecca C.} \snm{Steorts}\thanksref{addr2}\ead[label=e3]{beka@stat.duke.edu}}
+
+\runauthor{N. G. Marchant et al.}
+
+\address[addr1]{Department of Statistical Science,
+  Duke University,
+  P.O.\ Box 90251,
+  Durham, NC 27708, USA
+  \printead{e1}, % print email address of "e1"
+  \printead*{e2}
+}
+
+\address[addr2]{Departments of Statistical Science and Computer Science,
+  Duke University,
+  P.O.\ Box 90251,
+  Durham, NC 27708, USA
+  \printead{e3}
+}
+
+%\thankstext{<id>}{<text>}
+\end{aug}
+
+
+\begin{abstract}
+Recently, researchers have developed Bayesian versions of the Fellegi Sunter model for record linkage. These have the crucial advantage of quantifying uncertainty from imperfect linkages.  However, current implementations of Bayesian Fellegi Sunter models are computationally intensive, making them challenging to use on larger-scale record linkage tasks.  We propose and investigate a variation on Bayesian Fellegi Sunter models that we call fast beta linkage, or \texttt{fabl}.  Specifically, in \texttt{fabl} we propose independent prior distributions over the matching space, allowing us to use hashing techniques that reduce computational overhead. This also allows us to complete pairwise record comparisons over large datasets through parallel computing and reduce memory costs through a new technique called storage efficient indexing. Through simulations and two case studies, we show that \texttt{fabl} has markedly increased speed with minimal loss of accuracy.
+\end{abstract}
+
+%% ** Keywords **
+\begin{keyword}%[class=MSC]
+\kwd{bipartite record linkage}
+\kwd{Bayesian methods}
+\kwd{hashing techniques}
+\kwd{parallel/distributed computing}
+\kwd{Markov chain Monte Carlo}
+\end{keyword}
+
+\end{frontmatter}
+
+
+
+
+%% ** Mainmatter **
+
+
+\section{Introduction}
+\label{sec:introduction}
+	
+	In many data analysis tasks, analysts seek to identify duplicate records across two databases. This is an increasingly important task in ``data cleaning,'' and is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others \citep{christen_2012, gutman2013bayesian, dalzell2018regression, tang2020}. In this paper, we consider bipartite record linkage, which merges two databases together that contain duplications across but not within the respective databases. 
+	
+	Many statistical record linkage methods are extensions of the seminal work of \cite{fellegi_theory_1969} and \cite{newcombe_automatic_1959}. Specifically, Fellegi and Sunter created comparison vectors for each pair of records in the data and independently classified those pairs as a match or a non-match using a likelihood ratio test. Recent work in the statistical literature has extended this approach for a wide variety of applications \citep{winkler1991application, fair2004generalized, wagner2014person, gill2003english, enamorado2019using}. 
+	% Possible citation for bipartite matching. 
+	%\citep{fellegi_theory_1969, jaro1989, Winkler1988, belin_1995, larsen_2001, liseo_2011,  herzog2007data, gutman_bayesian_2013, sadinle_bayesian_2017}.
+	
+	The independent pairwise matching assumption from Fellegi and Sunter is popular mainly for its mathematical simplicity, but is often unreasonable in practice. In many situations, we know that there are no duplications within a database, meaning that one record from one database should be linked with at most one record from the other. Here, additional declared matches are known by assumption to be false. Many extensions to \cite{fellegi_theory_1969} resolve these false matches as a post-processing step \citep{jaro1989}, but this model misspecification can still lead to poor results \citep{sadinle_bayesian_2017}.
+	
+	Alternatively, one can embed one-to-one matching requirements into the model specification itself \citep{gutman2013bayesian, liseo_2011}, at an additional computational cost. \cite{larsen2005} employed a Metropolis-Hastings algorithm to only allow sampling matches that respected one-to-one assumptions, but such algorithms exhibit slow mixing due to the combinatorial nature of the constrained matching space. \cite{fortunato_2010} used simulated annealing to target the space of matches permitted under the one-to-one constraint, but the method was so computationally intensive it could only be used to link databases of less than 100 records. \cite{sadinle_bayesian_2017} proposed the \emph{Beta Record Linkage} model (\texttt{BRL}), using a prior over the space of bipartite matchings to strictly enforce one-to-one requirements throughout his Gibbs sampler. Additionally, he introduced a class of loss functions that allows for a flexible estimation of the linkage structure, such that the modeller can weight the relative importance of false positives and false negatives, and identify records pairings to be be decided through clerical review. Although it was shown to work on larger tasks than previous one-to-one methods, \texttt{BRL} becomes slow when working with larger datasets. 
+	
+	In this paper, we propose fast beta linkage (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. As suggested by \cite{heck2019}, we relax the one-to-one matching requirement of \texttt{BRL} and propose independent priors over the matching space, creating a ``many-to-one'' model for record linkage. This allows us to (1) employ hashing techniques that hasten calculations and reduce computational costs, (2) compute the pairwise record comparisons over large datasets via parallel computing, and (3) reduce memory costs through what we call storage efficient indexing. We argue that even in cases where a bipartite matching is desired, \texttt{fabl} (with a simple post-processing procedure) provides accurate estimation of the linkage structure and other parameters, more information through which to asses model misspecification, and greatly enhanced speed. Open source software to use \texttt{fabl} in \texttt{R} is available through \href{https://github.com/briankundinger/parlrdev}{Github}.
+	
+	In what follows, Section~\ref{sec:review-of_prior-work} reviews the work of \cite{fellegi_theory_1969} and \cite{sadinle_bayesian_2017}. Section~\ref{sec:fast-beta-linkage}, proposes the \texttt{fabl} model, derives the Gibbs sampler for posterior inference, and provides the loss function used to calculate the Bayes estimate for the bipartite matching. Section~\ref{sec:efficiency} introduces the hashing technique and storage efficient indexing used to increase the speed of calculatoins and the scale of linkage tasks amenable to \texttt{fabl}. Sections~\ref{sec:simulations} and \ref{sec:case-studies} demonstrate the speed and accuracy of \texttt{fabl} through simulation studies and case studies of homicides from the El Salvadoran Civil War and the National Long Term Care Study. Section~\ref{discussion} concludes with a discussion of future work. 
+	
+\section{Review of Prior Work}
+\label{sec:review-of_prior-work}
+
+Consider two databases $\bm{X}_1$ and $\bm{X}_2$ with respective sizes $n_1$ and $n_2$. Without loss of generality, denote the files such that $n_1 \geq n_2$. In the context of bipartite matching, we assume that there are duplications across, but not within, each database. Under this framework, the set of matches across databases can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_1 \times n_2}$, where
+\begin{align}
+	\Delta_{ij} =
+	\begin{cases}
+		1 \quad \text{if records}\;  i \in \bm{X}_1 \; \text{and}\; j\in \bm{X}_2 \; \text{refer to the same entity}; \\
+		0 \quad \text{otherwise}.\\
+	\end{cases}
+\end{align}
+Though intuitive, this sparse matrix representation can become costly for large linkage tasks. More compactly, bipartite matching also can be viewed as a labeling $\bm{Z} = (Z_1, \ldots, Z_{n_2})$ for the records in database $\bm{X}_2$ such that 
+\begin{align}
+	Z_{j} =
+	\begin{cases}
+		i \quad \text{if records}\;  i \in \bm{X}_1 \; \text{and}\; j\in \bm{X}_2 \; \text{refer to the same entity}; \\
+		n_1 + j \quad  \quad \text{if records}\;  j \in \bm{X}_2 \; \text{does not have a match in database}\; \bm{X}_1. \\
+	\end{cases}
+\end{align}
+Depending on which representation is the most convenient, we can go back and forth between the two using $\Delta_{ij} = I(Z_j = i),$ where $I(\cdot) = 1$ when the expression inside the parentheses is true, and $I(\cdot) = 0$ otherwise. 
+
+Denote the set of matches by $\bm{M} = \{(i,j): i \in \bm{X}_1, j \in \bm{X}_2, \Delta_{ij} = 1\}.$, and the set of non-matches by 
+$\bm{U} =  \{(i,j): i \in \bm{X}_1, j \in \bm{X}_2, \Delta_{ij} = 0\}.$ The record linkage task can be viewed as identifying the sets of  $\bm{M}$ and  $\bm{U}.$ We refer to record pairs that are estimated as matches as ``links'', and record pairs that are estimated as non-matches as ``non-links''.
+
+%\subsection{Comparison Vectors}
+%\label{comparison-vectors}
+
+Intuitively, co-referent records (those that refer to the same entity) should be similar; records that are not co-referent should not be similar. \cite{fellegi_theory_1969} proposed encoding this is using a comparison vector $\bm{\gamma}_{ij}$ computed for each record pair $(i,j)$ in $\bm{X}_1 \times \bm{X}_2.$ Denote the number of criteria for comparing records by $F$, such that $\bm{\gamma}_{ij} = (\gamma_{ij}^1, \gamma_{ij}^2, \ldots, \gamma_{ij}^f, \ldots, \gamma_{ij}^F).$ In most cases, $\bm{\gamma}_{ij}$ consists of one comparison for each feature shared between the two datasets. 
+
+The simplest way to compare two records is to check for agreement or disagreement, and this is commonly used for categorical variables. For more complex measurements, we can take into account partial agreement to more richly characterize the comparison; for numerical data, we can use absoluate difference, and for text data, we can use string distance metrics such as Levenstein or Jaro-Winkler distance \citep{cohen2003comparison}. We then can propose thresholds that allow us to represent comparisons through discrete levels of disagreement \citep{bilenko2006riddle, elmagarmid_duplicate_2007}. Let $\mathcal{S}_f(i,j)$ denote a general similarity measure for feature $f$ of records $i$ and $j,$ where the range of $\mathcal{S}_f$ can be divided into $L_f +1$ intervals denoted by $I_{f0}, I_{f1}, \ldots, I_{fL_f}$. Following convention, $I_{f0}$ represents the highest level of agreement (inclusive of complete agreement) and $I_{fL_f}$ represents the highest level of disagreement (including complete disagreement). Thus, we can construct comparison vectors in the following way: 
+$\gamma_{ij}^f = \ell \; \text{if} \; \mathcal{S}_f(i,j) \in I_{f\ell}.$
+The choice of $I_{f\ell}$ are application specific, which we discuss in our simulation and case studies. 
+
+In practice, it is not feasible to make all-to-all record comparisons as the computational complexity is of order $O(n_1 \times n_2).$ The most common solution is to utilize blocking, which places similar records into partitions, or ``blocks,'' to reduce this computational burden \citep{steorts_comparison_2014, murray2016probabilistic}. In deterministic blocking, the modeller chooses a field thought to be highly reliable, and only compares records that agree on that field. The record linkage method is then applied independently across all blocks, which can be done in parallel for additional speed gains. However, blocking on an unreliable field can lead to missed matches, making this form of blocking undesirable in some situations.
+
+In this paper, we use hashing and new technique called storage efficient indexing to increase the scale of the linkage tasks we can undertake without blocking. This is useful when there is no reliable blocking field available, or one desires estimates of model parameters for the entire sample in question. In practice, \texttt{fabl} can be combined with blocking, but all derivations, simulations, and case studies are presented here without blocking. 	
+
+%\section{}\label{}
+
+% \begin{figure} 
+% \includegraphics{<eps-file>}% place <eps-file> in ./img  subfolder
+% \caption{}
+% \label{}
+% \end{figure}
+
+
+% \begin{table} 
+% *****************
+% \begin{tabular}{lll}
+% \end{tabular}
+% *****************
+% \caption{}
+% \label{}
+% \end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Supplementary Material, if any, should   %%
+%% be provided in {supplement} environment  %%
+%% with title and short description.        %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{supplement}
+% \stitle{???}
+% \sdescription{???.}
+% \end{supplement}
+
+
+\bibliographystyle{ba}
+\bibliography{biblio}
+
+% ** Acknowledgements **
+% \begin{acknowledgement}
+% \end{acknowledgement}
+
+% ATTN: Should not include appendices in the main manuscript
+%\input{subfiles/appendix.tex}
+
+\end{document}
+

@@ -1,13 +1,14 @@
-% \documentclass[ba,preprint]{imsart}% use this for supplement article
-\documentclass[ba]{imsart}
-%
-\pubyear{2021}
-\volume{TBA}
-\issue{TBA}
-% \doi{0000}
-%\arxiv{}
-\firstpage{1}
-\lastpage{1}
+\documentclass[ba,preprint]{imsart}% use this for supplement article
+%\documentclass[ba]{imsart}
+%%
+%\pubyear{2021}
+%\volume{TBA}
+%\issue{TBA}
+%% \doi{0000}
+%%\arxiv{}
+%\firstpage{1}
+%\lastpage{1}
+%\input{subfiles/preamble.tex}
 
 \usepackage[hypertexnames=false]{hyperref}
 \usepackage{amsmath}
@@ -62,11 +63,15 @@
 \newtheorem{definition}{Definition}
 \newtheorem{lemma}{Lemma}
 
-\startlocaldefs
-% ** Local definitions **
-\endlocaldefs
+%\startlocaldefs
+%% ** Local definitions **
+%\endlocaldefs
 
 \begin{document}
+
+\begin{frontmatter}
+
+
 
 %% *** Frontmatter *** 
 
@@ -75,6 +80,32 @@
 %\title{A Sample Document\thanksref{T1}}
 %\thankstext{T1}{<thanks text>}
 \runtitle{Efficient and Scalable Bipartite Matching with Fast Beta Linkage  (fabl)}
+%
+%\begin{aug}
+%\author{\fnms{Neil G.} \snm{Marchant}\thanksref{addr1}\ead[label=e1]{nmarchant@unimelb.edu.au}},
+%\author{\fnms{Benjamin I. P.} \snm{Rubinstein}\thanksref{addr1}\ead[label=e2]{brubinstein@unimelb.edu.au}}
+%\and
+%\author{\fnms{Rebecca C.} \snm{Steorts}\thanksref{addr2}\ead[label=e3]{beka@stat.duke.edu}}
+%
+%\runauthor{N. G. Marchant et al.}
+%
+%\address[addr1]{School of Computing and Information Systems,
+%  University of Melbourne,
+%  Parkville, VIC 3010, Australia,
+%  \printead{e1}, % print email address of "e1"
+%  \printead*{e2}
+%}
+%
+%\address[addr2]{Departments of Statistical Science and Computer Science,
+%  Duke University,
+%  P.O.\ Box 90251,
+%  Durham, NC 27708, USA
+%  \printead{e3}
+%}
+%
+%%\thankstext{<id>}{<text>}
+%
+%\end{aug}
 
 \begin{aug}
 \author{\fnms{Brian} \snm{Kundinger}\thanksref{addr1}\ead[label=e1]{brian.kundinger@duke.edu}},
@@ -93,12 +124,12 @@
    \printead*{e3}
 }
 
-%\address[addr2]{Departments of Statistical Science and Computer Science,
-%  Duke University,
-%  P.O.\ Box 90251,
-%  Durham, NC 27708, USA
-%  \printead{e3}
-%}
+\address[addr2]{Departments of Statistical Science and Computer Science,
+  Duke University,
+  P.O.\ Box 90251,
+  Durham, NC 27708, USA
+  \printead{e3}
+}
 
 %\thankstext{<id>}{<text>}
 
@@ -110,10 +141,22 @@ In this paper, we propose the \emph{fast beta linkage} method (\texttt{fabl}), w
 
 %% ** Keywords **
 \begin{keyword}%[class=MSC]
-bipartite record linkage, Bayesian methods, Gibbs sampling, hashing techniques, Markov chain Monte carlo, parallel/distributed computing
-%\kwd{}
+\kwd{entity resolution}
+\kwd{record linkage}
+\kwd{deduplication}
+\kwd{Bayesian methods}
+\kwd{Markov chain Monte Carlo}
 %\kwd[]{}
 \end{keyword}
+
+\end{frontmatter}
+
+%%% ** Keywords **
+%\begin{keyword}%[class=MSC]
+%bipartite record linkage, Bayesian methods, Gibbs sampling, hashing techniques, Markov chain Monte carlo, parallel/distributed computing
+%%\kwd{}
+%%\kwd[]{}
+%\end{keyword}
 
 \end{frontmatter}
 
