@@ -28,6 +28,18 @@ files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
 all_patterns = TRUE
 R = NULL
 
+m_prior = 1
+u_prior = 1
+alpha = 1
+beta = 1
+S = 1000
+burn = 100
+show_progress = T
+fast = F
+R = NULL
+all_patterns = TRUE
+lag = 10
+
 
 overlap_vals <- c(50, 250, 450)
 
@@ -93,6 +105,27 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   elapsed <- proc.time() - ptm
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
+  
+  bouncing_matches <- apply(Zchain[[1]][, (S- lag -1):(S-1)],1, function(x){
+    x[x<nA + 1] %>%
+    unique() %>%
+    length()
+  })
+  table(bouncing_matches)
+  
+  ptm <- proc.time()
+  Zchain_d <- BKSimple_hash_discount(cd)
+  elapsed <- proc.time() - ptm
+  Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
+  eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
+  
+    bouncing_matches_d <- apply(Zchain_d[[1]][, (S- lag -1):(S-1)],1, function(x){
+    x[x<nA + 1] %>%
+    unique() %>%
+    length()
+  })
+    table(bouncing_matches_d)
+  
   
   # Resolution Step
   Zhat_resolved <- ResolveConflicts(Zhat)
@@ -302,4 +335,20 @@ ggsave(filename = "../notes/figures/sadinle_sim_plot_partial.png",
        plot = acc_plot_partial)
 
 ```
+
+
+
+<!-- ```{r} -->
+
+<!-- nA <- 10000000 -->
+<!-- nB <- 500 -->
+<!-- thing <- nA-2 -->
+<!-- candidates <- 1:nA -->
+<!-- ptm <- proc.time() -->
+<!-- task <- sapply(1:nB, function(x){ -->
+<!--   result <- thing %in% candidates -->
+<!-- }) -->
+
+<!-- proc.time() - ptm -->
+<!-- ``` -->
 

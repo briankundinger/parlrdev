@@ -27,10 +27,11 @@ set.seed(2)
 R <- NULL
 show_progress <- T
 fast <- F
+all_patterns <- F
 S <- 1000
 burn <- S * .1
 iter_count <- seq_len(S)
-empirical <- TRUE
+lag <- 10
 
 cd <- readRDS("../data/comparison_elsalvador_smallP.rds")
 nA <- cd$n1
@@ -39,7 +40,8 @@ levels <- cd[[4]]
 P <- prod(levels) 
 var_names <- cd$compFields[,1]
 ptm <- proc.time()
-Zchain_fabl <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE, empirical = FALSE)
+# Zchain_fabl <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE)
+Zchain_fabl <- BKSimple_hash_discount(cd, S = S, R = R, show_progress = T, all_patterns = FALSE, lag = lag)
 #Zchain_empirical <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE, empirical = TRUE)
 elapsed_fabl <- proc.time() - ptm
 Zchain_fabl[[4]]
@@ -107,16 +109,13 @@ results_image
 # as_image(results_image, file = "../notes/figures/el_salvador/time_table_small_P2.png")
 
 
-colSums(final_gibbs < nA + 1) %>% 
-  quantile(., c(.025, .975))
-
 ```
 
 
 ```{r}
 bayes <- results_table[,1]
 method <- rownames(results_table)
-bayes_df <- data.frame(bayes, method)
+bayes_df <- data.frame(bayes, method)[c(2, 1), ]
 #bayes_df <- bayes_df[c(2, 3), ]
 
 method <- c(rep("fabl", S), rep("BRL", S))
@@ -160,7 +159,7 @@ not_one2one_samps %>%
   coord_flip() +
   theme_bw()
 
-ggsave("../notes/figures/el_salvador/violations_hist.png")
+#ggsave("../notes/figures/el_salvador/violations_hist.png")
 
 overlap_trace <- df %>% 
   filter(method == "fabl") %>% 
@@ -227,7 +226,7 @@ df %>%
   theme_bw() + 
   scale_color_brewer(palette="Set1")
 
-ggsave("../notes/figures/el_salvador/m_posterior_smallP.png")
+#ggsave("../notes/figures/el_salvador/m_posterior_smallP.png")
 
 m_tidy <- lapply(seq_len(dim(Zchain_fabl$m)[1]), function(x){
   data.frame(Zchain_fabl$m[x, ], m_fabl[x, 1], m_fabl[x, 2])
@@ -247,7 +246,7 @@ m_trace <- m_tidy %>%
   labs(x = NULL, y = NULL) +
   scale_x_continuous(labels = NULL, breaks = NULL)
 
-ggsave("../notes/figures/el_salvador/m_trace.png", plot = m_trace)
+#ggsave("../notes/figures/el_salvador/m_trace.png", plot = m_trace)
 
 u_fabl <- ProcessChain(Zchain_fabl$u)
 u_fabl$method <- "fabl"
@@ -270,7 +269,7 @@ u_trace <- u_tidy %>%
   labs(x = NULL, y = NULL) +
   scale_x_continuous(labels = NULL, breaks = NULL)
 
-ggsave("../notes/figures/el_salvador/u_trace.png", plot = u_trace)
+#ggsave("../notes/figures/el_salvador/u_trace.png", plot = u_trace)
   
 ```
 
@@ -315,6 +314,23 @@ df_mixing %>%
   theme(legend.position="bottom") +
   guides(color=guide_legend(nrow=2,byrow=TRUE))
 
-ggsave("../notes/figures/el_salvador/bad_mixing.png")
+#ggsave("../notes/figures/el_salvador/bad_mixing.png")
+```
+
+```{r}
+thing <- (Zhat_fabl[[2]] >nA ) &  (Zhat_sadinle[[1]] < nA  +1)
+match1_index <- which(thing)
+match2_index <- Zhat_sadinle[[1]][match1_index]
+
+ER <- readRDS("../data/ER.rds")
+CDHES <- readRDS("../data/CDHES.rds")
+
+ER[match1_index, ]
+
+
+cbind(Zhat_fabl[[2]][thing], Zhat_sadinle[[2]][thing])
+```
+```{r}
+CDHES[match2_index, ]
 ```
 
