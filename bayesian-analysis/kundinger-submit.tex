@@ -464,7 +464,7 @@ comparison against \texttt{fabl}, currently built in R. However, the computation
 In Figure~\ref{fig:speed1}, we see that at low data size, \texttt{BRL} outperforms, but that \texttt{fabl} is significantly faster at handling larger data. In particular, run-time for \texttt{BRL} seems to grow quadratically (or linearly with the size of both $\bm{X}_1$ and $\bm{X}_2$) while run-time for \texttt{fabl} seems to grow linearly (in the size of $\bm{X}_2$).
 
 \begin{figure}[t]
-	\begin{center} \includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_speed_plot2} 
+	\begin{center} \includegraphics[width=0.45\textwidth]{../notes/figures/sadinle_speed_plot2} 
 		\caption{Run-time for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, for increasing values of both $n_A$ and $n_B$. We see near quadratic growth in runtime for BRL, and near linear growth for fabl.}\label{fig:speed1}
 	\end{center}
 \end{figure}
@@ -478,7 +478,7 @@ slight increases in run-time that we do see are due primarily to the
 hashing step, which again can be run in parallel for large data.
 
 \begin{figure}[h!]
-	\begin{center} \includegraphics[width=0.6\textwidth]{../notes/figures/speed_plot_fixed_nB_slides} 
+	\begin{center} \includegraphics[width=0.45\textwidth]{../notes/figures/speed_plot_fixed_nB_slides} 
 		\caption{Run-time for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, with increasing $n_A$, and $n_B$ fixed at 500. We see linear growth in runtime for BRL, and near constant runtime for fabl.}\label{fig:speed2}
 	\end{center}
 \end{figure}
@@ -519,7 +519,7 @@ We compare \texttt{fabl} to \texttt{BRL} in terms of recall, precision and f-mea
 
 \begin{figure}[t]
 	\begin{center}
-\includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_sim_plot2} 
+\includegraphics[width=0.5\textwidth]{../notes/figures/sadinle_sim_plot2} 
 \caption{Posterior means and credible intervals for accuracy metrics under the replication of simulation study from \cite{sadinle_bayesian_2017}. For each level of overlap and each level of error, we have 100 paired sets of 500 records. We see comparable performance for all levels of error and overlap.}
 \label{fig:sadinle_simulation}
 	\end{center}
@@ -538,7 +538,7 @@ In Figure~\ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 
 \begin{figure}[t]
 \begin{center}
-	\includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_sim_plot_partial} 
+	\includegraphics[width=0.5\textwidth]{../notes/figures/sadinle_sim_plot_partial} 
 	\caption{Negative predictive value (NPV) and positive predictive value (PPV) on simulated datasets. We see poorer performance for \texttt{fabl} only in situations with high overlap.}
 	\label{fig:sadinle_simulation_partial}
 \end{center}
@@ -604,7 +604,7 @@ We see similar results under \texttt{BRL}, with a Bayes estimate of 181 individu
 
 \begin{figure}[t]
 	\begin{center}
-		\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_distribution_smallP_bayes}
+		\includegraphics[width=0.45\textwidth]{../notes/figures/el_salvador/overlap_distribution_smallP_bayes}
 		\caption{Posterior distribution and Bayes estimate of overlap across the two files. We note they are quite similar under both methods.}
 		\label{fig:overlap-plot}
 	\end{center}
@@ -613,7 +613,7 @@ We see similar results under \texttt{BRL}, with a Bayes estimate of 181 individu
 
 \begin{figure}[t]
 \begin{center}
-	\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_posterior_smallP} 
+	\includegraphics[width=0.45\textwidth]{../notes/figures/el_salvador/m_posterior_smallP} 
 \caption{Posterior estimates of m parameters with 95\% credible intervals for El Salvador case study. We note they are quite similar across the two methods.}\label{fig:m-and-u}
 \label{fig:m-and-u}
 \end{center}
@@ -648,7 +648,7 @@ We run a Gibbs sampler for 1000 iterations, taking about 235 seconds. Our Bayes 
 
 \begin{figure}[t]
 	\begin{center}
-		\includegraphics[width=0.6\textwidth]{../notes/figures/nltcs/overlap_posterior4}
+		\includegraphics[width=0.45\textwidth]{../notes/figures/nltcs/overlap_posterior4}
 		\caption{Posterior distribution and Bayes estimate of overlap across years 1982 and 1989 of NLTCS data.}
 		\label{fig:overlap-plot}
 	\end{center}
@@ -711,6 +711,62 @@ To our knowledge, \texttt{fabl} is the first method within the Fellegi Sunter co
 
 
 
+
+
+
+\hypertarget{appendix-sim}{%
+	\subsection{Traceplots for Simulation Study}\label{app:appendix-sim}}
+Below are traceplots for one 900 linkage tasks that comprise the simulation in Section \ref{accuracy}. It is set up with one error across the linkage fields and 50 duplicates across files. Traceplots across other settings exhibit similar behavior. Note that traceplots for $\bf{u}$ parameters show very little variation because the overwhelming majority of record pairs are nonmatching.  
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.45\textwidth]{../notes/figures/sim_overlap_trace} 
+		\caption{Representative traceplot of overlap between files from simulation study in Section \ref{accuracy}}\label{fig:sim_overlap_trace}
+	\end{center}
+\end{figure}
+
+
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.45\textwidth]{../notes/figures/sim_m_trace} 
+		\caption{Representative traceplot of m parameter from simulation study in Section \ref{accuracy}}\label{fig:sim_m_trace}
+	\end{center}
+\end{figure}
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[width=0.45\textwidth]{../notes/figures/sim_u_trace} 
+		\caption{Representative traceplot of u parameters from simulation study in Section \ref{accuracy}}\label{fig:sim_u_trace}
+	\end{center}
+\end{figure}
+
+\clearpage
+
+\hypertarget{appendix-es}{%
+	\subsection{Traceplots for El Salvador Case Study}\label{app:appendix-es}}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.45\textwidth]{../notes/figures/el_salvador/overlap_trace} 
+\caption{Traceplot for number of matches found across datasets in El Salvador case study}\label{fig:overlap_trace}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.45\textwidth]{../notes/figures/el_salvador/m_trace} 
+\caption{Traceplot for m parameter in El Salvador case study}\label{fig:m_trace}
+\end{center}
+\end{figure}
+
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=0.45\textwidth]{../notes/figures/el_salvador/u_trace} 
+\caption{Traceplot for u parameter in El Salvador case study}\label{fig:u_trace}
+\end{center}
+\end{figure}
+
 \hypertarget{app:fabl-psuedocode}{%
 	\subsection{Summary of Fast Beta Linkage Method}\label{app:fabl-psuedocode}}
 
@@ -741,60 +797,6 @@ To our knowledge, \texttt{fabl} is the first method within the Fellegi Sunter co
 		
 	\end{algorithmic}
 \end{algorithm}
-\clearpage
-
-\hypertarget{appendix-sim}{%
-	\subsection{Traceplots for Simulation Study}\label{app:appendix-sim}}
-Below are traceplots for one 900 linkage tasks that comprise the simulation in Section \ref{accuracy}. It is set up with one error across the linkage fields and 50 duplicates across files. Traceplots across other settings exhibit similar behavior. Note that traceplots for $\bf{u}$ parameters show very little variation because the overwhelming majority of record pairs are nonmatching.  
-
-\begin{figure}[!h]
-	\begin{center}
-		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_overlap_trace} 
-		\caption{Representative traceplot of overlap between files from simulation study in Section \ref{accuracy}}\label{fig:sim_overlap_trace}
-	\end{center}
-\end{figure}
-
-
-
-\begin{figure}[!h]
-	\begin{center}
-		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_m_trace} 
-		\caption{Representative traceplot of m parameter from simulation study in Section \ref{accuracy}}\label{fig:sim_m_trace}
-	\end{center}
-\end{figure}
-
-\begin{figure}[!h]
-	\begin{center}
-		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_u_trace} 
-		\caption{Representative traceplot of u parameters from simulation study in Section \ref{accuracy}}\label{fig:sim_u_trace}
-	\end{center}
-\end{figure}
-
-\clearpage
-
-\hypertarget{appendix-es}{%
-	\subsection{Traceplots for El Salvador Case Study}\label{app:appendix-es}}
-
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_trace} 
-\caption{Traceplot for number of matches found across datasets in El Salvador case study}\label{fig:overlap_trace}
-\end{center}
-\end{figure}
-
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_trace} 
-\caption{Traceplot for m parameter in El Salvador case study}\label{fig:m_trace}
-\end{center}
-\end{figure}
-
-\begin{figure}[!h]
-\begin{center}
-\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/u_trace} 
-\caption{Traceplot for u parameter in El Salvador case study}\label{fig:u_trace}
-\end{center}
-\end{figure}
 
 
 \end{document}
