@@ -345,7 +345,7 @@ $$h^{*}(i, j) = \sum_{f = 1}^F I(\gamma_{ij}^f > 0)2^{\gamma_{ij}^f + I(k>1)\sum
 This function maps each agreement pattern to a unique integer, allowing us to store a scalar quantity instead of an entire vector for each record pair. For computational ease, we then map these integers to sequential integers from $\{1, \ldots, P\}$ corresponding to the enumerated patterns in $\mathcal{P}$. When the $(i, j)$ pair exhibits the $p^{th}$ pattern, we say $(i, j) \in h_p$.
 
 With all record pairs converted to hashed values, we can create a more compact nested list 
-$$\mathcal{R} = \left\{\{r_{j_p} \}_{p=1}^{P} \right\}_{j = 1}^{n_2}$$
+$$\mathcal{R} = \left\{\{r_{j_p} \}_{p=1}^{P} \right\}_{j = 1}^{n_2},$$
 where $r_{j_p} = \{i \in \bm{X_1} | (i, j) \in h_p\}$. This representation is useful because it allows us to easily compute sufficient statistics
 $$H_{j_p} = \sum_{i} I((i, j) \in h_p) = ||r_{j_p}||$$
 and
@@ -395,7 +395,6 @@ Calculated at the level of the record pairs, updating  \(\alpha_{fl}(\bm{Z})\) a
 Instead, we use one-hot encodings of the agreement patterns $\mathcal{P}$ for more efficient calculations. Denote
 $H_p^m = \sum_{j=1}^{n_B} \bm{1}_{(Z_j, j) \in h_p}$ to be the
 number of matching record pairs with agreement pattern $p$. We also can easily calculate the number of non-matching record pairs with agreement pattern $p$ as \(H_p^u = H_p - H_p^m\). Then, if $\bm{\alpha_0}$ and $\bm{\beta_0}$ are vectors of prior parameters for the $\bm{m}$ and $\bm{u}$ distributions respectively, the posterior update becomes
-
 $$\bm{\alpha(Z)} = \bm{\alpha_0} + \sum_{p=1}^P H_p^m \times h_p$$
 $$\bm{\beta(Z)} = \bm{\beta_0} + \sum_{p=1}^P H_p^u \times h_p.$$
 These constitute $\tilde{L}$ summations over $P$ quantities, where $\tilde{L} = \sum_{f=1}^F L_f$ is the total number of levels used across all features in the linkage task.
@@ -436,7 +435,7 @@ In summary, the total computational complexity is $O(\frac{F}{B} n_1 n_2) + O(n_
 \section{Simulation Studies}
 \label{sec:simulations}
 
-We demonstrate the speed, and accuracy of \texttt{fabl} as compared to \texttt{BRL} through several simulation studies. 
+We demonstrate the speed and accuracy of \texttt{fabl} as compared to \texttt{BRL} through several simulation studies. 
 
 \hypertarget{speed}{%
 	\subsection{Speed}\label{speed}}
