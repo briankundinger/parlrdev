@@ -189,7 +189,7 @@ $$Z_j | \pi =
 	\frac{1}{n_1}\pi  & z_j \leq n_1; \\
 	1-\pi &  z_j  = n_1 + j \\
 \end{cases}$$
-$$\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi})$$
+$$\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi}).$$
 
 Intuitively, this set of priors says that record $j \in \bm{X}_2$ has some match in $\bm{X}_1$ with probability $\pi$, and that each record $i \in \bm{X}_1$ is equally likely to be that match. $\pi$ itself is given a prior distribution with hyperparameters $\alpha_{\pi}$ and $\beta_{\pi}$ to encode prior beliefs about  the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}$. One choice of uninformative prior might be \(\pi \sim \text{Beta}(1, 1)\), which corresponds to a prior belief that non-matches and matches are equally likely, and another might be \(\pi \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\), which corresponds to a uniform prior on the labeling of \(\bm{Z}\). We note here that prior from \cite{heck2019} can be viewed as a special case of the fast beta prior, with $\pi$ fixed at the mean of a $\text{Beta}\left(1, \frac{1}{n_1}\right)$ random variable. 
 
@@ -216,7 +216,7 @@ $$Z_j | \pi =
 	\frac{1}{n_1}\pi  & z_j \leq n_1; \\
 	1-\pi &  z_j  = n_1 + j \\
 \end{cases}$$
-$$\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi})$$
+$$\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi}).$$
 
 \hypertarget{posterior-sampling}{%
 	\subsection{Gibbs Sampler}
@@ -228,46 +228,43 @@ We work with the following factorization of the joint posterior distribution:
 	&\propto \prod_{j=1}^{n_2}  \prod_{i=1}^{n_1}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
 	&\times  \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{\alpha_{fl} - 1}  \times\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{\beta_{fl} - 1} \\
 	&\times \prod_{j=1}^{n_2} \left[I(Z_j \leq n_1)\frac{1}{n_1}\pi + I(Z_j > n_1)(1 - \pi)\right] \\
-	&\times \pi^{\alpha_{\pi} -1} (1-\pi)^{\beta_{\pi} -1}
+	&\times \pi^{\alpha_{\pi} -1} (1-\pi)^{\beta_{\pi} -1}.
 \end{align*}
 
-The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. Thus we have
+The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. Thus, we have
 
 $$\bm{m}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}), \ldots, \alpha_{fL_f}(\bm{Z}))$$
-$$\bm{u}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\beta_{f1}(\bm{Z}), \ldots, \beta_{fL_f}(\bm{Z}))$$
+$$\bm{u}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\beta_{f1}(\bm{Z}), \ldots, \beta_{fL_f}(\bm{Z})),$$
 where
 \(\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j = i)\)
 and
 \(\beta_{fl}(\bm{Z})= \beta_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j \neq i)\).
 
-As a function of \(\pi\), \(\bm{Z}\) is sequence of successes (when \(z_j < n_A + 1\)) and failures (when \(z_j = n_A + 1\)), and therefore \(p(\bm{Z}|\pi) = \mathcal{L}(\pi|\bm{Z})\) is determined only by the number of links $n_{12}(\bm{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + 1)$ encoded by $\bm{Z}$. Thus we have
-
+As a function of \(\pi\), \(\bm{Z}\) is a sequence of successes (when \(z_j < n_A + 1\)) and failures (when \(z_j = n_A + 1\)), and therefore \(p(\bm{Z}|\pi) = \mathcal{L}(\pi|\bm{Z})\) is determined only by the number of links $n_{12}(\bm{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + 1)$ encoded by $\bm{Z}$. It follows that
 \begin{align*}
 p(\pi | \bm{Z}) &\propto p(\bm{Z}|\pi)p(\pi) \\
 &\propto \pi^{n_{12}(\bm{Z})} (1-\pi)^{n_2 - (n_{12}(\bm{Z})} \pi^{\alpha_{\pi} -1} (1-\pi)^{\beta_{\pi} -1} \\
-&\propto \pi^{n_{12}(\bm{Z}) + \alpha_{\pi} - 1} (1-\pi)^{n_1 - n_{12}(\bm{Z}) + \beta_{\pi} -1} \\
+&\propto \pi^{n_{12}(\bm{Z}) + \alpha_{\pi} - 1} (1-\pi)^{n_1 - n_{12}(\bm{Z}) + \beta_{\pi} -1}. \\
 \end{align*}
-Thus the posterior $\pi^{(s+1)}|\bm{Z}^{(s+1)}$ has a $\text{Beta}(D + \alpha_{\pi}, n_2 - n_{12}(\bm{Z}) + \beta_{\pi})$ distribution.
+Hence, the posterior $\pi^{(s+1)}|\bm{Z}^{(s+1)}$ has a $\text{Beta}(D + \alpha_{\pi}, n_2 - n_{12}(\bm{Z}) + \beta_{\pi})$ distribution.
 
 Because we sample \(Z_j\) independently of all other \(Z_{j'}\), we use
 only the full conditional for an individual \(Z_j\). Let \(\Gamma_{.j}\)
 denote the set of \(n_1\) comparison vectors with \(j \in \bm{X_2}\).  As a function of \(Z_j\), 
 \(p(\Gamma_{.j}|Z_j, \Phi) = \mathcal{L}(Z_j|\Gamma_{.j}, \Phi)\)
 is a discrete distribution with probabilities proportional to
-
 \begin{align*}
 	p(\Gamma_{.j}|Z_j = z_j, \Phi) &\propto \prod_{i=1}^{n_1}\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\\
 	&\propto \prod_{i=1}^{n_1}\left(\prod_{f=1}^{F}\prod_{l=1}^{L_f} \frac{m_{fl}}{u_{fl}}\right)^{I(z_j = i) I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
 	&=
 	\begin{cases} 
 		w_{ij}  & z_j \leq n_1; \\
-		1 &  z_j  = n_1 + j \\
+		1 &  z_j  = n_1 + j,\\
 	\end{cases}\\
 \end{align*}
-
 where
 %$w_{ij} = \left(\frac{\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}}{\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} = \frac{P(\boldsymbol{\gamma_{ij}}|Z_j = i)}{P(\boldsymbol{\gamma_{ij}} |Z_j \neq i)}$.
-$$w_{ij} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}$$. 
+$$w_{ij} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.$$
 
 These \(w_{ij}\) are precisely the likelihood ratios used in the Fellegi-Sunter model to classify matches and non-matches, and we therefore call them the Fellegi Sunter weights.
 
@@ -275,19 +272,19 @@ With the likelihood in this form, we can derive the full conditional
 \begin{align*}
 	p(Z_j|\Gamma_{.j}, \Phi, \pi) &\propto p(\Gamma_{.j}| Z_j, \Phi) P(Z_j|\pi) \\
 	&\propto \left(\sum_{i=1}^{n_1}w_{ij}\bm{1}_{z_j = i} + \bm{1}_{z_j = n_1 + 1}\right)\left(\pi\sum_{i=1}^{n_1}\frac{1}{n_1}\bm{1}_{z_j = i} + (1-\pi)\bm{1}_{z_j = n_1 + 1}\right) \\	
-	&= \frac{\pi}{n_1}\sum_{i=1}^{n_1}w_{ij}\bm{1}_{z_j = i} + (1-\pi)\bm{1}_{z_j = n_1 + 1}
+	&= \frac{\pi}{n_1}\sum_{i=1}^{n_1}w_{ij}\bm{1}_{z_j = i} + (1-\pi)\bm{1}_{z_j = n_1 + 1}.
 \end{align*}
-Thus we have
+It follows that
 $$Z_j^{(s+1)} | \Phi, \Gamma, \pi \propto \begin{cases} 
 	\frac{\pi}{n_1}w_{ij}   & z_j \leq n_1; \\
-	1-\pi &  z_j  = n_1 + 1 \\
+	1-\pi &  z_j  = n_1 + 1. \\
 \end{cases}$$
 Finally, we integrate over the posterior of \(\pi\) and rearrange terms to produce the final full conditional:
 
 \[p\left(Z_j^{(s+1)}  = i| \Phi, \bm{Z^{(s)}}\right) \propto
 \begin{cases} 
 	w_{ij}  & i \leq n_1; \\
-	n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}} & i  = n_1 + 1 \\
+	n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}} & i  = n_1 + 1. \\
 \end{cases}\]
 
 \hypertarget{bayes-estimate}{%
@@ -417,7 +414,7 @@ $$P\left(Z_j^{(s+1)} = i \mid h\left(Z_j^{(s+1)}\right) = p\right) = \begin{case
 
 Lastly, we recognize that all posterior updates are governed by the agreement patterns of the record pairs rather than the record labels themselves. Thus we complete the entire Gibbs sampler first at the level of the \(P\) agreement patterns with the first equation above. After all iterations are complete, we can back-fill the records corresponding to the agreement patterns through the second equation. 
 
-We emphasize the computational gains of this split sampler: the first step is a sample from $P$ options, where $P$ does not scale with the size of the linkage task; and the second step is sampling uniformly at random, which is computationally simple even for large sets of candidate records. These changes drastically improve the speed of the sampler, and each can be parallelized if desired for additional computational gains. We provide a summary of the \texttt{fabl} method through pseudocode in Appendix \ref{app:fabl-psuedocode}. {\color{blue}We note here that this split sampler can be adapted for use with \texttt{BRL} as well, but would require updating $\{H_j\}$ to account for the previously matched records that no are longer candidate matches for the current record. \texttt{BRL} would see considerable speed up through the procedure, but this step would keep the complexity of the sampler at $O(n_A \times n_B)$.}
+We emphasize the computational gains of this split sampler: the first step is a sample from $P$ options, where $P$ does not scale with the size of the linkage task; and the second step is sampling uniformly at random, which is computationally simple even for large sets of candidate records. These changes drastically improve the speed of the sampler, and each can be parallelized if desired for additional computational gains. We provide a summary of the \texttt{fabl} method through pseudocode in Appendix \ref{app:fabl-psuedocode}. {We note here that this split sampler can be adapted for use with \texttt{BRL} as well, but would require updating $\{H_j\}$ to account for the previously matched records that no are longer candidate matches for the current record. \texttt{BRL} would see considerable speed up through the procedure, but this step would keep the complexity of the sampler at $O(n_A \times n_B)$.}
 
 \hypertarget{computational-complexity}{%
 	\subsection{Computational Complexity}\label{computational-complexity}}
