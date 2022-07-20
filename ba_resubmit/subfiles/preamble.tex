@@ -1,0 +1,49 @@
+% Recommended, but optional, packages for figures and better typesetting:
+\usepackage{microtype}
+\usepackage{graphicx}
+%\usepackage{subfigure}
+\usepackage{booktabs} % for professional tables
+
+% CUSTOM PACKAGES
+\usepackage{amssymb}
+\usepackage{bm}             % bold math symbols
+\usepackage{enumitem}
+\usepackage{multirow}
+\usepackage{tabularx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{url}
+
+\usepackage{tikz}
+%\usepackage{tikzscale}
+\usetikzlibrary{arrows, backgrounds, patterns, matrix, shapes, fit,
+  calc, shadows, plotmarks, babel, positioning}
+
+% CUSTOM PACKAGES
+\let\oldvec\vec
+\renewcommand\vec{\bm}
+\newcommand{\distfn}{\mathrm{dist}} % distance measure
+\newcommand{\valset}{\mathcal{D}} % attribute value set
+\newcommand{\entset}{\mathcal{R}} % set of records that make up an entity
+\newcommand{\partset}{\mathcal{E}} % set of entities that make up a partition
+\newcommand{\euler}{\mathrm{e}} % Euler's constant
+\newcommand{\dblink}{\textsf{\upshape \lowercase{d-blink}}} % Name of scalable Bayesian ER model
+\newcommand{\blink}{\textsf{\upshape \lowercase{blink}}} % Name of original Bayesian ER model
+\newcommand{\secref}[1]{Section~\ref{#1}} % Section reference
+\newcommand{\myparagraph}[1]{\smallskip\textbf{#1}}
+\newcommand{\eat}[1]{}
+%\newcommand{\change}[1]{{\color{Bittersweet} #1}}
+\newcommand{\change}[1]{#1} % do nothing
+\newcommand{\ind}[1]{\mathbb{I}\!\left(#1\right)}
+\newcommand{\dd}{\mathrm{d}}
+%\def\spacingset#1{\renewcommand{\baselinestretch}%
+%  {#1}\small\normalsize} \spacingset{1}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\ncomment}[1]{{\color{purple} NM: #1}}
+%\newcommand{\cellemph}[1]{\boldmath\textbf{#1}}
+\newcommand{\cellemph}[1]{#1} % do nothing
+\newcommand{\uncertain}[3]{\ensuremath{#1 \ {\scriptstyle(#2, #3)}}}
+
+\graphicspath{{./figures/}}
+
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
