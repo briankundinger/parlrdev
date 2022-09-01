@@ -216,15 +216,13 @@ records (elements in X2) which violates the size ordering. Can the algorithm be 
 for this reverse sizing?
 }
 
-\color{red}{I need some help addressing this in the paper. The answer is yes, the algorithm can easily be adapted for the reverse sizing. The issue is mostly notational. 
-
-It seems as though Sadinle chose to label the datasets $X_1$ and $X_2$ such that $n_1 > n_2$ for mostly notational reasons. He uses the notation $Z_j = n_1 + j$ when record $j \in X_1$ has no match in $X_2$, which works because when $n_1 > n_2$, $n_1 + j$ never refers to any record in $X_2$. Jody uses the simplified notation $Z_j = n_1 + 1$ to refer to unmatched records, and this works for the same reason. 
-
+\textcolor{red}{I need some help addressing this in the paper. The answer is yes, the algorithm can easily be adapted for the reverse sizing. The issue is mostly notational. It seems as though Sadinle chose to label the datasets $X_1$ and $X_2$ such that $n_1 > n_2$ for mostly notational reasons. He uses the notation $Z_j = n_1 + j$ when record $j \in X_1$ has no match in $X_2$, which works because when $n_1 > n_2$, $n_1 + j$ never refers to any record in $X_2$. Jody uses the simplified notation $Z_j = n_1 + 1$ to refer to unmatched records, and this works for the same reason. 
 However, when we relax the one-to-one constraint, or even encourage a modeller to allow multiple linkages in one dataset, we shouldn't denote the datasets according to simple notational convenience. This might require clever edits of the "Review of Prior Work" section, and other areas of the paper. 
-
 Notationally, we can use  $Z_j = 0$ or $Z_j = -j$ as a way to unambiguously denote a record as nonmatching.
-
 Additionally, we could just strike the paragraph about the advantages of many-to-one matchings, and keep this strictly a paper about bipartite matching}
+
+\textcolor{blue}{This is a good point. I wonder if we could perhaps remove a lot of the notation by Sadinle/FS and redo the notation such that the ordering wouldn't matter. Also, it would make more sense to follow with the examples that we use in the paper -- NLTCS and EL Salvador so that we don't confuse the reader. Let's talk through this point as this would be a big change. If the algorithm and notation can be easily modified to reverse things, this would be a nice addition to the paper and improvement over Sadinle.} 
+
 
 		\pointRaised{%
 5. Section 3, full model: $I_obs(.)$ seems to be taken from a different paper dealing with missing
@@ -233,12 +231,17 @@ the accompanying discussion of missing data mechanism should be included if such
 considered for this manuscript. This comment also applies to the $Gamma^{obs}$ notation in the
 following subsection.
 }
-\textcolor{red}{I can add these definitions, no problem. But is it worth including mention of missing data?}
+
+		\reply{R1}{%
+\textcolor{red}{I can add these definitions, no problem. But is it worth including mention of missing data?}		
+\textcolor{blue}{Given that we have missing data (or could have missing data), this needs to be added into the paper. Otherwise, the authors are going to complain that we don't have it. If you don't have this in your code, then remove it. Make sense?}
+}
+
 		\pointRaised{%
 Section 3, full model: The Phi notation needs to be defined.
 }
 		\reply{R1}{%
-	We thank the reviewers for identifying this oversight, and have defined the notation. 
+\textbf{We thank the reviewers for identifying this oversight, and have defined the notation. \todo}
 }
 
 		\pointRaised{%
@@ -247,7 +250,7 @@ indices of the sum contained in the brackets.
 }
 
 		\reply{R1}{%
-	We thank the reviewers for identifying this oversight, and have corrected the expression. 
+\textbf{We thank the reviewers for identifying this oversight, and have corrected the expression. \todo}
 }
 		\pointRaised{%
 Section 3.1, I found the motivational descriptions in this section to be somewhat confusing, in
@@ -260,80 +263,109 @@ intermediate conclusions. In particular, the derivation of the probability of $G
 to be missing a factor of $u_{fl}^I(gamma_{ij}^f=l)$. This is not important to the eventual full
 conditional of Z, but does not seem to be correct for the distribution of Gamma as claimed.
 }
+
+\reply{R1}{%
+\textcolor{blue}{Let's talk through why the reviewer find this to be confusing. I think that the AE is asking for the joint posterior to be written in such as way that we can easily decompose the full conditionals more naturally. So, we can start with what you have and then simplify the joint posterior such the full conditionals fall out more easily. The point below makes me think this is his/her suggestion.}
+}
+
 		\pointRaised{%
 Section 3.1, full joint posterior distribution: I was surprised to see that the contribution of the
 conditional distribution of Z was included using the summation-style notation rather than the
 binomial/multinomial-style multiplicative notation that naturally motivates the full conditional
 presented on the first line of page 8.
 }
+
+\reply{R1}{%
+\textcolor{blue}{This comment goes with the one above.}
+}
+
 		\pointRaised{%
 Section 3.1, first equation on page 8: There is an extra parenthesis in the exponent of (1-pi).
 }
 		\reply{R1}{%
-	We thank the reviewers for identifying this oversight, and have corrected the expression. 
+	\textbf{We thank the reviewers for identifying this oversight, and have corrected the expression.} \todo
 }
 		\pointRaised{%
 Section 3.1, pmf for $Gamma_{.j}$ and full conditional for Z: The notation in the final equation
 may be more clear if you replace i with $z_j$, as in $w_{z_j j}$. I believe that “$n_1+1$” should be “$n_1+ j$” in several places.
 }
+
+
+\reply{R1}{%
+\textbf{I would recommend fixing this to make it more clear since this is the AE.}
+}
+
 		\pointRaised{%
 Section 3.1, last equations on page 8: There seems to be some lack of specificity in describing
 these equations as full conditional distributions vs. steps in the Gibbs Sampler algorithm. It
 would be helpful to provide a brief justification of integrating out pi.
 }
 \textcolor{red}{I'm not sure how to justify this step, but also this step isn't actually necessary. We could just sample $\pi$ and use it, as in a standard Gibbs sampler. Should I just remove this step?}
+\textcolor{blue}{The AE makes a good point. We have given the full conditionals, but have not written down the Gibbs algorithm. The AE is expecting something like this for the algorithm: https://arxiv.org/pdf/1403.0211.pdf}
 
 		\pointRaised{%
 Section 4.2, SEI procedure. I’m not sure I follow the description of the SEI procedure. My understanding of SEI is that for patterns with lots of possible pairs, no single pair is likely to (should) be identified in the posterior distribution. Thus, you take a small subsample of the records of size $S < H_{j_p}$, and store these in $R^{SEI}$ rather than the complete index of pairs in
 each R. Can you quantify the computational savings due to this method? Do you have advice for how small S can be? In your simulations, how does the use of this method or choice of S affect the results?}
+\textcolor{blue}{Do you think you could write the computational complexity of this out Brian as this would help? In addition, how does the SEI come into play in the Gibbs sampler? If it comes into play, it will need to be in the algorithm.}
 
 \textcolor{red}{All computational savings occur from conducting the Gibbs sampler over the $P$ patterns instead of the $n_2$ records. SEI is for memory savings. I think I need help articulating this clearly.}
 		\pointRaised{%
 Section 4.4, Assumptions and definitions should be included in the statement of this lemma.
+
+            	\reply{R1}{%
+	\textcolor{red}{Do I really need this to be a Lemma? It seems overly clunky to me, but if its convention to provide computational complexity as a lemma, thats OK with me.} \textcolor{blue}{Yes, this is convention.}
+	        }
 }
-\textcolor{red}{Do I really need this to be a Lemma? It seems overly clunky to me, but if its convention to provide computational complexity as a lemma, thats OK with me.}
+
 		\pointRaised{%
 Section 5.1 simulations – there is a detailed comparison for one set of simulation settings,
 including a binary definition of a “match”. Do these results differ as these settings change?
 }
-\textcolor{red}{Yes, results would be the same. To me, this is clear, I'm not sure how to clarify this in the paper}
+
+	\reply{R1}{%
+	\textcolor{red}{Yes, results would be the same. To me, this is clear, I'm not sure how to clarify this in the paper.} 
+\textcolor{blue}{Did you run them on other settings? What were they? Don't include this in the paper, but explain this here and we'll work on this together.}
+	}
+
+
 		\pointRaised{%
 Section 5.2 and 5.3 simulations – are these a single simulated datasets? Do these same results
 hold over multiple simulated datasets, Or was this just a chance result for each setting?
 }
+
 		\reply{R1}{%
-	In the caption under Figure 3, we explain that we have 100 pairs of sets of records for each level of overlap and error. We have added this description in the body of the paper as well for clarity. 
+	\textbf{In the caption under Figure 3, we explain that we have 100 pairs of sets of records for each level of overlap and error. We have added this description in the body of the paper as well for clarity. \textcolor{blue}{We need to more clearly answer the question. Was this one data set? This isn't clear to me from the answer.}}
 }
 		\pointRaised{%
 Section 5.3 simulation – RR results are not presented.
 }
-\textcolor{red}{I will redo simulations in order to get this}
+\textbf{\textcolor{red}{I will redo simulations in order to get this}}
 
 		\pointRaised{%
 	Section 6.1 last sentences. I believe the last sentence should be removed, as it is redundant.
 }
 		\reply{R1}{%
-			We have deleted this last sentence. Thank you for addressing this oversight. 
+			\textbf{This has been removed.}
 }
 		\pointRaised{%
 Section 6.2, second sentence. I believe the word “survey” is missing, as in “the initial SURVEY
 began…”
 }
 		\reply{R1}{%
-	Thank you for addressing this oversight. 
+	\textbf{This has been fixed.}
 }
 		\pointRaised{%
 Section 6.2. In the NLTCS, are participants added in later cohorts, or may we assume that every
 member of the smaller dataset should also be included in the earlier one?
 }
-\textcolor{red}{Beka, can you help answer this?}
+\textbf{Participants can be added in later cohorts. This has been clarified in the paper. \todo}
 
 		\pointRaised{%
 	Figures 5 and 7 are not referenced in the text.
 }
 		\reply{R1}{%
-	Thank you for addressing this oversight. We have included pointers to these figures in the main text. 
-}
+	\textbf{This has been fixed.}
+	}
 
 
 
@@ -356,6 +388,7 @@ member of the smaller dataset should also be included in the earlier one?
 	point of Sadinle’s research is Fellegi-sunter, the starting point of this paper is Sadinle’s work. This should
 	be made clearer, beginning in the abstract and reiterated in the conclusion.
 	
+	\textbf{We thank the reviewer for their comments, and we have revised the clarity of our paper. \todo}	
 	
 	
 \end{document}
