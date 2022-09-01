@@ -83,9 +83,9 @@
 	
 	Regarding the presentation, the AE points out a number of problems with notation, typos, and various inconsistencies.  Independently, I found many similar problems.  The intersection between what I found and what the AE found is non-empty and so is the symmetric difference.  Also, the AE found some issues that I did not find and vice versa.  So, I am almost certain that an additional review would uncover more problems.  Now, the results presented in the paper seem plausible as do the broad strokes of the derivations, but I must admit that I was not able to follow all the details. This, in large part, was because of the issues that I just mentioned, and I believe that most readers would find it difficult to follow the developments, as these issues are exceedingly distracting.
 	
-	There are problems with the notation, which in places is not defined, in others is used before being defined, and in others yet is used inconsistently.  For example, I_obs() is never defined, n_12(Z) first appears on p. 5, but is not defined (in passing) until the bottom of p. 7, and it seems to become D on p. 8.  Throughout the manuscript, n_1 and n_2 are used interchangeably with n_A and n_B, sometimes in the same section, as it happens, for example, in Section 3.1.  The loss function on p. 9 is out of Sadinle’s paper and it inherits the typo therein (\theta_11, if Z_j, \hat{Z_j}, …).  In the statement of Lemma 1 on p.13, B comes out of nowhere.  (Thinking I had missed something, I went back to the previous pages only to find out that B would be then defined in the proof.)  Formatting of all displayed math must be checked and fixed, especially as far as punctuation is concerned, as commas seem to be missing in multiple places.  For example, in Equation (1), there should be a comma after 0 and after 1, and this is by no means an isolated occurrence.
+	There are problems with the notation, which in places is not defined, in others is used before being defined, and in others yet is used inconsistently.  For example, $I_obs()$ is never defined, $n_12(Z)$ first appears on p. 5, but is not defined (in passing) until the bottom of p. 7, and it seems to become D on p. 8.  Throughout the manuscript, $n_1$ and $n_2$ are used interchangeably with $n_A$ and $n_B$, sometimes in the same section, as it happens, for example, in Section 3.1.  The loss function on p. 9 is out of Sadinle’s paper and it inherits the typo therein $(\theta_11, if Z_j, \hat{Z_j}, …)$.  In the statement of Lemma 1 on p.13, B comes out of nowhere.  (Thinking I had missed something, I went back to the previous pages only to find out that B would be then defined in the proof.)  Formatting of all displayed math must be checked and fixed, especially as far as punctuation is concerned, as commas seem to be missing in multiple places.  For example, in Equation (1), there should be a comma after 0 and after 1, and this is by no means an isolated occurrence.
 	
-	Confusion can also arise from lack of clarity in the exposition.  Take comment 4 from the AE, for example.  Whose marriage certificates and whose birth records are involved?  What records are in X_1 and what records are in X_2?  The reader should not be expected to go back to Newcombe’s paper to clarify the issue. 
+	Confusion can also arise from lack of clarity in the exposition.  Take comment 4 from the AE, for example.  Whose marriage certificates and whose birth records are involved?  What records are in $X_1$ and what records are in $X_2$?  The reader should not be expected to go back to Newcombe’s paper to clarify the issue. 
 	
 	This is not an exhaustive list, but only a set of examples meant to point out what makes the paper hard to read and how it can be improved.  Many more specific points are raised in the AE’s report and here are a couple of other minor issues I noticed:
 	
@@ -135,17 +135,17 @@
 	itemized list below
 	
 		\pointRaised{%
-Overall, the notation is, somewhat by necessity, quite extensive. However, I’m not convinced
-that it’s entirely consistent. A glossary in the appendix may help the reader navigate the paper
-more easily.
+Overall, the notation is, somewhat by necessity, quite extensive. However, I’m not convinced that it’s entirely consistent. A glossary in the appendix may help the reader navigate the paper more easily.
 	}
 
 		\pointRaised{%
 Section 2, line 1: It may help to explicitly define X1 and X2 as being vectors of indices as implied
 by equations (1) and (2).
 }
+\textcolor{red}{I'm not sure I agree with this point}
+
 		\pointRaised{%
-Section 2.2, beta distribution: the n_{12}(.) notation needs to be defined.
+Section 2.2, beta distribution: the $n_{12}(.)$ notation needs to be defined.
 }
 		\reply{R1}{%
 			We thank the reviewers for identifying this oversight, and have defined the notation. 
@@ -158,13 +158,25 @@ presented, as I would think that one certificate (element in X1) would match mul
 records (elements in X2) which violates the size ordering. Can the algorithm be easily adjusted
 for this reverse sizing?
 }
+
+\color{red}{I need some help addressing this in the paper. The answer is yes, the algorithm can easily be adapted for the reverse sizing. The issue is mostly notational. 
+
+It seems as though Sadinle chose to label the datasets $X_1$ and $X_2$ such that $n_1 > n_2$ for mostly notational reasons. He uses the notation $Z_j = n_1 + j$ when record $j \in X_1$ has no match in $X_2$, which works because when $n_1 > n_2$, $n_1 + j$ never refers to any record in $X_2$. Jody uses the simplified notation $Z_j = n_1 + 1$ to refer to unmatched records, and this works for the same reason. 
+
+However, when we relax the one-to-one constraint, or even encourage a modeller to allow multiple linkages in one dataset, we shouldn't denote the datasets according to simple notational convenience. This might require clever edits of the "Review of Prior Work" section, and other areas of the paper. 
+
+Notationally, we can use  $Z_j = 0$ or $Z_j = -j$ as a way to unambiguously denote a record as nonmatching.
+
+Additionally, we could just strike the paragraph about the advantages of many-to-one matchings, and keep this strictly a paper about bipartite matching}
+
 		\pointRaised{%
-5. Section 3, full model: I_obs(.) seems to be taken from a different paper dealing with missing
+5. Section 3, full model: $I_obs(.)$ seems to be taken from a different paper dealing with missing
 fields, which is not at all discussed in this manuscript. This consideration of missing fields and
 the accompanying discussion of missing data mechanism should be included if such data is to be
-considered for this manuscript. This comment also applies to the Gamma^{obs} notation in the
+considered for this manuscript. This comment also applies to the $Gamma^{obs}$ notation in the
 following subsection.
 }
+\textcolor{red}{I can add these definitions, no problem. But is it worth including mention of missing data?}
 		\pointRaised{%
 Section 3, full model: The Phi notation needs to be defined.
 }
@@ -187,8 +199,8 @@ multinomial-Dirichlet…) and model construction (as a function of pi, Z is a se
 This subsection might be easier to understand if its purpose was more bluntly described in an
 opening sentence or paragraph and streamlined to focus only on the full conditional
 distributions for a Gibbs Sampler. In addition, the mixed motivation may have led to errors in
-intermediate conclusions. In particular, the derivation of the probability of Gamma_{.j} seems
-to be missing a factor of u_{fl}^I(gamma_{ij}^f=l). This is not important to the eventual full
+intermediate conclusions. In particular, the derivation of the probability of $Gamma_{.j}$ seems
+to be missing a factor of $u_{fl}^I(gamma_{ij}^f=l)$. This is not important to the eventual full
 conditional of Z, but does not seem to be correct for the distribution of Gamma as claimed.
 }
 		\pointRaised{%
@@ -204,51 +216,66 @@ Section 3.1, first equation on page 8: There is an extra parenthesis in the expo
 	We thank the reviewers for identifying this oversight, and have corrected the expression. 
 }
 		\pointRaised{%
-Section 3.1, pmf for Gamma_{.j} and full conditional for Z: The notation in the final equation
-may be more clear if you replace i with z_j, as in w_{z_j j}. I believe that “n_1+1” should be “n_1
-+ j” in several places.
+Section 3.1, pmf for $Gamma_{.j}$ and full conditional for Z: The notation in the final equation
+may be more clear if you replace i with $z_j$, as in $w_{z_j j}$. I believe that “$n_1+1$” should be “$n_1+ j$” in several places.
 }
 		\pointRaised{%
 Section 3.1, last equations on page 8: There seems to be some lack of specificity in describing
 these equations as full conditional distributions vs. steps in the Gibbs Sampler algorithm. It
 would be helpful to provide a brief justification of integrating out pi.
 }
+\textcolor{red}{I'm not sure how to justify this step, but also this step isn't actually necessary. We could just sample $\pi$ and use it, as in a standard Gibbs sampler. Should I just remove this step?}
+
 		\pointRaised{%
-Section 4.2, SEI procedure. I’m not sure I follow the description of the SEI procedure. My
-understanding of SEI is that for patterns with lots of possible pairs, no single pair is likely to
-(should) be identified in the posterior distribution. Thus, you take a small subsample of the
-records of size S < H_j_p, and store these in R^{SEI} rather than the complete index of pairs in
-each R. Can you quantify the computational savings due to this method? Do you have advice for
-how small S can be? In your simulations, how does the use of this method or choice of S affect
-the results?
-}
+Section 4.2, SEI procedure. I’m not sure I follow the description of the SEI procedure. My understanding of SEI is that for patterns with lots of possible pairs, no single pair is likely to (should) be identified in the posterior distribution. Thus, you take a small subsample of the records of size $S < H_{j_p}$, and store these in $R^{SEI}$ rather than the complete index of pairs in
+each R. Can you quantify the computational savings due to this method? Do you have advice for how small S can be? In your simulations, how does the use of this method or choice of S affect the results?}
+
+\textcolor{red}{All computational savings occur from conducting the Gibbs sampler over the $P$ patterns instead of the $n_2$ records. SEI is for memory savings. I think I need help articulating this clearly.}
 		\pointRaised{%
 Section 4.4, Assumptions and definitions should be included in the statement of this lemma.
 }
+\textcolor{red}{Do I really need this to be a Lemma? It seems overly clunky to me, but if its convention to provide computational complexity as a lemma, thats OK with me.}
 		\pointRaised{%
 Section 5.1 simulations – there is a detailed comparison for one set of simulation settings,
 including a binary definition of a “match”. Do these results differ as these settings change?
 }
+\textcolor{red}{Yes, results would be the same. To me, this is clear, I'm not sure how to clarify this in the paper}
 		\pointRaised{%
 Section 5.2 and 5.3 simulations – are these a single simulated datasets? Do these same results
 hold over multiple simulated datasets, Or was this just a chance result for each setting?
 }
+		\reply{R1}{%
+	In the caption under Figure 3, we explain that we have 100 pairs of sets of records for each level of overlap and error. We have added this description in the body of the paper as well for clarity. 
+}
 		\pointRaised{%
 Section 5.3 simulation – RR results are not presented.
 }
+\textcolor{red}{I will redo simulations in order to get this}
+
 		\pointRaised{%
 	Section 6.1 last sentences. I believe the last sentence should be removed, as it is redundant.
+}
+		\reply{R1}{%
+			We have deleted this last sentence. Thank you for addressing this oversight. 
 }
 		\pointRaised{%
 Section 6.2, second sentence. I believe the word “survey” is missing, as in “the initial SURVEY
 began…”
 }
+		\reply{R1}{%
+	Thank you for addressing this oversight. 
+}
 		\pointRaised{%
 Section 6.2. In the NLTCS, are participants added in later cohorts, or may we assume that every
 member of the smaller dataset should also be included in the earlier one?
 }
+\textcolor{red}{Beka, can you help answer this?}
+
 		\pointRaised{%
 	Figures 5 and 7 are not referenced in the text.
+}
+		\reply{R1}{%
+	Thank you for addressing this oversight. We have included pointers to these figures in the main text. 
 }
 
 
