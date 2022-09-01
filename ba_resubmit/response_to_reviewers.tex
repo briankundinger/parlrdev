@@ -199,7 +199,7 @@ Section 2, line 1: It may help to explicitly define X1 and X2 as being vectors o
 by equations (1) and (2).
 }
 \textcolor{red}{I'm not sure I agree with this point}
-\textcolor{blue}{The reviewer is stating that equations 1 and 2 are vectorized, so everything is else needs to be vectorized as well. In short, all notation needs to be consistent.}
+\textcolor{blue}{I think the comment is being made as otherwise it's not so clear to the reader. I would agree with this comment as not everyone reading this will know record linkage.}
 
 		\pointRaised{%
 Section 2.2, beta distribution: the $n_{12}(.)$ notation needs to be defined.
@@ -216,12 +216,16 @@ records (elements in X2) which violates the size ordering. Can the algorithm be 
 for this reverse sizing?
 }
 
-\textcolor{red}{I need some help addressing this in the paper. The answer is yes, the algorithm can easily be adapted for the reverse sizing. The issue is mostly notational. It seems as though Sadinle chose to label the datasets $X_1$ and $X_2$ such that $n_1 > n_2$ for mostly notational reasons. He uses the notation $Z_j = n_1 + j$ when record $j \in X_1$ has no match in $X_2$, which works because when $n_1 > n_2$, $n_1 + j$ never refers to any record in $X_2$. Jody uses the simplified notation $Z_j = n_1 + 1$ to refer to unmatched records, and this works for the same reason. 
-However, when we relax the one-to-one constraint, or even encourage a modeller to allow multiple linkages in one dataset, we shouldn't denote the datasets according to simple notational convenience. This might require clever edits of the "Review of Prior Work" section, and other areas of the paper. 
-Notationally, we can use  $Z_j = 0$ or $Z_j = -j$ as a way to unambiguously denote a record as nonmatching.
-Additionally, we could just strike the paragraph about the advantages of many-to-one matchings, and keep this strictly a paper about bipartite matching}
+\textbf{Thank you for the interesting comment/question. In this paper, our main goal and applications deal with bipartite record linkage (such that we can make fair comparison with prior work), which is consistent with the algorithm that we present in the paper. We have removed the confusing text mentioned by the reviewer. We are working on extensions beyond bipartite record linkage in other work, where the reverse sizing is not an issue, however, this is beyond the scope of this paper.}
 
-\textcolor{blue}{This is a good point. I wonder if we could perhaps remove a lot of the notation by Sadinle/FS and redo the notation such that the ordering wouldn't matter. Also, it would make more sense to follow with the examples that we use in the paper -- NLTCS and EL Salvador so that we don't confuse the reader. Let's talk through this point as this would be a big change. If the algorithm and notation can be easily modified to reverse things, this would be a nice addition to the paper and improvement over Sadinle.} 
+%\textcolor{red}{I need some help addressing this in the paper. The answer is yes, the algorithm can easily be adapted for the reverse sizing. The issue is mostly notational. It seems as though Sadinle chose to label the datasets $X_1$ and $X_2$ such that $n_1 > n_2$ for mostly notational reasons. He uses the notation $Z_j = n_1 + j$ when record $j \in X_1$ has no match in $X_2$, which works because when $n_1 > n_2$, $n_1 + j$ never refers to any record in $X_2$. Jody uses the simplified notation $Z_j = n_1 + 1$ to refer to unmatched records, and this works for the same reason. 
+%However, when we relax the one-to-one constraint, or even encourage a modeller to allow multiple linkages in one dataset, we shouldn't denote the datasets according to simple notational convenience. This might require clever edits of the "Review of Prior Work" section, and other areas of the paper. 
+%Notationally, we can use  $Z_j = 0$ or $Z_j = -j$ as a way to unambiguously denote a record as nonmatching.
+%Additionally, we could just strike the paragraph about the advantages of many-to-one matchings, and keep this strictly a paper about bipartite matching}
+
+
+
+%\textcolor{blue}{This is a good point. I wonder if we could perhaps remove a lot of the notation by Sadinle/FS and redo the notation such that the ordering wouldn't matter. Also, it would make more sense to follow with the examples that we use in the paper -- NLTCS and EL Salvador so that we don't confuse the reader. Let's talk through this point as this would be a big change. If the algorithm and notation can be easily modified to reverse things, this would be a nice addition to the paper and improvement over Sadinle.} 
 
 
 		\pointRaised{%
@@ -234,7 +238,7 @@ following subsection.
 
 		\reply{R1}{%
 \textcolor{red}{I can add these definitions, no problem. But is it worth including mention of missing data?}		
-\textcolor{blue}{Given that we have missing data (or could have missing data), this needs to be added into the paper. Otherwise, the authors are going to complain that we don't have it. If you don't have this in your code, then remove it. Make sense?}
+\textcolor{blue}{It's my understanding that there is missing data in SV, so we need to include this. (If we don't include it, the reviewers will complain that we're not including a very easy component of missing data), so this is something that really should be included.}
 }
 
 		\pointRaised{%
