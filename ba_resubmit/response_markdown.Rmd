@@ -38,7 +38,7 @@ Thank you for addressing this oversight. We have made these corrections througho
 
 **The loss function on p. 9 is out of Sadinle’s paper and it inherits the typo therein $(\theta_{11},$ $if Z_j, \hat{Z_j}, …)$.**
 \begin{quote}
-Thank you for addressing this oversight. We have corrected the loss function.
+Thank you for addressing this oversight. The previous expression $Z_j, \hat{Z}_j \leq n_1$ was meant to be understood as $Z_j\leq n_1, \hat{Z}_j \leq n_1$ We agree that the latter expression is more clear, and have made that change.
 \end{quote}
 
 **In the statement of Lemma 1 on p.13, B comes out of nowhere.  (Thinking I had missed something, I went back to the previous pages only to find out that B would be then defined in the proof.)**
@@ -48,7 +48,7 @@ We have updated the Lemma to include the definition of $B$.
 
 **Formatting of all displayed math must be checked and fixed, especially as far as punctuation is concerned, as commas seem to be missing in multiple places.  For example, in Equation (1), there should be a comma after 0 and after 1, and this is by no means an isolated occurrence.**
 \begin{quote}
-\textcolor{red}{Is this true?}
+\textcolor{red}{Is this true? I don't mind making the change, I've just never seen commas in that way.}
 \end{quote}
 	
 **Confusion can also arise from lack of clarity in the exposition.  Take comment 4 from the AE, for example.  Whose marriage certificates and whose birth records are involved?  What records are in $X_1$ and what records are in $X_2$?  The reader should not be expected to go back to Newcombe’s paper to clarify the issue.**
@@ -229,5 +229,11 @@ The paper presents a computational variant of the method introduced by Sadinle (
 
 A significant part of the paper is a reproduction of the paper of Sadinle. The variant is introduced in section 4. It is simple but consequential. The simulations and applications show how the variant accelerates the computation relative to the original method and reveals the trade-offs. The value of the paper resides in that computational complexity continues to be a difficult obstacle in the application of Bayesian statistics. The proposals of the paper enable the application of Sadinle’s approach to an extent not possible before.
 
-It is important to present the research for what it is: An extension of the method of Sadinle motivated by computational considerations. Here Sadinle supersedes Fellegi-Sunter in the sense while the starting point of Sadinle’s research is Fellegi-sunter, the starting point of this paper is Sadinle’s work. This should be made clearer, beginning in the abstract and reiterated in the conclusion.
+**It is important to present the research for what it is: An extension of the method of Sadinle motivated by computational considerations. Here Sadinle supersedes Fellegi-Sunter in the sense while the starting point of Sadinle’s research is Fellegi-sunter, the starting point of this paper is Sadinle’s work. This should be made clearer, beginning in the abstract and reiterated in the conclusion.**
+\begin{quote}
+\textcolor{red}{I'm not sure how to address this.}
+\end{quote}
+
+
+
 	
