@@ -40,17 +40,30 @@
 	before skip=14pt plus 2pt,%
 	after skip=14pt plus 2pt}
 
-\newcommand{\pointRaised}[1]{%
-	\begin{tcolorbox}
-		\itshape #1
-	\end{tcolorbox}
+%\newcommand{\pointRaised}[1]{%
+%	\begin{tcolorbox}
+%		\itshape #1
+%	\end{tcolorbox}
+%}
+%
+%\newcounter{responsectr}[section]     % counter for response resets at each section
+%\newcommand{\reply}[2]{%
+%	\refstepcounter{responsectr}%
+%	\textbf{#1.\theresponsectr:} #2
+%}
+
+\newcommand{\pointRaised}[2]{%
+	\textbf{#1.\theresponsectr:} #2
 }
 
 \newcounter{responsectr}[section]     % counter for response resets at each section
-\newcommand{\reply}[2]{%
+\newcommand{\reply}[1]{%
 	\refstepcounter{responsectr}%
-	\textbf{#1.\theresponsectr:} #2
+		\begin{tcolorbox}
+			\itshape #1
+		\end{tcolorbox}
 }
+
 
 \newcommand{\todo}{\textcolor{red}{[TODO]}\xspace}
 
@@ -71,46 +84,46 @@
 	\section*{Editor}
 	
 	
-	\pointRaised{%
+	\pointRaised{E}{%
 	The paper has been reviewed by a referee and an associate editor and I have read the manuscript independently, before looking at the reports.  When I confront my notes and overall impression with the reviewers’ comments, I find myself in substantial agreement with the reviewers.
 	
 	As indicated by both reviewers, the work expands on previous work by Sadinle, introducing computational advances that are achieved by relaxing some requirements in the original formulation of the problem.  The close connections with the previous work and the extent of the novel contributions are not adequately explained.  This makes it hard for the reader to understand what is new and why the new contributions are valuable.  A careful editing of the presentation is needed to address this shortcoming.}
 	
-			\reply{E}{%
-	\textbf{We thank the Editor, the AE, and the reviewer for their feedback, and pointing out our strengths of the paper and areas that we can improve the quality of our paper. In summary, we have revised our paper in the abstract and introduction as to make our contributions more clear to that of prior work.  Furthermore, we have carefully edited the paper to address issues that were pointed out by the Editorial Board.} \todo
+			\reply{%
+	We thank the Editor, the AE, and the reviewer for their feedback, and pointing out our strengths of the paper and areas that we can improve the quality of our paper. In summary, we have revised our paper in the abstract and introduction as to make our contributions more clear to that of prior work.  Furthermore, we have carefully edited the paper to address issues that were pointed out by the Editorial Board. \todo
 	}
 	
 	\newpage
 
-	\pointRaised{%
+	\pointRaised{E}{%
 	Regarding the presentation, the AE points out a number of problems with notation, typos, and various inconsistencies.  Independently, I found many similar problems.  The intersection between what I found and what the AE found is non-empty and so is the symmetric difference.  Also, the AE found some issues that I did not find and vice versa.  So, I am almost certain that an additional review would uncover more problems.  Now, the results presented in the paper seem plausible as do the broad strokes of the derivations, but I must admit that I was not able to follow all the details. This, in large part, was because of the issues that I just mentioned, and I believe that most readers would find it difficult to follow the developments, as these issues are exceedingly distracting.
 	
 	\begin{enumerate}
 	\item There are problems with the notation, which in places is not defined, in others is used before being defined, and in others yet is used inconsistently.  
 	\item For example, $I_obs()$ is never defined, $n_12(Z)$ first appears on p. 5, but is not defined (in passing) until the bottom of p. 7, and it seems to become D on p. 8.  
 	\item Throughout the manuscript, $n_1$ and $n_2$ are used interchangeably with $n_A$ and $n_B$, sometimes in the same section, as it happens, for example, in Section 3.1.  
-	\item The loss function on p. 9 is out of Sadinle’s paper and it inherits the typo therein $(\theta_11, if Z_j, \hat{Z_j}, …)$. 
+	\item The loss function on p. 9 is out of Sadinle’s paper and it inherits the typo therein $(\theta_11, if Z_j, \hat{Z_j}, \ldots)$. 
 	\item  In the statement of Lemma 1 on p.13, B comes out of nowhere.  (Thinking I had missed something, I went back to the previous pages only to find out that B would be then defined in the proof.)  
 	\item Formatting of all displayed math must be checked and fixed, especially as far as punctuation is concerned, as commas seem to be missing in multiple places.  
 	\item For example, in Equation (1), there should be a comma after 0 and after 1, and this is by no means an isolated occurrence.
 	\end{enumerate}
 	}
 	
-		\reply{E}{%
-	\textbf{We thank the Editor, the AE, and the reviewer for their feedback. We have made an effort to make it more clear our contributions in this work as opposed to previous work. Furthermore, we have carefully edited the paper to address issues that were pointed out by the Editorial Board.} \todo
+\reply{%
+	We thank the Editor, the AE, and the reviewer for their feedback. We have made an effort to make it more clear our contributions in this work as opposed to previous work. Furthermore, we have carefully edited the paper to address issues that were pointed out by the Editorial Board.\todo
 	}
 	
 	
-		\pointRaised{%
+	\pointRaised{E}{%
 	Confusion can also arise from lack of clarity in the exposition.  Take comment 4 from the AE, for example.  Whose marriage certificates and whose birth records are involved?  What records are in $X_1$ and what records are in $X_2$?  The reader should not be expected to go back to Newcombe’s paper to clarify the issue. 
 	}
-	\reply{E}{%
+	\reply{%
 	Go fix this! \todo
 	}
 		
 	
 	
-		\pointRaised{%
+	\pointRaised{E}{%
 		
 		Other comments that were raised are as follows:
 		
@@ -129,8 +142,8 @@
 	\end{enumerate}
 	}
 	
-	\reply{E}{%
-	\textbf{Go fix these!} \todo
+	\reply{%
+	Go fix these! \todo
 	}
 	
 	To summarize, the paper contains an interesting algorithmic contribution that can speed up calculations at the expense of relaxing some of the modeling conditions, without much adverse impact on the resulting inferences.  This aspect should be emphasized in a revised presentation.  The presentation should also make clearer the close connections to the relevant work by Sadinle, and all the issues that I mentioned above should be ironed out.
@@ -138,10 +151,10 @@
 	The authors should prepare a careful and substantive revision that remains within the editorial limit of 25 pages and that answers the various comments satisfactorily.  The authors should upload the revised manuscript together with a document detailing how they addressed the reviewers’ comments.
 	
 
-	\reply{E}{%
-		\textbf{Thank you for the opportunity to submit a revision and improve the quality of our paper. 
+	\reply{%
+		Thank you for the opportunity to submit a revision and improve the quality of our paper. 
 		We have provided detailed responses to the reviewers' comments below, 
-		which prompted significant changes in our paper.}
+		which prompted significant changes in our paper.
 	}
 	
 
@@ -150,7 +163,7 @@
 	\clearpage
 	\newpage
 	
-	\section*{Reviewer 2}
+	\section*{Reviewer 1}
 
 \textcolor{blue}{Subtle comment to Brian: The Editor told us that this review is the AE, so we want to satisfy all these comments if possible since the Editor thinks the comments are "spot on"}
 
@@ -158,7 +171,7 @@
 	\setcounter{responsectr}{0}
 	
 	
-	\pointRaised{%
+	\pointRaised{R1}{%
 	This manuscript addresses the bipartite matching problem in data linkage and proposes a new fast
 	computation version of “Beta Linkage” to allow such matching to take place for pairs of large databases
 	without resorting to ad hoc blocking. It is built upon the Felegi-Sunter model of record linkages, where
@@ -179,36 +192,35 @@
 	itemized list below
 	}
 	
-	\reply{R1}{%
-	\textbf{We thank the reviewer (AE) for noticing our computational novelties that expand upon the prior limitations of the prior work of Sadinle (2017). 
-	Our review paper clarifies our novel contributions, improves upon the exposition of the writing, provides a practical guidance for users, and expands the simulations. We expand on these points further below.} \todo
+	\reply{%
+	We thank the reviewer (AE) for noticing our computational novelties that expand upon the prior limitations of the prior work of Sadinle (2017). Our review paper clarifies our novel contributions, improves upon the exposition of the writing, provides a practical guidance for users, and expands the simulations. We expand on these points further below. \todo
 	}
 	
 	
-		\pointRaised{%
+	\pointRaised{R1}{%
 Overall, the notation is, somewhat by necessity, quite extensive. However, I’m not convinced that it’s entirely consistent. A glossary in the appendix may help the reader navigate the paper more easily.
-            \reply{R1}{%
+            \reply{%
             \textcolor{blue}{I think this is an excellent idea and it could make sure that we don't miss anything. It would really help the reader. You could make a table of the notation, and Neil does this quite well in the Marchant 2021 paper as an example.}
             }
 
 
 	}
 
-		\pointRaised{%
+	\pointRaised{R1}{%
 Section 2, line 1: It may help to explicitly define X1 and X2 as being vectors of indices as implied
 by equations (1) and (2).
 }
 \textcolor{red}{I'm not sure I agree with this point}
 \textcolor{blue}{I think the comment is being made as otherwise it's not so clear to the reader. I would agree with this comment as not everyone reading this will know record linkage.}
 
-		\pointRaised{%
+	\pointRaised{R1}{%
 Section 2.2, beta distribution: the $n_{12}(.)$ notation needs to be defined.
 }
-		\reply{R1}{%
-			\textbf{We thank the reviewers for identifying this oversight, and have defined the notation.}
+		\reply{%
+			We thank the reviewers for identifying this oversight, and have defined the notation.
 		}
 
-		\pointRaised{%
+\pointRaised{R1}{%
 Section 3, 4th full paragraph: My understanding of the example of matching birth records and
 marriage certificates (presuming monogamy) may not quite be consistent with the algorithm as
 presented, as I would think that one certificate (element in X1) would match multiple birth
@@ -216,7 +228,7 @@ records (elements in X2) which violates the size ordering. Can the algorithm be 
 for this reverse sizing?
 }
 
-\textbf{Thank you for the interesting comment/question. In this paper, our main goal and applications deal with bipartite record linkage (such that we can make fair comparison with prior work), which is consistent with the algorithm that we present in the paper. We have removed the confusing text mentioned by the reviewer. We are working on extensions beyond bipartite record linkage in other work, where the reverse sizing is not an issue, however, this is beyond the scope of this paper.}
+\reply{Thank you for the interesting comment/question. In this paper, our main goal and applications deal with bipartite record linkage (such that we can make fair comparison with prior work), which is consistent with the algorithm that we present in the paper. We have removed the confusing text mentioned by the reviewer. We are working on extensions beyond bipartite record linkage in other work, where the reverse sizing is not an issue, however, this is beyond the scope of this paper.}
 
 %\textcolor{red}{I need some help addressing this in the paper. The answer is yes, the algorithm can easily be adapted for the reverse sizing. The issue is mostly notational. It seems as though Sadinle chose to label the datasets $X_1$ and $X_2$ such that $n_1 > n_2$ for mostly notational reasons. He uses the notation $Z_j = n_1 + j$ when record $j \in X_1$ has no match in $X_2$, which works because when $n_1 > n_2$, $n_1 + j$ never refers to any record in $X_2$. Jody uses the simplified notation $Z_j = n_1 + 1$ to refer to unmatched records, and this works for the same reason. 
 %However, when we relax the one-to-one constraint, or even encourage a modeller to allow multiple linkages in one dataset, we shouldn't denote the datasets according to simple notational convenience. This might require clever edits of the "Review of Prior Work" section, and other areas of the paper. 
@@ -228,7 +240,7 @@ for this reverse sizing?
 %\textcolor{blue}{This is a good point. I wonder if we could perhaps remove a lot of the notation by Sadinle/FS and redo the notation such that the ordering wouldn't matter. Also, it would make more sense to follow with the examples that we use in the paper -- NLTCS and EL Salvador so that we don't confuse the reader. Let's talk through this point as this would be a big change. If the algorithm and notation can be easily modified to reverse things, this would be a nice addition to the paper and improvement over Sadinle.} 
 
 
-		\pointRaised{%
+\pointRaised{R1}{%
 5. Section 3, full model: $I_obs(.)$ seems to be taken from a different paper dealing with missing
 fields, which is not at all discussed in this manuscript. This consideration of missing fields and
 the accompanying discussion of missing data mechanism should be included if such data is to be
@@ -236,27 +248,27 @@ considered for this manuscript. This comment also applies to the $Gamma^{obs}$ n
 following subsection.
 }
 
-		\reply{R1}{%
+\reply{%
 \textcolor{red}{I can add these definitions, no problem. But is it worth including mention of missing data?}		
 \textcolor{blue}{It's my understanding that there is missing data in SV, so we need to include this. (If we don't include it, the reviewers will complain that we're not including a very easy component of missing data), so this is something that really should be included.}
 }
 
-		\pointRaised{%
+\pointRaised{R1}{%
 Section 3, full model: The Phi notation needs to be defined.
 }
-		\reply{R1}{%
-\textbf{We thank the reviewers for identifying this oversight, and have defined the notation. \todo}
+\reply{%
+We thank the reviewers for identifying this oversight, and have defined the notation. \todo
 }
 
-		\pointRaised{%
+\pointRaised{R1}{%
 Section 3, full model: The square brackets seem to be misplaced, as the exponent includes
 indices of the sum contained in the brackets.
 }
 
-		\reply{R1}{%
-\textbf{We thank the reviewers for identifying this oversight, and have corrected the expression. \todo}
+		\reply{%
+We thank the reviewers for identifying this oversight, and have corrected the expression. \todo
 }
-		\pointRaised{%
+\pointRaised{R1}{%
 Section 3.1, I found the motivational descriptions in this section to be somewhat confusing, in
 that they seem to mix the posterior behavior (e.g., parameters are updated though standard
 multinomial-Dirichlet…) and model construction (as a function of pi, Z is a series of successes…).
@@ -268,108 +280,117 @@ to be missing a factor of $u_{fl}^I(gamma_{ij}^f=l)$. This is not important to t
 conditional of Z, but does not seem to be correct for the distribution of Gamma as claimed.
 }
 
-\reply{R1}{%
+\reply{%
 \textcolor{blue}{Let's talk through why the reviewer find this to be confusing. I think that the AE is asking for the joint posterior to be written in such as way that we can easily decompose the full conditionals more naturally. So, we can start with what you have and then simplify the joint posterior such the full conditionals fall out more easily. The point below makes me think this is his/her suggestion.}
 }
 
-		\pointRaised{%
+\pointRaised{R1}{%
 Section 3.1, full joint posterior distribution: I was surprised to see that the contribution of the
 conditional distribution of Z was included using the summation-style notation rather than the
 binomial/multinomial-style multiplicative notation that naturally motivates the full conditional
 presented on the first line of page 8.
 }
 
-\reply{R1}{%
+\reply{%
 \textcolor{blue}{This comment goes with the one above.}
 }
 
-		\pointRaised{%
+\pointRaised{R1}{%
 Section 3.1, first equation on page 8: There is an extra parenthesis in the exponent of (1-pi).
 }
-		\reply{R1}{%
-	\textbf{We thank the reviewers for identifying this oversight, and have corrected the expression.} \todo
-}
-		\pointRaised{%
+	\reply{%
+	We thank the reviewers for identifying this oversight, and have corrected the expression. \todo
+	}
+
+\pointRaised{R1}{%
 Section 3.1, pmf for $Gamma_{.j}$ and full conditional for Z: The notation in the final equation
 may be more clear if you replace i with $z_j$, as in $w_{z_j j}$. I believe that “$n_1+1$” should be “$n_1+ j$” in several places.
 }
 
+	\reply{%
+	I would recommend fixing this to make it more clear since this is the AE.
+	}
 
-\reply{R1}{%
-\textbf{I would recommend fixing this to make it more clear since this is the AE.}
-}
-
-		\pointRaised{%
+\pointRaised{R1}{%
 Section 3.1, last equations on page 8: There seems to be some lack of specificity in describing
 these equations as full conditional distributions vs. steps in the Gibbs Sampler algorithm. It
 would be helpful to provide a brief justification of integrating out pi.
 }
+\reply{
 \textcolor{red}{I'm not sure how to justify this step, but also this step isn't actually necessary. We could just sample $\pi$ and use it, as in a standard Gibbs sampler. Should I just remove this step?}
 \textcolor{blue}{The AE makes a good point. We have given the full conditionals, but have not written down the Gibbs algorithm. The AE is expecting something like this for the algorithm: https://arxiv.org/pdf/1403.0211.pdf}
+}
 
-		\pointRaised{%
+\pointRaised{R1}{%
 Section 4.2, SEI procedure. I’m not sure I follow the description of the SEI procedure. My understanding of SEI is that for patterns with lots of possible pairs, no single pair is likely to (should) be identified in the posterior distribution. Thus, you take a small subsample of the records of size $S < H_{j_p}$, and store these in $R^{SEI}$ rather than the complete index of pairs in
 each R. Can you quantify the computational savings due to this method? Do you have advice for how small S can be? In your simulations, how does the use of this method or choice of S affect the results?}
 \textcolor{blue}{Do you think you could write the computational complexity of this out Brian as this would help? In addition, how does the SEI come into play in the Gibbs sampler? If it comes into play, it will need to be in the algorithm.}
 
-\textcolor{red}{All computational savings occur from conducting the Gibbs sampler over the $P$ patterns instead of the $n_2$ records. SEI is for memory savings. I think I need help articulating this clearly.}
-		\pointRaised{%
+\reply{%
+	\textcolor{red}{All computational savings occur from conducting the Gibbs sampler over the $P$ patterns instead of the $n_2$ records. SEI is for memory savings. I think I need help articulating this clearly.}
+}
+\pointRaised{R1}{%
 Section 4.4, Assumptions and definitions should be included in the statement of this lemma.
 
-            	\reply{R1}{%
+\reply{%
 	\textcolor{red}{Do I really need this to be a Lemma? It seems overly clunky to me, but if its convention to provide computational complexity as a lemma, thats OK with me.} \textcolor{blue}{Yes, this is convention.}
 	        }
 }
 
-		\pointRaised{%
+\pointRaised{R1}{%
 Section 5.1 simulations – there is a detailed comparison for one set of simulation settings,
 including a binary definition of a “match”. Do these results differ as these settings change?
 }
 
-	\reply{R1}{%
+\reply{%
 	\textcolor{red}{Yes, results would be the same. To me, this is clear, I'm not sure how to clarify this in the paper.} 
-\textcolor{blue}{Did you run them on other settings? What were they? Don't include this in the paper, but explain this here and we'll work on this together.}
-	}
-
-
-		\pointRaised{%
-Section 5.2 and 5.3 simulations – are these a single simulated datasets? Do these same results
-hold over multiple simulated datasets, Or was this just a chance result for each setting?
+	\textcolor{blue}{Did you run them on other settings? What were they? Don't include this in the paper, but explain this here and we'll work on this together.}
 }
 
-		\reply{R1}{%
-	\textbf{In the caption under Figure 3, we explain that we have 100 pairs of sets of records for each level of overlap and error. We have added this description in the body of the paper as well for clarity. \textcolor{blue}{We need to more clearly answer the question. Was this one data set? This isn't clear to me from the answer.}}
+
+\pointRaised{R1}{%
+	Section 5.2 and 5.3 simulations – are these a single simulated datasets? Do these same results
+	hold over multiple simulated datasets, Or was this just a chance result for each setting?
 }
-		\pointRaised{%
+
+\reply{%
+	In the caption under Figure 3, we explain that we have 100 pairs of sets of records for each level of overlap and error. We have added this description in the body of the paper as well for clarity. \textcolor{blue}{We need to more clearly answer the question. Was this one data set? This isn't clear to me from the answer.}
+}
+\pointRaised{R1}{%
 Section 5.3 simulation – RR results are not presented.
 }
-\textbf{\textcolor{red}{I will redo simulations in order to get this}}
+\reply{%
+	\textcolor{red}{I will redo simulations in order to get this}
+}
 
-		\pointRaised{%
+\pointRaised{R1}{%
 	Section 6.1 last sentences. I believe the last sentence should be removed, as it is redundant.
 }
-		\reply{R1}{%
-			\textbf{This has been removed.}
+\reply{%
+	This has been removed.
 }
-		\pointRaised{%
+\pointRaised{R1}{%
 Section 6.2, second sentence. I believe the word “survey” is missing, as in “the initial SURVEY
 began…”
 }
-		\reply{R1}{%
-	\textbf{This has been fixed.}
+\reply{%
+	This has been fixed.
 }
-		\pointRaised{%
+
+\pointRaised{R1}{%
 Section 6.2. In the NLTCS, are participants added in later cohorts, or may we assume that every
 member of the smaller dataset should also be included in the earlier one?
 }
-\textbf{Participants can be added in later cohorts. This has been clarified in the paper. \todo}
+\reply{%
+	Participants can be added in later cohorts. This has been clarified in the paper. \todo
+}
 
-		\pointRaised{%
+\pointRaised{R1}{%
 	Figures 5 and 7 are not referenced in the text.
 }
-		\reply{R1}{%
-	\textbf{This has been fixed.}
-	}
+\reply{%
+	This has been fixed.
+}
 
 
 
