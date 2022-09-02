@@ -111,7 +111,9 @@
 	We thank the Editor, the AE, and the reviewer for their feedback. We have made an effort to make it more clear our contributions in this work as opposed to previous work. Furthermore, we have carefully edited the paper to address issues that were pointed out by the Editorial Board.
 	
 		\begin{enumerate}
-		\item We have included an explanation of our missingness assumptions along with the defintion of $I_{obs}.$ Additionally, we have defined $n_{12}(Z)$ at its first occurance.
+		\item \textcolor{red}{I'm unsure where I should put our missing at random (MAR) assumption, and therefore also unsure where to put the definition of $I_{obs}$}
+		
+		Additionally, we have defined $n_{12}(Z)$ at its first occurance.
 		\item We have fixed the inconsistency, using $n_1$ and $n_2$ throughout the paper.
 		\item The previous expression $Z_j, \hat{Z}_j \leq n_1$ was meant to be understood as $Z_j\leq n_1, \hat{Z}_j \leq n_1$ We agree that the latter expression is more clear, and have made that change.
 		\item  We have updated the Lemma to include the definition of $B$, in addition to all other variables included in the Lemma. 
@@ -126,13 +128,11 @@
 	}
 
 	\reply{%
-We agree with this comment, and we have removed this example as it does not add to the paper. Furthermore, we have gone through the paper to improve the overall exposition and clarity of the writing.\todo
+We agree with this comment, and we have removed this example as it does not add to the paper. Furthermore, we have gone through the paper to improve the overall exposition and clarity of the writing.
 }
 
-
-
-	\pointRaised{E}{%
-		Other comments that were raised are as follows: This is not an exhaustive list, but only a set of examples meant to point out what makes the paper hard to read and how it can be improved.  Many more specific points are raised in the AE’s report and here are a couple of other minor issues I noticed:
+\pointRaised{E}{%
+	Other comments that were raised are as follows: This is not an exhaustive list, but only a set of examples meant to point out what makes the paper hard to read and how it can be improved.  Many more specific points are raised in the AE’s report and here are a couple of other minor issues I noticed:
 	\begin{enumerate}
 	\item p. 12, second paragraph:  insert “is” after Section 3.1
 
@@ -146,7 +146,7 @@ We agree with this comment, and we have removed this example as it does not add 
 	}
 
 	\reply{%
-		\begin{enumerate}
+	\begin{enumerate}
 		\item This change has been made
 		
 		\item \textcolor{red}{I could not find this error}
@@ -154,7 +154,6 @@ We agree with this comment, and we have removed this example as it does not add 
 		\item We have read the paper for typos and inconsistencies, and thank the reviewers for bringing these to our attention. 
 		
 		\item We have responded to the AE's comments about the simulation studies
-		
 	\end{enumerate}
 }
 
@@ -180,24 +179,9 @@ The authors should prepare a careful and substantive revision that remains withi
 	\setcounter{responsectr}{0}
 
 	\pointRaised{R1}{%
-	This manuscript addresses the bipartite matching problem in data linkage and proposes a new fast
-	computation version of “Beta Linkage” to allow such matching to take place for pairs of large databases
-	without resorting to ad hoc blocking. It is built upon the Felegi-Sunter model of record linkages, where
-	linkages are made within strata of agreement between records across the two databases, and relies
-	heavily on advances made by Sadinle (2017).
-	Overall, the paper presents a practical implementation of a modified Beta Linkage approach to
-	matching. It demonstrates that even though the new method suffers from the limitations of not
-	seamlessly enforcing one-to-one matching, it is feasible for large datasets with modest numbers of
-	features on which to match. Though the novelty of the presented methodology is primarily in the
-	computational approach, I believe it to be a real advance for practical implementation of record linkage
-	in modern applications.
-	I have no major concerns about the content or accuracy of the presentation. However, substantial
-	improvements are warranted to confirm my impression. In addition to the recommendation made by
-	Reviewer 1 to include more clarity of the novel contributions of this manuscript, I believe that the
-	explanation of the method should be written more clearly, the simulation comparisons should be
-	repeated/expanded, and various features of the simplification should be fleshed out a bit more. Finally,
-	more practical advice would be welcome. All of these points are more specifically described in the
-	itemized list below
+	This manuscript addresses the bipartite matching problem in data linkage and proposes a new fast computation version of “Beta Linkage” to allow such matching to take place for pairs of large databases without resorting to ad hoc blocking. It is built upon the Felegi-Sunter model of record linkages, where linkages are made within strata of agreement between records across the two databases, and relies heavily on advances made by Sadinle (2017). Overall, the paper presents a practical implementation of a modified Beta Linkage approach to	matching. It demonstrates that even though the new method suffers from the limitations of not seamlessly enforcing one-to-one matching, it is feasible for large datasets with modest numbers of features on which to match. Though the novelty of the presented methodology is primarily in the computational approach, I believe it to be a real advance for practical implementation of record linkage in modern applications.
+	
+	I have no major concerns about the content or accuracy of the presentation. However, substantial improvements are warranted to confirm my impression. In addition to the recommendation made by Reviewer 1 to include more clarity of the novel contributions of this manuscript, I believe that the explanation of the method should be written more clearly, the simulation comparisons should be repeated/expanded, and various features of the simplification should be fleshed out a bit more. Finally, more practical advice would be welcome. All of these points are more specifically described in the itemized list below
 	}
 
 	\reply{%
@@ -206,7 +190,7 @@ The authors should prepare a careful and substantive revision that remains withi
 
 
 	\pointRaised{R1}{%
-Overall, the notation is, somewhat by necessity, quite extensive. However, I’m not convinced that it’s entirely consistent. A glossary in the appendix may help the reader navigate the paper more easily.}
+		Overall, the notation is, somewhat by necessity, quite extensive. However, I’m not convinced that it’s entirely consistent. A glossary in the appendix may help the reader navigate the paper more easily.}
 \reply{%
 	\textcolor{blue}{I think this is an excellent idea and it could make sure that we don't miss anything. It would really help the reader. You could make a table of the notation, and Neil does this quite well in the Marchant 2021 paper as an example.}
 }
@@ -215,8 +199,11 @@ Overall, the notation is, somewhat by necessity, quite extensive. However, I’m
 	Section 2, line 1: It may help to explicitly define X1 and X2 as being vectors of indices as implied by equations (1) and (2).
 }
 \reply{
-	\textcolor{red}{I'm not sure I agree with this point}
-	\textcolor{blue}{I think the comment is being made as otherwise it's not so clear to the reader. I would agree with this comment as not everyone reading this will know record linkage.}
+	\textcolor{red}{I'm not sure the best way to approach this. Here are two options:}
+	
+	\textcolor{red}{OPTION 1: Consider two databases $X_1$ and $X_2$ containing records $\{x_{1i}\}_{i=1}^{n_1}$ and $\{x_{2j}\}_{j=1}^{n_2}$ respectively. Without loss of generality, denote files such that $n_1 \geq n_2$. We follow the convention established by Sadinle (2017) and say "record i $\in X_1$ rather than the more compact $x_{1i}$ in order to avoid double subscripts.}
+	
+	\textcolor{red}{OPTION 2: We agree that the notation provided conflates the records themselves with the record indices. However, this notation was established in Sadinle 2017 and has been replicated in further work (Wortman 2019, Alishen-Guendel, one of Jerry's students), and we have decided to use it as well for consistency within the literature.}	
 }
 
 \pointRaised{R1}{%
@@ -251,8 +238,7 @@ for this reverse sizing?
 }
 
 \reply{%
-\textcolor{red}{I can add these definitions, no problem. But is it worth including mention of missing data?}
-\textcolor{blue}{It's my understanding that there is missing data in SV, so we need to include this. (If we don't include it, the reviewers will complain that we're not including a very easy component of missing data), so this is something that really should be included.}
+	\textcolor{red}{I'm unsure where I should put our missing at random (MAR) assumption, and therefore also unsure where to put the definition of $I_{obs}$}
 }
 
 \pointRaised{R1}{%
@@ -271,12 +257,13 @@ Section 3, full model: The Phi notation needs to be defined.
 }
 
 \pointRaised{R1}{%
-Section 3.1, I found the motivational descriptions in this section to be somewhat confusing, in that they seem to mix the posterior behavior (e.g., parameters are updated though standard multinomial-Dirichlet…) and model construction (as a function of pi, Z is a series of successes…). This subsection might be easier to understand if its purpose was more bluntly described in an opening sentence or paragraph and streamlined to focus only on the full conditional distributions for a Gibbs Sampler. In addition, the mixed motivation may have led to errors in intermediate conclusions. In particular, the derivation of the probability of $Gamma_{.j}$ seems to be missing a factor of $u_{fl}^I(gamma_{ij}^f=l)$. This is not important to the eventual full
-conditional of Z, but does not seem to be correct for the distribution of Gamma as claimed.
+Section 3.1, I found the motivational descriptions in this section to be somewhat confusing, in that they seem to mix the posterior behavior (e.g., parameters are updated though standard multinomial-Dirichlet…) and model construction (as a function of pi, Z is a series of successes…). This subsection might be easier to understand if its purpose was more bluntly described in an opening sentence or paragraph and streamlined to focus only on the full conditional distributions for a Gibbs Sampler. In addition, the mixed motivation may have led to errors in intermediate conclusions. In particular, the derivation of the probability of $\Gamma_{.j}$ seems to be missing a factor of $u_{fl}^I(gamma_{ij}^f=l)$. This is not important to the eventual full conditional of Z, but does not seem to be correct for the distribution of Gamma as claimed.
 }
 
 \reply{%
-\textcolor{blue}{Let's talk through why the reviewer find this to be confusing. I think that the AE is asking for the joint posterior to be written in such as way that we can easily decompose the full conditionals more naturally. So, we can start with what you have and then simplify the joint posterior such the full conditionals fall out more easily. The point below makes me think this is his/her suggestion.}
+\textcolor{red}{We should meet specifically to talk about how to best present the Gibbs Sampler}
+
+We have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented. \textcolor{red}{I want you guys to look at it though. Its pretty ugly.}
 }
 
 \pointRaised{R1}{%
@@ -300,28 +287,32 @@ Section 3.1, pmf for $Gamma_{.j}$ and full conditional for Z: The notation in th
 }
 
 \reply{%
-	\todo
+	We have changed $w_{ij}$ to $w_{z_j, j}$ in the pmf for $\Gamma_{.j}$ and the full conditional for $Z_j$. We have been sure that “$n_1+1$” has been changed to “$n_1+ j$” throughout the paper. 
 }
 
 \pointRaised{R1}{%
 Section 3.1, last equations on page 8: There seems to be some lack of specificity in describing these equations as full conditional distributions vs. steps in the Gibbs Sampler algorithm. It would be helpful to provide a brief justification of integrating out pi.
 }
 \reply{%
-	We have included the details for integrating out $\pi$ in the appendix. \todo
+	\textcolor{red}{I don't fully understand the first part of the comment}
+	We have included the details for integrating out $\pi$.
 }
 
 \pointRaised{R1}{%
 Section 4.2, SEI procedure. I’m not sure I follow the description of the SEI procedure. My understanding of SEI is that for patterns with lots of possible pairs, no single pair is likely to (should) be identified in the posterior distribution. Thus, you take a small subsample of the records of size $S < H_{j_p}$, and store these in $R^{SEI}$ rather than the complete index of pairs in each R. Can you quantify the computational savings due to this method? Do you have advice for how small S can be? In your simulations, how does the use of this method or choice of S affect the results?}
 
 \reply{%
-	\todo
+	In line 276, we have quantified the memory savings: "Rather than storing \(n_1 \times n_2\) record labels, SEI allows us to store at most \(n_2 \times P \times S\) labels, regardless of how large \(n_1\) might be." SEI does not affect the computation time of the Gibbs sampler, since the complexity of the sampler is $O(n_2 P)$, regardless of how many comparison vectors are of pattern $P$.
+	
+	I included the following text to answer the second question.
+	\textcolor{red}{In practice, we recommend $S=10$, as this reduces the number of stored indices for highly unlikely record pairings, but does is not likely to eliminate any of the indices for likely matches. Choosing $S$ too low can concentrate undue mass on unlikely matches and distort linkage results.}
 }
 \pointRaised{R1}{%
 Section 4.4, Assumptions and definitions should be included in the statement of this lemma.
+}
 
 \reply{%
-	\textcolor{red}{Do I really need this to be a Lemma? It seems overly clunky to me, but if its convention to provide computational complexity as a lemma, thats OK with me.} \textcolor{blue}{Yes, this is convention.}
-	        }
+	We have revised the lemma to include definitions for all variables used within the statement. 
 }
 
 \pointRaised{R1}{%
@@ -329,17 +320,17 @@ Section 5.1 simulations – there is a detailed comparison for one set of simula
 }
 
 \reply{%
-	\textcolor{red}{Yes, results would be the same. To me, this is clear, I'm not sure how to clarify this in the paper.}
-	\textcolor{blue}{Did you run them on other settings? What were they? Don't include this in the paper, but explain this here and we'll work on this together.}
+	Regardless of the specific construction of the comparison vectors, the computational complexity the Gibbs sampler under BRL is $O(n_1 n_2)$, where as it is $O(n_2 P)$ for fabl. The exact shape of the lines will be different, but in all cases, fabl removes dependence on $n_1$ in the computational complexity. 
+	
+	\textcolor{red}{I think this is clear in the paper, so I did not add anything to the actual text.} 
 }
-
 
 \pointRaised{R1}{%
 	Section 5.2 and 5.3 simulations – are these a single simulated datasets? Do these same results hold over multiple simulated datasets, Or was this just a chance result for each setting?
 }
 
 \reply{%
-	In the caption under Figure 3, we explain that we have 100 pairs of sets of records for each level of overlap and error. We have added this description in the body of the paper as well for clarity. \textcolor{blue}{We need to more clearly answer the question. Was this one data set? This isn't clear to me from the answer.}
+	In the caption under Figure 3, we explain that we have 100 pairs of sets of records for each level of overlap and error. Thus the table represents results over 900 pairs of datasets. We have added this description in the body of the paper as well for clarity. 
 }
 
 \pointRaised{R1}{%
@@ -357,19 +348,17 @@ Section 5.3 simulation – RR results are not presented.
 	This has been removed.
 }
 \pointRaised{R1}{%
-Section 6.2, second sentence. I believe the word “survey” is missing, as in “the initial SURVEY
-began…”
+	Section 6.2, second sentence. I believe the word “survey” is missing, as in “the initial SURVEY began…”
 }
 \reply{%
 	This has been fixed.
 }
 
 \pointRaised{R1}{%
-Section 6.2. In the NLTCS, are participants added in later cohorts, or may we assume that every
-member of the smaller dataset should also be included in the earlier one?
+	Section 6.2. In the NLTCS, are participants added in later cohorts, or may we assume that every member of the smaller dataset should also be included in the earlier one?
 }
 \reply{%
-	Participants can be added in later cohorts. This has been clarified in the paper. \todo
+	In each iteration of the study, some participants are added to the lists, and others are lost due to loss of contact or death. This has been clarified in the paper. 
 }
 
 \pointRaised{R1}{%
@@ -378,8 +367,6 @@ member of the smaller dataset should also be included in the earlier one?
 \reply{%
 	This has been fixed.
 }
-
-
 
 	\clearpage
 	\newpage
