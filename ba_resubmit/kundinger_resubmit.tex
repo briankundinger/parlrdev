@@ -201,7 +201,7 @@ Note that linkage in this setting is conducted at the record level, rather than 
 
 Importantly, this independence relaxes the one-to-one requirement from \texttt{BRL}; the Gibbs sampler under \texttt{fabl} does ensure that each record in \(\bm{X}_2\) can be matched to at most one record in \(\bm{X}_1\), but allows for the possibility that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\). To resolve many-to-one matchings and obtain a one-to-one estimate, we use the post processing procedure shown in section~\ref{bayes-estimate}.
 
-Lastly, we note that it is common to encounter missing information in datasets used for record linkage. Whether information is missing in record $i \in \bf{X}_1$ or $j \in \bf{X}_2$, the comparison vector $\bf{\gamma}_{ij}$ will have missing values. We handle this issue by assuming that this missingness occurs at random (MAR, by \cite{LittleRubin2002})
+\textcolor{red}{Lastly, we note that it is common to encounter missing information in datasets used for record linkage. Whether information is missing in record $i \in \bf{X}_1$ or $j \in \bf{X}_2$, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. We handle this issue by assuming that this missingness occurs at random (MAR, by \cite{LittleRubin2002}). With this assumption, we can marginalize over the missing data, and do all computation simply using the observed data. To notate this, we use the indicator $I_{obs}(\cdot)$, which takes on the value 1 when the argument inside the parentheses is observed, and 0 otherwise.}
 
 %this independent prior for each \(Z_j\), induces a sampler that is \emph{embarassingly parallel}, allowing for significant computational gains over the Gibbs sampler under \texttt{BRL}. More importantly, since only the agreement pattern of \(Z_j\) is used forcalculations within the Gibbs sampler, and not the particular record label, this sampling is only needed at the level of the unique agreement patterns, which offers additional computational savings.  
 
@@ -212,7 +212,7 @@ Lastly, we note that it is common to encounter missing information in datasets u
 %As commonly done in the record linkage literature, we assume that agreement levels across features are conditionally independent. Additionally, we assume that any missing data is missing at random. Let  $m_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j = i)$ denote the probability of that matching records have level $\ell$ of disagreement in feature $f$, and $u_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j \neq i)$ represent the same probability for non-matches. In addition, denote $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$, $\bm{u}_f = (u_{f1}, \ldots, u_{fL_f})$, $\bm{m}= (m_1, \ldots m_F)$, $\bm{u}= (u_1, \ldots u_F)$, and $\Phi = (\bm{m}, \bm{u})$.
 
 %The model can then be specified as follows:
-With the \texttt{fabl} prior defined, we present the full model as follows: 
+With the \texttt{fabl} prior defined and our missingness assumptions addressed, we present the full model as follows: 
 
 %$$\mathcal{L}(\bm{Z}, \Phi \mid \bm{\Gamma}) = \prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}$$
 %$$\bm{m}_f \sim \text{Dirichlet}(\alpha_{f0}, \ldots, \alpha_{f L_f})$$
@@ -502,7 +502,7 @@ Although sampling \(Z_j\) from a the full conditional provided in Section~\ref{g
 		\caption{Distributions used for $m$ and $u$ probabilties in simulation studies}\label{Tab:distributions}
 	\end{table}
 	
-	We note here that the implementation of \texttt{BRL} that we use is coded in C \citep{sadinle_bayesian_2017}.  In contrast, we use non-optimized code written in R for \texttt{fabl}.  While this complicates comparisons, and indeed disfavors fabl, the computational speed gains for \texttt{fabl} are still evident, especially for larger sample sizes.  Additionally, although \texttt{fabl} is amenable to parallelization, this simulation was run on a single core. Implementing \texttt{fabl} in C++ with paralellization for the hashing step and sampling the matching status of the record pairs should lead to even more computational gains.
+	We note here that the implementation of \texttt{BRL} that we use is coded in C \citep{sadinle_bayesian_2017}.  In contrast, we use non-optimized code written in R for \texttt{fabl}.  While this complicates comparisons, and indeed disfavors \texttt{fabl}, the computational speed gains for \texttt{fabl} are still evident, especially for larger sample sizes.  Additionally, although \texttt{fabl} is amenable to parallelization, this simulation was run on a single core. Implementing \texttt{fabl} in C++ with paralellization for the hashing step and sampling the matching status of the record pairs should lead to even more computational gains.
 	
 	In Figure~\ref{fig:speed1}, \texttt{BRL} is faster than \texttt{fabl} for low sample sizes, but that \texttt{fabl} is significantly faster at handling larger data. In particular, run-time for \texttt{BRL} seems to grow quadratically (or linearly with the size of both $\bm{X}_1$ and $\bm{X}_2$) while run-time for \texttt{fabl} seems to grow linearly (in the size of $\bm{X}_2$).
 	
@@ -565,7 +565,9 @@ Although sampling \(Z_j\) from a the full conditional provided in Section~\ref{g
 	\hypertarget{partial}{%
 		\subsection{Accuracy under Partial Estimates}\label{partial}}
 	
-	By leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the negative predictive value (NPV), defined as the proportion of non-links that are actual non-matches. Mathematically, $\text{NPV} = \sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j = n_1 + j)$/$\sum_{j=1}^{n_2} I(\hat{Z}_j = n_1 + j)$. We continue to use the precision, which is renamed the positive predictive value (PPV) in this context. Lastly, we also report the rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_2} I(\hat{Z}_j = R)$.
+	By leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the negative predictive value (NPV), defined as the proportion of non-links that are actual non-matches. Mathematically, $\text{NPV} = \sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j = n_1 + j)$/$\sum_{j=1}^{n_2} I(\hat{Z}_j = n_1 + j)$. We continue to use the precision, which is renamed the positive predictive value (PPV) in this context. Lastly, we also examine the rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_2} I(\hat{Z}_j = R)/n_2$. \textcolor{red}{To convey this information alongside NPV and PPV, for which values close to 1 indicate strong performance, we report the decision rate (DR), defined as DR = $1 - RR$.}
+	
+	\textcolor{red}{Should I skip defining RR? And just define decision rate DR = $\sum_{j=1}^{n_2} I(\hat{Z}_j \neq R)/n_2$?}
 	
 	In Figure~\ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} maintains equivalently strong PPV as \texttt{BRL} across all linkage settings. However, with high amounts of error, and thus fewer accurate and discerning fields of information, the rejection rate under \texttt{fabl} rises, leading to a decrease in NPV. Since \texttt{fabl} does not remove previously matched records from consideration for a new record, posterior probabilities of matches at times can be split across more records; in contrast, \texttt{BRL} is able to maintain higher confidence in matches in this setting. If one wishes to use partial estimates, \texttt{fabl} will possibly leave more linkages for the modeller to match by hand than would be left under \texttt{BRL}, but the decisions made by each method will have nearly equal accuracy. 
 	
@@ -575,8 +577,8 @@ Although sampling \(Z_j\) from a the full conditional provided in Section~\ref{g
 	
 	\begin{figure}[t]
 		\begin{center}
-			\includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_sim_plot_partial} 
-			\caption{Negative predictive value (NPV) and positive predictive value (PPV) on simulated datasets. We see poorer performance for \texttt{fabl} only in situations with high overlap.}
+			\includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_sim_plot_partial_DR} 
+			\caption{Negative predictive value (NPV), positive predictive value (PPV), and decision rate (DR) on simulated datasets. We see poorer performance for \texttt{fabl} only in situations with high overlap.}
 			\label{fig:sadinle_simulation_partial}
 		\end{center}
 	\end{figure}
@@ -808,7 +810,7 @@ Although sampling \(Z_j\) from a the full conditional provided in Section~\ref{g
 			\EndProcedure
 			
 			\Procedure{Gibbs Sampling}{}
-			\State Initialize $m$, $u$, and $Z$ parameters.
+			\State Initialize $\Phi$, and $Z$ parameters.
 			
 			\For{$t \in \{1, \ldots, T\}$} 
 			\State Sample $\Phi^{t+1}|Z^{t}, \tilde{\Gamma}$.

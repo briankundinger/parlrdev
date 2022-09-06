@@ -111,7 +111,7 @@
 	We thank the Editor, the AE, and the reviewer for their feedback. We have made an effort to make it more clear our contributions in this work as opposed to previous work. Furthermore, we have carefully edited the paper to address issues that were pointed out by the Editorial Board.
 	
 		\begin{enumerate}
-		\item \textcolor{red}{I'm unsure where I should put our missing at random (MAR) assumption, and therefore also unsure where to put the definition of $I_{obs}$}
+		\item \textcolor{red}{We have included a discussion of our missingness assumptions and the definition of $I_{obs}()$ near the end of Section 3.}
 		
 		Additionally, we have defined $n_{12}(Z)$ at its first occurance.
 		\item We have fixed the inconsistency, using $n_1$ and $n_2$ throughout the paper.
@@ -165,7 +165,6 @@ The authors should prepare a careful and substantive revision that remains withi
 	Thank you for the opportunity to submit a revision and improve the quality of our paper. We have provided detailed responses to the reviewers' comments below, which prompted significant changes in our paper.
 }
 
-
 \textcolor{blue}{Suggestions/Tips for Brian to Discuss: Let's work on the easy fixes first. Go fix all the notation, check the grammar, and fix the point by point responses of the Editor as these can be done hopefully quickly. Let's use this more organized format so we can more quickly talk about what comment the Editor is making. It also makes it easier for the Editor/AE to review, so they like this (just a pointer). Suggest putting lines in the paper so we can also know where we are and it's often helpful to put changes in color so we can check every detail before resubmission. These are just some tips that have worked in the past that I hope that will help. I typically like to handle the big changes last as they take a lot of time and more attention to detail. Antidote is a nice tool for checking grammar or asking someone who is really great at proofing to find these issues and mark it up for you. Olivier is pretty good at spotting such things or Ted, so they might be good choices. Finally, given that we have some sloppy stuff going on, I'd recommend having this really polished before sending it to HRDAG or Patrick Ball will think it's a mess. I personally don't like sending things that aren't polished out the door, and this my fault for not catching this prior to submission.}
 
 	\clearpage
@@ -201,7 +200,7 @@ The authors should prepare a careful and substantive revision that remains withi
 \reply{
 	\textcolor{red}{I'm not sure the best way to approach this. Here are two options:}
 	
-	\textcolor{red}{OPTION 1: Consider two databases $X_1$ and $X_2$ containing records $\{x_{1i}\}_{i=1}^{n_1}$ and $\{x_{2j}\}_{j=1}^{n_2}$ respectively. Without loss of generality, denote files such that $n_1 \geq n_2$. We follow the convention established by Sadinle (2017) and say "record i $\in X_1$ rather than the more compact $x_{1i}$ in order to avoid double subscripts.}
+	\textcolor{red}{OPTION 1: Consider two databases $X_1$ and $X_2$ containing records $\{x_{1i}\}_{i=1}^{n_1}$ and $\{x_{2j}\}_{j=1}^{n_2}$ respectively. Without loss of generality, denote files such that $n_1 \geq n_2$. We follow the convention established by Sadinle (2017) and say ``record i $\in X_1$" rather than the more compact $x_{1i}$ in order to avoid double subscripts.}
 	
 	\textcolor{red}{OPTION 2: We agree that the notation provided conflates the records themselves with the record indices. However, this notation was established in Sadinle 2017 and has been replicated in further work (Wortman 2019, Alishen-Guendel, one of Jerry's students), and we have decided to use it as well for consistency within the literature.}	
 }
@@ -238,7 +237,7 @@ for this reverse sizing?
 }
 
 \reply{%
-	\textcolor{red}{I'm unsure where I should put our missing at random (MAR) assumption, and therefore also unsure where to put the definition of $I_{obs}$}
+	\textcolor{red}{We have included a discussion of our missingness assumptions and the definition of $I_{obs}()$ near the end of Section 3.}
 }
 
 \pointRaised{R1}{%
@@ -261,7 +260,7 @@ Section 3.1, I found the motivational descriptions in this section to be somewha
 }
 
 \reply{%
-\textcolor{red}{We should meet specifically to talk about how to best present the Gibbs Sampler}
+\textcolor{red}{\todo We should meet specifically to talk about how to best present the Gibbs Sampler. I think it be good to move as much of it as possible (at least the messy math and derivations) into the appendix.}
 
 We have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented. \textcolor{red}{I want you guys to look at it though. Its pretty ugly.}
 }
@@ -338,7 +337,7 @@ Section 5.3 simulation – RR results are not presented.
 }
 
 \reply{%
-	\textcolor{red}{I will redo simulations in order to get this}
+	\textcolor{red}{We have updated the image with these results. Since its is presented along side NPV and PPV, for which values close to 1 indicate strong performance, we have presented decision rate (DR) results.}
 }
 
 \pointRaised{R1}{%
@@ -374,18 +373,9 @@ Section 5.3 simulation – RR results are not presented.
 	\section*{Reviewer 3}
 	\setcounter{responsectr}{0}
 
-	The paper presents a computational variant of the method introduced by Sadinle (2017). Simulation
-	results are presented and the variant is applied on a new, significantly larger data set.
-	A significant part of the paper is a reproduction of the paper of Sadinle. The variant is introduced in
-	section 4. It is simple but consequential. The simulations and applications show how the variant
-	accelerates the computation relative to the original method and reveals the trade-offs.
-	The value of the paper resides in that computational complexity continues to be a difficult obstacle in
-	the application of Bayesian statistics. The proposals of the paper enable the application of Sadinle’s
-	approach to an extent not possible before.
-	It is important to present the research for what it is: An extension of the method of Sadinle motivated
-	by computational considerations. Here Sadinle supersedes Fellegi-Sunter in the sense while the starting
-	point of Sadinle’s research is Fellegi-sunter, the starting point of this paper is Sadinle’s work. This should
-	be made clearer, beginning in the abstract and reiterated in the conclusion.
+	The paper presents a computational variant of the method introduced by Sadinle (2017). Simulation results are presented and the variant is applied on a new, significantly larger data set. A significant part of the paper is a reproduction of the paper of Sadinle. The variant is introduced in section 4. It is simple but consequential. The simulations and applications show how the variant accelerates the computation relative to the original method and reveals the trade-offs.
+	
+	The value of the paper resides in that computational complexity continues to be a difficult obstacle in the application of Bayesian statistics. The proposals of the paper enable the application of Sadinle’s approach to an extent not possible before. It is important to present the research for what it is: An extension of the method of Sadinle motivated by computational considerations. Here Sadinle supersedes Fellegi-Sunter in the sense while the starting point of Sadinle’s research is Fellegi-sunter, the starting point of this paper is Sadinle’s work. This should be made clearer, beginning in the abstract and reiterated in the conclusion.
 
 	\textbf{We thank the reviewer for their comments, and we have revised the clarity of our paper. \todo}
 

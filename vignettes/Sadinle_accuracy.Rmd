@@ -47,9 +47,9 @@ fabl_acc_samps <- array(NA, dim = c(length(files), 5, 3))
 fabl_acc_samps_resolved <- array(NA, dim = c(length(files), 5, 3))
 sad_acc_samps <- array(NA, dim = c(length(files), 5, 3))
 
-fabl_acc_samps2 <- array(NA, dim = c(length(files), 5, 3))
-fabl_acc_samps_resolved2 <- array(NA, dim = c(length(files), 5, 3))
-sad_acc_samps2 <- array(NA, dim = c(length(files), 5, 3))
+fabl_acc_samps2 <- array(NA, dim = c(length(files), 6, 3))
+fabl_acc_samps_resolved2 <- array(NA, dim = c(length(files), 6, 3))
+sad_acc_samps2 <- array(NA, dim = c(length(files), 6, 3))
 
 for(j in seq_along(overlap_vals)){
   
@@ -106,25 +106,25 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
   
-  bouncing_matches <- apply(Zchain[[1]][, (S- lag -1):(S-1)],1, function(x){
-    x[x<nA + 1] %>%
-    unique() %>%
-    length()
-  })
-  table(bouncing_matches)
-  
-  ptm <- proc.time()
-  Zchain_d <- BKSimple_hash_discount(cd)
-  elapsed <- proc.time() - ptm
-  Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
-  eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
-  
-    bouncing_matches_d <- apply(Zchain_d[[1]][, (S- lag -1):(S-1)],1, function(x){
-    x[x<nA + 1] %>%
-    unique() %>%
-    length()
-  })
-    table(bouncing_matches_d)
+  # bouncing_matches <- apply(Zchain[[1]][, (S- lag -1):(S-1)],1, function(x){
+  #   x[x<nA + 1] %>%
+  #   unique() %>%
+  #   length()
+  # })
+  # table(bouncing_matches)
+  # 
+  # ptm <- proc.time()
+  # Zchain_d <- BKSimple_hash_discount(cd)
+  # elapsed <- proc.time() - ptm
+  # Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
+  # eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
+  # 
+  #   bouncing_matches_d <- apply(Zchain_d[[1]][, (S- lag -1):(S-1)],1, function(x){
+  #   x[x<nA + 1] %>%
+  #   unique() %>%
+  #   length()
+  # })
+  #   table(bouncing_matches_d)
   
   
   # Resolution Step
@@ -137,8 +137,9 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, .1)
   Zhat <- ResolveConflicts(Zhat)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
+  RR <- sum(Zhat == -1)/n2
   eval[1] <- sum(Zhat == Ztrue & Ztrue > n1) / (sum(Zhat > n1))
-  fabl_acc_samps2[i, ,j] <- c(eval, elapsed[3], overlap)
+  fabl_acc_samps2[i, ,j] <- c(eval, RR, elapsed[3], overlap)
   
   #Sadinle 2017 Method
   ptm <- proc.time()
@@ -150,13 +151,16 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   sad_acc_samps[i, ,j] <- c(eval, elapsed[3], overlap)
   
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, .1)
+  RR <- sum(Zhat == -1)/n2
   eval <- GetEvaluations(Zhat, Ztrue, n1)
   eval[1] <- sum(Zhat == Ztrue & Ztrue > n1) / (sum(Zhat > n1))
-  sad_acc_samps2[i, ,j] <- c(eval, elapsed[3], overlap)
+  sad_acc_samps2[i, ,j] <- c(eval, RR, elapsed[3], overlap)
   
   print(i)
 }
 }
+
+
 # list(BK = parlr_acc_samps,
 #      Sadinle = sad_acc_samps)
 
@@ -281,35 +285,36 @@ fabl_samps2 <- rbind(fabl_acc_samps2[,,1], fabl_acc_samps2[,,2], fabl_acc_samps2
 
 # fabl_samps_resolved <- rbind(fabl_acc_samps_resolved[,,1], fabl_acc_samps_resolved[,,2], fabl_acc_samps_resolved[,,3])
 
-sad_samps2 <- rbind(sad_acc_samps2[,,1], sad_acc_samps2[,,2], sad_acc_samps[,,3])
+sad_samps2 <- rbind(sad_acc_samps2[,,1], sad_acc_samps2[,,2], sad_acc_samps2[,,3])
 error_level <- rep(rep(c("One Error", "Two Errors", "Three Errors"), each = 100), 3)
 error_level <- factor(error_level, levels = c("One Error", "Two Errors", "Three Errors"))
 #error_level <- 3
 # error_level <- factor(error_level, levels = c("One Error", "Two Errors", "Three Errors"))
 
 fabl_df2 <- data.frame(fabl_samps2, error_level, "fabl")
-names(fabl_df2) <- c("NPV", "PPV", "Fmeasure", "time", "overlap", "error_level", "method")
+names(fabl_df2) <- c("NPV", "PPV", "Fmeasure", "RR", "time", "overlap", "error_level", "method")
 # fabl_resolved_df <- data.frame(fabl_samps_resolved, error_level, "fabl_resolved")
 # names(fabl_resolved_df) <- c("NPV", "PPV", "Fmeasure", "time", "overlap", "error_level", "method")
 sadinle_df2 <- data.frame(sad_samps2, error_level, "Sadinle17")
-names(sadinle_df2) <- c("NPV", "PPV", "Fmeasure", "time", "overlap", "error_level",  "method")
+names(sadinle_df2) <- c("NPV", "PPV", "Fmeasure", "RR", "time", "overlap", "error_level",  "method")
 
 df2 <- rbind(fabl_df2, sadinle_df2)
 results_df2 <- df2 %>%
-  pivot_longer(cols = 1:2, names_to = "metric") %>%
+  pivot_longer(cols = 1:4, names_to = "metric") %>%
+  filter(metric != "Fmeasure") %>% 
   group_by(method, metric, error_level, overlap) %>%
   summarize(avg = mean(value, na.rm = T),
             lower = quantile(value, .025, na.rm = T),
             upper = quantile(value, .975, na.rm = T),
             .groups = "drop") %>% 
-  mutate(metric = factor(metric, c("NPV", "PPV", "Fmeasure")),
+  mutate(metric = factor(metric, c("NPV", "PPV", "RR")),
          overlap = case_when(
            overlap == 50 ~ "10% Overlap",
            overlap == 250 ~ "50% Overlap",
            overlap == 450 ~ "90% Overlap"
          ))
 
-saveRDS(results_df2, file = "Sadinle_Replication_Results_Partial")
+saveRDS(results_df2, file = "Sadinle_Replication_Results_Partial_new")
 
 results_df2$method[results_df2$method == "Sadinle17"] <- "BRL"
 
@@ -331,9 +336,49 @@ acc_plot_partial <- results_df2 %>%
 
 acc_plot_partial
 
-ggsave(filename = "../notes/figures/sadinle_sim_plot_partial.png",
-       plot = acc_plot_partial)
+# ggsave(filename = "../notes/figures/sadinle_sim_plot_partial_new.png",
+#        plot = acc_plot_partial)
 
+
+results_df2_DR <- df2 %>%
+  mutate(DR = 1 - RR) %>% 
+  pivot_longer(cols = c(1:4, 9), names_to = "metric") %>%
+  filter(metric != "Fmeasure", 
+         metric != "RR") %>% 
+  group_by(method, metric, error_level, overlap) %>%
+  summarize(avg = mean(value, na.rm = T),
+            lower = quantile(value, .025, na.rm = T),
+            upper = quantile(value, .975, na.rm = T),
+            .groups = "drop") %>% 
+  mutate(metric = factor(metric, c("NPV", "PPV", "DR")),
+         overlap = case_when(
+           overlap == 50 ~ "10% Overlap",
+           overlap == 250 ~ "50% Overlap",
+           overlap == 450 ~ "90% Overlap"
+         ))
+
+saveRDS(results_df2, file = "Sadinle_Replication_Results_Partial_DR")
+
+results_df2_DR$method[results_df2_DR$method == "Sadinle17"] <- "BRL"
+
+acc_plot_partial_DR <- results_df2_DR %>% 
+  ggplot(aes(x = metric, y = avg,
+             ymin  = lower, ymax = upper,
+             color = method)) +
+  geom_pointrange(position = position_dodge2(width = .5)) + 
+  facet_grid(overlap ~ error_level) +
+  labs(x = NULL, 
+       y = NULL,
+       color = "Method") +
+  theme_bw(base_size = 10) +
+  theme(plot.title = element_text(hjust = .5),
+        plot.subtitle = element_text(hjust = .5)) + 
+  scale_color_brewer(palette="Set1")
+
+acc_plot_partial_DR
+
+ggsave(filename = "../notes/figures/sadinle_sim_plot_partial_DR.png",
+       plot = acc_plot_partial_DR)
 ```
 
 
