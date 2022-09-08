@@ -261,7 +261,7 @@ Section 3.1, I found the motivational descriptions in this section to be somewha
 }
 
 \reply{%
-\textcolor{red}{\todo We should meet specifically to talk about how to best present the Gibbs Sampler. I think it be good to move as much of it as possible (at least the messy math and derivations) into the appendix.}
+\textcolor{red}{\todo We should meet specifically to talk about how to best present the Gibbs Sampler. I think it be good to move as much of it as possible (at least the messy math and derivations) into the appendix.} \textcolor{blue}{I agree that these should be moved to the appendix as well.}
 
 We have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented. \textcolor{red}{I want you guys to look at it though. Its pretty ugly.}
 }
@@ -294,7 +294,7 @@ Section 3.1, pmf for $Gamma_{.j}$ and full conditional for Z: The notation in th
 Section 3.1, last equations on page 8: There seems to be some lack of specificity in describing these equations as full conditional distributions vs. steps in the Gibbs Sampler algorithm. It would be helpful to provide a brief justification of integrating out pi.
 }
 \reply{%
-	\textcolor{red}{I don't fully understand the first part of the comment}
+	\textcolor{red}{I don't fully understand the first part of the comment} \textcolor{blue}{I believe the person is asking you to make a connection to your full conditionals to how you make Gibbs draws. To do this, state that now you have all the full conditionals to run a Gibbs sampler, which can be found in Appendix XX.}
 	We have included the details for integrating out $\pi$.
 }
 
@@ -322,7 +322,7 @@ Section 5.1 simulations – there is a detailed comparison for one set of simula
 \reply{%
 	Regardless of the specific construction of the comparison vectors, the computational complexity the Gibbs sampler under BRL is $O(n_1 n_2)$, where as it is $O(n_2 P)$ for fabl. The exact shape of the lines will be different, but in all cases, fabl removes dependence on $n_1$ in the computational complexity. 
 	
-	\textcolor{red}{I think this is clear in the paper, so I did not add anything to the actual text.} 
+	\textcolor{red}{I think this is clear in the paper, so I did not add anything to the actual text.} \textcolor{blue}{I'm not sure that you answered the reviewers question. You show a comparison for one set of simulation settings, but if you change the settings what would occur? I think the reviewer is asking for more clarify regarding how the lines would change. You may wish to give a few different scenarios to illustrate how things change?}
 }
 
 \pointRaised{R1}{%
