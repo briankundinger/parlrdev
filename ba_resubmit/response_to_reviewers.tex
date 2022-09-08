@@ -97,29 +97,62 @@
 
 	\pointRaised{E}{%
 	Regarding the presentation, the AE points out a number of problems with notation, typos, and various inconsistencies.  Independently, I found many similar problems.  The intersection between what I found and what the AE found is non-empty and so is the symmetric difference.  Also, the AE found some issues that I did not find and vice versa.  So, I am almost certain that an additional review would uncover more problems.  Now, the results presented in the paper seem plausible as do the broad strokes of the derivations, but I must admit that I was not able to follow all the details. This, in large part, was because of the issues that I just mentioned, and I believe that most readers would find it difficult to follow the developments, as these issues are exceedingly distracting.
-
-	\begin{enumerate}
-	\item There are problems with the notation, which in places is not defined, in others is used before being defined, and in others yet is used inconsistently. For example, $I_{obs()}$ is never defined, $n_{12(Z)}$ first appears on p. 5, but is not defined (in passing) until the bottom of p. 7, and it seems to become D on p. 8.
-	\item Throughout the manuscript, $n_1$ and $n_2$ are used interchangeably with $n_A$ and $n_B$, sometimes in the same section, as it happens, for example, in Section 3.1.
-	\item The loss function on p. 9 is out of Sadinle’s paper and it inherits the typo therein $(\theta_{11}, \text{if} \; Z_j, \;\hat{Z_j}, \ldots)$.
-	\item  In the statement of Lemma 1 on p.13, B comes out of nowhere.  (Thinking I had missed something, I went back to the previous pages only to find out that B would be then defined in the proof.)
-	\item Formatting of all displayed math must be checked and fixed, especially as far as punctuation is concerned, as commas seem to be missing in multiple places. For example, in Equation (1), there should be a comma after 0 and after 1, and this is by no means an isolated occurrence.
-	\end{enumerate}
+	}
+	
+	\reply{
+	\textbf{We appreciate these comments immensely, and have done our utmost to address the ones listed by yourself and the AE. Furthermore, we have carefully gone through the paper ourselves, where we have corrected other issues with notation, typos, and various inconsistencies.} \todo
+	}
+	
+	\pointRaised{E}{%
+	There are problems with the notation, which in places is not defined, in others is used before being defined, and in others yet is used inconsistently. For example, $I_{obs()}$ is never defined, $n_{12(Z)}$ first appears on p. 5, but is not defined (in passing) until the bottom of p. 7, and it seems to become D on p. 8.
+	}
+	
+	\reply{
+	\textbf{The definition of $I_{obs}()$ now defined. We have defined $n_{12(Z)}$ in the correct place (and removed the error with $D$). We have checked for other notational inconsistencies. Additionally, we have defined $n_{12}(Z)$ when it first appears.}
+	}
+	
+	\pointRaised{E}{%
+	Throughout the manuscript, $n_1$ and $n_2$ are used interchangeably with $n_A$ and $n_B$, sometimes in the same section, as it happens, for example, in Section 3.1. 
+	}
+	
+	\reply{
+	\textbf{We have fixed the inconsistency, using $n_1$ and $n_2$ throughout the paper.}
+	
+	}
+	
+		\pointRaised{E}{%
+	The loss function on p. 9 is out of Sadinle’s paper and it inherits the typo therein $(\theta_{11}, \text{if} \; Z_j, \;\hat{Z_j}, \ldots)$.
+	}
+	
+	\reply{
+	\textbf{The previous expression $Z_j, \hat{Z}_j \leq n_1$ was meant to be understood as $Z_j\leq n_1, \hat{Z}_j \leq n_1.$ We agree that the latter expression is more clear. This has been updated in our revision.}
+	}
+	
+		\pointRaised{E}{%
+	In the statement of Lemma 1 on p.13, B comes out of nowhere.  (Thinking I had missed something, I went back to the previous pages only to find out that B would be then defined in the proof.)
+	}
+	
+	\reply{
+	\textbf{We have updated the Lemma to include the definition of $B$, in addition to all other variables included in the Lemma.}
+	}
+	
+        	\pointRaised{E}{%
+	Formatting of all displayed math must be checked and fixed, especially as far as punctuation is concerned, as commas seem to be missing in multiple places. For example, in Equation (1), there should be a comma after 0 and after 1, and this is by no means an isolated occurrence.
+	}
+	
+	\reply{
+	\textcolor{red}{BEKA/JERRY: This exact reference seems purely stylistic. We need to decide how to respond to this.} \textcolor{blue}{The Editor is unhappy as the displayed equations are not consistent regarding punctuation. They must all be checked and be the same. This could be due to the fact that Brian/myself edited the paper separately. I would follow the notation that Mauricio uses (as one example) or that of Marchant et al. (2021). The idea is to be very consistent in every single equation. Yes, this is very nitpicky, but we need to satisfy the Editor. }
 	}
 
-\reply{%
-	We thank the Editor, the AE, and the reviewer for their feedback. We have made an effort to make it more clear our contributions in this work as opposed to previous work. Furthermore, we have carefully edited the paper to address issues that were pointed out by the Editorial Board.
+.
+
+
+
 	
-		\begin{enumerate}
-		\item \textcolor{red}{We have included a discussion of our missingness assumptions and the definition of $I_{obs}()$ near the end of Section 3.}
-		
-		Additionally, we have defined $n_{12}(Z)$ at its first occurance.
-		\item We have fixed the inconsistency, using $n_1$ and $n_2$ throughout the paper.
-		\item The previous expression $Z_j, \hat{Z}_j \leq n_1$ was meant to be understood as $Z_j\leq n_1, \hat{Z}_j \leq n_1$ We agree that the latter expression is more clear, and have made that change.
-		\item  We have updated the Lemma to include the definition of $B$, in addition to all other variables included in the Lemma. 
-		\item \textcolor{red}{BEKA/JERRY: This exact reference seems purely stylistic. We need to decide how to respond to this.}
-	\end{enumerate}
-}
+	
+	
+
+
 
 
 
