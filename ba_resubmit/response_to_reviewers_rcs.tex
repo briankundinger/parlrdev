@@ -293,10 +293,14 @@ Section 3.1, I found the motivational descriptions in this section to be somewha
 }
 
 \reply{%
-\textcolor{red}{\todo We should meet specifically to talk about how to best present the Gibbs Sampler. I think it be good to move as much of it as possible (at least the messy math and derivations) into the appendix.} \textcolor{blue}{I agree that these should be moved to the appendix as well.}
-
-We have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented. \textcolor{red}{I want you guys to look at it though. Its pretty ugly.}
+	\textcolor{red}{We have revised our presentation of the Gibbs sampler with this feedback in mind. The main body of the text now presents the final full conditionals, with revised derivations moved now in the appendix. In particular, we have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented.}
 }
+
+%\reply{%
+%\textcolor{red}{\todo We should meet specifically to talk about how to best present the Gibbs Sampler. I think it be good to move as much of it as possible (at least the messy math and derivations) into the appendix.} \textcolor{blue}{I agree that these should be moved to the appendix as well.}
+%
+%We have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented. \textcolor{red}{I want you guys to look at it though. Its pretty ugly.}
+%}
 
 \pointRaised{R1}{%
 Section 3.1, full joint posterior distribution: I was surprised to see that the contribution of the conditional distribution of Z was included using the summation-style notation rather than the binomial/multinomial-style multiplicative notation that naturally motivates the full conditional
@@ -304,7 +308,7 @@ presented on the first line of page 8.
 }
 
 \reply{%
-\textbf{The contribution of $Z$ in the full conditional is just the prior distribution, which we have expressed with summation notation to reflect the piecewise nature of the prior. The binomial-looking expression at the top of page 8 is the posterior distribution for $\pi$. We note that the posterior $p(\pi| \Gamma, Z, \Phi)$ in fact only depends on $Z$, and is thus shortened to $p(\pi \mid Z)$. We have tried to improve our explanation of this in our revision.}
+	\textbf{The contribution of $Z$ in the full conditional is just the prior distribution, which we have expressed with summation notation to reflect the piecewise nature of the prior. The binomial-looking expression at the top of page 8 is the posterior distribution for $\pi$. We note that the posterior $p(\pi| \Gamma, Z, \Phi)$ in fact only depends on $Z$, and is thus shortened to $p(\pi|Z)$. We have updated our explanation to make this more clear.}
 }
 
 \pointRaised{R1}{%
@@ -331,14 +335,14 @@ Section 3.1, last equations on page 8: There seems to be some lack of specificit
 }
 
 \pointRaised{R1}{%
-Section 4.2, SEI procedure. I’m not sure I follow the description of the SEI procedure. My understanding of SEI is that for patterns with lots of possible pairs, no single pair is likely to (should) be identified in the posterior distribution. Thus, you take a small subsample of the records of size $S < H_{j_p}$, and store these in $R^{SEI}$ rather than the complete index of pairs in each R. Can you quantify the computational savings due to this method? Do you have advice for how small S can be? In your simulations, how does the use of this method or choice of S affect the results?}
+Section 4.2, SEI procedure. I’m not sure I follow the description of the SEI procedure. (1) My understanding of SEI is that for patterns with lots of possible pairs, no single pair is likely to (should) be identified in the posterior distribution. (2) Thus, you take a small subsample of the records of size $S < H_{j_p}$, and store these in $R^{SEI}$ rather than the complete index of pairs in each R. (3) Can you quantify the computational savings due to this method? (4) Do you have advice for how small S can be? (5) In your simulations, how does the use of this method or choice of S affect the results?
+}
 
 \reply{%
-	In line 276, we have quantified the memory savings: "Rather than storing \(n_1 \times n_2\) record labels, SEI allows us to store at most \(n_2 \times P \times S\) labels, regardless of how large \(n_1\) might be." SEI does not affect the computation time of the Gibbs sampler, since the complexity of the sampler is $O(n_2 P)$, regardless of how many comparison vectors are of pattern $P$.
-	
-	I included the following text to answer the second question.
-	\textcolor{red}{In practice, we recommend $S=10$, as this reduces the number of stored indices for highly unlikely record pairings, but does is not likely to eliminate any of the indices for likely matches. Choosing $S$ too low can concentrate undue mass on unlikely matches and distort linkage results.}
+\textcolor{blue}{Brian: There are five questions here that should be answered. The first two should be yes, the understanding is correct or no, it's not correct. (If the reviewer doesn't understand, then provide an explanation of your approach. For (3), we quantify the SEI procedure in Section 4.2, where we state: 
+"Rather than storing \(n_1 \times n_2\) record labels, SEI allows us to store at most \(n_2 \times P \times S\) labels, regardless of how large \(n_1\) might be." SEI does not affect the computation time of the Gibbs sampler, since the complexity of the sampler is $O(n_2 P)$, regardless of how many comparison vectors are of pattern $P$. Turning to (4), in practice, we recommend $S=10$, as this reduces the number of stored indices for highly unlikely record pairings, but does is not likely to eliminate any of the indices for likely matches. Choosing $S$ too low can concentrate undue mass on unlikely matches and distort linkage results. I don't see an answer to the question (5).}
 }
+
 \pointRaised{R1}{%
 Section 4.4, Assumptions and definitions should be included in the statement of this lemma.
 }
@@ -370,7 +374,7 @@ Section 5.3 simulation – RR results are not presented.
 }
 
 \reply{%
-	\textcolor{red}{We have updated the image with these results. Since its is presented along side NPV and PPV, for which values close to 1 indicate strong performance, we have presented decision rate (DR) results.}
+	\textcolor{red}{We have updated the \textcolor{blue}{Figure XXXX} with these results. Since its is presented along side NPV and PPV, for which values close to 1 indicate strong performance, we have presented decision rate (DR) results.}
 }
 
 \pointRaised{R1}{%
