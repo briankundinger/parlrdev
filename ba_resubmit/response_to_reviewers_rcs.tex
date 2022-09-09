@@ -355,10 +355,15 @@ Section 5.1 simulations – there is a detailed comparison for one set of simula
 }
 
 \reply{%
-	Regardless of the specific construction of the comparison vectors, the computational complexity the Gibbs sampler under BRL is $O(n_1 n_2)$, where as it is $O(n_2 P)$ for fabl. The exact shape of the lines will be different, but in all cases, fabl removes dependence on $n_1$ in the computational complexity. 
-	
-	\textcolor{red}{I think this is clear in the paper, so I did not add anything to the actual text.} \textcolor{blue}{I'm not sure that you answered the reviewers question. You show a comparison for one set of simulation settings, but if you change the settings what would occur? I think the reviewer is asking for more clarify regarding how the lines would change. You may wish to give a few different scenarios to illustrate how things change?}
+	Regardless of the specific construction of the comparison vectors, the computational complexity the Gibbs sampler under BRL is $O(n_1 n_2)$, where as it is $O(n_2 P)$ for fabl. The exact shape of the lines will be different, but in all cases, fabl removes dependence on $n_1$ in the computational complexity. \textcolor{red}{To illustrate this, we have included in the appendix an additional simulation study under different comparison vector settings.}
 }
+
+
+%\reply{%
+%	Regardless of the specific construction of the comparison vectors, the computational complexity the Gibbs sampler under BRL is $O(n_1 n_2)$, where as it is $O(n_2 P)$ for fabl. The exact shape of the lines will be different, but in all cases, fabl removes dependence on $n_1$ in the computational complexity. 
+%	
+%	\textcolor{red}{I think this is clear in the paper, so I did not add anything to the actual text.} \textcolor{blue}{I'm not sure that you answered the reviewers question. You show a comparison for one set of simulation settings, but if you change the settings what would occur? I think the reviewer is asking for more clarify regarding how the lines would change. You may wish to give a few different scenarios to illustrate how things change?}
+%}
 
 \pointRaised{R1}{%
 	Section 5.2 and 5.3 simulations – are these a single simulated datasets? Do these same results hold over multiple simulated datasets, Or was this just a chance result for each setting?
