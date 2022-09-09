@@ -198,13 +198,10 @@ The authors should prepare a careful and substantive revision that remains withi
 	Section 2, line 1: It may help to explicitly define X1 and X2 as being vectors of indices as implied by equations (1) and (2). 
 }
 \reply{
-	
-	
-	\textcolor{red}{We thank the reviewer for the suggestion, which has been incorporated into the paper in the following way: ``Consider two databases $X_1$ and $X_2$ containing records $\{x_{1i}\}_{i=1}^{n_1}$ and $\{x_{2j}\}_{j=1}^{n_2}$ respectively. Without loss of generality, denote files such that $n_1 \geq n_2$. We follow the convention established by Sadinle (2017) and say ``record i $\in X_1$" rather than the more compact $x_{1i}$ in order to avoid double subscripts."} \todo
-	
+	We thank the reviewer for the suggestion, which has been incorporated into the paper in the following way: ``Consider two databases $X_1$ and $X_2$ containing records $\{x_{1i}\}_{i=1}^{n_1}$ and $\{x_{2j}\}_{j=1}^{n_2}$ respectively. Without loss of generality, denote files such that $n_1 \geq n_2$. We follow the convention established by Sadinle (2017) and say ``record i $\in X_1$" rather than the more compact $x_{1i}$ in order to avoid double subscripts."
+}
 %	\textcolor{red}{OPTION 2: We agree that the notation provided conflates the records themselves with the record indices. However, this notation was established in Sadinle 2017 and has been replicated in further work (Wortman 2019, Alishen-Guendel, one of Jerry's students), and we have decided to use it as well for consistency within the literature.}
 %	\textcolor{blue}{We appreciate the suggestion, however, we believe it would be confusing to the existing prior work by Fellegi and Sunter (1969) that has been established as well as others that have extended the work, such as Sadinle (2014+), Wortman (2019), and Asheshin-Gundel (2020+). Given that it's widely used in this literature, we continue to utilize it.}
-}
 
 \pointRaised{R1}{%
 Section 2.2, beta distribution: the $n_{12}(.)$ notation needs to be defined.
@@ -214,14 +211,11 @@ Section 2.2, beta distribution: the $n_{12}(.)$ notation needs to be defined.
 }
 
 \pointRaised{R1}{%
-Section 3, 4th full paragraph: My understanding of the example of matching birth records and
-marriage certificates (presuming monogamy) may not quite be consistent with the algorithm as
-presented, as I would think that one certificate (element in X1) would match multiple birth
-records (elements in X2) which violates the size ordering. Can the algorithm be easily adjusted
-for this reverse sizing?
+Section 3, 4th full paragraph: My understanding of the example of matching birth records and marriage certificates (presuming monogamy) may not quite be consistent with the algorithm as presented, as I would think that one certificate (element in X1) would match multiple birth records (elements in X2) which violates the size ordering. Can the algorithm be easily adjusted for this reverse sizing?
 }
 
-\reply{Thank you for the interesting comment/question. In this paper, our main goal and applications deal with bipartite record linkage (such that we can make fair comparison with prior work), which is consistent with the algorithm that we present in the paper. We have removed the confusing text mentioned by the reviewer. We are working on extensions beyond bipartite record linkage in other work, where the reverse sizing is not an issue, however, this is beyond the scope of this paper.}
+\reply{
+	Thank you for the interesting comment/question. In this paper, our main goal and applications deal with bipartite record linkage (such that we can make fair comparison with prior work), which is consistent with the algorithm that we present in the paper. We have removed the confusing text mentioned by the reviewer. We are working on extensions beyond bipartite record linkage in other work, where the reverse sizing is not an issue, however, this is beyond the scope of this paper.}
 
 %\textcolor{red}{I need some help addressing this in the paper. The answer is yes, the algorithm can easily be adapted for the reverse sizing. The issue is mostly notational. It seems as though Sadinle chose to label the datasets $X_1$ and $X_2$ such that $n_1 > n_2$ for mostly notational reasons. He uses the notation $Z_j = n_1 + j$ when record $j \in X_1$ has no match in $X_2$, which works because when $n_1 > n_2$, $n_1 + j$ never refers to any record in $X_2$. Jody uses the simplified notation $Z_j = n_1 + 1$ to refer to unmatched records, and this works for the same reason.
 %However, when we relax the one-to-one constraint, or even encourage a modeller to allow multiple linkages in one dataset, we shouldn't denote the datasets according to simple notational convenience. This might require clever edits of the "Review of Prior Work" section, and other areas of the paper.
@@ -234,7 +228,7 @@ for this reverse sizing?
 
 
 \pointRaised{R1}{%
-5. Section 3, full model: $I_obs(.)$ seems to be taken from a different paper dealing with missing fields, which is not at all discussed in this manuscript. This consideration of missing fields and the accompanying discussion of missing data mechanism should be included if such data is to be considered for this manuscript. This comment also applies to the $Gamma^{obs}$ notation in the following subsection.
+	Section 3, full model: $I_obs(.)$ seems to be taken from a different paper dealing with missing fields, which is not at all discussed in this manuscript. This consideration of missing fields and the accompanying discussion of missing data mechanism should be included if such data is to be considered for this manuscript. This comment also applies to the $Gamma^{obs}$ notation in the following subsection.
 }
 
 \reply{%
@@ -261,9 +255,7 @@ Section 3.1, I found the motivational descriptions in this section to be somewha
 }
 
 \reply{%
-\textcolor{red}{\todo We should meet specifically to talk about how to best present the Gibbs Sampler. I think it be good to move as much of it as possible (at least the messy math and derivations) into the appendix.} \textcolor{blue}{I agree that these should be moved to the appendix as well.}
-
-We have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented. \textcolor{red}{I want you guys to look at it though. Its pretty ugly.}
+	\textcolor{red}{We have revised our presentation of the Gibbs sampler with this feedback in mind. The main body of the text now presents the final full conditionals, with revised derivations moved now in the appendix. In particular, we have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented.}
 }
 
 \pointRaised{R1}{%
@@ -272,7 +264,7 @@ presented on the first line of page 8.
 }
 
 \reply{%
-The contribution of $Z$ in the full conditional is just the prior distribution, which we have expressed with summation notation to reflect the piecewise nature of the prior. The binomial-looking expression at the top of page 8 is the posterior distribution for $\pi$. We note that the posterior $p(\pi| \Gamma, Z, \Phi)$ in fact only depends on $Z$, and is thus shortened to $p(\pi|Z)$. We have updated our explanation to make this more clear. 
+	The contribution of $Z$ in the full conditional is just the prior distribution, which we have expressed with summation notation to reflect the piecewise nature of the prior. The binomial-looking expression at the top of page 8 is the posterior distribution for $\pi$. We note that the posterior $p(\pi| \Gamma, Z, \Phi)$ in fact only depends on $Z$, and is thus shortened to $p(\pi|Z)$. We have updated our explanation to make this more clear. 
 }
 
 \pointRaised{R1}{%
@@ -283,7 +275,7 @@ Section 3.1, first equation on page 8: There is an extra parenthesis in the expo
 }
 
 \pointRaised{R1}{%
-Section 3.1, pmf for $Gamma_{.j}$ and full conditional for Z: The notation in the final equation may be more clear if you replace i with $z_j$, as in $w_{z_j j}$. I believe that “$n_1+1$” should be “$n_1+ j$” in several places.
+	Section 3.1, pmf for $Gamma_{.j}$ and full conditional for Z: The notation in the final equation may be more clear if you replace i with $z_j$, as in $w_{z_j j}$. I believe that “$n_1+1$” should be “$n_1+ j$” in several places.
 }
 
 \reply{%
@@ -294,8 +286,7 @@ Section 3.1, pmf for $Gamma_{.j}$ and full conditional for Z: The notation in th
 Section 3.1, last equations on page 8: There seems to be some lack of specificity in describing these equations as full conditional distributions vs. steps in the Gibbs Sampler algorithm. It would be helpful to provide a brief justification of integrating out pi.
 }
 \reply{%
-	\textcolor{red}{I don't fully understand the first part of the comment} \textcolor{blue}{I believe the person is asking you to make a connection to your full conditionals to how you make Gibbs draws. To do this, state that now you have all the full conditionals to run a Gibbs sampler, which can be found in Appendix XX.}
-	We have included the details for integrating out $\pi$.
+	\textcolor{red}{We have revised the presentation of the Gibbs sampler based on this feedback. The main body of the paper presents the results, and revised derivations (including justification for integrating out $\pi$) have been placed in the appendix.}
 }
 
 \pointRaised{R1}{%
@@ -320,9 +311,7 @@ Section 5.1 simulations – there is a detailed comparison for one set of simula
 }
 
 \reply{%
-	Regardless of the specific construction of the comparison vectors, the computational complexity the Gibbs sampler under BRL is $O(n_1 n_2)$, where as it is $O(n_2 P)$ for fabl. The exact shape of the lines will be different, but in all cases, fabl removes dependence on $n_1$ in the computational complexity. 
-	
-	\textcolor{red}{I think this is clear in the paper, so I did not add anything to the actual text.} \textcolor{blue}{I'm not sure that you answered the reviewers question. You show a comparison for one set of simulation settings, but if you change the settings what would occur? I think the reviewer is asking for more clarify regarding how the lines would change. You may wish to give a few different scenarios to illustrate how things change?}
+	Regardless of the specific construction of the comparison vectors, the computational complexity the Gibbs sampler under BRL is $O(n_1 n_2)$, where as it is $O(n_2 P)$ for fabl. The exact shape of the lines will be different, but in all cases, fabl removes dependence on $n_1$ in the computational complexity. \textcolor{red}{To illustrate this, we have included in the appendix an additional simulation study under different comparison vector settings.}
 }
 
 \pointRaised{R1}{%
