@@ -107,16 +107,16 @@ In what follows, Section~\ref{sec:review-of_prior-work} reviews the work of \cit
 \begin{align}
 	\Delta_{ij} =
 	\begin{cases}
-		1 \quad \text{if records}\;  i \in \bm{X}_1 \; \text{and}\; j\in \bm{X}_2 \; \text{refer to the same entity}; \\
-		0 \quad \text{otherwise}.\\
+		1, & \text{if records}\;  i \in \bm{X}_1 \; \text{and}\; j\in \bm{X}_2 \; \text{refer to the same entity}; \\
+		0, & \text{otherwise}.\\
 	\end{cases}
 \end{align}
 Though intuitive, this sparse matrix representation can become cumbersome for large linkage tasks. More compactly, bipartite matching also can be viewed as a labeling $\bm{Z} = (Z_1, \ldots, Z_{n_2})$ for the records in database $\bm{X}_2$ such that 
 \begin{align}
 	Z_{j} =
 	\begin{cases}
-		i \quad \text{if records}\;  i \in \bm{X}_1 \; \text{and}\; j\in \bm{X}_2 \; \text{refer to the same entity}; \\
-		n_1 + j \quad  \quad \text{if records}\;  j \in \bm{X}_2 \; \text{does not have a match in database}\; \bm{X}_1. \\
+		i, & \text{if records}\;  i \in \bm{X}_1 \; \text{and}\; j\in \bm{X}_2 \; \text{refer to the same entity}; \\
+		n_1 + j, & \text{if records}\;  j \in \bm{X}_2 \; \text{does not have a match in database}\; \bm{X}_1. \\
 	\end{cases}
 \end{align}
 We can go back and forth between the two using $\Delta_{ij} = I(Z_j = i),$ where $I(\cdot) = 1$ when the expression inside the parentheses is true, and $I(\cdot) = 0$ otherwise. 
@@ -174,12 +174,12 @@ The solution to this problem, for which several simple algorithms exist, is a bi
 
 One criticism of the independent matching assumption is that the decision rule leads to ``many-to-many assignments,'' breaking one-to-one matching assumptions. One way of resolving this issue to incorporate the constraint directly into the model as follows:
 \begin{align}
-	&\bm{\Gamma}_{ij} \mid Z_j =i \stackrel{iid}{\sim} \mathcal{M}(\bm{m})  \\
-	&\bm{\Gamma}_{ij} \mid Z_j \neq i \stackrel{iid}{\sim} \mathcal{U}(\bm{u}) \notag \\
+	&\bm{\Gamma}_{ij} \mid Z_j =i \stackrel{iid}{\sim} \mathcal{M}(\bm{m}),  \\
+	&\bm{\Gamma}_{ij} \mid Z_j \neq i \stackrel{iid}{\sim} \mathcal{U}(\bm{u}) \notag, \\
 	& \bm{Z} \sim \mathcal{B}, \notag
 \end{align}
 where $\mathcal{B}$ represents a prior on the space of bipartite matchings, and $\mathcal{M}(\bm{m})$ and $\mathcal{U}(\bm{u})$ are models for the comparison vectors of matches and non-matches. For \texttt{BRL}, \cite{sadinle_bayesian_2017} proposed the beta distribution for bipartite matching, given by
-$$P(\bm{Z}|\alpha_{\pi}, \beta_{\pi}) = \frac{(n_1 - n_{12}(\bm{Z}))!}{n_1 !}\frac{\text{B}(n_{12}(\bm{Z}) + \alpha_{\pi}, n_2 - n_{12}(\bm{Z}) - \beta_{\pi})}{\text{B}(\alpha_{\pi}, \beta_{\pi})}
+$$P(\bm{Z}|\alpha_{\pi}, \beta_{\pi}) = \frac{(n_1 - n_{12}(\bm{Z}))!}{n_1 !}\frac{\text{B}(n_{12}(\bm{Z}) + \alpha_{\pi}, n_2 - n_{12}(\bm{Z}) - \beta_{\pi})}{\text{B}(\alpha_{\pi}, \beta_{\pi})},
 $$
 where $\text{B}(\cdot, \cdot)$ represents the Beta function, hyperparameters $\alpha_{\pi}$ and $\beta_{\pi}$ encode prior beliefs about the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}$, and $n_{12}(\bm{Z}) = \sum_{j=1}^{n_2} I(Z_j \leq n_1 + j)$ is the records in $\bm{X}_2$ that have a match in $\bm{X}_1$. This prior induces a Gibbs sampler that strictly enforces one-to-one matching, removing previously matched records from the set of candidate records when sampling \(Z_j\). This creates a dependency that makes the sampler inherently serial, which can slow down the sampler when working on large linkage tasks.
 
@@ -190,8 +190,8 @@ Recall the compact representation of the matching structure $\bm{Z} = (Z_1, Z_2,
 
 $$Z_j | \pi =
 \begin{cases} 
-	\frac{1}{n_1}\pi  & z_j \leq n_1; \\
-	1-\pi &  z_j  = n_1 + j \\
+	\frac{1}{n_1}\pi,  & z_j \leq n_1; \\
+	1-\pi, &  z_j  = n_1 + j; \\
 \end{cases}$$
 $$\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi}).$$
 
@@ -199,7 +199,7 @@ Intuitively, this set of priors says that record $j \in \bm{X}_2$ has some match
 
 Note that linkage in this setting is conducted at the record level, rather than at the record pair level as in the Fellegi Sunter model. That is, $\pi$ under \texttt{fabl} estimates the proportion of records in $\bm{X_2}$ that have matches, while $\lambda$ in the Fellegi Sunter model estimates the proportion of record pairs that are matches. We find $\pi$ to be more interpretable parameter than $\lambda$ in the bipartite case. There are at most $n_2$ matching pairs out of $n_1 n_2$ total pairs, meaning that $\lambda$ is bounded above by $\frac{1}{n_1}$ and tends towards 0 as the size of the linkage task grows. Additionally, while the Fellegi Sunter model makes $n_1 \times n_2$ independent matching decisions and \texttt{BRL} makes $n_2$ dependent matching decisions, \texttt{fabl} strikes a middle ground between the two, making $n_2$  independent matching decisions. As shown in Sections \ref{sec:simulations} and \ref{sec:case-studies}, this allows \texttt{fabl} to achieve the benefits from \texttt{BRL} while making efficiency gains possible by exploiting independence. 
 
-Importantly, this independence relaxes the one-to-one requirement from \texttt{BRL}; the Gibbs sampler under \texttt{fabl} does ensure that each record in \(\bm{X}_2\) can be matched to at most one record in \(\bm{X}_1\), but allows for the possibility that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\). To resolve many-to-one matchings and obtain a one-to-one estimate, we use the post processing procedure shown in section~\ref{bayes-estimate}.
+Importantly, this independence relaxes the one-to-one requirement from \texttt{BRL}; the Gibbs sampler under \texttt{fabl} does ensure that each record in \(\bm{X}_2\) can be matched to at most one record in \(\bm{X}_1\), but allows for the possibility that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\). To resolve many-to-one matchings and obtain a one-to-one estimate, we use the post processing procedure shown in Section~\ref{bayes-estimate}.
 
 \textcolor{red}{Lastly, we note that it is common to encounter missing information in datasets used for record linkage. Whether information is missing in record $i \in \bf{X}_1$ or $j \in \bf{X}_2$, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. We handle this issue by assuming that this missingness occurs at random (MAR, by \cite{LittleRubin2002}). With this assumption, we can marginalize over the missing data, and do all computation simply using the observed data. To notate this, we use the indicator $I_{obs}(\cdot)$, which takes on the value 1 when the argument inside the parentheses is observed, and 0 otherwise.}
 
@@ -225,13 +225,13 @@ With the \texttt{fabl} prior defined and our missingness assumptions addressed, 
 %$$\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi})$$
 
 \begin{align*}
-	\mathcal{L}(\bm{Z}, \Phi \mid \bm{\Gamma}) &= \prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\prod_{f=1}^{F}\prod_{l=1}^{L_f}\left[  m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
-	\bm{m}_f &\sim \text{Dirichlet}(\alpha_{f0}, \ldots, \alpha_{f L_f}) \\
-	\bm{u}_f &\sim \text{Dirichlet}(\beta_{f0}, \ldots, \beta_{f L_f}) \\
+	\mathcal{L}(\bm{Z}, \Phi \mid \bm{\Gamma}) &= \prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\prod_{f=1}^{F}\prod_{l=1}^{L_f}\left[  m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}, \\
+	\bm{m}_f &\sim \text{Dirichlet}(\alpha_{f0}, \ldots, \alpha_{f L_f}), \\
+	\bm{u}_f &\sim \text{Dirichlet}(\beta_{f0}, \ldots, \beta_{f L_f}), \\
 	Z_j | \pi &=
 	\begin{cases} 
-		\frac{1}{n_1}\pi  & z_j \leq n_1; \\
-		1-\pi &  z_j  = n_1 + j \\
+		\frac{1}{n_1}\pi,  & z_j \leq n_1; \\
+		1-\pi, &  z_j  = n_1 + j; \\
 	\end{cases} \\
 	\pi &\sim \text{Beta}(\alpha_{\pi}, \beta_{\pi}),
 \end{align*}
@@ -243,16 +243,16 @@ where we have used the condensed notation $\Phi = \{\bf{m}, \bf{u}\}$ to denote 
 
 We initialize $\Phi$ from random draws from the prior distributions of $\bm{m}$ and $\bm{u}$, and initialize $\bm{Z}$ to reflect no matches across datasets, that is $\bm{Z} = (n_1 + 1, \ldots, n_1 + n_2)$. We then iterativly sample $\Phi$ and $\bm{Z}$ from their respective full conditionals:
 
-$$\bm{m}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}), \ldots, \alpha_{fL_f}(\bm{Z}))$$
-$$\bm{u}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\beta_{f1}(\bm{Z}), \ldots, \beta_{fL_f}(\bm{Z}))$$
+$$\bm{m}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}), \ldots, \alpha_{fL_f}(\bm{Z})),$$
+$$\bm{u}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\beta_{f1}(\bm{Z}), \ldots, \beta_{fL_f}(\bm{Z})),$$
 $$p\left(Z_j^{(s+1)}  = i| \Phi, \bm{Z^{(s)}}\right) \propto
 \begin{cases} 
-	w_{z_j, j}  & z_j \leq n_1; \\
-	n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}} & z_j   = n_1 + j. \\
+	w_{z_j, j},  & z_j \leq n_1; \\
+	n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}}, & z_j  = n_1 + j, \\
 \end{cases},$$
 where 
 $$w_{ij} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.$$
-Derivations for these full conditionals can be found in Section ~\ref{app:derivations}.
+Derivations for these full conditionals can be found in Appendix \ref{app:derivations}.
 
 %We work with the following factorization of the joint posterior distribution:
 %
@@ -276,7 +276,7 @@ adopt the loss function proposed in \cite{sadinle_bayesian_2017}, in which
 option to leave the matching undetermined by the model. Specifically, we have
 
 \[L(\hat{Z_j}, Z_j)=\begin{cases} 
-	0  & \text{if } Z_j = \hat{Z_j}; \\
+	0,  & \text{if } Z_j = \hat{Z_j}; \\
 	\theta_R,  & \text{if } \hat{Z_j} = R; \\
 	\theta_{10},  & \text{if } Z_j \leq 1,\hat{Z_j} = n_1 + j ; \\
 	\theta_{01},  & \text{if } Z_j = n_1 + j,\hat{Z_j} \leq n_1 ; \\
@@ -288,16 +288,11 @@ Here, \(\theta_R\) is the loss from not making a decision on the linkage status,
 
 We seek to minimize the posterior expected loss, given by 
 $$\mathbb{E}[L(\hat{\bm{Z}}, \bm{Z})|\Gamma^{obs}] = \sum_{\bm{Z}} L(\hat{Z_j}, Z_j)P(\bm{Z}|\Gamma^{obs}).$$
-
-Here, we set $(\theta_{10}, \theta_{01}, \theta_{11}, \theta_R) = (1, 1, 2, \infty)$ inducing the intuitive decision rule
-
-%$\theta_R = \infty, \theta_{10} = 1, \theta_{01} = 1, \theta_{11} = 2$ , 
-
-\[\hat{Z}_j =\begin{cases} 
+In general, we set $(\theta_{10}, \theta_{01}, \theta_{11}, \theta_R) = (1, 1, 2, \infty)$ inducing the intuitive decision rule
+$$\hat{Z}_j =\begin{cases} 
 	i,  & \text{if } P(Z_j = i |\Gamma) > \frac{1}{2}; \\
 	0,  & \text{otherwise}. \\
-\end{cases}\]
-
+\end{cases}$$
 For a more in-depth explanation of this function and the induced Bayes
 estimate, see \cite{sadinle_bayesian_2017}.
 
@@ -321,9 +316,9 @@ $$h^{*}(i, j) = \sum_{f = 1}^F I(\gamma_{ij}^f > 0)2^{\gamma_{ij}^f + I(k>1)\sum
 This function maps each agreement pattern to a unique integer, allowing us to store a scalar quantity instead of an entire vector for each record pair. For computational ease, we then map these integers to sequential integers from $\{1, \ldots, P\}$ corresponding to the enumerated patterns in $\mathcal{P}$. When the $(i, j)$ pair exhibits the $p^{th}$ pattern, we say $(i, j) \in h_p$.
 
 With all record pairs converted to hashed values, we can create a more compact nested list 
-$$\mathcal{R} = \left\{\{r_{j_p} \}_{p=1}^{P} \right\}_{j = 1}^{n_2}$$
+$$\mathcal{R} = \left\{\{r_{j_p} \}_{p=1}^{P} \right\}_{j = 1}^{n_2},$$
 where $r_{j_p} = \{i \in \bm{X_1} | (i, j) \in h_p\}$. This representation is useful because it allows us to easily compute sufficient statistics
-$$H_{j_p} = \sum_{i} I((i, j) \in h_p) = ||r_{j_p}||$$
+$$H_{j_p} = \sum_{i} I((i, j) \in h_p) = ||r_{j_p}||,$$
 and
 $$H_p =  \sum_{i, j} I((i, j) \in h_p) = \sum_{j} H_{j_p}.$$
 For convenience, denote this set of sufficient statistics $\mathcal{H} = \left\{\{H_{j_p}\}, \{H_{p}\}\right\}.$ As we will show in Section \ref{efficient-posterior}, all posterior calculations are conducted with these sufficient statistics. Note that $\mathcal{P}$, $\mathcal{R}$, and $\mathcal{H}$  fully characterize the comparison matrix $\Gamma$ with no loss of information, so we proceed with $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{H}\}$ for posterior inference. 
@@ -342,8 +337,7 @@ With SEI, however, we can reduce the comparison space, and its associated storag
 	%	\subsection{Distributed Computation for Pairwise Comparison}\label{distributed}}
 
 For large data, we can partition the two datasets \(\bm{X}_1\) and
-\(\bm{X}_2\) into smaller blocks \(\{\bm{X}_{1m}\}\) and \(\{\bm{X}_{2n}\}\) for more
-manageable computations. On a single machine, we can read-in data
+\(\bm{X}_2\) into smaller blocks \(\{\bm{X}_{1m}\}\) and \(\{\bm{X}_{2n}\}\) for more manageable computations. On a single machine, we can read-in data
 sequentially, conduct hashing, compress information through SEI, and
 delete the original data from memory before continuing with the next
 chunk of data. With multiple cores or multiple machines, this can be
@@ -355,7 +349,7 @@ allows us to conduct linkage tasks over much larger datasets.
 
 Calculated at the level of the record pairs, updating  \(\alpha_{fl}(\bm{Z})\) and \(\beta_{fl}(\bm{Z})\) for each field and level in the linkage task constitutes \(2 \times \sum L_f\) many summations over \(n_1 \times n_2\) quantities. These are simple calculations, but become computationally burdensome when working on large linkage tasks. 
 
-Instead, we use one-hot encodings of the agreement patterns $\mathcal{P}$ for more efficient calculations. Denote $H_p^m = \sum_{j=1}^{n_2} \bm{1}_{(Z_j, j) \in h_p}$ to be the number of matching record pairs with agreement pattern $p$. The number of non-matching record pairs with agreement pattern $p$ is \(H_p^u = H_p - H_p^m\). Then, if $\bm{\alpha_0}$ and $\bm{\beta_0}$ are vectors of prior parameters for the $\bm{m}$ and $\bm{u}$ distributions respectively, the posterior update becomes
+Instead, we use one-hot encodings of the agreement patterns $\mathcal{P}$ for more efficient calculations. Denote $H_p^m = \sum_{j=1}^{n_2} I\left((Z_j, j) \in h_p\right)$ to be the number of matching record pairs with agreement pattern $p$. The number of non-matching record pairs with agreement pattern $p$ is \(H_p^u = H_p - H_p^m\). Then, if $\bm{\alpha_0}$ and $\bm{\beta_0}$ are vectors of prior parameters for the $\bm{m}$ and $\bm{u}$ distributions respectively, the posterior update becomes
 
 $$\bm{\alpha(Z)} = \bm{\alpha_0} + \sum_{p=1}^P H_p^m \times h_p$$
 $$\bm{\beta(Z)} = \bm{\beta_0} + \sum_{p=1}^P H_p^u \times h_p.$$
@@ -739,7 +733,7 @@ where $\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\ga
 $$\bm{m}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}), \ldots, \alpha_{fL_f}(\bm{Z}))$$
 $$\bm{u}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\beta_{f1}(\bm{Z}), \ldots, \beta_{fL_f}(\bm{Z})).$$
 
-Since $\pi$ encodes the rate of matching across the two datasets, the posterior distribution $p(\pi|\Gamma, \bf{Z}, \Phi, \alpha_{\pi}, \beta_{\pi})$ depends only on the number of links $n_{12}(\bm{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + j)$ encoded by $\bm{Z}$ (and hyperparameters). Thus we use $p(\pi | \bf{Z}, \alpha_{\pi}, \beta_{\pi})$, and have 
+In order to define the full conditional for $\bm{Z}$, we must provide the posterior distribution for $\pi$, and provide a more tractable expression for the portion of the likelihooh relevant to a particular record $j \in \bm{X}_2$. Since $\pi$ encodes the rate of matching across the two datasets, the posterior distribution $p(\pi|\Gamma, \bm{Z}, \Phi, \alpha_{\pi}, \beta_{\pi})$ depends only on the number of links $n_{12}(\bm{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + j)$ encoded by $\bm{Z}$ (and hyperparameters). Thus we use $p(\pi | \bf{Z}, \alpha_{\pi}, \beta_{\pi})$, and have 
 
 %As a function of \(\pi\), \(\bm{Z}\) is sequence of successes (when \(z_j < n_1 + j\)) and failures (when \(z_j = n_1 + j\)), and therefore \(p(\bm{Z}|\pi) = \mathcal{L}(\pi|\bm{Z})\) is determined only by the number of links $n_{12}(\bm{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + j)$ encoded by $\bm{Z}$. We have
 
@@ -750,10 +744,8 @@ Since $\pi$ encodes the rate of matching across the two datasets, the posterior 
 \end{align*}
 Thus $\pi^{(s+1)}|\bm{Z}^{(s+1),  \alpha_{\pi}, \beta_{\pi}}$ has a $\text{Beta}(n_{12}(\bm{Z}) + \alpha_{\pi}, n_2 - n_{12}(\bm{Z}) + \beta_{\pi})$ distribution.
 
-Because we sample each \(Z_j\) independently of all other \(Z_{j'}\), we use only the full conditional for an individual \(Z_j\). Let \(\Gamma_{.j}\) denote the set of \(n_1\) comparison vectors with \(j \in \bm{X_2}\). We have
-
+Let \(\Gamma_{.j}\) denote the set of \(n_1\) comparison vectors with \(j \in \bm{X_2}\). We have
 %As a function of \(Z_j\), \(p(\Gamma_{.j}|Z_j, \Phi) = \mathcal{L}(Z_j|\Gamma_{.j}, \Phi)\) is a discrete distribution with
-
 \begin{align*}
 	p(\Gamma_{.j}|Z_j = z_j, \Phi) &\propto \prod_{i=1}^{n_1}\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\\
 	&\propto \prod_{i=1}^{n_1}\frac{\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}}{\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}}\\
@@ -767,7 +759,7 @@ Because we sample each \(Z_j\) independently of all other \(Z_{j'}\), we use onl
 where
 $$w_{ij} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.$$
 
-With the likelihood in this form, we derive an expression for the posterior distribution of $Z_j$:
+With the likelihood in this form, we derive an expression for the posterior distribution of $\bm{Z}$. Because we sample each \(Z_j\) independently of all other \(Z_{j'}\), we use only the full conditional for an individual \(Z_j\):
 \begin{align*}
 	p\left(Z_j^{(s+1)}|\Gamma_{.j}, \Phi, \bm{Z^{(s)}}, \pi\right) &\propto p(\Gamma_{.j}| Z_j^{(s+1)}, \Phi) P(Z_j^{(s+1)}|\pi) \\
 	&\propto \left(\sum_{i=1}^{n_1}w_{z_j, j}I(z_j = i) + I(z_j = n_1 + j) \right) \left (\pi\sum_{i=1}^{n_1}\frac{1}{n_1}I(z_j = i) + (1-\pi)I(z_j = n_1 + j) \right) \\	
@@ -778,7 +770,7 @@ With the likelihood in this form, we derive an expression for the posterior dist
 	\end{cases}
 \end{align*}
 
-For more direct comparability with the method from \cite{sadinle2018bayesian}, we avoid sampling $\pi$ directly, and instead integrate over it in the final full conditional for $Z_j$.
+For more direct comparability with the method from \cite{sadinle_bayesian_2017}, we avoid sampling $\pi$ directly, and instead integrate over it in the final full conditional for $Z_j$.
 
 \begin{align*}
 	p\left(Z_j^{(s+1)}  = i| \Gamma, \Phi, \bm{Z^{(s)}}\right) &= \int_{\pi}p(Z_j^{(s+1)} | \Gamma, \Phi, \bm{Z^{(s)}}, \pi) d\pi \\
