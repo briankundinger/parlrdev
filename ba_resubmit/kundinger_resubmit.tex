@@ -103,7 +103,7 @@ In what follows, Section~\ref{sec:review-of_prior-work} reviews the work of \cit
 \section{Review of Prior Work}
 \label{sec:review-of_prior-work}
 
-Consider two databases $\bm{X}_1$ and $\bm{X}_2$ with $n_1$ and $n_2$ records respectively. Without loss of generality, denote the files such that $n_1 \geq n_2$. In the context of bipartite matching, we assume that there are duplications across, but not within, each database. Under this framework, the set of matches across databases can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_1 \times n_2}$, where
+\textcolor{red}{Consider two databases $\bf{X}_1$ and $\bf{X}_2$ containing records $\{x_{1i}\}_{i=1}^{n_1}$ and $\{x_{2j}\}_{j=1}^{n_2}$ respectively. Without loss of generality, denote files such that $n_1 \geq n_2$. We follow the convention established by \cite{sadinle_bayesian_2017} and say ``record i $\in X_1$" rather than the more compact $x_{1i}$ in order to avoid double subscripts.} In the context of bipartite matching, we assume that there are duplications across, but not within, each database. Under this framework, the set of matches across databases can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_1 \times n_2}$, where
 \begin{align}
 	\Delta_{ij} =
 	\begin{cases}
@@ -240,87 +240,29 @@ where we have used the condensed notation $\Phi = \{\bf{m}, \bf{u}\}$ to denote 
 \hypertarget{posterior-sampling}{%
 	\subsection{Gibbs Sampler}
 	\label{gibbs_sampling}}
-We work with the following factorization of the joint posterior distribution:
 
-\begin{align*}
-	p(\bm{Z}, \Phi, \pi|\Gamma) &\propto \mathcal{L}(\bm{Z}, \Phi \mid \Gamma^{obs}) p(\bm{Z} | \pi) p(\Phi) p(\pi) \\
-	&\propto \prod_{j=1}^{n_2}  \prod_{i=1}^{n_1}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
-	&\times  \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{\alpha_{fl} - 1}  \times\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{\beta_{fl} - 1} \\
-	&\times \prod_{j=1}^{n_2} \left[I(Z_j \leq n_1)\frac{1}{n_1}\pi + I(Z_j > n_1)(1 - \pi)\right] \\
-	&\times \pi^{\alpha_{\pi} -1} (1-\pi)^{\beta_{\pi} -1}.
-\end{align*}
-
-The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. Thus we have
+We initialize $\Phi$ from random draws from the prior distributions of $\bm{m}$ and $\bm{u}$, and initialize $\bm{Z}$ to reflect no matches across datasets, that is $\bm{Z} = (n_1 + 1, \ldots, n_1 + n_2)$. We then iterativly sample $\Phi$ and $\bm{Z}$ from their respective full conditionals:
 
 $$\bm{m}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}), \ldots, \alpha_{fL_f}(\bm{Z}))$$
 $$\bm{u}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\beta_{f1}(\bm{Z}), \ldots, \beta_{fL_f}(\bm{Z}))$$
-where
-\(\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j = i)\)
-and
-\(\beta_{fl}(\bm{Z})= \beta_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j \neq i)\).
-
-Since $\pi$ encodes the rate of matching across the two datasets, the posterior distribution $p(\pi|\Gamma, \bf{Z}, \Phi, \alpha_{\pi}, \beta_{\pi})$ depends only on the number of links $n_{12}(\bm{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + j)$ encoded by $\bm{Z}$ (and hyperparameters). Thus we use the abbreviated $p(\pi | \bf{Z}, \alpha_{\pi}, \beta_{\pi})$, and have 
-
-%As a function of \(\pi\), \(\bm{Z}\) is sequence of successes (when \(z_j < n_1 + j\)) and failures (when \(z_j = n_1 + j\)), and therefore \(p(\bm{Z}|\pi) = \mathcal{L}(\pi|\bm{Z})\) is determined only by the number of links $n_{12}(\bm{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + j)$ encoded by $\bm{Z}$. We have
-
-\begin{align*}
-	p(\pi | \bm{Z}, \alpha_{\pi}, \beta_{\pi}) &\propto p(\bm{Z}|\pi)p(\pi) \\
-	&\propto \pi^{n_{12}(\bm{Z})} (1-\pi)^{n_2 - n_{12}(\bm{Z})} \pi^{\alpha_{\pi} -1} (1-\pi)^{\beta_{\pi} -1} \\
-	&\propto \pi^{n_{12}(\bm{Z}) + \alpha_{\pi} - 1} (1-\pi)^{n_1 - n_{12}(\bm{Z}) + \beta_{\pi} -1}. \\
-\end{align*}
-Thus $\pi^{(s+1)}|\bm{Z}^{(s+1),  \alpha_{\pi}, \beta_{\pi}}$ has a $\text{Beta}(n_{12}(\bm{Z}) + \alpha_{\pi}, n_2 - n_{12}(\bm{Z}) + \beta_{\pi})$ distribution.
-
-Because we sample each \(Z_j\) independently of all other \(Z_{j'}\), we use only the full conditional for an individual \(Z_j\). Let \(\Gamma_{.j}\) denote the set of \(n_1\) comparison vectors with \(j \in \bm{X_2}\).  As a function of \(Z_j\), \(p(\Gamma_{.j}|Z_j, \Phi) = \mathcal{L}(Z_j|\Gamma_{.j}, \Phi)\) is a discrete distribution with
-
-\textcolor{red}{I added the second line, showing the division by all the u's. Its pretty ugly! What do you guys think?}
-
-\begin{align*}
-	p(\Gamma_{.j}|Z_j = z_j, \Phi) &\propto \prod_{i=1}^{n_1}\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\\
-	&\propto \prod_{i=1}^{n_1}\frac{\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}}{\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}}\\
-	&\propto \prod_{i=1}^{n_1}\left(\prod_{f=1}^{F}\prod_{l=1}^{L_f} \frac{m_{fl}}{u_{fl}}\right)^{I(z_j = i) I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
-	&=
-	\begin{cases} 
-		w_{z_j, j}  & z_j \leq n_1; \\
-		1 &  z_j  = n_1 + j \\
-	\end{cases}\\
-\end{align*}
-
-where
-$$w_{ij} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.$$
-
-These \(w_{ij}\) are precisely the likelihood ratios used in the Fellegi-Sunter model to classify matches and non-matches, and we therefore call them the Fellegi Sunter weights.
-
-With the likelihood in this form, we can derive the full conditional
-\begin{align*}
-	p(Z_j|\Gamma_{.j}, \Phi, \pi) &\propto p(\Gamma_{.j}| Z_j, \Phi) P(Z_j|\pi) \\
-	&\propto \left(\sum_{i=1}^{n_1}w_{z_j, j}I(z_j = i) + I(z_j = n_1 + j) \right) \left (\pi\sum_{i=1}^{n_1}\frac{1}{n_1}I(z_j = i) + (1-\pi)I(z_j = n_1 + j) \right) \\	
-	&= \frac{\pi}{n_1}\sum_{i=1}^{n_1}w_{z_j, j}I(z_j = i) + (1-\pi)I(z_j = n_1 + j).
-\end{align*}
-Thus, we have
-$$Z_j^{(s+1)} | \Phi, \Gamma, \pi \propto \begin{cases} 
-	\frac{\pi}{n_1}w_{z_{j}, j}   & z_j \leq n_1; \\
-	1-\pi &  z_j  = n_1 + j. \\
-\end{cases}$$
-We integrate over \(\pi\) and rearrange terms to produce the final full conditional:
-
-\textcolor{red}{This is the derivation for integrating out $\pi$. Should it go here, or in the appendix?}
-\begin{align*}
-	\int_{\pi}p(Z_j | \Phi, \Gamma, \pi) d\pi &= \int_{\pi}\left[\frac{\pi}{n_1}w_{z_{j}, j} I(z_j\leq n_1) + (1-\pi)I(z_j = n_1 + j)\right]d\pi \\
-	&= \frac{\int_{\pi} \pi d\pi}{n_1}w_{z_{j}, j} I(z_j\leq n_1) + \left(1-\int_{\pi} \pi d\pi \right) I(z_j = n_1 + j) \\
-	&= \frac{n_{12}(\bf{Z}) + \alpha_{\pi}}{n_1 (n_2 + \alpha_{\pi} + \beta_{\pi})}w_{z_{j}, j} I(z_j\leq n_1) + \frac{n_2 - n_{12}(\bf{Z}) + \beta_{\pi}}{n_2 + \alpha_{\pi} + \beta_{\pi}}I(z_j = n_1 + j) \\
-	&\propto w_{z_j, j}I(z_j\leq n_1) + n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}}I(z_j = n_1 + j) \\
-	&\propto 
-	\begin{cases} 
-		w_{z_j, j}  & z_j \leq n_1; \\
-		n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}} & z_j   = n_1 + j. \\
-	\end{cases} \\
-\end{align*}
-
-\[p\left(Z_j^{(s+1)}  = i| \Phi, \bm{Z^{(s)}}\right) \propto
+$$p\left(Z_j^{(s+1)}  = i| \Phi, \bm{Z^{(s)}}\right) \propto
 \begin{cases} 
 	w_{z_j, j}  & z_j \leq n_1; \\
 	n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}} & z_j   = n_1 + j. \\
-\end{cases}\]
+\end{cases},$$
+where 
+$$w_{ij} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.$$
+Derivations for these full conditionals can be found in Section ~\ref{app:derivations}.
+
+%We work with the following factorization of the joint posterior distribution:
+%
+%\begin{align*}
+%	p(\bm{Z}, \Phi, \pi|\Gamma) &\propto \mathcal{L}(\bm{Z}, \Phi \mid \Gamma^{obs}) p(\bm{Z} | \pi) p(\Phi) p(\pi) \\
+%	&\propto \prod_{j=1}^{n_2}  \prod_{i=1}^{n_1}\left[ \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
+%	&\times  \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{\alpha_{fl} - 1}  \times\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{\beta_{fl} - 1} \\
+%	&\times \prod_{j=1}^{n_2} \left[I(Z_j \leq n_1)\frac{1}{n_1}\pi + I(Z_j > n_1)(1 - \pi)\right] \\
+%	&\times \pi^{\alpha_{\pi} -1} (1-\pi)^{\beta_{\pi} -1}.
+%\end{align*}
 
 \hypertarget{bayes-estimate}{%
 	\subsection{Bayes Estimate}
@@ -339,12 +281,8 @@ option to leave the matching undetermined by the model. Specifically, we have
 	\theta_{10},  & \text{if } Z_j \leq 1,\hat{Z_j} = n_1 + j ; \\
 	\theta_{01},  & \text{if } Z_j = n_1 + j,\hat{Z_j} \leq n_1 ; \\
 	\theta_{11},  & \text{if } Z_j \leq n_1, \hat{Z}_j \leq n_1, Z_j \neq \hat{Z_j}. \\
-\end{cases}\] Here, \(\theta_R\) is the loss from not making a decision
-on the linkage status, \(\theta_{10}\) is the loss from a false
-non-match, \(\theta_{01}\) is the loss from a false match, and
-\(\theta_{11}\) is the loss from the special case of a false match in
-which the record has a true match other than the one estimated by the
-model. 
+\end{cases}\] 
+Here, \(\theta_R\) is the loss from not making a decision on the linkage status, \(\theta_{10}\) is the loss from a false non-match, \(\theta_{01}\) is the loss from a false match, and \(\theta_{11}\) is the loss from the special case of a false match in which the record has a true match other than the one estimated by the model. 
 
 %In this article, we set false matches and false non-matches to be equally costly, and thus set $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$; when we want a full estimate of the linkage parameter, we set $\theta_R = \infty$, and when we want to leave some records unmatched by the algorithm, we set $\theta_R = 0.1$.
 
@@ -367,14 +305,10 @@ Since the Gibbs sampler does not strictly enforce one-to-one matching, it is pos
 
 %It is often desirable to see such matches, because they provide evidence of model misspecification; specifically, large numbers of ``many to one'' matches indicate that the assumption of no duplicates within files may not be reasonable. We will explore this issue through the El Salvador homicide case study. 
 
-
-
 \section{Efficient and Scalable Implementation}
 \label{sec:efficiency}
 
-To increase the speed of the Gibbs sampler and expand the scale of the linkage tasks we can undertake, we propose hashing methods similar to those used by \cite{enamorado2019using} in the creation of \texttt{fastlink}, a fast and scalable implementation of the Fellegi Sunter method. The key insight is to recognize that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. To make this more precise, let $h_1, \ldots, h_P$ denote the unique agreement patterns, and collect these unique patterns in the set $\mathcal{P} = \{h_1, \ldots, h_P\}$. Here, 
-$P = |\mathcal{P}|$ is the total number of unique agreement
-patterns. \(P\) is bounded above by \(\prod_{f=1}^F L_f\) which does not depend on \(n_1\) or \(n_2\). In this context, the integers $\{1, \ldots, P\}$ serve as hashed values that encode the same information as the orignial vectors themselves. Whenever possible, we conduct calculations over these \(P\) agreement patterns, instead of the typical \(n_1 \times n_2\) record pairs. Additionally, we store ``one-hot encodings'' of these patterns rather than the original Fellegi Sunter comparison vectors, to aid in vectorized computations. See Appendix ~\ref{app:ohe} for details.   
+To increase the speed of the Gibbs sampler and expand the scale of the linkage tasks we can undertake, we propose hashing methods similar to those used by \cite{enamorado2019using} in the creation of \texttt{fastlink}, a fast and scalable implementation of the Fellegi Sunter method. The key insight is to recognize that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. To make this more precise, let $h_1, \ldots, h_P$ denote the unique agreement patterns, and collect these unique patterns in the set $\mathcal{P} = \{h_1, \ldots, h_P\}$. Here,  $P = |\mathcal{P}|$ is the total number of unique agreement patterns. \(P\) is bounded above by \(\prod_{f=1}^F L_f\) which does not depend on \(n_1\) or \(n_2\). In this context, the integers $\{1, \ldots, P\}$ serve as hashed values that encode the same information as the orignial vectors themselves. Whenever possible, we conduct calculations over these \(P\) agreement patterns, instead of the typical \(n_1 \times n_2\) record pairs. Additionally, we store ``one-hot encodings'' of these patterns rather than the original Fellegi Sunter comparison vectors, to aid in vectorized computations. See Appendix ~\ref{app:ohe} for details.   
 
 \hypertarget{data-representation-hashing-and-storage}{%
 	\subsection{Data Representation, Hashing, and
@@ -457,7 +391,7 @@ Although sampling \(Z_j\) from a the full conditional provided in Section~\ref{g
 	
 	Lastly, we recognize that all posterior updates are governed by the agreement patterns of the record pairs rather than the record labels themselves. Thus we complete the entire Gibbs sampler first at the level of the \(P\) agreement patterns with (\ref{eqn:gibbs1}) above. After all iterations are complete, we can back-fill the records corresponding to the agreement patterns through (\ref{eqn:gibbs2}). 
 	
-	We emphasize the computational gains of this split sampler: the first step is a sample from $P$ options, where $P$ does not scale with the size of the linkage task; and the second step is sampling uniformly at random, which is computationally simple even for large sets of candidate records. These changes drastically improve the speed of the sampler, and each can be parallelized if desired for additional computational gains. We provide a summary of the \texttt{fabl} method through pseudocode in Appendix \ref{app:fabl-psuedocode}. We note here that this split sampler can be adapted for use with \texttt{BRL} as well, but would require updating $\{H_j\}$ to account for the previously matched records that no are longer candidate matches for the current record. \texttt{BRL} would see considerable speed up through the procedure, but computation time would still scale with the size of the larger dataset.
+	We emphasize the computational gains of this split sampler: the first step is a sample from $P$ options, where $P$ does not scale with the size of the linkage task; and the second step is sampling uniformly at random, which is computationally simple even for large sets of candidate records. These changes drastically improve the speed of the sampler, and each can be parallelized if desired for additional computational gains. We provide a summary of the \texttt{fabl} method through psuedocode in Appendix \ref{app:fabl-psuedocode}. We note here that this split sampler can be adapted for use with \texttt{BRL} as well, but would require updating $\{H_j\}$ to account for the previously matched records that no are longer candidate matches for the current record. \texttt{BRL} would see considerable speed up through the procedure, but computation time would still scale with the size of the larger dataset.
 	
 	\hypertarget{computational-complexity}{%
 		\subsection{Computational Complexity}\label{computational-complexity}}
@@ -484,7 +418,7 @@ Although sampling \(Z_j\) from a the full conditional provided in Section~\ref{g
 	\hypertarget{speed}{%
 		\subsection{Speed}\label{speed}}
 	
-	In our first simulation, we generate comparison vectors from pre-specified distributions so that we can easily increase the size of the linkage problem. The distributions used (see Table~\ref{Tab:distributions}) are meant to emulate the rates of agreement across first name, last name, day of birth, and month of birth.  For example, $u^{\text{month, agree}} = P(\text{Records have same birth-month} \mid \text{Nonmatch}) = \frac{1}{12}$. The parameters for year would vary largely by context, so we choose them here to adjust the desired difficulty of the linkage task. For simplicity, we consider only exact matching, so a vector (1, 0) corresponds to agreement and (0, 1) to disagreement. We simulate these data for different values of \(n_1\) and \(n_2\), and compare the run-time of \texttt{fabl} against \texttt{BRL}. Since we have 5 binary comparison fields, the number is unique patterns \(P\) is bounded above by \(2^5 = 32\), a bound which is consistently attained in simulations with more records.
+	In our first simulation, we generate comparison vectors from pre-specified distributions so that we can easily increase the size of the linkage problem. The distributions used (see Table~\ref{Tab:distributions}) are meant to emulate the rates of agreement across first name, last name, day of birth, and month of birth.  For example, $u^{\text{month, agree}} = P(\text{Records have same birth-month} \mid \text{Nonmatch}) = \frac{1}{12}$. The parameters for year would vary largely by context, so we choose them here to adjust the desired difficulty of the linkage task. For simplicity, we consider only exact matching, so a vector (1, 0) corresponds to agreement and (0, 1) to disagreement. We simulate these data for different values of \(n_1\) and \(n_2\), and compare the run-time of \texttt{fabl} against \texttt{BRL}. Since we have 5 binary comparison fields, the number is unique patterns \(P\) is bounded above by \(2^5 = 32\), a bound which is consistently attained in simulations with more records. 
 	
 	\begin{table}[t]
 		\centering
@@ -512,7 +446,7 @@ Although sampling \(Z_j\) from a the full conditional provided in Section~\ref{g
 		\end{center}
 	\end{figure}
 	
-	The above discussion suggests that for fixed \(n_2\), computation time for \texttt{fabl} should remain mostly constant with growing \(n_1\). In the simulation results displayed in Figure~\ref{fig:speed2} fixing \(n_2 = 500\), we see linear growth for the run-time under \texttt{BRL} as \(n_1\) increases, with much more static run-time under \texttt{fabl}. The slight increases in run-time for \texttt{fabl} are due primarily to the hashing step, which again can be run in parallel for large data.
+	The above discussion suggests that for fixed \(n_2\), computation time for \texttt{fabl} should remain mostly constant with growing \(n_1\). In the simulation results displayed in Figure~\ref{fig:speed2} fixing \(n_2 = 500\), we see linear growth for the run-time under \texttt{BRL} as \(n_1\) increases, with much more static run-time under \texttt{fabl}. The slight increases in run-time for \texttt{fabl} are due primarily to the hashing step, which again can be run in parallel for large data. \textcolor{red}{To illustrate that these trends are generalizeable to other specifications of the comparison vectors, we have included the run-time results for an additional simulation study, under different comparison vector settings, in }
 	
 	\begin{figure}[h!]
 		\begin{center} \includegraphics[width=0.6\textwidth]{../notes/figures/speed_plot_fixed_nB_slides} 
@@ -790,7 +724,76 @@ Although sampling \(Z_j\) from a the full conditional provided in Section~\ref{g
 	\section*{Appendix}
 	\label{sec:appendix}
 	
-	
+	\hypertarget{app:derivations}{%
+	\subsection{Derivations of Full Conditionals}\label{app:derivations}}
+
+The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{f\ell}$, we have
+
+\begin{align*}
+	p(m_{fl}| \Gamma, \bf{Z}) &\propto \prod_{i=1}^{n_1} \prod_{j=1}^{n_2} m_{fl}^{I(Z_j = i) I(\gamma_{ij}^f = l) I_{obs}(\gamma_{ij}^f)} \times  m_{fl}^{\alpha_{fl} - 1} \\
+	&= m_{fl}^{\alpha_{fl}(\bm{Z}) - 1}
+\end{align*}
+
+where $\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j = i)$. Analogous procedures lead to the posterior distribution $p(u_{fl}| \Gamma, \bf{Z})$  $\propto u_{fl}^{\beta_{fl}(\bm{Z}) - 1}$, where $\beta_{fl}(\bm{Z})= \beta_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j \neq i)$. Thus for the vectors of parameters $\bf{m}_f$ and $\bf{u}_f$, we have
+
+$$\bm{m}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}), \ldots, \alpha_{fL_f}(\bm{Z}))$$
+$$\bm{u}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\beta_{f1}(\bm{Z}), \ldots, \beta_{fL_f}(\bm{Z})).$$
+
+Since $\pi$ encodes the rate of matching across the two datasets, the posterior distribution $p(\pi|\Gamma, \bf{Z}, \Phi, \alpha_{\pi}, \beta_{\pi})$ depends only on the number of links $n_{12}(\bm{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + j)$ encoded by $\bm{Z}$ (and hyperparameters). Thus we use $p(\pi | \bf{Z}, \alpha_{\pi}, \beta_{\pi})$, and have 
+
+%As a function of \(\pi\), \(\bm{Z}\) is sequence of successes (when \(z_j < n_1 + j\)) and failures (when \(z_j = n_1 + j\)), and therefore \(p(\bm{Z}|\pi) = \mathcal{L}(\pi|\bm{Z})\) is determined only by the number of links $n_{12}(\bm{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + j)$ encoded by $\bm{Z}$. We have
+
+\begin{align*}
+	p(\pi | \bm{Z}, \alpha_{\pi}, \beta_{\pi}) &\propto p(\bm{Z}|\pi)p(\pi) \\
+	&\propto \pi^{n_{12}(\bm{Z})} (1-\pi)^{n_2 - n_{12}(\bm{Z})} \pi^{\alpha_{\pi} -1} (1-\pi)^{\beta_{\pi} -1} \\
+	&\propto \pi^{n_{12}(\bm{Z}) + \alpha_{\pi} - 1} (1-\pi)^{n_1 - n_{12}(\bm{Z}) + \beta_{\pi} -1}. \\
+\end{align*}
+Thus $\pi^{(s+1)}|\bm{Z}^{(s+1),  \alpha_{\pi}, \beta_{\pi}}$ has a $\text{Beta}(n_{12}(\bm{Z}) + \alpha_{\pi}, n_2 - n_{12}(\bm{Z}) + \beta_{\pi})$ distribution.
+
+Because we sample each \(Z_j\) independently of all other \(Z_{j'}\), we use only the full conditional for an individual \(Z_j\). Let \(\Gamma_{.j}\) denote the set of \(n_1\) comparison vectors with \(j \in \bm{X_2}\). We have
+
+%As a function of \(Z_j\), \(p(\Gamma_{.j}|Z_j, \Phi) = \mathcal{L}(Z_j|\Gamma_{.j}, \Phi)\) is a discrete distribution with
+
+\begin{align*}
+	p(\Gamma_{.j}|Z_j = z_j, \Phi) &\propto \prod_{i=1}^{n_1}\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\\
+	&\propto \prod_{i=1}^{n_1}\frac{\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}}{\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}}\\
+	&\propto \prod_{i=1}^{n_1}\left(\prod_{f=1}^{F}\prod_{l=1}^{L_f} \frac{m_{fl}}{u_{fl}}\right)^{I(z_j = i) I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
+	&=
+	\begin{cases} 
+		w_{z_j, j}  & z_j \leq n_1; \\
+		1 &  z_j  = n_1 + j \\
+	\end{cases},\\
+\end{align*}
+where
+$$w_{ij} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.$$
+
+With the likelihood in this form, we derive an expression for the posterior distribution of $Z_j$:
+\begin{align*}
+	p\left(Z_j^{(s+1)}|\Gamma_{.j}, \Phi, \bm{Z^{(s)}}, \pi\right) &\propto p(\Gamma_{.j}| Z_j^{(s+1)}, \Phi) P(Z_j^{(s+1)}|\pi) \\
+	&\propto \left(\sum_{i=1}^{n_1}w_{z_j, j}I(z_j = i) + I(z_j = n_1 + j) \right) \left (\pi\sum_{i=1}^{n_1}\frac{1}{n_1}I(z_j = i) + (1-\pi)I(z_j = n_1 + j) \right) \\	
+	&= \frac{\pi}{n_1}\sum_{i=1}^{n_1}w_{z_j, j}I(z_j = i) + (1-\pi)I(z_j = n_1 + j). \\
+	&= \begin{cases} 
+		\frac{\pi}{n_1}w_{z_{j}, j}   & z_j \leq n_1; \\
+		1-\pi &  z_j  = n_1 + j. \\
+	\end{cases}
+\end{align*}
+
+For more direct comparability with the method from \cite{sadinle2018bayesian}, we avoid sampling $\pi$ directly, and instead integrate over it in the final full conditional for $Z_j$.
+
+\begin{align*}
+	p\left(Z_j^{(s+1)}  = i| \Gamma, \Phi, \bm{Z^{(s)}}\right) &= \int_{\pi}p(Z_j^{(s+1)} | \Gamma, \Phi, \bm{Z^{(s)}}, \pi) d\pi \\
+	&= \int_{\pi}\left[\frac{\pi}{n_1}w_{z_{j}, j} I(z_j\leq n_1) + (1-\pi)I(z_j = n_1 + j)\right]d\pi \\
+	&= \frac{\int_{\pi} \pi d\pi}{n_1}w_{z_{j}, j} I(z_j\leq n_1) + \left(1-\int_{\pi} \pi d\pi \right) I(z_j = n_1 + j) \\
+	&= \frac{n_{12}(\bm{Z}) + \alpha_{\pi}}{n_1 (n_2 + \alpha_{\pi} + \beta_{\pi})}w_{z_{j}, j} I(z_j\leq n_1) + \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_2 + \alpha_{\pi} + \beta_{\pi}}I(z_j = n_1 + j) \\
+	&\propto w_{z_j, j}I(z_j\leq n_1) + n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}}I(z_j = n_1 + j) \\
+	&\propto 
+	\begin{cases} 
+		w_{z_j, j}  & z_j \leq n_1; \\
+		n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}} & z_j   = n_1 + j. \\
+	\end{cases} \\
+\end{align*}
+
+	\clearpage
 	
 	\hypertarget{app:fabl-psuedocode}{%
 		\subsection{Summary of Fast Beta Linkage Method}\label{app:fabl-psuedocode}}
@@ -856,7 +859,6 @@ Although sampling \(Z_j\) from a the full conditional provided in Section~\ref{g
 	\end{figure}
 	
 	
-	
 	\begin{figure}[!h]
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_m_trace} 
@@ -870,8 +872,26 @@ Although sampling \(Z_j\) from a the full conditional provided in Section~\ref{g
 			\caption{Representative traceplot of u parameters from simulation study in Section \ref{accuracy}}\label{fig:sim_u_trace}
 		\end{center}
 	\end{figure}
+
+\clearpage
+
+	\hypertarget{appendix-speed}{%
+	\subsection{Additional Speed Simulation Study}\label{app:appendix-speed}}
+	To illustrate that different constructions of the comparison vectors lead to similar speed gains, we replicate the speed study of Section ~\ref{speed} under different settings. Here, we use four fields of comparison, each with three possible levels of agreement, resulting in $3^4 = 81$ possible patterns.
 	
-	\clearpage
+	\begin{figure}[h!]
+		\begin{center} \includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_speed_plot_slides2} 
+			\caption{Run-time for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, for increasing values of both $n_1$ and $n_2$. We see near quadratic growth in run-time for BRL, and near linear growth for fabl.}\label{fig:app-speed1}
+		\end{center}
+	\end{figure}
+	
+	\begin{figure}[h!]
+		\begin{center} \includegraphics[width=0.6\textwidth]{../notes/figures/speed_plot_fixed_nB_slides2} 
+			\caption{Run-time for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, with increasing $n_1$, and $n_2$ fixed at 500. We see linear growth in run-time for BRL, and near constant run-time for fabl.}\label{fig:app-speed2}
+		\end{center}
+	\end{figure}
+
+\clearpage
 	
 	\hypertarget{appendix-es}{%
 		\subsection{Traceplots for El Salvador Case Study}\label{app:appendix-es}}
