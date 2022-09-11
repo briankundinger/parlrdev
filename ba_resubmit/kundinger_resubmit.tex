@@ -319,10 +319,11 @@ This function maps each agreement pattern to a unique integer, allowing us to st
 
 With all record pairs converted to hashed values, we can create a more compact nested list 
 $$\mathcal{R} = \left\{\{r_{j_p} \}_{p=1}^{P} \right\}_{j = 1}^{n_2},$$
-where $r_{j_p} = \{i \in \bm{X_1} | (i, j) \in h_p\}$. This representation is useful because it allows us to easily compute sufficient statistics
+where $r_{j_p} = \{i \in \bm{X_1} | (i, j) \in h_p\}$ \textcolor{red}{is a list of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$}. This representation is useful because it allows us to easily compute sufficient statistics
 $$H_{j_p} = \sum_{i} I((i, j) \in h_p) = ||r_{j_p}||,$$
-and
-$$H_p =  \sum_{i, j} I((i, j) \in h_p) = \sum_{j} H_{j_p}.$$
+which is the number of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$, and 
+$$H_p =  \sum_{i, j} I((i, j) \in h_p) = \sum_{j} H_{j_p},$$
+which is the number of comparison vectors that exhibit pattern $p$.
 For convenience, denote this set of sufficient statistics $\mathcal{H} = \left\{\{H_{j_p}\}, \{H_{p}\}\right\}.$ As we will show in Section \ref{efficient-posterior}, all posterior calculations are conducted with these sufficient statistics. Note that $\mathcal{P}$, $\mathcal{R}$, and $\mathcal{H}$  fully characterize the comparison matrix $\Gamma$ with no loss of information, so we proceed with $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{H}\}$ for posterior inference. 
 
 \hypertarget{scaling}{%
@@ -427,7 +428,7 @@ Although sampling \(Z_j\) from a the full conditional provided in Section \ref{g
 			year & $\left(\frac{19}{20}, \frac{1}{20}\right)$ & $\left(\frac{1}{12}, \frac{11}{12}\right)$ \\ 
 			\hline
 		\end{tabular}
-		\caption{Distributions used for $m$ and $u$ probabilties in simulation studies}\label{Tab:distributions}
+		\caption{Distributions used for $m$ and $u$ probabilities in simulation studies}\label{Tab:distributions}
 	\end{table}
 	
 	We note here that the implementation of \texttt{BRL} that we use is coded in C \citep{sadinle_bayesian_2017}.  In contrast, we use non-optimized code written in R for \texttt{fabl}.  While this complicates comparisons, and indeed disfavors \texttt{fabl}, the computational speed gains for \texttt{fabl} are still evident, especially for larger sample sizes.  Additionally, although \texttt{fabl} is amenable to parallelization, this simulation was run on a single core. Implementing \texttt{fabl} in C++ with paralellization for the hashing step and sampling the matching status of the record pairs should lead to even more computational gains.
@@ -717,6 +718,35 @@ Although sampling \(Z_j\) from a the full conditional provided in Section \ref{g
 	
 	\section*{Appendix}
 	\label{sec:appendix}
+	
+	\hypertarget{app:glossary}{%
+	\subsection{Summary of Notation}\label{app:glossary}}
+	
+		\begin{table}[h!]
+		\centering
+		\begin{tabular}[h!]{ll}
+			\hline
+			Symbol & Description \\
+			\hline
+			$\bm{X}_1, \bm{X}_2$ & datasets\\
+			$i \in 1, \ldots, n_1 $ & index over records in $\bm{X}_1$\\
+			$j \in 1, \ldots, n_2 $ & index over records in $\bm{X}_2$\\
+			$f \in 1, \ldots F$ & index over fields used for comparisons \\
+			$l \in 1, \ldots L_f$ & index over agreement levels for field $f$ \\
+			$n_{12}$ & number of entities in common between $\bm{X}_1$ and $\bm{X}_2$\\
+			$\bm{\gamma}_{ij}$ & comparison vector for records $i \in \bm{X}_1$ and $j \in \bm{X}_2$ \\
+			$Z_j = i$ & records $i \in \bm{X}_1$ and $j \in \bm{X}_2$ match \\
+			$Z_j = n_1 + j$ & record $j \in \bm{X}_2$ has no match in $\bm{X}_1$ \\
+			$m_{fl}$ & $P(\gamma_{ij}^f = l | Z_j = i)$ \\
+			$u_{fl}$ & $P(\gamma_{ij}^f = l | Z_j \neq i)$ \\
+			$\pi$ & probability that a record in $\bm{X}_2$ has a match in $\bm{X}_1$ \\
+			$r_{j_p}$ & list of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$ \\
+			$h_p$ & one hot encoding of agreement pattern $p$ \\
+			$H_{j_p}$ & number of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$ \\
+			$H_p$ & number of comparison vectors that exhibit pattern $p$ \\
+			\hline
+		\end{tabular}
+	\end{table}
 	
 	\hypertarget{app:derivations}{%
 	\subsection{Derivations of Full Conditionals}\label{app:derivations}}

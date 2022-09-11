@@ -89,7 +89,7 @@
 
 	As indicated by both reviewers, the work expands on previous work by Sadinle, introducing computational advances that are achieved by relaxing some requirements in the original formulation of the problem.  The close connections with the previous work and the extent of the novel contributions are not adequately explained.  This makes it hard for the reader to understand what is new and why the new contributions are valuable.  A careful editing of the presentation is needed to address this shortcoming.}
 
-			\reply{%
+	\reply{%
 \textbf{We thank the Editor, the AE, and the reviewer for their feedback, and pointing out our strengths of the paper and areas that we can improve the quality of our paper. In summary, we have revised our paper in the abstract and introduction as to make our contributions more clear to that of prior work.  Furthermore, we have carefully edited the paper to address issues that were pointed out by the Editorial Board.} \todo
 	}
 
@@ -100,7 +100,7 @@
 	}
 	
 	\reply{
-\textbf{We appreciate these comments immensely, and have done our utmost to address the ones listed by yourself and the AE. Furthermore, we have carefully gone through the paper ourselves, where we have corrected other issues with notation, typos, and various inconsistencies.} \todo
+\textbf{We appreciate these comments, and have done our utmost to address the ones listed by yourself and the AE. Furthermore, we have carefully gone through the paper ourselves, where we have corrected other issues with notation, typos, and various inconsistencies.} \todo
 	}
 	
 	\pointRaised{E}{%
@@ -108,7 +108,7 @@
 	}
 	
 	\reply{
-\textbf{The definition of $I_{obs}()$ now defined. We have defined $n_{12(Z)}$ in the correct place (and removed the error with $D$). We have checked for other notational inconsistencies. Additionally, we have defined $n_{12}(Z)$ when it first appears.}
+\textbf{The definition of $I_{obs}()$ now defined. We have defined $n_{12}(Z)$ in the correct place (and removed the error with $D$). We have checked for other notational inconsistencies. Additionally, we have defined $n_{12}(Z)$ when it first appears.}
 	}
 	
 	\pointRaised{E}{%
@@ -211,7 +211,7 @@ The authors should prepare a careful and substantive revision that remains withi
 	\pointRaised{R1}{%
 		Overall, the notation is, somewhat by necessity, quite extensive. However, I’m not convinced that it’s entirely consistent. A glossary in the appendix may help the reader navigate the paper more easily.}
 \reply{%
-	\textcolor{blue}{I think this is an excellent idea and it could make sure that we don't miss anything. It would really help the reader. You could make a table of the notation, and Neil does this quite well in the Marchant 2021 paper as an example.} \todo
+	We have provided a summary of notation in Appendix 7.1. \textcolor{red}{I'm not sure where I should reference this in the text. Do I need to?}
 }
 
 \pointRaised{R1}{%
@@ -277,7 +277,7 @@ Section 3, full model: The Phi notation needs to be defined.
 }
 
 \pointRaised{R1}{%
-Section 3.1, I found the motivational descriptions in this section to be somewhat confusing, in that they seem to mix the posterior behavior (e.g., parameters are updated though standard multinomial-Dirichlet…) and model construction (as a function of pi, Z is a series of successes…). This subsection might be easier to understand if its purpose was more bluntly described in an opening sentence or paragraph and streamlined to focus only on the full conditional distributions for a Gibbs Sampler. In addition, the mixed motivation may have led to errors in intermediate conclusions. In particular, the derivation of the probability of $\Gamma_{.j}$ seems to be missing a factor of $u_{fl}^I(gamma_{ij}^f=l)$. This is not important to the eventual full conditional of Z, but does not seem to be correct for the distribution of Gamma as claimed.
+Section 3.1, I found the motivational descriptions in this section to be somewhat confusing, in that they seem to mix the posterior behavior (e.g., parameters are updated though standard multinomial-Dirichlet…) and model construction (as a function of pi, Z is a series of successes…). This subsection might be easier to understand if its purpose was more bluntly described in an opening sentence or paragraph and streamlined to focus only on the full conditional distributions for a Gibbs Sampler. In addition, the mixed motivation may have led to errors in intermediate conclusions. In particular, the derivation of the probability of $\Gamma_{.j}$ seems to be missing a factor of $u_{fl}^I(\gamma_{ij}^f=l)$. This is not important to the eventual full conditional of Z, but does not seem to be correct for the distribution of Gamma as claimed.
 }
 
 \reply{%
@@ -299,7 +299,7 @@ Section 3.1, full joint posterior distribution: I was surprised to see that the 
 }
 
 \pointRaised{R1}{%
-Section 3.1, first equation on page 8: There is an extra parenthesis in the exponent of (1-pi).
+Section 3.1, first equation on page 8: There is an extra parenthesis in the exponent of (1-$\pi$).
 }
 \reply{%
 	\textbf{This has been corrected.}
