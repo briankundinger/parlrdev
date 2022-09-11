@@ -90,7 +90,7 @@
 	As indicated by both reviewers, the work expands on previous work by Sadinle, introducing computational advances that are achieved by relaxing some requirements in the original formulation of the problem.  The close connections with the previous work and the extent of the novel contributions are not adequately explained.  This makes it hard for the reader to understand what is new and why the new contributions are valuable.  A careful editing of the presentation is needed to address this shortcoming.}
 
 	\reply{%
-\textbf{We thank the Editor, the AE, and the reviewer for their feedback, and pointing out our strengths of the paper and areas that we can improve the quality of our paper. In summary, we have revised our paper in the abstract and introduction as to make our contributions more clear to that of prior work.  Furthermore, we have carefully edited the paper to address issues that were pointed out by the Editorial Board.} \todo
+\textbf{We thank the Editor, the AE, and the reviewer for their feedback, and pointing out our strengths of the paper and areas that we can improve the quality of our paper. We have revised our paper in the abstract and introduction as to make our contributions more clear in relation to prior work.  Furthermore, we have carefully edited the paper to address issues that were pointed out by the Editorial Board.} \todo
 	}
 
 	\newpage
@@ -108,8 +108,9 @@
 	}
 	
 	\reply{
-\textbf{The definition of $I_{obs}()$ now defined. We have defined $n_{12}(Z)$ in the correct place (and removed the error with $D$). We have checked for other notational inconsistencies. Additionally, we have defined $n_{12}(Z)$ when it first appears.}
+\textbf{$I_{obs}()$ is now defined. We have defined $n_{12}(Z)$ at its first occurrence (and removed the error with $D$). We have checked for other notational inconsistencies.
 	}
+}
 	
 	\pointRaised{E}{%
 	Throughout the manuscript, $n_1$ and $n_2$ are used interchangeably with $n_A$ and $n_B$, sometimes in the same section, as it happens, for example, in Section 3.1. 
@@ -149,7 +150,7 @@
 	}
 
 	\reply{%
-\textbf{We agree with this comment, and we have removed this example as it does not add to the paper. Furthermore, we have gone through the paper to improve the overall exposition and clarity of the writing.}
+\textbf{We agree with this comment, and we have removed this example as it does not add to the paper.}
 }
 
 \pointRaised{E}{%
@@ -204,7 +205,7 @@ The authors should prepare a careful and substantive revision that remains withi
 	}
 
 	\reply{%
-	\textbf{We thank the reviewer (AE) for noticing our computational novelties that expand upon the prior limitations of the prior work of Sadinle (2017). Our review paper clarifies our novel contributions, improves upon the exposition of the writing, provides a practical guidance for users, and expands the simulations. We expand on these points further below.} \todo
+	\textbf{We thank the reviewer (AE) for noticing our computational novelties that expand upon the prior limitations of the prior work of Sadinle (2017). Our revised paper clarifies our novel contributions, improves upon the exposition of the writing, provides practical guidance for users, and expands the simulations. We expand on these points further below.} \todo
 	}
 
 
@@ -240,7 +241,7 @@ for this reverse sizing?
 }
 
 \reply{
-	\textbf{Thank you for the interesting comment/question. In this paper, our main goal and applications deal with bipartite record linkage (such that we can make fair comparison with prior work), which is consistent with the algorithm that we present in the paper. We have removed the confusing text mentioned by the reviewer. We are working on extensions beyond bipartite record linkage in other work, where the reverse sizing is not an issue, however, this is beyond the scope of this paper.}
+	\textbf{Thank you for the interesting comment/question. In this paper, our main goal and applications deal with bipartite record linkage (such that we can make fair comparison with prior work), which is consistent with the algorithm that we present in the paper. We have removed the confusing text mentioned by the reviewer. We are working on extensions beyond bipartite record linkage in other work, where the reverse sizing is not an issue; however, this is beyond the scope of this paper.}
 }
 
 %\textcolor{red}{I need some help addressing this in the paper. The answer is yes, the algorithm can easily be adapted for the reverse sizing. The issue is mostly notational. It seems as though Sadinle chose to label the datasets $X_1$ and $X_2$ such that $n_1 > n_2$ for mostly notational reasons. He uses the notation $Z_j = n_1 + j$ when record $j \in X_1$ has no match in $X_2$, which works because when $n_1 > n_2$, $n_1 + j$ never refers to any record in $X_2$. Jody uses the simplified notation $Z_j = n_1 + 1$ to refer to unmatched records, and this works for the same reason.
@@ -258,7 +259,7 @@ for this reverse sizing?
 }
 
 \reply{%
-	\textbf{Our missingness assumptions and the definition of $I_{obs}()$ are near the end of Section 3.}
+	\textbf{Our missingness assumptions and the definition of $I_{obs}()$ have been added near end of Section 3.} \textcolor{red}{Think about where best to put this.}
 }
 
 \pointRaised{R1}{%
@@ -281,7 +282,7 @@ Section 3.1, I found the motivational descriptions in this section to be somewha
 }
 
 \reply{%
-	We have revised our presentation of the Gibbs sampler with this feedback in mind. The main body of the text now presents the final full conditionals, with revised derivations moved now in the appendix. In particular, we have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented.
+	We have revised our presentation of the Gibbs sampler with this feedback in mind. The main body of the text now presents the final full conditionals, with revised derivations now in the Appendix. In particular, we have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented.
 }
 
 %\reply{%
@@ -317,7 +318,7 @@ Section 3.1, pmf for $Gamma_{.j}$ and full conditional for Z: The notation in th
 	Section 3.1, last equations on page 8: There seems to be some lack of specificity in describing these equations as full conditional distributions vs. steps in the Gibbs Sampler algorithm. It would be helpful to provide a brief justification of integrating out pi.
 }
 \reply{%
-	\textbf{We have revised the presentation of the Gibbs sampler based on this feedback. The main body of the paper presents the results, and revised derivations (including justification for integrating out $\pi$) have been placed in the appendix.}
+	\textbf{We have revised the presentation of the Gibbs sampler based on this feedback. The main body of the paper presents the results, and revised derivations (including justification for integrating out $\pi$) have been placed in the Appendix.}
 }
 
 \pointRaised{R1}{%
@@ -326,9 +327,9 @@ Section 3.1, pmf for $Gamma_{.j}$ and full conditional for Z: The notation in th
 
 \reply{%
 	We have numbered each sentence in the comment above to clearly address each point. (1) and (2) are correct understandings of the SEI procedure. For (3), we quantify computational savings of SEI in Section 4.2, where we state:
-	"Rather than storing \(n_1 \times n_2\) record labels, SEI allows us to store at most \(n_2 \times P \times S\) labels, regardless of how large \(n_1\) might be." SEI does not affect the computation time of the Gibbs sampler, since the complexity of the sampler is $O(n_2 P)$, regardless of how many comparison vectors are of pattern $P$. 
+	''Rather than storing \(n_1 \times n_2\) record labels, SEI allows us to store at most \(n_2 \times P \times S\) labels, regardless of how large \(n_1\) might be." SEI does not affect the computation time of the Gibbs sampler, since the complexity of the sampler is $O(n_2 P)$, regardless of how many comparison vectors are of pattern $P$. 
 	
-	For (4), we have included the following sentence in the paper ``In practice, we recommend $S=10$, as this reduces the number of stored indices for highly unlikely record pairings, but does is not likely to eliminate any of the indices for likely matches."
+	For (4), we have included the following sentence in the paper ``In practice, we recommend $S=10$, as this reduces the number of stored indices for highly unlikely record pairings, but does is not likely to eliminate any of the indices for plausible matches."
 	
 	For (5), we have included the following sentence in the paper ``Choosing $S$ too low, like $S=1$ or $S=2$, can concentrate undue mass on unlikely matches and distort linkage results." 
 }
@@ -338,7 +339,7 @@ Section 4.4, Assumptions and definitions should be included in the statement of 
 }
 
 \reply{%
-	\textbf{The lemma now includes assumptions/definitions for all variables used within the statement.}
+	\textbf{The lemma now includes assumptions and definitions for all variables used within the statement.}
 }
 
 \pointRaised{R1}{%
@@ -369,7 +370,7 @@ Section 5.3 simulation – RR results are not presented.
 }
 
 \reply{%
-	We have updated the Figure 4 with these results. Since its is presented along side NPV and PPV, for which values close to 1 indicate strong performance, we have presented decision rate (DR) results.
+	We have updated the Figure 4 with these results. Since it is presented alongside NPV and PPV, for which values close to 1 indicate strong performance, we have presented decision rate (DR) results, instead of rejection rate (RR) results.
 }
 
 \pointRaised{R1}{%
