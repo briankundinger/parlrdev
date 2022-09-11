@@ -141,11 +141,11 @@ In this paper, we use hashing and a new technique called storage efficient index
 
 Under the Fellegi Sunter model, we assume first, that comparison vectors are independent given their matching status, and second, that the match status of the record pairs are independent. This allows us to model the comparison data using mixture models in the following way:
 \begin{align}
-	&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 1 \stackrel{iid}{\sim} \text{Multinomial}(\bm{m}), \\
-	&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 0  \stackrel{iid}{\sim} \text{Multinomial}(\bm{u}), \notag\\
+	&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 1 \stackrel{iid}{\sim} \mathcal{M}(\bm{m}), \\
+	&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 0  \stackrel{iid}{\sim} \mathcal{U}(\bm{u}), \notag\\
 	& \Delta_{ij}   \stackrel{iid}{\sim} \text{Bernoulli}(p), \notag
 \end{align}
-where $p$ is the proportion of records that match, and $\bm{m}$ is the set of parameters for the matching record pairs $m_{fl} = P(\gamma_{ij}^f = l|\Delta_{ij} = 1)$ for all fields $f$ and agreement levels $l$, and $\bm{u}$ is defined similarly for non-matching pairs. These $\bm{m}$ and $\bm{u}$ parameters are then used to calculate the likelihood ratio  
+where $\mathcal{M}$ and $\mathcal{U}$ are the distributions for matching and non-matching record pairs, $\bm{m}$ and $\bm{u}$ are their respective sets of parameters, and $p$ is the marginal probability that a record pair is a match. These $\bm{m}$ and $\bm{u}$ parameters are then used to calculate the likelihood ratio  
 \begin{align}
 	\label{eqn:wts}
 	w_{ij} = \frac{P(\gamma_{ij} \mid \Delta_{ij} = 1)}{P(\gamma_{ij} \mid \Delta_{ij} = 0)}.
@@ -185,8 +185,6 @@ To estimate a one-to-one matching without using a post-processing step, \cite{sa
 $$P(\bm{Z}|\alpha_{\pi}, \beta_{\pi}) = \frac{(n_1 - n_{12}(\bm{Z}))!}{n_1 !}\frac{\text{B}(n_{12}(\bm{Z}) + \alpha_{\pi}, n_2 - n_{12}(\bm{Z}) + \beta_{\pi})}{\text{B}(\alpha_{\pi}, \beta_{\pi})},
 $$
 where $\text{B}(\cdot, \cdot)$ represents the Beta function, hyperparameters $\alpha_{\pi}$ and $\beta_{\pi}$ encode prior beliefs about the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}$, and $n_{12}(\bm{Z}) = \sum_{j=1}^{n_2} I(Z_j \leq n_1 + j)$ is the number of records in $\bm{X}_2$ that have a match in $\bm{X}_1$. This prior induces a Gibbs sampler that strictly enforces one-to-one matching, removing previously matched records from the set of candidate records when sampling \(Z_j\). This creates a dependency that makes the sampler inherently serial, which can be slow when working on large linkage tasks.
-
-
 
 %One criticism of the independent matching assumption is that the decision rule leads to ``many-to-many assignments,'' breaking one-to-one matching assumptions. One way of resolving this issue to incorporate the constraint directly into the model as follows:
 %\begin{align}
@@ -229,7 +227,7 @@ Importantly, this independence relaxes the one-to-one requirement from \texttt{B
 %As commonly done in the record linkage literature, we assume that agreement levels across features are conditionally independent. Additionally, we assume that any missing data is missing at random. Let  $m_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j = i)$ denote the probability of that matching records have level $\ell$ of disagreement in feature $f$, and $u_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j \neq i)$ represent the same probability for non-matches. In addition, denote $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$, $\bm{u}_f = (u_{f1}, \ldots, u_{fL_f})$, $\bm{m}= (m_1, \ldots m_F)$, $\bm{u}= (u_1, \ldots u_F)$, and $\Phi = (\bm{m}, \bm{u})$.
 
 %The model can then be specified as follows:
-With the \texttt{fabl} prior defined and our missingness assumptions addressed, we present the full model as follows: 
+With the \texttt{fabl} prior defined and our missingness assumptions addressed, we present the full model. Let $\bm{m} = (\bm{m}_1, \ldots, \bm{m}_F)$, where $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$ and $m_{fl} = P(\gamma_{ij}^f = l|Z_j = i)$ for all fields $f$ and agreement levels $l$. Let $\bm{u}$ parameters be defined analogously, with $u_{fl} = P(\gamma_{ij}^f = l|Z_j \neq i)$. Then, using the condensed notation $\Phi = \{\bf{m}, \bf{u}\}$, our model is:
 \begin{align*}
 	\mathcal{L}(\bm{Z}, \Phi \mid \bm{\Gamma}) &= \prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\prod_{f=1}^{F}\prod_{l=1}^{L_f}\left[  m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}, \\
 	\bm{m}_f &\sim \text{Dirichlet}(\alpha_{f0}, \ldots, \alpha_{f L_f}), \\
@@ -241,7 +239,7 @@ With the \texttt{fabl} prior defined and our missingness assumptions addressed, 
 	\end{cases} \\
 	\pi &\sim \text{Beta}(\alpha_{\pi}, \beta_{\pi}),
 \end{align*}
-where we have used the condensed notation $\Phi = \{\bf{m}, \bf{u}\}$ to denote the set of parameters governing the probabilities of agreement levels for matching and non-matching record pairs. 
+%where we have used the condensed notation $\Phi = \{\bf{m}, \bf{u}\}$ to denote the set of parameters governing the probabilities of agreement levels for matching and non-matching record pairs. 
 
 \textcolor{red}{I actually don't like the $\Phi$ notation. It seems unnecessary. The only reason it's here is because Sadinle used it. What do you guys think?}
 
