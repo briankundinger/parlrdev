@@ -206,17 +206,29 @@ $$Z_j | \pi =
 	\frac{1}{n_1}\pi,  & z_j \leq n_1; \\
 	1-\pi, &  z_j  = n_1 + j; \\
 \end{cases}$$
-$$\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi}).$$
+$$\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi}),$$
+$\alpha_{\pi}$ and $\beta_{\pi}$ are fixed hyperparameters that encode prior beliefs about  the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}.$ Note the prior from \cite{wortman2019} can be viewed as a special case of the fabl prior, with $\pi$ fixed at the mean of a $\text{Beta}\left(1, \frac{1}{n_1}\right)$ random variable. 
 
-Intuitively, this set of priors says that record $j \in \bm{X}_2$ has some match in $\bm{X}_1$ with probability $\pi$, and that each record $i \in \bm{X}_1$ is equally likely to be that match. $\pi$ itself is given a prior distribution with hyperparameters $\alpha_{\pi}$ and $\beta_{\pi}$ to encode prior beliefs about  the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}$. One non-informative choice might be \(\pi \sim \text{Beta}(1, 1)\), which corresponds to a prior belief that non-matches and matches are equally likely, and another might be \(\pi \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\), which corresponds to a uniform prior on the labeling of \(\bm{Z}\). We note here that the prior from \cite{wortman2019} can be viewed as a special case of the fast beta prior, with $\pi$ fixed at the mean of a $\text{Beta}\left(1, \frac{1}{n_1}\right)$ random variable. 
+\begin{remark}
+Intuitively, this set of priors says that record $j \in \bm{X}_2$ has some match in $\bm{X}_1$ with probability $\pi$, and that each record $i \in \bm{X}_1$ is equally likely to be that match. One non-informative choice might be \(\pi \sim \text{Beta}(1, 1)\), which corresponds to a prior belief that non-matches and matches are equally likely, and another might be \(\pi \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\), which corresponds to a uniform prior on the labeling of \(\bm{Z}\). 
+\end{remark}
+
+\textcolor{blue}{Furthermore, note that it is common to encounter missing information in datasets used for record linkage. Whether information is missing in record $i \in \bf{X}_1$ or $j \in \bf{X}_2$, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. We handle this issue by assuming that this missingness occurs at random (MAR, by \cite{LittleRubin2002}). With this assumption, we can marginalize over the missing data, and do all computation simply using the observed data. To notate this, we use the indicator $I_{obs}(\cdot)$, which takes on the value 1 when the argument inside the parentheses is observed, and 0 otherwise.}
+\textcolor{red}{(I don't love this right here, but I don't really know where else to put it.)}
+
+
+
+
+
+%Intuitively, this set of priors says that record $j \in \bm{X}_2$ has some match in $\bm{X}_1$ with probability $\pi$, and that each record $i \in \bm{X}_1$ is equally likely to be that match. $\pi$ itself is given a prior distribution with hyperparameters $\alpha_{\pi}$ and $\beta_{\pi}$ to encode prior beliefs about  the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}$. One non-informative choice might be \(\pi \sim \text{Beta}(1, 1)\), which corresponds to a prior belief that non-matches and matches are equally likely, and another might be \(\pi \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\), which corresponds to a uniform prior on the labeling of \(\bm{Z}\). We note here that the prior from \cite{wortman2019} can be viewed as a special case of the fast beta prior, with $\pi$ fixed at the mean of a $\text{Beta}\left(1, \frac{1}{n_1}\right)$ random variable. 
 
 Note that linkage in this setting is conducted at the record level, rather than at the record pair level as in the Fellegi Sunter model. That is, $\pi$ under \texttt{fabl} estimates the proportion of records in $\bm{X_2}$ that have matches, while $\lambda$ in the Fellegi Sunter model estimates the proportion of record pairs that are matches. We find $\pi$ to be more interpretable parameter than $\lambda$ in the bipartite case. In this setting, there are at most $n_2$ matching pairs out of $n_1 n_2$ total pairs, meaning that $\lambda$ is bounded above by $\frac{1}{n_1}$ and tends towards 0 as the size of the linkage task grows. Additionally, while the Fellegi Sunter model makes $n_1 \times n_2$ independent matching decisions and \texttt{BRL} makes $n_2$ dependent matching decisions, \texttt{fabl} strikes a middle ground between the two, making $n_2$  independent matching decisions. As shown in Sections \ref{sec:simulations} and \ref{sec:case-studies}, this allows \texttt{fabl} to achieve the benefits from \texttt{BRL} while making efficiency gains possible by exploiting independence. 
 
 Importantly, this independence relaxes the one-to-one requirement from \texttt{BRL}; the Gibbs sampler under \texttt{fabl} does ensure that each record in \(\bm{X}_2\) can be matched to at most one record in \(\bm{X}_1\), but allows for the possibility that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\). To resolve many-to-one matchings and obtain a one-to-one estimate, we use the post processing procedure explained in Section \ref{bayes-estimate}.
 
-\textcolor{red}{Lastly, we note that it is common to encounter missing information in datasets used for record linkage. Whether information is missing in record $i \in \bf{X}_1$ or $j \in \bf{X}_2$, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. We handle this issue by assuming that this missingness occurs at random (MAR, by \cite{LittleRubin2002}). With this assumption, we can marginalize over the missing data, and do all computation simply using the observed data. To notate this, we use the indicator $I_{obs}(\cdot)$, which takes on the value 1 when the argument inside the parentheses is observed, and 0 otherwise.}
 
-\textcolor{red}{(I don't love this right here, but I don't really know where else to put it.)}
+
+
 
 %this independent prior for each \(Z_j\), induces a sampler that is \emph{embarassingly parallel}, allowing for significant computational gains over the Gibbs sampler under \texttt{BRL}. More importantly, since only the agreement pattern of \(Z_j\) is used forcalculations within the Gibbs sampler, and not the particular record label, this sampling is only needed at the level of the unique agreement patterns, which offers additional computational savings.  
 
