@@ -60,9 +60,11 @@
 \end{aug}
 
 \begin{abstract}
-Recently, researchers have developed Bayesian versions of the Fellegi Sunter model for record linkage. These have the crucial advantage of quantifying uncertainty from imperfect linkages.  However, current implementations of Bayesian Fellegi Sunter models are computationally intensive, making them challenging to use on larger-scale record linkage tasks.  We propose a variation on Bayesian Fellegi Sunter models that we call fast beta linkage, or \texttt{fabl}.  Specifically, we propose independent prior distributions over the matching space, allowing us to use hashing techniques that reduce computational overhead. This also allows us to complete pairwise record comparisons over large datasets through parallel computing and to reduce memory costs through a new technique called storage efficient indexing. Through simulations and two case studies, we show that \texttt{fabl} has markedly increased speed with minimal loss of accuracy.
+Recently, researchers have developed Bayesian versions of the Fellegi Sunter model for record linkage. These have the crucial advantage of quantifying uncertainty from imperfect linkages.  However, current implementations of Bayesian Fellegi Sunter models are computationally intensive, making them challenging to use on larger-scale record linkage tasks.  \textcolor{blue}{We propose a variation on Bayesian Fellegi Sunter models that we call fast beta linkage, or \texttt{fabl}, and is motivated by computational considerations. 
+Our method extends that of \cite{sadinle_bayesian_2017}, who extended the early work of \cite{fellegi_theory_1969}.}
+Specifically, we propose independent prior distributions over the matching space, allowing us to use hashing techniques that reduce computational overhead. This also allows us to complete pairwise record comparisons over large datasets through parallel computing and to reduce memory costs through a new technique called storage efficient indexing. Through simulations and two case studies, we show that \texttt{fabl} has markedly increased speed with minimal loss of accuracy.
 
-\textcolor{red}{BEKA/JERRY: Reviewer 2 wanted a specific reference to Sadinle in the abstract. I remember we actively decided not to do that. What do you think?}
+\textcolor{red}{BEKA/JERRY: Reviewer 2 wanted a specific reference to Sadinle in the abstract. I remember we actively decided not to do that. What do you think?} \textcolor{blue}{I added this back in. He only has one concern, so let's make sure to satisfy the person.}
 \end{abstract}
 
 %% ** Keywords **

@@ -213,6 +213,7 @@ The authors should prepare a careful and substantive revision that remains withi
 		Overall, the notation is, somewhat by necessity, quite extensive. However, I’m not convinced that it’s entirely consistent. A glossary in the appendix may help the reader navigate the paper more easily.}
 \reply{%
 	We have provided a summary of notation in Appendix 7.1. \textcolor{red}{I'm not sure where I should reference this in the text. Do I need to?}
+	\textcolor{blue}{I would recommend a table for notation of the model and a table for notation of your hashing method. Why? It will be strange to reference it all together. I would try and put these in the main body if possible as it will really help the reader. You could also write a graphical model with notation of your model to help the reader. These are just some thoughts to think about. (I'm going to leave this up to you Brian if you want to abandon the able as it's quite annoying).}
 }
 
 \pointRaised{R1}{%
@@ -259,7 +260,7 @@ for this reverse sizing?
 }
 
 \reply{%
-	\textbf{Our missingness assumptions and the definition of $I_{obs}()$ have been added near end of Section 3.} \textcolor{red}{Think about where best to put this.}
+	\textbf{Our missingness assumptions and the definition of $I_{obs}()$ have been added near end of Section 3.} \textcolor{red}{Think about where best to put this.} \textcolor{blue}{I put this somewhere; feel free to move it if you don't like it!}
 }
 
 \pointRaised{R1}{%
@@ -408,10 +409,13 @@ Section 5.3 simulation – RR results are not presented.
 
 	The paper presents a computational variant of the method introduced by Sadinle (2017). Simulation results are presented and the variant is applied on a new, significantly larger data set. A significant part of the paper is a reproduction of the paper of Sadinle. The variant is introduced in section 4. It is simple but consequential. The simulations and applications show how the variant accelerates the computation relative to the original method and reveals the trade-offs.
 	
+	
+	
 	The value of the paper resides in that computational complexity continues to be a difficult obstacle in the application of Bayesian statistics. The proposals of the paper enable the application of Sadinle’s approach to an extent not possible before. It is important to present the research for what it is: An extension of the method of Sadinle motivated by computational considerations. Here Sadinle supersedes Fellegi-Sunter in the sense while the starting point of Sadinle’s research is Fellegi-sunter, the starting point of this paper is Sadinle’s work. This should be made clearer, beginning in the abstract and reiterated in the conclusion.
 
 	\reply{%
-		\textcolor{red}{BEKA/JERRY: I think this reviewer wants us to explicitly mention Sadinle in the abstract. I think I had that originally, but we removed it. Please advise on the best way to address this comment.}
+	Thank you for your positive feedback regarding our paper. We have clarified that we are motivation by the work of Sadinle and computational considerations. We have tried to make this more clear in both the abstract, introduction, and conclusion.}
+		\textcolor{red}{BEKA/JERRY: I think this reviewer wants us to explicitly mention Sadinle in the abstract. I think I had that originally, but we removed it. 
 	}
 
 \newpage
