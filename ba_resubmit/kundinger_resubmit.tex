@@ -386,11 +386,17 @@ Although sampling \(Z_j\) from the full conditional provided in Section \ref{gib
 		\end{cases}
 	\end{align} 
 	
-	We emphasize the computational gains of this split sampler: the first step is a sample from $P$ options, where $P$ does not scale with the size of the linkage task; and the second step is sampling uniformly at random, which is computationally simple even for large sets of candidate records. These changes drastically improve the speed of the sampler, and each can be parallelized if desired for additional computational gains. We provide a summary of the \texttt{fabl} method through psuedocode in Appendix \ref{app:fabl-psuedocode}. We note here that this split sampler can be adapted for use with \texttt{BRL} as well, but would require updating $\{H_j\}$ to account for the previously matched records that no are longer candidate matches for the current record. \texttt{BRL} would see considerable speed up through the procedure, but computation time would still scale with the size of the larger dataset.
+	We emphasize the computational gains of this split sampler: the first step is a sample from $P$ options, where $P$ does not scale with the size of the linkage task; and the second step is sampling uniformly at random, which is computationally simple even for large sets of candidate records. These changes drastically improve the speed of the sampler, and each can be parallelized if desired for additional computational gains. We provide a summary of the \texttt{fabl} method through psuedocode in Appendix \ref{app:fabl-psuedocode}. \textcolor{blue}{The computational complexity of \texttt{fabl} is given in Lemma \ref{lemma:fabl}.}
+	
+%	We close this section by proving the computational complexity of \texttt{fabl}.
+	
+	\begin{remark}
+	We note here that this split sampler can be adapted for use with \texttt{BRL} as well, but would require updating $\{H_j\}$ to account for the previously matched records that no are longer candidate matches for the current record. \texttt{BRL} would see considerable speed up through the procedure, but computation time would still scale with the size of the larger dataset.
+	\end{remark}
 	
 %	\hypertarget{computational-complexity}{%
 %		\subsection{Computational Complexity}\label{computational-complexity}}
-	We close this section by proving the computational complexity of \texttt{fabl}.
+	
 	
 	\begin{lemma}
 		Recall that $n_1$ and $n_2$ are the number of records in $\bm{X}_1$ and $\bm{X}_2$ respectively, $F$ is the number of fields used for comparisons across records, and $P$ is the number of patterns that comparison vectors can exhibit. We assume $B$ processors available for parallelization. Then, the overall computational complexity of \texttt{fabl} is $O(\frac{F}{B} n_1 n_2) + O(n_2 P)$.
