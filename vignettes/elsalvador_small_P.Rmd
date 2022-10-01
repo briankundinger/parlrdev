@@ -40,9 +40,7 @@ levels <- cd[[4]]
 P <- prod(levels) 
 var_names <- cd$compFields[,1]
 ptm <- proc.time()
-# Zchain_fabl <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE)
-Zchain_fabl <- BKSimple_hash_discount(cd, S = S, R = R, show_progress = T, all_patterns = FALSE, lag = lag)
-#Zchain_empirical <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE, empirical = TRUE)
+Zchain_fabl <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE)
 elapsed_fabl <- proc.time() - ptm
 Zchain_fabl[[4]]
 Zhat_fabl <- LinkRecordsBK(Zchain_fabl[[1]], nA, 1, 1, 2, Inf)

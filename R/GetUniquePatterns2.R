@@ -31,26 +31,32 @@ GetUniquePatterns2 <- function(cd,
   rec1 <- ids[,1]
   rec2 <- ids[,2]
   levels <- cd[[4]]
-  #P_star <- prod(levels)
 
-# Don't need rec1 and rec2 yet
-# df <- data.frame(indicators, rec1, rec2)
+#   Lf_vec<- (levels - 1) %>%
+#     c(0, .) %>%
+#     .[seq_along(levels)] %>%
+#     cumsum()
 #
-# pattern_df <- df %>%
-#   unite(pattern, 1:fields, sep = "")
+#   hash_vals <- imap(cd[[4]], ~hash_field(.x, .y, Lf_vec)) %>%
+#     unlist()
 #
-#   unique_hash <- unique(pattern_df$pattern)
-#   P <- length(unique_hash)
+#   hash <- sweep(indicators, 2, hash_vals, "*") %>%
+#     rowSums() + 1
 #
-#   hash_id <- vector(length = N)
-#   for(i in seq_along(unique_hash)){
-#     hash_id[pattern_df$pattern == unique_hash[i]] <- i
-#   }
-#   hash_id <- factor(hash_id)
+# if(all_patterns == TRUE){
+#
+#   unique_patterns <- GetPossiblePatternsSad_sep(levels)
+#   unique_hashed <- sweep(unique_patterns, 2, hash_vals, "*") %>%
+#     rowSums() + 1
+#   P <- dim(unique_patterns)[1]
+#   hash_id <- hash %>%
+#     factor(levels = unique_hashed) %>%
+#     as.integer() %>%
+#     factor(levels = 1:P)
 
-  Lf_vec<- (levels - 1) %>%
+  Lf_vec<- (levels) %>%
     c(0, .) %>%
-    .[seq_along(levels)] %>%
+    #.[seq_along(levels)] %>%
     cumsum()
 
   hash_vals <- imap(cd[[4]], ~hash_field(.x, .y, Lf_vec)) %>%
@@ -59,21 +65,16 @@ GetUniquePatterns2 <- function(cd,
   hash <- sweep(indicators, 2, hash_vals, "*") %>%
     rowSums() + 1
 
-if(all_patterns == TRUE){
+  if(all_patterns == TRUE){
 
-  unique_patterns <- GetPossiblePatternsSad_sep(levels)
-  unique_hashed <- sweep(unique_patterns, 2, hash_vals, "*") %>%
-    rowSums() + 1
-  P <- dim(unique_patterns)[1]
-  #hash_id <- factor(hash, unique_hashed)
-  hash_id <- hash %>%
-    factor(levels = unique_hashed) %>%
-    as.integer() %>%
-    factor(levels = 1:P)
-  #
-  # hash %>%
-  #   factor() %>%
-  #   as.integer
+    unique_patterns <- GetPossiblePatternsSad_missing(levels)
+    unique_hashed <- sweep(unique_patterns, 2, hash_vals, "*") %>%
+      rowSums() + 1
+    P <- dim(unique_patterns)[1]
+    hash_id <- hash %>%
+      factor(levels = unique_hashed) %>%
+      as.integer() %>%
+      factor(levels = 1:P)
 
 } else {
 

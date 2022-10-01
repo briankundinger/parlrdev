@@ -160,7 +160,7 @@
 \reply{	
 	\begin{enumerate}
 	\item p. 12, second paragraph:  insert “is” after Section 3.1.  \textbf{This has been fixed.}
-	\item p. 15:  the first sentence of the last full paragraph is either missing a verb (“we observe”?) or it includes an extra “that.” \textbf{We are not able to find this error. Go check this.}
+	\item p. 15:  the first sentence of the last full paragraph is either missing a verb (“we observe”?) or it includes an extra “that.” \textbf{This has been fixed.}
 	\item As I said, I do not believe that we, as reviewers, were able to uncover all the problems, and I strongly encourage the authors to do their part, as they should, to improve the presentation and eliminate all typos and inconsistencies. \textbf{This has been done by all authors.} \todo
 	\item The AE finds the simulation studies to be incomplete and gives detailed suggestions on how those should be improved.  The AE also gives important suggestions about other aspects of the manuscript that must be carefully considered and addressed.  All of the AE’s comments are right on the mark. \textbf{We have provided detailed comments to the AE.}
 	\end{enumerate}
@@ -208,11 +208,14 @@ The authors should prepare a careful and substantive revision that remains withi
 	\textbf{We thank the reviewer (AE) for noticing our computational novelties that expand upon the prior limitations of the prior work of Sadinle (2017). Our revised paper clarifies our novel contributions, improves upon the exposition of the writing, provides practical guidance for users, and expands the simulations. We expand on these points further below.} \todo
 	}
 
-
 	\pointRaised{R1}{%
 		Overall, the notation is, somewhat by necessity, quite extensive. However, I’m not convinced that it’s entirely consistent. A glossary in the appendix may help the reader navigate the paper more easily.}
 \reply{%
-	We have provided a summary of notation in Appendix 7.1. \textcolor{red}{I'm not sure where I should reference this in the text. Do I need to?}
+	We have provided a summary of notation in Appendix 7.1. 
+	
+	\textcolor{blue}{I would recommend a table for notation of the model and a table for notation of your hashing method. Why? It will be strange to reference it all together. I would try and put these in the main body if possible as it will really help the reader. You could also write a graphical model with notation of your model to help the reader. These are just some thoughts to think about. (I'm going to leave this up to you Brian if you want to abandon the able as it's quite annoying).}
+
+	\textcolor{red}{Done}
 }
 
 \pointRaised{R1}{%
@@ -259,14 +262,15 @@ for this reverse sizing?
 }
 
 \reply{%
-	\textbf{Our missingness assumptions and the definition of $I_{obs}()$ have been added near end of Section 3.} \textcolor{red}{Think about where best to put this.}
+	\textbf{Our missingness assumptions and the definition of $I_{obs}()$ have been added near end of Section 3.} 
 }
 
 \pointRaised{R1}{%
 Section 3, full model: The Phi notation needs to be defined.
 }
+
 \reply{%
-	\textbf{This has been defined.}
+	\textbf{We have removed the $\Phi$ notation, using the parameters $\bm{m}$ and $\bm{u}$ throughout the paper.}
 }
 
 \pointRaised{R1}{%
@@ -284,12 +288,6 @@ Section 3.1, I found the motivational descriptions in this section to be somewha
 \reply{%
 	We have revised our presentation of the Gibbs sampler with this feedback in mind. The main body of the text now presents the final full conditionals, with revised derivations now in the Appendix. In particular, we have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented.
 }
-
-%\reply{%
-%\textcolor{red}{\todo We should meet specifically to talk about how to best present the Gibbs Sampler. I think it be good to move as much of it as possible (at least the messy math and derivations) into the appendix.} \textcolor{blue}{I agree that these should be moved to the appendix as well.}
-%
-%We have included an extra step in the derivation of $p(\Gamma_{.j})$ that shows exactly how we divide by $\prod_{i = 1}^{n_1}\prod_{f = 1}^{F} \prod_{\ell = 1}^{L_f}  u_{fl}^{I(\gamma_{ij}^f=l)}$ and use proportionality to arrive that the distribution presented. \textcolor{red}{I want you guys to look at it though. Its pretty ugly.}
-%}
 
 \pointRaised{R1}{%
 Section 3.1, full joint posterior distribution: I was surprised to see that the contribution of the conditional distribution of Z was included using the summation-style notation rather than the binomial/multinomial-style multiplicative notation that naturally motivates the full conditional presented on the first line of page 8.
@@ -350,13 +348,6 @@ Section 5.1 simulations – there is a detailed comparison for one set of simula
 	Regardless of the specific construction of the comparison vectors, the computational complexity the Gibbs sampler under BRL is $O(n_1 n_2)$, where as it is $O(n_2 P)$ for fabl. The exact shape of the lines will be different, but in all cases, fabl removes dependence on $n_1$ in the computational complexity. To illustrate this, we have included in the appendix an additional simulation study under different comparison vector settings.
 }
 
-
-%\reply{%
-%	Regardless of the specific construction of the comparison vectors, the computational complexity the Gibbs sampler under BRL is $O(n_1 n_2)$, where as it is $O(n_2 P)$ for fabl. The exact shape of the lines will be different, but in all cases, fabl removes dependence on $n_1$ in the computational complexity. 
-%	
-%	\textcolor{red}{I think this is clear in the paper, so I did not add anything to the actual text.} \textcolor{blue}{I'm not sure that you answered the reviewers question. You show a comparison for one set of simulation settings, but if you change the settings what would occur? I think the reviewer is asking for more clarify regarding how the lines would change. You may wish to give a few different scenarios to illustrate how things change?}
-%}
-
 \pointRaised{R1}{%
 	Section 5.2 and 5.3 simulations – are these a single simulated datasets? Do these same results hold over multiple simulated datasets, Or was this just a chance result for each setting?
 }
@@ -408,80 +399,181 @@ Section 5.3 simulation – RR results are not presented.
 
 	The paper presents a computational variant of the method introduced by Sadinle (2017). Simulation results are presented and the variant is applied on a new, significantly larger data set. A significant part of the paper is a reproduction of the paper of Sadinle. The variant is introduced in section 4. It is simple but consequential. The simulations and applications show how the variant accelerates the computation relative to the original method and reveals the trade-offs.
 	
+	
+	
 	The value of the paper resides in that computational complexity continues to be a difficult obstacle in the application of Bayesian statistics. The proposals of the paper enable the application of Sadinle’s approach to an extent not possible before. It is important to present the research for what it is: An extension of the method of Sadinle motivated by computational considerations. Here Sadinle supersedes Fellegi-Sunter in the sense while the starting point of Sadinle’s research is Fellegi-sunter, the starting point of this paper is Sadinle’s work. This should be made clearer, beginning in the abstract and reiterated in the conclusion.
 
 	\reply{%
-		\textcolor{red}{BEKA/JERRY: I think this reviewer wants us to explicitly mention Sadinle in the abstract. I think I had that originally, but we removed it. Please advise on the best way to address this comment.}
-	}
+	\textbf{Thank you for your positive feedback regarding our paper. We have clarified that we are motivation by the work of Sadinle and computational considerations. We have tried to make this more clear in both the abstract, introduction, and conclusion.}}
+		
 
 \newpage
 
 \section{Additional Points Addressed}
 
 We highlight some additional points addressed in our revision. \todo
-\textcolor{blue}{Brian: These are just some suggestions that I have, so we can chat through these in case you don't agree! I have these marked up on the paper itself to help you more easily make the changes.}
+
+\textcolor{blue}{Brian: These are just some suggestions that I have, so we can chat through these in case you don't agree! I have these marked up on a printed copy of the paper itself to help you more easily make the changes. Please note I have not made these changes, but I'm marking them on a marked up paper so you can go back through and make changes. It's likely that there may be more errors, so please go over things very carefully for all errors as the content is all there, we just have to weed out these tedious details.}
+
+\textcolor{Red}{For the purpose of our revisions, I commented out the comments about minor typos. The comments that remain are things I want you to read so we can discuss.}
 
 \begin{enumerate}
 \item We have added introductory sentences to each section/subsection to provide more guidance to the reader. 
 \begin{itemize}
 	\item \textcolor{red}{I originally had sentences like this, and Jerry removed them. I also like it better without these introductory sentences, and don't find them necessary.}
 \end{itemize}
+
 \item The word databases is used throughout instead of files or lists. 
 \begin{itemize}
-	\item \todo
+	\item \textcolor{red}{Sadinle uses the words datafile and file. I'll remove database, and do that instead.}
 \end{itemize}
-\item We have checked for the proper use of commas throughout the paper. 
-\begin{itemize}
-	\item \textcolor{red}{Done}
-\end{itemize}
-\item We have re-written our proposed work on page 2 to make it more clear our contributions to the literature as it was missing our improvements over existing work in terms of speed with minimal loss in accuracy as well as providing two case studies. One case study is from the original paper of our extension, while another case study illustrates our ability to scale to larger databases. We provide a more comprehensive discussion regarding our work. 
-\begin{itemize}
-	\item \textcolor{red}{I don't really understand what you want me to change there.}
-\end{itemize}
+
+%\item We have checked for the proper use of commas throughout the paper. 
+%\begin{itemize}
+%	\item \textcolor{red}{Done}
+%\end{itemize}
+
+%\item We have re-written our proposed work on page 2 to make it more clear our contributions to the literature as it was missing our improvements over existing work in terms of speed with minimal loss in accuracy as well as providing two case studies. One case study is from the original paper of our extension, while another case study illustrates our ability to scale to larger databases. We provide a more comprehensive discussion regarding our work. 
+%\begin{itemize}
+%	\item \textcolor{red}{I don't think that the proposed changes made the contribution more clear. I did other edits, adding the specifics }
+%\end{itemize}
+
 \item We have broken up sentences that are too long.
 \begin{itemize}
-	\item \textcolor{red}{Done.}
+	\item \textcolor{red}{We disagree on some of these. For all of the longer sentences that remain, I believe they are clearer together than broken up.}
 \end{itemize}
-\item We have removed repetitive words, such as intuitive, additionally.  \textcolor{blue}{Brian: you can use something like antidote to check for these or go through yourself. Be careful with the word intuitive. While it might be obvious to you, it may not be obvious to the Editor and this word can be quite jarring). As an example, in my job talk, Mike West did not find the linkage structure to be intuitive and found it to be quite weird and confusing!}
-\item We have checked that we define terms before they are introduced.
-\begin{itemize}
-	\item \textcolor{red}{Done}
-\end{itemize} 
+
+%\item We have removed repetitive words, such as intuitive, additionally.  \textcolor{blue}{Brian: you can use something like antidote to check for these or go through yourself. Be careful with the word intuitive. While it might be obvious to you, it may not be obvious to the Editor and this word can be quite jarring). As an example, in my job talk, Mike West did not find the linkage structure to be intuitive and found it to be quite weird and confusing!}
+%
+%\item We have checked that we define terms before they are introduced.
+%\begin{itemize}
+%	\item \textcolor{red}{Done}
+%\end{itemize} 
+
 \item We have defined the parameters $m$ and $u$ on page 4. 
 \begin{itemize}
-	\item \textcolor{red}{I originally had the precise definition of $m$ and $u$ at this spot, giving the $m_{fl} = p(\gamma_{ij}^f = l | Z_{j} = i)$ definitions. However, technically, FS do not specify that comparison vectors be thresholded to discrete values, so this definition technically doesn't make sense here. I checked, and Sadinle defines the $m$ and $u$ parameters during the FS review section in the same way.}
+	\item \textcolor{red}{I originally had the precise definition of $m$ and $u$ at this spot, giving the $m_{fl} = p(\gamma_{ij}^f = l | Z_{j} = i)$ definitions. However, technically, FS do not specify that comparison vectors be thresholded to discrete values, so this definition technically doesn't make sense here. I checked, and Sadinle defines the $m$ and $u$ parameters during the FS review section the same way that I do.}
 	
 	\textcolor{red}{I agree that reviewers might take note of this, so I could add the following sentence.}
 	
-	\textcolor{red}{When using comparison vectors with discrete agreement levels as described above, the $\bm{m}$ parameter takes the form $\bm{m} = (\bm{m}_1, \ldots, \bm{m}_F)$, where $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$ and $m_{fl} = P(\gamma_{ij}^f = l|Z_j = i)$ for all fields $f$ and agreement levels $l$. The $\bm{u}$ parameters are defined similarly, with $u_{fl} = P(\gamma_{ij}^f = l|Z_j \neq i)$.}
+	\textcolor{red}{"When using comparison vectors with discrete agreement levels as described above, the $\bm{m}$ parameter takes the form $\bm{m} = (\bm{m}_1, \ldots, \bm{m}_F)$, where $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$ and $m_{fl} = P(\gamma_{ij}^f = l|Z_j = i)$ for all fields $f$ and agreement levels $l$. The $\bm{u}$ parameters are defined similarly, with $u_{fl} = P(\gamma_{ij}^f = l|Z_j \neq i)$."}
 \end{itemize}
+
 \item One page 5, section 2.2, we have made it more clear why our extension is warranted and needed in the literature. 
 \begin{itemize}
-	\item \textcolor{red}{I don't really understand what you want me to change there. Its not really possible to say the Sadinle doesn't work for X many records in any precise way, because it depends on the number of comparison fields and the number of records in each dataset. Also, I don't know how to say exactly when something is "too slow" in a precise way.}
+	\item \textcolor{red}{Done.}
 \end{itemize}
+
 \item We have removed confusing language, such as "compactful representation of" on page 5.
 \begin{itemize}
 	\item \textcolor{red}{Done}
 \end{itemize}
+
 \item We have checked that fast beta linkage is represented by fabl throughout.
 \begin{itemize}
 	\item \textcolor{red}{Done. However, I think "fast beta prior" is fine, and I have left that as is.}
 \end{itemize} 
+
 \item \textcolor{blue}{See page 10 for a long list of comments.}
 \begin{itemize}
 	\item \textcolor{red}{I don't understand what this is.}
 \end{itemize}
-\item We do not start sentences with a Greek letter or a parameter.
+
+%\item We do not start sentences with a Greek letter or a parameter.
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+
+%\item We have fixed the sentence ``sampling a value from...." that has a missing verb (see page 11).
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+%\item We have fixed a typo in equation 6, which is a missing (). 
+%\begin{itemize}
+%	\item \textcolor{red}{Done. But this was a new typo introduced in my editing, not in the original submission. So I'll remove this one from the list.}
+%\end{itemize}
+%\item We have corrected many typos in section 5.1 page 12 (first paragraph). These include a comma that should not be present, a period instead of a comma, and a Greek letter that starts a sentence.
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+%\item Break up the first long sentence in Lemma 1 as it's hard to read. 
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+%\item "In the simulation results displayed..." This sentence is awkward and should be rephrased. Page 13. 
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+\item Appendices should be done as A, B, C or the convention in BA (please check). 
 \begin{itemize}
-	\item \textcolor{red}{Done.}
+	\item \textcolor{red}{None of the articles I saw on the BA homepage had appendices. Some had "Supplementary Material," and those had numbered headings. So I'm leaving it as is for now. }
 \end{itemize}
-\item We have fixed the sentence ``sampling a value from...." that has a missing verb (see page 11).
+
+%\item There is a comma present that needs to be removed in Figure 2. 
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+%
+%\item Page 15, provide a reference to the Appendix.
+%\begin{itemize}
+%	\item \textcolor{red}{Already there.}
+%\end{itemize}
+%
+%\item proportion should be proportional on page 15
+%\begin{itemize}
+%	\item \textcolor{red}{Fixed.}
+%\end{itemize}
+%\item datasets should be databases on page 17
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+%\item bold m and u on page 18
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+%\item Therefore needs a comma after it on page 18
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+%\item equation 7 is not consistent with other equations on page 20
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+%\item Convergence is stated on page 20. We have shown no issue of lack of convergence. Please address.
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+\item Conclusion needs to be longer most likely or they will ask us to address this.
 \begin{itemize}
-	\item \textcolor{red}{Done.}
+	\item \textcolor{red}{I added a paragraph (in red), check it out!}
 \end{itemize}
-\item We have fixed a typo in equation 6, which is a missing (). 
+ 
+\item Reference summary of notation in main paper and make sure it is complete. 
 \begin{itemize}
-	\item \textcolor{red}{Done. But this was a new typo introduced in my editing, not in the original submission. So I'll remove this one from the list.}
+	\item \textcolor{red}{I included the summary of notation (one for the general Gibbs sampler, one for the hashing notation) in the main body.}
 \end{itemize}
+
+%\item Refer the reader back to the main body of appendix with a reference so it's easier to find the section. 
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+%\item Provide an introduction to each subsection so it's more clear what you're presenting. Example: Section 7.2: In this section, we derive the full conditional distributions of section \ref{}. 
+%\begin{itemize}
+%	\item \textcolor{red}{See earlier response.}
+%\end{itemize}
+%\item Similar minor details in appendix that are marked up regarding punctuation/typos.
+%\begin{itemize}
+%	\item \textcolor{red}{Done.}
+%\end{itemize}
+
+\item \textcolor{red}{I moved the discussion of blocking and indexing the beginning of Section 4. It makes the most sense there, because that's when I introduce the computational speed ups.}
+
+
+\item \textcolor{red}{Do I need to provide open source software? I don't really want to be responsible for having a perfectly functioning R package at this stage.}
+
+\item \textcolor{red}{I got rid of both remarks. I figure if the information isn't relevant enough to be in the main flow of the paper, its probably not relevant enough to include.}
+
+\item \textcolor{red}{I have for the moment removed the psuedo-code for fabl from the appendix. It didn't seem necessary, and the notation was difficult in that format.}
+
 \end{enumerate}
 \end{document}

@@ -60,9 +60,10 @@
 \end{aug}
 
 \begin{abstract}
-Recently, researchers have developed Bayesian versions of the Fellegi Sunter model for record linkage. These have the crucial advantage of quantifying uncertainty from imperfect linkages.  However, current implementations of Bayesian Fellegi Sunter models are computationally intensive, making them challenging to use on larger-scale record linkage tasks.  We propose a variation on Bayesian Fellegi Sunter models that we call fast beta linkage, or \texttt{fabl}.  Specifically, we propose independent prior distributions over the matching space, allowing us to use hashing techniques that reduce computational overhead. This also allows us to complete pairwise record comparisons over large datasets through parallel computing and to reduce memory costs through a new technique called storage efficient indexing. Through simulations and two case studies, we show that \texttt{fabl} has markedly increased speed with minimal loss of accuracy.
+Recently, researchers have developed Bayesian versions of the Fellegi Sunter model for record linkage. These have the crucial advantage of quantifying uncertainty from imperfect linkages.  However, current implementations of Bayesian Fellegi Sunter models are computationally intensive, making them challenging to use on larger-scale record linkage tasks. \textcolor{red}{To address these computational considerations, we propose fast beta linkage (\texttt{fabl}), an extension to the Beta Record Linkage (\texttt{BRL}) method of \cite{sadinle_bayesian_2017}.} Specifically, we propose independent prior distributions over the matching space, allowing us to use hashing techniques that reduce computational overhead. This also allows us to complete pairwise record comparisons over large datasets through parallel computing and to reduce memory costs through a new technique called storage efficient indexing. Through simulations and two case studies, we show that \texttt{fabl} has markedly increased speed with minimal loss of accuracy \textcolor{red}{when compared to \texttt{BRL}.}
+%
+%\textcolor{blue}{We propose a variation on Bayesian Fellegi Sunter models that we call fast beta linkage, or \texttt{fabl}, and is motivated by computational considerations.  Our method extends that of \cite{sadinle_bayesian_2017}, who extended the early work of \cite{fellegi_theory_1969}.}
 
-\textcolor{red}{BEKA/JERRY: Reviewer 2 wanted a specific reference to Sadinle in the abstract. I remember we actively decided not to do that. What do you think?}
 \end{abstract}
 
 %% ** Keywords **
@@ -86,25 +87,30 @@ Recently, researchers have developed Bayesian versions of the Fellegi Sunter mod
 \section{Introduction}
 \label{sec:introduction}
 
-In many data analysis tasks, analysts seek to identify duplicate records across two databases. This is an increasingly important task in ``data cleaning,'' and is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others \citep{christen_2012, gutman2013bayesian, DalzellReiter18, tang2020}. In this article, we consider bipartite record linkage, which merges two databases that contain duplications across but not within the respective databases. 
+In many data analysis tasks, analysts seek to identify duplicate records across two datafiles. This is an increasingly important task in ``data cleaning,'' and is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others \citep{christen_2012, gutman2013bayesian, DalzellReiter18, tang2020}. In this article, we consider bipartite record linkage, which merges two datafiles that contain duplications across, but not within, the respective datafiles. 
 
 Many statistical record linkage methods are extensions of the seminal work of \cite{fellegi_theory_1969} and \cite{newcombe_automatic_1959}. Specifically, \cite{fellegi_theory_1969} created comparison vectors for each pair of records in the data and independently classified each pair as a match or a non-match using a likelihood ratio test. Recent work in the statistical literature has extended this approach for a wide variety of applications \citep{Winkler1990, fair2004generalized, wagner2014person, gill2003english, enamorado2019using, aleshinguendel2021multifile}. Additionally, some methods model records directly \citep{steorts_bayesian_2016, marchant_distributed_2019, betancourt2021prior}, but in this paper, we build on the contributions to the comparison vector approach. 
 
 % Possible citation for bipartite matching. 
 %\citep{fellegi_theory_1969, jaro1989, Winkler1988, belin_1995, larsen_2001, liseo_2011,  herzog2007data, gutman_bayesian_2013, sadinle_bayesian_2017}.
 
-The independent pairwise matching assumption from \cite{fellegi_theory_1969} is popular mainly for its mathematical simplicity, but can be unreasonable in practice. In many situations, we know that there are no duplications within a database, meaning that each record in one file should be linked with at most one other record in the other file. Thus, when the procedure results in many-to-one matches, some of these links must be false. Many extensions to \cite{fellegi_theory_1969} resolve these false matches as a post-processing step \citep{jaro1989}, but this model misspecification can still lead to poor results \citep{sadinle_bayesian_2017}.
+The independent pairwise matching assumption from \cite{fellegi_theory_1969} is popular mainly for its mathematical simplicity, but can be unreasonable in practice. In many situations, we know that there are no duplications within a datafile, meaning that each record in one file should be linked with at most one other record in the other file. Thus, when the procedure results in many-to-one matches, some of these links must be false. Many extensions to \cite{fellegi_theory_1969} resolve these false matches as a post-processing step \citep{jaro1989}, but this model misspecification can still lead to poor results \citep{sadinle_bayesian_2017}.
 
-Alternatively, one can embed one-to-one matching requirements into the model specification itself \citep{gutman2013bayesian, liseo_2011}, at an additional computational cost. \cite{Larsen05} employed a Metropolis-Hastings algorithm to only allow sampling matches that respected one-to-one assumptions, but such algorithms exhibit slow mixing due to the combinatorial nature of the constrained matching space. \cite{fortunato_2010} used simulated annealing to target the space of matches permitted under the one-to-one constraint, but the method is computationally intensive and, to our knowledge, has not been applied on databases with more than 100 records. \cite{sadinle_bayesian_2017} proposed the Beta Record Linkage model (\texttt{BRL}), using a prior distribution over the space of bipartite matchings to strictly enforce one-to-one requirements throughout a Gibbs sampler. Additionally, he introduced a class of loss functions that allows for a flexible estimation of the linkage structure, such that the modeler can weight the relative importance of false positives and false negatives, and identify records pairings to be decided through clerical review. \texttt{BRL} was shown to work on larger tasks than previous one-to-one methods, but in our experience, it becomes slow when applied to files with more than a few thousand records. 
+Alternatively, one can embed one-to-one matching requirements into the model specification itself \citep{gutman2013bayesian, liseo_2011}, at an additional computational cost. \cite{Larsen05} employed a Metropolis-Hastings algorithm to only allow sampling matches that respected one-to-one assumptions, but such algorithms exhibit slow mixing due to the combinatorial nature of the constrained matching space. \cite{fortunato_2010} used simulated annealing to target the space of matches permitted under the one-to-one constraint, but the method is computationally intensive and, to our knowledge, has not been applied on datafiles with more than 100 records. \cite{sadinle_bayesian_2017} proposed the Beta Record Linkage model (\texttt{BRL}), using a prior distribution over the space of bipartite matchings to strictly enforce one-to-one requirements throughout a Gibbs sampler. Additionally, he introduced a class of loss functions that allows for a flexible estimation of the linkage structure, such that the modeler can weigh the relative importance of false positives and false negatives, and identify records pairings to be decided through clerical review. \texttt{BRL} was shown to work on larger tasks than previous one-to-one methods, but in our experience, it becomes slow when applied to files with more than a few thousand records. 
 
-In this paper, we propose fast beta linkage (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. Following the suggestion in \cite{wortman2019}, we relax the one-to-one matching requirement of \texttt{BRL} and propose independent priors over the matching space. This allows us to (1) employ hashing techniques that speed up calculations and reduce computational costs, (2) compute the pairwise record comparisons over large datasets via parallel computing, and (3) reduce memory costs through what we call storage efficient indexing. We demonstrate \texttt{fabl} provides accurate estimation of the linkage structure and greatly enhanced speed. Open source software to use \texttt{fabl} in \texttt{R} is available through \href{https://github.com/briankundinger/parlrdev}{Github}.
+In this paper, we propose fast beta linkage (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. Following the suggestion in \cite{wortman2019}, we relax the one-to-one matching requirement of \texttt{BRL} and propose independent priors over the matching space. This allows us to (1) employ hashing techniques that speed up calculations and reduce computational costs, (2) compute the pairwise record comparisons over large datasets via parallel computing, and (3) reduce memory costs through what we call storage efficient indexing. \textcolor{red}{These contributions allow \texttt{fabl} to perform record linkage on much larger datafiles than previous Bayesian Fellegi Sunter models at significantly increased speed with minimal loss of accuracy. In particular, computation time under \texttt{BRL} grows quadratically, with the size of each datafile, while computation time under \texttt{fabl} grows linearly, only with the size of the smaller datafile.}
 
-In what follows, Section \ref{sec:review-of_prior-work} reviews the work of \cite{fellegi_theory_1969} and \cite{sadinle_bayesian_2017}. Section \ref{sec:fast-beta-linkage}, proposes the \texttt{fabl} model, provides the Gibbs sampler for posterior inference, and shows the loss function used to calculate the Bayes estimate for the bipartite matching. Section \ref{sec:efficiency} introduces the hashing technique and storage efficient indexing used to increase the speed of calculations and the scale of linkage tasks amenable to \texttt{fabl}. Sections \ref{sec:simulations} and \ref{sec:case-studies} demonstrate the speed and accuracy of \texttt{fabl} through simulation studies and case studies of homicides from the El Salvadoran Civil War and the National Long Term Care Study.
+%\textcolor{blue}{Moreever, we propose storage efficient indexing (SEI), which reduces memory costs.}
+%\textcolor{blue}{More specifically, we use both hashing and SEI to increase the scale of the linkage tasks without the use of blocking. This can be useful when there is no reliable blocking field available or one desires estimates of model parameters for the entire sample in question. In practice, \texttt{fabl} can be combined with blocking, but all derivations, simulations, and case studies are presented here without blocking. We illustrate our methodology on two case studies and two simulation scenarios, where Open source software to use \texttt{fabl} in \texttt{R} is available through \href{https://github.com/briankundinger/parlrdev}{Github}.}
+
+%We demonstrate \texttt{fabl} provides accurate estimation of the linkage structure and greatly enhanced speed. Open source software to use \texttt{fabl} in \texttt{R} is available through \href{https://github.com/briankundinger/parlrdev}{Github}.
+
+In what follows, Section \ref{sec:review-of_prior-work} reviews the work of \cite{fellegi_theory_1969} and \cite{sadinle_bayesian_2017}. Section \ref{sec:fast-beta-linkage} proposes the \texttt{fabl} model, provides the Gibbs sampler for posterior inference, and shows the loss function used to calculate the Bayes estimate for the bipartite matching. Section \ref{sec:efficiency} introduces the hashing technique and storage efficient indexing used to increase the speed of calculations and the scale of linkage tasks amenable to \texttt{fabl}. Sections \ref{sec:simulations} and \ref{sec:case-studies} demonstrate the speed and accuracy of \texttt{fabl} through simulation studies and case studies of homicides from the El Salvadoran Civil War and the National Long Term Care Study.
 
 \section{Review of Prior Work}
 \label{sec:review-of_prior-work}
 
-\textcolor{red}{Consider two databases $\bm{X}_1$ and $\bm{X}_2$ containing records $\{x_{1i}\}_{i=1}^{n_1}$ and $\{x_{2j}\}_{j=1}^{n_2}$ respectively. Without loss of generality, denote files such that $n_1 \geq n_2$. We follow the convention established by \cite{sadinle_bayesian_2017} and say ``record i $\in X_1$" rather than the more compact $x_{1i}$ in order to avoid double subscripts.} In the context of bipartite matching, we assume that there are duplications across, but not within, each database. Under this framework, the set of matches across databases can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_1 \times n_2}$, where
+Consider two datafiles $\bm{X}_1$ and $\bm{X}_2$ containing records $\{x_{1i}\}_{i=1}^{n_1}$ and $\{x_{2j}\}_{j=1}^{n_2}$ respectively. Without loss of generality, denote files such that $n_1 \geq n_2$. We follow the convention established by \cite{sadinle_bayesian_2017} and say ``record i $\in X_1$" rather than the more compact $x_{1i}$ in order to avoid double subscripts. In the context of bipartite matching, we assume that there are duplications across, but not within, each datafile. Under this framework, the set of matches across datafiles can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_1 \times n_2}$, where
 \begin{align}
 	\Delta_{ij} =
 	\begin{cases}
@@ -112,45 +118,51 @@ In what follows, Section \ref{sec:review-of_prior-work} reviews the work of \cit
 		0, & \text{otherwise}.\\
 	\end{cases}
 \end{align}
-Though intuitive, this sparse matrix representation can become cumbersome for large linkage tasks. More compactly, bipartite matching also can be viewed as a labeling $\bm{Z} = (Z_1, \ldots, Z_{n_2})$ for the records in database $\bm{X}_2$ such that 
+Though intuitive, this sparse matrix representation can become cumbersome for large linkage tasks. More compactly, bipartite matching also can be viewed as a labeling $\bm{Z} = (Z_1, \ldots, Z_{n_2})$ for the records in datafile $\bm{X}_2$ such that 
 \begin{align}
 	Z_{j} =
 	\begin{cases}
 		i, & \text{if records}\;  i \in \bm{X}_1 \; \text{and}\; j\in \bm{X}_2 \; \text{refer to the same entity}; \\
-		n_1 + j, & \text{if records}\;  j \in \bm{X}_2 \; \text{does not have a match in database}\; \bm{X}_1. \\
+		n_1 + j, & \text{if record}\;  j \in \bm{X}_2 \; \text{does not have a match in datafile}\; \bm{X}_1. \\
 	\end{cases}
 \end{align}
 We can go back and forth between the two using $\Delta_{ij} = I(Z_j = i),$ where $I(\cdot) = 1$ when the expression inside the parentheses is true, and $I(\cdot) = 0$ otherwise. 
 
 Denote the set of matches by $\bm{M} = \{(i,j): i \in \bm{X}_1, j \in \bm{X}_2, \Delta_{ij} = 1\}$, and the set of non-matches by 
-$\bm{U} =  \{(i,j): i \in \bm{X}_1, j \in \bm{X}_2, \Delta_{ij} = 0\}.$ The record linkage task can be viewed as identifying the sets of  $\bm{M}$ and  $\bm{U}.$ We refer to record pairs that are estimated as matches as ``links'', and record pairs that are estimated as non-matches as ``non-links''.
+$\bm{U} =  \{(i,j): i \in \bm{X}_1, j \in \bm{X}_2, \Delta_{ij} = 0\}.$ The record linkage task can be viewed as identifying the sets of  $\bm{M}$ and  $\bm{U}.$ We refer to record pairs that are estimated as matches as ``links'' and to record pairs that are estimated as non-matches as ``non-links.''
 
 %\subsection{Comparison Vectors}
 %\label{comparison-vectors}
 
 Intuitively, matching records (those that refer to the same entity) should be similar; records that are not non-matching should not be similar. \cite{fellegi_theory_1969} proposed encoding this is using a comparison vector $\bm{\gamma}_{ij}$ computed for each record pair $(i,j)$ in $\bm{X}_1 \times \bm{X}_2.$ Denote the number of criteria for comparing records by $F$, such that $\bm{\gamma}_{ij} = (\gamma_{ij}^1, \gamma_{ij}^2, \ldots, \gamma_{ij}^f, \ldots, \gamma_{ij}^F).$ In most cases, $\bm{\gamma}_{ij}$ consists of one comparison for each feature shared between the two datasets. We refer to set of all comparison vectors $\bm{\gamma}_{ij}$ as $\Gamma$.
 
-The simplest way to compare two records is to check for agreement or disagreement, and this is commonly used for categorical variables. For more complex measurements, we can take into account partial agreement to more richly characterize the comparison; for numerical data, we can use absolute difference, and for text data, we can use string distance metrics such as Levenstein or Jaro-Winkler distance \citep{cohen2003comparison}. We then can set thresholds that allow us to represent comparisons through discrete levels of disagreement \citep{bilenko2006riddle, elmagarmid_duplicate_2007}. Let $\mathcal{S}_f(i,j)$ denote a general similarity measure for feature $f$ of records $i$ and $j,$ where the range of $\mathcal{S}_f$ can be divided into $L_f +1$ intervals denoted by $I_{f0}, I_{f1}, \ldots, I_{fL_f}$. Following convention, $I_{f0}$ represents the highest level of agreement (inclusive of complete agreement) and $I_{fL_f}$ represents the highest level of disagreement (including complete disagreement). Thus, we can construct comparison vectors in the following way: $\gamma_{ij}^f = l \; \text{if} \; \mathcal{S}_f(i,j) \in I_{fl}.$ The choice of $I_{fl}$ are application specific, which we discuss in our simulation and case studies. 
+The simplest way to compare two records is to check for agreement or disagreement, and this is commonly used for categorical variables. For numerical data, we can use absolute difference, and for text data, we can use string distance metrics such as Levenstein or Jaro-Winkler distance \citep{cohen2003comparison}. We can then set thresholds that allow us to represent comparisons through discrete levels of disagreement \citep{bilenko2006riddle, elmagarmid_duplicate_2007}. Let $\mathcal{S}_f(i,j)$ denote a general similarity measure for feature $f$ of records $i$ and $j,$ where the range of $\mathcal{S}_f$ can be divided into $L_f +1$ intervals denoted by $I_{f0}, I_{f1}, \ldots, I_{fL_f}$. Following convention, $I_{f0}$ represents the highest level of agreement (inclusive of complete agreement) and $I_{fL_f}$ represents the highest level of disagreement (including complete disagreement). Thus, we can construct comparison vectors in the following way: $\gamma_{ij}^f = l \; \text{if} \; \mathcal{S}_f(i,j) \in I_{fl}.$ The choices of $I_{fl}$ are application specific, which we discuss in our simulation and case studies.
 
-\textcolor{red}{(I don't love this right here, but I don't really know where else to put it. But if it won't cause a problem with the reviewers, I'll just leave it.)}In practice, it is not feasible to make all-to-all record comparisons as the computational complexity is of order $O(n_1 \times n_2).$ The most common solution is to utilize blocking, which places similar records into partitions, or ``blocks,'' to reduce this computational burden \citep{steorts_comparison_2014, murray2016probabilistic}. In deterministic blocking, the modeler chooses a field thought to be highly reliable, and only compares records that agree on that field. The record linkage method is then applied independently across all blocks, which can be done in parallel for additional speed gains. However, blocking on an unreliable field can lead to missed matches, making this form of blocking undesirable in some situations \citep{steorts_comparison_2014}.
+%For more complex measurements, we can take into account partial agreement to more richly characterize the comparison;  
 
-In this paper, we use hashing and a new technique called storage efficient indexing to increase the scale of the linkage tasks we can undertake without blocking. This is useful when there is no reliable blocking field available, or one desires estimates of model parameters for the entire sample in question. In practice, \texttt{fabl} can be combined with blocking, but all derivations, simulations, and case studies are presented here without blocking. 
+%\textcolor{red}{(I don't love this right here, but I don't really know where else to put it. But if it won't cause a problem with the reviewers, I'll just leave it.)}
+%\textcolor{blue}{Perhaps any parts that aren't needed can be removed. I'll take a stab at it.}
+%In practice, it is not feasible to make all-to-all record comparisons as the computational complexity is of order $O(n_1 \times n_2).$ The most common solution is to utilize blocking, which places similar records into partitions, or ``blocks,'' to reduce this computational burden \citep{steorts_comparison_2014, murray2016probabilistic}. In deterministic blocking, the modeler chooses a field thought to be highly reliable, and only compares records that agree on that field. The record linkage method is then applied independently across all blocks, which can be done in parallel for additional speed gains. However, blocking on an unreliable field can lead to missed matches, making this form of blocking undesirable in some situations \citep{steorts_comparison_2014}.
+%
+%In this paper, we use hashing and a new technique called storage efficient indexing to increase the scale of the linkage tasks we can undertake without blocking. This is useful when there is no reliable blocking field available, or one desires estimates of model parameters for the entire sample in question. In practice, \texttt{fabl} can be combined with blocking, but all derivations, simulations, and case studies are presented here without blocking. 
 
 \subsection{Fellegi-Sunter Model}
 \label{fellegi-sunter}
 
-Under the Fellegi Sunter model, we assume first, that comparison vectors are independent given their matching status, and second, that the match status of the record pairs are independent. This allows us to model the comparison data using mixture models in the following way:
+The Fellegi Sunter model employs two independence assumptions: first, that comparison vectors are conditionally independent given their matching status, and second, that the matching status of the record pairs are independent. This allows us to model the comparison data using mixture models in the following way:
 \begin{align}
 	&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 1 \stackrel{iid}{\sim} \mathcal{M}(\bm{m}), \\
 	&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 0  \stackrel{iid}{\sim} \mathcal{U}(\bm{u}), \notag\\
 	& \Delta_{ij}   \stackrel{iid}{\sim} \text{Bernoulli}(p), \notag
 \end{align}
-where $\mathcal{M}$ and $\mathcal{U}$ are the distributions for matching and non-matching record pairs, $\bm{m}$ and $\bm{u}$ are their respective sets of parameters, and $p$ is the marginal probability that a record pair is a match. These $\bm{m}$ and $\bm{u}$ parameters are then used to calculate the likelihood ratio  
+where $\mathcal{M}$ and $\mathcal{U}$ are the distributions for matching and non-matching record pairs, $\bm{m}$ and $\bm{u}$ are their respective sets of parameters, and $p$ is the marginal probability that a record pair is a match. The $\bm{m}$ and $\bm{u}$ parameters are used to calculate the likelihood ratio  
 \begin{align}
 	\label{eqn:wts}
 	w_{ij} = \frac{P(\gamma_{ij} \mid \Delta_{ij} = 1)}{P(\gamma_{ij} \mid \Delta_{ij} = 0)}.
 \end{align}
 This ratio will be large when there is strong evidence of the pair being a match, and small otherwise. 
+
+%These unknown parameters are often estimated using the EM algorithm \cite{winkler_state_1999}. 
 
 The Fellegi Sunter method then uses thresholds $T_m$ and $T_u$ such that all record pairs with $w_{ij} > T_m$ are declared as links, and all those with $w_{ij} < T_u$ are declared as non-links (with those such that $T_u < w_{ij} < T_m$ left undetermined and subject to clerical review). This is a problem in practice as transitive closures can be violated. Since each $w_{ij}$ is calculated independently, there can be situations in which both $w_{ij} > T_m$ and $w_{i'j} > T_m$, so both $(i,j)$ and $(i', j)$ are declared as links, even though such a matching is not allowed by assumption. 
 
@@ -181,10 +193,10 @@ The solution to this problem, for which several simple algorithms exist, is a bi
 \subsection{Beta Record Linkage Model}
 \label{BRL}
 
-To estimate a one-to-one matching without using a post-processing step, \cite{sadinle_bayesian_2017} incorporated this constraint directly into the model. He proposed the  beta distribution for bipartite matching, given by
+To estimate a one-to-one matching without using a post-processing step, \cite{sadinle_bayesian_2017} incorporated this constraint directly into the model through a prior distribution over the matching space. He proposed the  beta distribution for bipartite matching, given by
 $$P(\bm{Z}|\alpha_{\pi}, \beta_{\pi}) = \frac{(n_1 - n_{12}(\bm{Z}))!}{n_1 !}\frac{\text{B}(n_{12}(\bm{Z}) + \alpha_{\pi}, n_2 - n_{12}(\bm{Z}) + \beta_{\pi})}{\text{B}(\alpha_{\pi}, \beta_{\pi})},
 $$
-where $\text{B}(\cdot, \cdot)$ represents the Beta function, hyperparameters $\alpha_{\pi}$ and $\beta_{\pi}$ encode prior beliefs about the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}$, and $n_{12}(\bm{Z}) = \sum_{j=1}^{n_2} I(Z_j \leq n_1 + j)$ is the number of records in $\bm{X}_2$ that have a match in $\bm{X}_1$. This prior induces a Gibbs sampler that strictly enforces one-to-one matching, removing previously matched records from the set of candidate records when sampling \(Z_j\). This creates a dependency that makes the sampler inherently serial, which can be slow when working on large linkage tasks.
+where $\text{B}(\cdot, \cdot)$ represents the Beta function, hyperparameters $\alpha_{\pi}$ and $\beta_{\pi}$ encode prior beliefs about the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}$, and $n_{12}(\bm{Z}) = \sum_{j=1}^{n_2} I(Z_j \leq n_1 + j)$ is the number of records in $\bm{X}_2$ that have a match in $\bm{X}_1$. This prior induces a Gibbs sampler that strictly enforces one-to-one matching, removing previously matched records from the set of candidate records when sampling \(Z_j\). This creates a dependency that makes the sampler inherently serial, which can be slow when working on linkage tasks with more than a few thousand records.
 
 %One criticism of the independent matching assumption is that the decision rule leads to ``many-to-many assignments,'' breaking one-to-one matching assumptions. One way of resolving this issue to incorporate the constraint directly into the model as follows:
 %\begin{align}
@@ -200,25 +212,19 @@ where $\text{B}(\cdot, \cdot)$ represents the Beta function, hyperparameters $\a
 \section{Fast Beta Linkage}
 \label{sec:fast-beta-linkage}
 
-Recall the compact representation of the matching structure $\bm{Z} = (Z_1, Z_2, \ldots Z_{n_2})$ with $Z_j \in \{1,2, \ldots, n_1, n_1 + j\}$, where $Z_j < n_1$ indicates a match and $Z_j = n_1 + j$ indicates a non-match. In contrast to the prior over the vector $\bm{Z}$ from \cite{sadinle_bayesian_2017}, we follow \cite{wortman2019} and use independent priors for each component $Z_j$. However, unlike \cite{wortman2019} who proposes a flat prior for $Z_j$, we use a proper and flexible prior. We denote the fast beta prior as follows:
+In contrast to the prior over the vector $\bm{Z}$ from \cite{sadinle_bayesian_2017}, we follow \cite{wortman2019} and use independent priors for each component $Z_j$. However, unlike \cite{wortman2019} who proposes a flat prior for $Z_j$, we use a proper prior. We denote the fast beta prior as follows:
 $$Z_j | \pi =
 \begin{cases} 
 	\frac{1}{n_1}\pi,  & z_j \leq n_1; \\
 	1-\pi, &  z_j  = n_1 + j; \\
 \end{cases}$$
-$$\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi}),$$
-$\alpha_{\pi}$ and $\beta_{\pi}$ are fixed hyperparameters that encode prior beliefs about  the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}.$ Note the prior from \cite{wortman2019} can be viewed as a special case of the fabl prior, with $\pi$ fixed at the mean of a $\text{Beta}\left(1, \frac{1}{n_1}\right)$ random variable. 
+$$\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi}).$$
+This set of priors says that record $j \in \bm{X}_2$ has some match in $\bm{X}_1$ with probability $\pi$, and that each record $i \in \bm{X}_1$ is equally likely to be that match. The parameter $\pi$ is given hyperparameters $\alpha_{\pi}$ and $\beta_{\pi}$ that encode prior beliefs about  the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}.$ 
 
-\begin{remark}
-Intuitively, this set of priors says that record $j \in \bm{X}_2$ has some match in $\bm{X}_1$ with probability $\pi$, and that each record $i \in \bm{X}_1$ is equally likely to be that match. One non-informative choice might be \(\pi \sim \text{Beta}(1, 1)\), which corresponds to a prior belief that non-matches and matches are equally likely, and another might be \(\pi \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\), which corresponds to a uniform prior on the labeling of \(\bm{Z}\). 
-\end{remark}
-
-\textcolor{blue}{Furthermore, note that it is common to encounter missing information in datasets used for record linkage. Whether information is missing in record $i \in \bf{X}_1$ or $j \in \bf{X}_2$, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. We handle this issue by assuming that this missingness occurs at random (MAR, by \cite{LittleRubin2002}). With this assumption, we can marginalize over the missing data, and do all computation simply using the observed data. To notate this, we use the indicator $I_{obs}(\cdot)$, which takes on the value 1 when the argument inside the parentheses is observed, and 0 otherwise.}
-\textcolor{red}{(I don't love this right here, but I don't really know where else to put it.)}
-
-
-
-
+% I don't really like using remarks. If its not relevante enough for the main body, we can just remove. 
+%\begin{remark}
+%One non-informative choice might be \(\pi \sim \text{Beta}(1, 1)\), which corresponds to a prior belief that non-matches and matches are equally likely, and another might be \(\pi \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\), which corresponds to a uniform prior on the labeling of \(\bm{Z}\). Note the prior from \cite{wortman2019} can be viewed as a special case of the fabl prior, with $\pi$ fixed at the mean of a $\text{Beta}\left(1, \frac{1}{n_1}\right)$ random variable. 
+%\end{remark}
 
 %Intuitively, this set of priors says that record $j \in \bm{X}_2$ has some match in $\bm{X}_1$ with probability $\pi$, and that each record $i \in \bm{X}_1$ is equally likely to be that match. $\pi$ itself is given a prior distribution with hyperparameters $\alpha_{\pi}$ and $\beta_{\pi}$ to encode prior beliefs about  the proportion of records in $\bm{X_2}$ that have matches in $\bm{X_1}$. One non-informative choice might be \(\pi \sim \text{Beta}(1, 1)\), which corresponds to a prior belief that non-matches and matches are equally likely, and another might be \(\pi \sim \text{Beta}\left(1, \frac{1}{n_1}\right)\), which corresponds to a uniform prior on the labeling of \(\bm{Z}\). We note here that the prior from \cite{wortman2019} can be viewed as a special case of the fast beta prior, with $\pi$ fixed at the mean of a $\text{Beta}\left(1, \frac{1}{n_1}\right)$ random variable. 
 
@@ -226,9 +232,7 @@ Note that linkage in this setting is conducted at the record level, rather than 
 
 Importantly, this independence relaxes the one-to-one requirement from \texttt{BRL}; the Gibbs sampler under \texttt{fabl} does ensure that each record in \(\bm{X}_2\) can be matched to at most one record in \(\bm{X}_1\), but allows for the possibility that multiple records in \(\bm{X}_2\) match to the same record in \(\bm{X}_1\). To resolve many-to-one matchings and obtain a one-to-one estimate, we use the post processing procedure explained in Section \ref{bayes-estimate}.
 
-
-
-
+Lastly, we note that it is common to encounter missing information in datasets used for record linkage. Whether information is missing in record $i \in \bm{X}_1$ or $j \in \bm{X}_2$, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. We handle this issue by assuming that this missingness occurs at random (MAR, by \cite{LittleRubin2002}). With this assumption, we can marginalize over the missing data, and do all computation simply using the observed data. To notate this, we use the indicator $I_{obs}(\cdot)$, which takes on the value 1 when the argument inside the parentheses is observed, and 0 otherwise.
 
 %this independent prior for each \(Z_j\), induces a sampler that is \emph{embarassingly parallel}, allowing for significant computational gains over the Gibbs sampler under \texttt{BRL}. More importantly, since only the agreement pattern of \(Z_j\) is used forcalculations within the Gibbs sampler, and not the particular record label, this sampling is only needed at the level of the unique agreement patterns, which offers additional computational savings.  
 
@@ -239,9 +243,31 @@ Importantly, this independence relaxes the one-to-one requirement from \texttt{B
 %As commonly done in the record linkage literature, we assume that agreement levels across features are conditionally independent. Additionally, we assume that any missing data is missing at random. Let  $m_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j = i)$ denote the probability of that matching records have level $\ell$ of disagreement in feature $f$, and $u_{f\ell} = P(\Gamma_{ij}^f = \ell \mid Z_j \neq i)$ represent the same probability for non-matches. In addition, denote $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$, $\bm{u}_f = (u_{f1}, \ldots, u_{fL_f})$, $\bm{m}= (m_1, \ldots m_F)$, $\bm{u}= (u_1, \ldots u_F)$, and $\Phi = (\bm{m}, \bm{u})$.
 
 %The model can then be specified as follows:
-With the \texttt{fabl} prior defined and our missingness assumptions addressed, we present the full model. Let $\bm{m} = (\bm{m}_1, \ldots, \bm{m}_F)$, where $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$ and $m_{fl} = P(\gamma_{ij}^f = l|Z_j = i)$ for all fields $f$ and agreement levels $l$. Let $\bm{u}$ parameters be defined analogously, with $u_{fl} = P(\gamma_{ij}^f = l|Z_j \neq i)$. Then, using the condensed notation $\Phi = \{\bf{m}, \bf{u}\}$, our model is:
+
+\begin{table}[t!]
+	\centering
+	\begin{tabular}[t!]{ll}
+		Symbol & Description \\
+		\hline
+		$\bm{X}_1, \bm{X}_2$ & datasets\\
+		$i \in 1, \ldots, n_1 $ & index over records in $\bm{X}_1$\\
+		$j \in 1, \ldots, n_2 $ & index over records in $\bm{X}_2$\\
+		$f \in 1, \ldots F$ & index over fields used for comparisons \\
+		$l \in 1, \ldots L_f$ & index over agreement levels for field $f$ \\
+		$n_{12}$ & number of entities in common between $\bm{X}_1$ and $\bm{X}_2$\\
+		$\bm{\gamma}_{ij}$ & comparison vector for records $i \in \bm{X}_1$ and $j \in \bm{X}_2$ \\
+		$Z_j = i$ & records $i \in \bm{X}_1$ and $j \in \bm{X}_2$ match \\
+		$Z_j = n_1 + j$ & record $j \in \bm{X}_2$ has no match in $\bm{X}_1$ \\
+		$m_{fl}$ & $P(\gamma_{ij}^f = l | Z_j = i)$ \\
+		$u_{fl}$ & $P(\gamma_{ij}^f = l | Z_j \neq i)$ \\
+		$\pi$ & probability that a record in $\bm{X}_2$ has a match in $\bm{X}_1$ \\
+		\hline
+	\end{tabular}\caption{Summary of model notation}\label{table_notation_1}
+\end{table}
+
+With the \texttt{fabl} prior defined and our missingness assumptions addressed, we present the full model. Let $\bm{m} = (\bm{m}_1, \ldots, \bm{m}_F)$, where $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$ and $m_{fl} = P(\gamma_{ij}^f = l|Z_j = i)$ for all fields $f$ and agreement levels $l$. Let $\bm{u}$ parameters be defined analogously, with $u_{fl} = P(\gamma_{ij}^f = l|Z_j \neq i)$. Then, our model is:
 \begin{align*}
-	\mathcal{L}(\bm{Z}, \Phi \mid \bm{\Gamma}) &= \prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\prod_{f=1}^{F}\prod_{l=1}^{L_f}\left[  m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}, \\
+	\mathcal{L}(\bm{Z}, \bm{m}, \bm{u} \mid \bm{\Gamma}) &= \prod_{j=1}^{n_1}  \prod_{i=1}^{n_2}\prod_{f=1}^{F}\prod_{l=1}^{L_f}\left[  m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}, \\
 	\bm{m}_f &\sim \text{Dirichlet}(\alpha_{f0}, \ldots, \alpha_{f L_f}), \\
 	\bm{u}_f &\sim \text{Dirichlet}(\beta_{f0}, \ldots, \beta_{f L_f}), \\
 	Z_j | \pi &=
@@ -249,28 +275,26 @@ With the \texttt{fabl} prior defined and our missingness assumptions addressed, 
 		\frac{1}{n_1}\pi,  & z_j \leq n_1; \\
 		1-\pi, &  z_j  = n_1 + j; \\
 	\end{cases} \\
-	\pi &\sim \text{Beta}(\alpha_{\pi}, \beta_{\pi}),
+	\pi &\sim \text{Beta}(\alpha_{\pi}, \beta_{\pi}).
 \end{align*}
+For convenience, a summary of notation is provided in Table \ref{table_notation_1}.
 %where we have used the condensed notation $\Phi = \{\bf{m}, \bf{u}\}$ to denote the set of parameters governing the probabilities of agreement levels for matching and non-matching record pairs. 
-
-\textcolor{red}{I actually don't like the $\Phi$ notation. It seems unnecessary. The only reason it's here is because Sadinle used it. What do you guys think?}
 
 \hypertarget{posterior-sampling}{%
 	\subsection{Gibbs Sampler}
 	\label{gibbs_sampling}}
 
-We initialize $\Phi$ from random draws from the prior distributions of $\bm{m}$ and $\bm{u}$, and initialize $\bm{Z}$ to reflect no matches across datasets, that is $\bm{Z} = (n_1 + 1, \ldots, n_1 + n_2)$. We then sample $\Phi$ from its full conditional:
-
+We initialize $\bm{m}$ and $\bm{u}$ from random draws from their prior distributions, and initialize $\bm{Z}$ to reflect no matches across datasets; that is, $\bm{Z} = (n_1 + 1, \ldots, n_1 + n_2)$. We then sample $\bm{m}$ and $\bm{u}$ from their full conditionals:
 $$\bm{m}_f|\Gamma, \bm{Z} \sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}), \ldots, \alpha_{fL_f}(\bm{Z})),$$
 $$\bm{u}_f|\Gamma, \bm{Z} \sim \text{Dirichlet}(\beta_{f1}(\bm{Z}), \ldots, \beta_{fL_f}(\bm{Z})),$$
-where $\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j = i)$, and $\beta_{fl}(\bm{Z})= \beta_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j \neq i)$.
+where $\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = l) I(z_j = i)$, and $\beta_{fl}(\bm{Z})= \beta_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = l) I(z_j \neq i)$.
 
 Next, we sample $\bm{Z}$ componentwise from the full conditionals for each $Z_j$:
-$$p\left(Z_j^{(s+1)}  = i|\Gamma, \Phi, \bm{Z^{(s)}}\right) \propto
+$$p\left(Z_j^{(s+1)}  = i|\Gamma, \bm{m}, \bm{u}, \bm{Z^{(s)}}\right) \propto
 \begin{cases} 
 	w_{z_j, j},  & z_j \leq n_1; \\
 	n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}}, & z_j  = n_1 + j, \\
-\end{cases},$$
+\end{cases}$$
 where 
 $$w_{ij} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.$$
 Derivations for these full conditionals can be found in Appendix \ref{app:derivations}.
@@ -292,7 +316,7 @@ Derivations for these full conditionals can be found in Appendix \ref{app:deriva
 We calculate a Bayes estimate \(\hat{\bm{Z}}\) for the linkage
 parameter \(\bm{Z}\) by assigning different positive losses to
 different types of errors, and minimizing posterior expected loss. We
-adopt the loss function proposed in \cite{sadinle_bayesian_2017}, in which
+adopt the loss function proposed in \cite{sadinle_bayesian_2017} in which
 \(\hat{Z}_j \in \{1, \ldots, n_1, n_1 + j, R\}\), with \(R\) representing the
 option to leave the matching undetermined by the model. Specifically, we have
 
@@ -309,7 +333,7 @@ Here, \(\theta_R\) is the loss from not making a decision on the linkage status,
 
 %We seek to minimize the posterior expected loss, given by 
 %$$\mathbb{E}[L(\hat{\bm{Z}}, \bm{Z})|\Gamma^{obs}] = \sum_{\bm{Z}} L(\hat{Z_j}, Z_j)P(\bm{Z}|\Gamma^{obs}).$$
-In general, we set $(\theta_{10}, \theta_{01}, \theta_{11}, \theta_R) = (1, 1, 2, \infty)$ inducing the intuitive decision rule
+In general, we set $(\theta_{10}, \theta_{01}, \theta_{11}, \theta_R) = (1, 1, 2, \infty)$ inducing the decision rule
 $$\hat{Z}_j =\begin{cases} 
 	i,  & \text{if } P(Z_j = i |\Gamma) > \frac{1}{2}; \\
 	0,  & \text{otherwise}. \\
@@ -324,40 +348,49 @@ Since the Gibbs sampler does not strictly enforce one-to-one matching, it is pos
 \section{Efficient and Scalable Implementation}
 \label{sec:efficiency}
 
-To increase the speed of the Gibbs sampler and expand the scale of the linkage tasks we can undertake, we propose hashing methods similar to those used by \cite{enamorado2019using} in the creation of \texttt{fastlink}, a fast and scalable implementation of the Fellegi Sunter method. The key insight is to recognize that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. To make this more precise, let $h_1, \ldots, h_P$ denote the unique agreement patterns, and collect these unique patterns in the set $\mathcal{P} = \{h_1, \ldots, h_P\}$. Here,  $P = |\mathcal{P}|$ is the total number of unique agreement patterns. \(P\) is bounded above by \(\prod_{f=1}^F L_f\) which does not depend on \(n_1\) or \(n_2\). In this context, the integers $\{1, \ldots, P\}$ serve as hashed values that encode the same information as the orignial vectors themselves. Whenever possible, we conduct calculations over these \(P\) agreement patterns, instead of the typical \(n_1 \times n_2\) record pairs. Additionally, we store ``one-hot encodings'' of these patterns rather than the original Fellegi Sunter comparison vectors, to aid in vectorized computations. See Appendix \ref{app:ohe} for details.   
+The scale of linkage tasks possible within the Fellegi Sunter framework is limited by (1) the memory costs of storing $n_1 \times n_2$ comparison vectors for every pair of records across the two datafiles, and (2) the speed of the linkage algorithm over those comparison vectors. One common solution to these challenges is to utilize blocking, which places similar records into partitions, or ``blocks,'' to reduce this computational burden \citep{christen2019data}. In deterministic blocking, the modeler chooses a field thought to be highly reliable, and only compares records that agree on that field. The record linkage method is then applied independently across all blocks, which can be done in parallel for additional speed gains. However, blocking on an unreliable field can lead to missed matches, making this form of blocking undesirable in some situations \citep{steorts_comparison_2014}.
+
+Another technique is indexing, in which the modeller decides a priori certain criteria that all linked pairs must satisfy, and labels any record pairs that do not meet that criteria as non-links. For example, one might only consider pairs with a certain similarity score on a field deemed to be important, like first name, or only pairs that exactly match on a specified number of fields. However, this kind of indexing requires knowledge  of the application and invites room for human error \citep{murray2016probabilistic}.
+
+With \texttt{fabl}, we introduce two techniques to expand the scalability of probabilistic record linkage without the drawbacks of blocking and indexing. First, we propose hashing methods that allow us to compute sufficient statistics which reduce the computational complexity of the Gibbs sampler. Second, we introduce storage efficient indexing (SEI), which reduces the memory costs associated with unlikely matches.
+
+%To increase the speed of the Gibbs sampler and expand the scale of the linkage tasks we can undertake, we propose hashing methods similar to those used by \cite{enamorado2019using} in the creation of \texttt{fastlink}, a fast and scalable implementation of the Fellegi Sunter method. The key insight is to recognize that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. To make this more precise, let $h_1, \ldots, h_P$ denote the unique agreement patterns, and collect these unique patterns in the set $\mathcal{P} = \{h_1, \ldots, h_P\}$. Here,  $P = |\mathcal{P}|$ is the total number of unique agreement patterns. \(P\) is bounded above by \(\prod_{f=1}^F L_f\) which does not depend on \(n_1\) or \(n_2\). In this context, the integers $\{1, \ldots, P\}$ serve as hashed values that encode the same information as the orignial vectors themselves. Whenever possible, we conduct calculations over these \(P\) agreement patterns, instead of the typical \(n_1 \times n_2\) record pairs. Additionally, we store ``one-hot encodings'' of these patterns rather than the original Fellegi Sunter comparison vectors, to aid in vectorized computations. See Appendix \ref{app:ohe} for details.   
 
 \hypertarget{data-representation-hashing-and-storage}{%
 	\subsection{Data Representation, Hashing, and
 		Storage}\label{data-representation-hashing-and-storage}}
 
+Following insight from \cite{enamorado2019using}, we recognize that record pairs contribute to posterior calculations only through the agreement pattern of the $\gamma_{ij}$ vector. To make this more precise, let $h_1, \ldots, h_P$ denote the unique agreement patterns, and collect these unique patterns in the set $\mathcal{P} = \{h_1, \ldots, h_P\}$. Here,  $P = |\mathcal{P}|$ is the total number of unique agreement patterns. \(P\) is bounded above by \(\prod_{f=1}^F L_f\) which does not depend on \(n_1\) or \(n_2\). In this context, the integers $\{1, \ldots, P\}$ serve as hashed values that encode the same information as the original vectors themselves. Whenever possible, we conduct calculations over these \(P\) agreement patterns, instead of the typical \(n_1 \times n_2\) record pairs. Additionally, we store ``one-hot encodings'' of these patterns rather than the original Fellegi Sunter comparison vectors, to aid in vectorized computations. See Appendix \ref{app:ohe} for details.   
+
 First, we hash record pairs of the same agreement pattern to unique integer values. \cite{enamorado2019using} accomplished this efficiently through the hashing function
-
 $$h^{*}(i, j) = \sum_{f = 1}^F I(\gamma_{ij}^f > 0)2^{\gamma_{ij}^f + I(k>1)\sum_{e=1}^{k-1}(L_e -1)}.$$
-
 This function maps each agreement pattern to a unique integer, allowing us to store a scalar quantity instead of an entire vector for each record pair. For computational ease, we then map these integers to sequential integers from $\{1, \ldots, P\}$ corresponding to the enumerated patterns in $\mathcal{P}$. When the $(i, j)$ pair exhibits the $p^{th}$ pattern, we say $(i, j) \in h_p$.
 
 With all record pairs converted to hashed values, we can create a more compact nested list 
 $$\mathcal{R} = \left\{\{r_{j_p} \}_{p=1}^{P} \right\}_{j = 1}^{n_2},$$
-where $r_{j_p} = \{i \in \bm{X_1} | (i, j) \in h_p\}$ \textcolor{red}{is a list of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$}. This representation is useful because it allows us to easily compute sufficient statistics
-$$H_{j_p} = \sum_{i} I((i, j) \in h_p) = ||r_{j_p}||,$$
-which is the number of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$, and 
-$$H_p =  \sum_{i, j} I((i, j) \in h_p) = \sum_{j} H_{j_p},$$
-which is the number of comparison vectors in $\Gamma$ that exhibit pattern $p$. For convenience, denote this set of sufficient statistics $\mathcal{H} = \left\{\{H_{j_p}\}, \{H_{p}\}\right\}.$ As we will show in Section \ref{efficient-posterior}, all posterior calculations are conducted with these sufficient statistics. Note that $\mathcal{P}$, $\mathcal{R}$, and $\mathcal{H}$  fully characterize the comparison matrix $\Gamma$ with no loss of information, so we proceed with $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{H}\}$ for posterior inference. 
+where $r_{j_p} = \{i \in \bm{X_1} | (i, j) \in h_p\}$ is a list of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$. This representation is useful because it allows us to easily compute two sets of sufficient statistics. First, we compute the number of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$, given by
+$$N_{j_p} = \sum_{i=1}^{n_1} I((i, j) \in h_p) = |r_{j_p}|.$$
+Second, we compute the number of comparison vectors in $\Gamma$ that exhibit pattern $p$, given by
+$$H_p =  \sum_{i=1}^{n_1} \sum_{j=1}^{n_2} I((i, j) \in h_p) = \sum_{j = 1}^{n_2} N_{j_p}.$$
+We collect these sufficient statistics in the sets $\mathcal{N} = \left\{\{N_{j_p}\}_{j=1}^{n_2}\right\}_{p=1}^P$ and $\mathcal{H} = \{H_{p}\}_{p=1}^P.$ As we will show in Section \ref{efficient-posterior}, all posterior calculations are conducted with these sufficient statistics. Note that $\mathcal{P}$, $\mathcal{R}$, and $\mathcal{H}$  fully characterize the comparison matrix $\Gamma$ with no loss of information, so we proceed with $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N}, \mathcal{H}\}$ for posterior inference. 
 
 \hypertarget{scaling}{%
 	\subsection{Scaling to Large Linkage Tasks}\label{scaling}}
 
-The hashing procedure described above considerably reduces the memory needed to store the comparison information. That is, instead of storing \(n_1 \times n_2\) comparison vectors, we only store the \(P\) unique vectors, and then \(n_1 \times n_2\) scalar quantities relating record pairs to those vectors. However, even storing these \(n_1 \times n_2\) scalar labels can become burdensome with large databases. Worse, the overwhelming majority of these labels relate to record pairs that are clear non-matches.
+%In practice, it is not feasible to make all-to-all record comparisons because creating and storing $n_1 \times n_2$ comparison vectors is computationally infeasible for large datafiles. The most common solution is to utilize blocking, which places similar records into partitions, or ``blocks,'' to reduce this computational burden \citep{steorts_comparison_2014, murray2016probabilistic}. In deterministic blocking, the modeler chooses a field thought to be highly reliable, and only compares records that agree on that field. The record linkage method is then applied independently across all blocks, which can be done in parallel for additional speed gains. However, blocking on an unreliable field can lead to missed matches, making this form of blocking undesirable in some situations \citep{steorts_comparison_2014}.
+%
+%The hashing procedure described above considerably reduces the memory needed to store the comparison information. That is, instead of storing \(n_1 \times n_2\) comparison vectors, we only store the \(P\) unique vectors, and \(n_1 \times n_2\) scalar quantities relating record pairs to those vectors. However, even storing these \(n_1 \times n_2\) scalar labels can become burdensome with large datafiles. Worse, the overwhelming majority of these labels relate to record pairs that are clear non-matches.
+%
+%To address this issue, we propose storage efficient indexing (SEI). In standard indexing, one decides a priori certain criteria that all linked pairs must satisfy, and labels any record pairs that do not meet that criteria as non-links. For example, one might only consider pairs with a certain similarity score on a field deemed to be important, like first name, or only pairs that exactly match on a specified number of fields. this kind of indexing requires knowledge of the application of the application and invites room for human error \cite{murray2016probabilistic}.
 
-To address this issue, we propose storage efficient indexing (SEI). In standard indexing, one decides a priori certain criteria that all linked pairs must satisfy, and labels any record pairs that do not meet that criteria as non-links. For example, one might only consider pairs with a certain similarity score on a field deemed to be important (like first name), or only pairs that exactly match on a specified number of fields. While generally chosen to be quite loose, establishing these criteria requires knowledge of the problem and invites room for human error. 
+With storage efficient indexing (SEI), we can calculate the above sufficient statistics for all $n_1 \times n_2$ record pairs, but greatly reduce the memory costs associated with unlikely matches, allowing us to conduct all-to-all comparisons for substantially larger linkage tasks. Observe that all records $i \in \bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$ have the same Fellegi Sunter weight $w_{ij}$. Therefore, these records have the same probability to be identified as a link when sampling \(Z_j\). Thus, we know that records $i \in r_{j_p}$  such that $N_{j_p}$ is large are very unlikely to be sampled consistently enough to be deemed a match through the Bayes estimate. We know this regardless of the form of the agreement pattern itself, or its associated probabilities. Therefore, rather than store all of these unlikely record labels, we choose to store only a small number \(S\) of them in a new nested list $\mathcal{R}^{\text{SEI}}$. Instead of storing \(n_1 \times n_2\) record labels, SEI allows us to store at most \(n_2 \times P \times S\) labels, regardless of how large \(n_1\) might be. In practice, we recommend $S=10$, as this reduces the number of stored indices for highly unlikely record pairings, but does is not likely to eliminate any of the indices for plausible matches. Choosing $S$ too low, like $S=1$ or $S=2$, can concentrate undue mass on unlikely matches and distort linkage results. Posterior calculations still attribute the appropriate weight to all records through the summary statistics in $\mathcal{H}$, and thus we can proceed with posterior inference through the memory reduced $\tilde{\Gamma}^{\text{SEI}} = \{\mathcal{P}, \mathcal{R}^{\text{SEI}}, \mathcal{N}, \mathcal{H}\}$. 
 
-With SEI, however, we can reduce the comparison space, and its associated storage costs, while avoiding these drawbacks. Observe that all records $i \in \bm{X}_1$ that share agreement pattern $p$ with $j \in \bm{X}_2$ have the same Fellegi Sunter weight $w_{ij}$, and therefore the same probability when sampling \(Z_j\). Thus, we know that records $i \in r_{j_p}$  such that $H_{j_p}$ is large are very unlikely to be sampled consistently enough to be deemed a match through the Bayes estimate. We know this regardless of the form of the agreement pattern itself, or its associated probabilities. Therefore, rather than store all of these unlikely record labels, we choose to store only a small number \(S\) of them in a new nested listed $\mathcal{R}^{\text{SEI}}$. instead of storing \(n_1 \times n_2\) record labels, SEI allows us to store at most \(n_2 \times P \times S\) labels, regardless of how large \(n_1\) might be. \textcolor{red}{In practice, we recommend $S=10$, as this reduces the number of stored indices for highly unlikely record pairings, but does is not likely to eliminate any of the indices for plausible matches. Choosing $S$ too low, like $S=1$ or $S=2$, can concentrate undue mass on unlikely matches and distort linkage results.} Posterior calculations still attribute the appropriate weight to all records through the summary statistics in $\mathcal{H}$, and thus we can proceed with posterior inference through the memory reduced $\tilde{\Gamma}^{\text{SEI}} = \{\mathcal{P}, \mathcal{R}^{\text{SEI}}, \mathcal{H}\}$. For simplicity, we suppress ``SEI'' in future notation, and use $\tilde{\Gamma}$ without loss of generality. 
+%For simplicity, we suppress ``SEI'' in future notation, and use $\tilde{\Gamma}$ without loss of generality. 
 
 %\hypertarget{distributed}{%
 	%	\subsection{Distributed Computation for Pairwise Comparison}\label{distributed}}
 
-For large data, we can partition the two datasets \(\bm{X}_1\) and \(\bm{X}_2\) into smaller chunks \(\{\bm{X}_{1m}\}\) and \(\{\bm{X}_{2n}\}\) for more manageable computations. On a single machine, we can read-in data sequentially, conduct hashing, compress information through SEI, and delete the original data from memory before continuing with the next chunk of data. With multiple cores or multiple machines, this can be done in parallel. Summary statistics from each pairwise chunk comparison can then be easily synthesized to recover sufficient statistics for the larger linkage task.  Thus, the combination of hashing, SEI, and partitioning
-allows us to conduct linkage tasks over much larger datasets.
+For large data, we can partition the two datasets \(\bm{X}_1\) and \(\bm{X}_2\) into smaller chunks \(\{\bm{X}_{1m}\}\) and \(\{\bm{X}_{2n}\}\) for more manageable computations. On a single machine, we can read-in data sequentially, conduct hashing, compress information through SEI, and delete the original data from memory before continuing with the next chunk of data. With multiple cores or multiple machines, this can be done in parallel. Summary statistics from each pairwise chunk comparison can then be easily synthesized to recover sufficient statistics for the larger linkage task.  Thus, the combination of partitioning, hashing, and SEI allows us to conduct linkage tasks over much larger datasets.
 
 \hypertarget{efficient-posterior}{%
 	\subsection{Efficient Posterior Inference }\label{efficient-posterior}}
@@ -368,46 +401,78 @@ Instead, we use one-hot encodings of the agreement patterns $\mathcal{P}$ for mo
 $$\bm{\alpha(Z)} = \bm{\alpha_0} + \sum_{p=1}^P H_p^m \times h_p,$$
 $$\bm{\beta(Z)} = \bm{\beta_0} + \sum_{p=1}^P H_p^u \times h_p.$$
 
-Although sampling \(Z_j\) from the full conditional provided in Section \ref{gibbs_sampling} is conceptually straightforward, it becomes computationally burdensome when $n_1$ is large. This is because sampling a value from $n_1$ many options with unequal weights requires normalizing the weights to probabilities, which has a computational cost that scales with $n_1$. To speed up computation, we break this sampling step into two. First, we calculate the Fellegi Sunter weight \(w_{p}\) associated with each unique pattern and sample the agreement pattern between \(j\) and its potential link. Second, we sample the record label uniformly among records associated with that agreement pattern for that particular \(j\in \bm{X}_2\). More concretely, define \(h(Z_j)\) to be the agreement pattern between \(j\) and its potential match, and say \(h(Z_j) = h_{P+1}\) when \(Z_j = n_1 + j\). Then,
-	\begin{align}
-		\label{eqn:gibbs1}
-		P\left(h\left(Z_j^{(s+1)}\right) = p \mid\tilde{\Gamma} \Phi, \bm{Z^{(s)}}\right) \propto
-		\begin{cases} 
-			w_{p}\times H_{j_p},  & p \leq P; \\
-			n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\lambda}}{n_{12}(\bm{Z}) + \alpha_{\lambda}}, &   p = P + 1; \\
-		\end{cases}
-	\end{align}
-	Since all posterior updates are governed by the agreement patterns of the record pairs rather than the record labels themselves, we complete the entire Gibbs sampler first at the level of the \(P\) agreement patterns with (\ref{eqn:gibbs1}) above. After all iterations are complete, we can back-fill the records uniformally among records of the sampled agreeement pattern through (\ref{eqn:gibbs1}) below:
-	\begin{align}
+Although sampling \(Z_j\) from the full conditional provided in Section \ref{gibbs_sampling} is conceptually straightforward, it becomes computationally burdensome when $n_1$ is large. This is because sampling a value from $n_1$ options with unequal weights requires normalizing the weights to probabilities, which has a computational cost that scales with $n_1$. To speed up computation, we break this sampling step into two. First, we calculate the Fellegi Sunter weight \(w_{p}\) associated with each unique pattern and sample the agreement pattern between \(j\) and its potential link, according to (\ref{eqn:gibbs1}).
+\begin{align}
+	\label{eqn:gibbs1}
+	P\left(\left(Z_j^{(s+1)}, j\right) \in h_p \mid \tilde{\Gamma}, \bm{m}, \bm{u}, \bm{Z^{(s)}}\right) \propto
+	\begin{cases} 
+		w_{p}\times N_{j_p},  & p \leq P; \\
+		n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}}, &   p = P + 1. \\
+	\end{cases}
+\end{align}
+%More concretely, define \(h(Z_j)\) to be the agreement pattern between \(j\) and its potential match, and say \(h(Z_j) = h_{P+1}\) when \(Z_j = n_1 + j\). Then,
+%	\begin{align}
+%		\label{eqn:gibbs1}
+%		P\left(h\left(Z_j^{(s+1)}\right) = h_p \mid\tilde{\Gamma}, \bm{m}, \bm{u}, \bm{Z^{(s)}}\right) \propto
+%		\begin{cases} 
+%			w_{p}\times H_{j_p},  & p \leq P; \\
+%			n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}}, &   p = P + 1; \\
+%		\end{cases}
+%	\end{align}
+Since all posterior updates are governed by the agreement patterns of the record pairs rather than the record labels themselves, we complete the entire Gibbs sampler first at the level of the \(P\) agreement patterns. After all iterations are complete, we can back-fill the records uniformally among records of the sampled agreement pattern through (\ref{eqn:gibbs2}).
+\begin{align}
 		\label{eqn:gibbs2}
-		P\left(Z_j^{(s+1)} = i \mid h\left(Z_j^{(s+1)}\right) = p\right) = \begin{cases} 
-			\frac{1}{H_{j_p}}, & (i, j) \in h_p; \\
+		P\left(Z_j^{(s+1)} = i \mid \left(Z_j^{(s+1)}, j\right) \in h_p \right) = \begin{cases} 
+			\frac{1}{N_{j_p}}, & (z_j, j) \in h_p; \\
 			0, & \text{otherwise.} \\
 		\end{cases}
 	\end{align} 
+%	\begin{align}
+%		\label{eqn:gibbs2}
+%		P\left(Z_j^{(s+1)} = i \mid h\left(Z_j^{(s+1)}\right) = p\right) = \begin{cases} 
+%			\frac{1}{H_{j_p}}, & (i, j) \in h_p; \\
+%			0, & \text{otherwise.} \\
+%		\end{cases}
+%	\end{align} 
 	
-	We emphasize the computational gains of this split sampler: the first step is a sample from $P$ options, where $P$ does not scale with the size of the linkage task; and the second step is sampling uniformly at random, which is computationally simple even for large sets of candidate records. These changes drastically improve the speed of the sampler, and each can be parallelized if desired for additional computational gains. We provide a summary of the \texttt{fabl} method through psuedocode in Appendix \ref{app:fabl-psuedocode}. \textcolor{blue}{The computational complexity of \texttt{fabl} is given in Lemma \ref{lemma:fabl}.}
+We emphasize the computational gains of this split sampler: the first step is a sample from $P$ options, where $P$ does not scale with the size of the linkage task; and the second step is sampling uniformly at random, which is computationally simple even for large sets of candidate records. These changes drastically improve the speed of the sampler, and each can be parallelized if desired for additional computational gains. We provide a summary of the notation used for the hashing procedure in Table \ref{table_notation_2}. The computational complexity of \texttt{fabl} is given in Lemma \ref{lemma:fabl}.
+%, and a summary of the \texttt{fabl} method through psuedocode in Appendix \ref{app:fabl-psuedocode}
+	
+	\begin{table}[t!]
+		\centering
+		\begin{tabular}[t!]{ll}
+			Symbol & Description \\
+			\hline
+			$h_p$ & one hot encoding of agreement pattern $p$ \\
+			$(i,j) \in h_p$ & comparison vector between records $i \in \bm{X}_1$ and $i \in \bm{X}_2$ exhibits pattern $p$ \\
+			$r_{j_p}$ & list of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$ \\
+			$N_{j_p}$ & number of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$ \\
+			$H_p$ & number of total comparison vectors that exhibit pattern $p$ \\
+			$H_p^m$ & number of matching comparison vectors that exhibit pattern $p$ \\
+			$H_p^u$ & number of non-matching comparison vectors that exhibit pattern $p$ \\
+			\hline
+		\end{tabular}\caption{Summary of hashing notation.}\label{table_notation_2}
+	\end{table}
 	
 %	We close this section by proving the computational complexity of \texttt{fabl}.
 	
-	\begin{remark}
-	We note here that this split sampler can be adapted for use with \texttt{BRL} as well, but would require updating $\{H_j\}$ to account for the previously matched records that no are longer candidate matches for the current record. \texttt{BRL} would see considerable speed up through the procedure, but computation time would still scale with the size of the larger dataset.
-	\end{remark}
+%	\begin{remark}
+%	We note here that this split sampler can be adapted for use with \texttt{BRL} as well, but would require updating $\{H_j\}$ to account for the previously matched records that no are longer candidate matches for the current record. \texttt{BRL} would see considerable speed up through the procedure, but computation time would still scale with the size of the larger dataset.
+%	\end{remark}
 	
 %	\hypertarget{computational-complexity}{%
 %		\subsection{Computational Complexity}\label{computational-complexity}}
 	
 	
 	\begin{lemma}
-		Recall that $n_1$ and $n_2$ are the number of records in $\bm{X}_1$ and $\bm{X}_2$ respectively, $F$ is the number of fields used for comparisons across records, and $P$ is the number of patterns that comparison vectors can exhibit. We assume $B$ processors available for parallelization. Then, the overall computational complexity of \texttt{fabl} is $O(\frac{F}{B} n_1 n_2) + O(n_2 P)$.
+		Recall that $n_1$ and $n_2$ are the number of records in $\bm{X}_1$ and $\bm{X}_2$, respectively. Let $F$ be the number of fields used for comparisons across records, and $P$ be the number of patterns that comparison vectors can exhibit. We assume $B$ processors available for parallelization. Then, the overall computational complexity of \texttt{fabl} is $O(\frac{F}{B} n_1 n_2) + O(n_2 P)$.
 		\label{lemma:fabl}
 	\end{lemma}
 	
 	\begin{proof}
-		To prove the computational complexity, we consider two steps --- constructing the comparison vectors and the Gibbs sampler. 
-		The computational complexity of all pairwise comparisons across the two databases $\bm{X}_1$ and $\bm{X}_2$ is $O(F n_1 n_2)$. The hashing procedure for all pairwise comparisons is also of complexity $O(F n_1 n_2)$. With $B$ processors available, we can split these computations across $B$ equally sized partitions and compute these comparisons in parallel, so the complexity becomes $O(\frac{F}{B} n_1 n_2)$. There are then trivial computational costs associated with synthesizing summary statistics across these partitions. 
+		To prove the computational complexity, we consider two steps: constructing the comparison vectors and the Gibbs sampler. The computational complexity of all pairwise comparisons across the two datafiles $\bm{X}_1$ and $\bm{X}_2$ is $O(F n_1 n_2)$. The hashing procedure for all pairwise comparisons is also $O(F n_1 n_2)$. With $B$ processors available, we can split these computations across $B$ equally sized partitions and compute these comparisons in parallel, so the complexity becomes $O(\frac{F}{B} n_1 n_2)$. There are then trivial computational costs associated with synthesizing summary statistics across these partitions. 
 		
-		Without hashing, the computational complexity of updating the $\bm{m}$ and $\bm{u}$ parameters is $O(F n_1 n_2)$. However, by doing calculations over the agreement patterns rather than the individual records, hashing reduces the overall complexity to $O(P)$. The complexity of updating $Z$ sequentially at the record level is $O(n_1 n_2)$. With hashing, we split this sampling into two steps. First we sample the agreement pattern of the match with complexity $O(n_2 P)$, and then we sample the record exhibiting that pattern with complexity $O(n_2)$. Thus the complexity of sampling $\bm{Z}$ is $O(n_2 P)$. Since $P << n_1$ in all reasonable applications, we have reduced the complexity of the Gibbs sampler from $O(F n_1 n_2)$ under \texttt{BRL} to $O(n_2 P)$ under \texttt{fabl}.
+		Without hashing, the computational complexity of updating the $\bm{m}$ and $\bm{u}$ parameters is $O(F n_1 n_2)$. However, by doing calculations over the agreement patterns rather than the individual records, hashing reduces the overall complexity to $O(P)$. The complexity of updating $\bm{Z}$ sequentially at the record level is $O(n_1 n_2)$. With hashing, we split this sampling into two steps. First, we sample the agreement pattern of the match with complexity $O(n_2 P)$, and then we sample the record exhibiting that pattern with complexity $O(n_2)$. Thus, the complexity of sampling $\bm{Z}$ is $O(n_2 P)$. Since $P << n_1$ in most applications, we have reduced the complexity of the Gibbs sampler from $O(F n_1 n_2)$ under \texttt{BRL} to $O(n_2 P)$ under \texttt{fabl}.
 		In summary, the total computational complexity is $O(\frac{F}{B} n_1 n_2) + O(n_2 P).$
 	\end{proof} 
 	
@@ -419,7 +484,7 @@ Although sampling \(Z_j\) from the full conditional provided in Section \ref{gib
 	\hypertarget{speed}{%
 		\subsection{Speed}\label{speed}}
 	
-	In our first simulation, we generate comparison vectors from pre-specified distributions so that we can easily increase the size of the linkage problem. We use five binary comparisons with probabilities for matching and non-matching pairs shown in Table \ref{Tab:distributions}). $\bm{u}$ parameters are chosen to emulate what is seen in practice for first name, last name, day of birth, and month of birth. The parameters for year would vary largely by context, so we choose them here to adjust the desired difficulty of the linkage task. We simulate these data for different values of \(n_1\) and \(n_2\), always with $n_2/2$ records in common across datasets, and compare the run-time of \texttt{fabl} against \texttt{BRL}. Since we have 5 binary comparison fields, the number is unique patterns \(P\) is bounded above by \(2^5 = 32\), a bound which is consistently attained in simulations with more records. 
+	In our first simulation, we generate comparison vectors from pre-specified distributions so that we can easily increase the size of the linkage problem. We use five binary comparisons with probabilities for matching and non-matching pairs shown in Table \ref{Tab:distributions}. The $\bm{u}$ parameters are chosen to emulate what is seen in practice for first name, last name, day of birth, and month of birth. The parameters for year would vary largely by context, so we choose them here to adjust the desired difficulty of the linkage task. We simulate these data for different values of \(n_1\) and \(n_2\), always with $n_2/2$ records in common across datasets, and compare the run-time of \texttt{fabl} against \texttt{BRL}. Since we have 5 binary comparison fields, the number is unique patterns \(P\) is bounded above by \(2^5 = 32\), a bound which is consistently attained in simulations with more records. 
 	
 	\begin{table}[t]
 		\centering
@@ -438,21 +503,23 @@ Although sampling \(Z_j\) from the full conditional provided in Section \ref{gib
 		\caption{Probabilities used for $m$ and $u$ distributions in simulation studies}\label{Tab:distributions}
 	\end{table}
 	
-	We note here that the implementation of \texttt{BRL} that we use is coded in C \citep{sadinle_bayesian_2017}.  In contrast, we use non-optimized code written in R for \texttt{fabl}.  While this complicates comparisons, and indeed disfavors \texttt{fabl}, the computational speed gains for \texttt{fabl} are still evident, especially for larger sample sizes.  Additionally, although \texttt{fabl} is amenable to parallelization, this simulation was run on a single core. Implementing \texttt{fabl} in C++ with paralellization for the hashing step and sampling the matching status of the record pairs should lead to even more computational gains.
+	We note here that the implementation of \texttt{BRL} that we use is coded in C \citep{sadinle_bayesian_2017}.  In contrast, we use non-optimized code written in \texttt{R} for \texttt{fabl}.  While this complicates comparisons, and indeed disfavors \texttt{fabl}, the computational speed gains for \texttt{fabl} are still evident, especially for larger sample sizes.  Additionally, although \texttt{fabl} is amenable to parallelization, this simulation was run on a single core. Implementing \texttt{fabl} in C++ with paralellization for the hashing step and sampling the matching status of the record pairs should lead to even more computational gains.
 	
-	In Figure \ref{fig:speed1}, where we increase both $n_1$ and $n_2$, \texttt{BRL} is faster than \texttt{fabl} for low sample sizes, but that \texttt{fabl} is significantly faster at handling larger data. In particular, run-time for \texttt{BRL} seems to grow quadratically (or linearly with the size of both $\bm{X}_1$ and $\bm{X}_2$) while run-time for \texttt{fabl} seems to grow linearly (in the size of only $\bm{X}_2$).
+	In Figure \ref{fig:speed1}, where we increase both $n_1$ and $n_2$, \texttt{BRL} is faster than \texttt{fabl} for low sample sizes, but \texttt{fabl} is significantly faster at handling larger data. In particular, run-time for \texttt{BRL} grows quadratically (or linearly with the size of both $\bm{X}_1$ and $\bm{X}_2$) while run-time for \texttt{fabl} grows linearly (in the size of only $\bm{X}_2$).
 	
 	\begin{figure}[t]
 		\begin{center} \includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_speed_plot2} 
-			\caption{Run-time for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, for increasing values of both $n_1$ and $n_2$. We see near quadratic growth in run-time for BRL, and near linear growth for fabl.}\label{fig:speed1}
+			\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations, including the hashing step for \texttt{fabl}, for increasing values of both $n_1$ and $n_2$. We see near quadratic growth in run-time for \texttt{BRL}, and near linear growth for \texttt{fabl}.}\label{fig:speed1}
 		\end{center}
 	\end{figure}
 	
-	The above discussion suggests that for fixed \(n_2\), computation time for \texttt{fabl} should remain mostly constant with growing \(n_1\). In the simulation results displayed in Figure \ref{fig:speed2} fixing \(n_2 = 500\), we see linear growth for the run-time under \texttt{BRL} as \(n_1\) increases, with much more static run-time under \texttt{fabl}. The slight increases in run-time for \texttt{fabl} are due primarily to the hashing step, which again can be run in parallel for large data. \textcolor{red}{To illustrate that these trends are generalizeable to other specifications of the comparison vectors, we have included the run-time results for an additional simulation study, under different comparison vector settings, in Appendix \ref{app:appendix-speed}.}
+	%The above discussion suggests that for fixed \(n_2\), computation time for \texttt{fabl} should remain mostly constant with growing \(n_1\). 
+	
+	In Figure \ref{fig:speed2}, where we fix \(n_2 = 500\), we see linear growth for the run-time under \texttt{BRL} as \(n_1\) increases, and much more static run-time under \texttt{fabl}. The slight increases in run-time for \texttt{fabl} are due primarily to the hashing step, which again can be run in parallel for large data. To illustrate that these trends are generalizeable to other specifications of the comparison vectors, we have included the run-time results for an additional simulation study, under different comparison vector settings, in Appendix \ref{app:appendix-speed}.
 	
 	\begin{figure}[h!]
 		\begin{center} \includegraphics[width=0.6\textwidth]{../notes/figures/speed_plot_fixed_nB_slides} 
-			\caption{Run-time for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, with increasing $n_1$, and $n_2$ fixed at 500. We see linear growth in run-time for BRL, and near constant run-time for fabl.}\label{fig:speed2}
+			\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations, including hashing step for \texttt{fabl}, with increasing $n_1$ and $n_2$ fixed at 500. We see linear growth in run-time for \texttt{BRL}, and near constant run-time for \texttt{fabl}.}\label{fig:speed2}
 		\end{center}
 	\end{figure}
 	
@@ -480,15 +547,13 @@ Although sampling \(Z_j\) from the full conditional provided in Section \ref{gib
 		\label{Tab:sadinle_simulation_cutoffs}
 	\end{table}
 	
-	We compare \texttt{fabl} to \texttt{BRL} in terms of recall, precision and F-measure, as defined in \cite{christen_2012}. Recall is the proportion of true matches found by the model, that is, $\sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j, Z_j \leq n_1) / \sum_{j=1}^{n_2} I(Z_j \leq n_1)$. Precision is proportion the of links found by the model that are true matches, that is $\sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j, Z_j \leq n_1) / \sum_{j=1}^{n_2} I(\hat{Z}_j \leq n_1)$. The F-measure balances the two metrics to provide an overall measure of accuracy, and is defined as $2 \times (\text{Recall } + \text{ Precision}) / (\text{Recall } \times \text{ Precision})$. In Figure \ref{fig:sadinle_simulation}, we see that the two methods have comparable performance at all levels of error and overlap. In the specific case of high error and low overlap, widely regarded as the most difficult linkage scenario, we see that \texttt{fabl} performs slightly worse on average; however, the overall accuracy level remains high. 
+	We compare \texttt{fabl} to \texttt{BRL} in terms of recall, precision and F-measure, as defined in \cite{christen_2012}. Recall is the proportion of true matches found by the model, that is, $\sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j, Z_j \leq n_1) / \sum_{j=1}^{n_2} I(Z_j \leq n_1)$. Precision is the proportion of links found by the model that are true matches, that is $\sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j, Z_j \leq n_1) / \sum_{j=1}^{n_2} I(\hat{Z}_j \leq n_1)$. The F-measure balances the two metrics to provide an overall measure of accuracy, and is defined as $2 \times (\text{Recall } + \text{ Precision}) / (\text{Recall } \times \text{ Precision})$. In Figure \ref{fig:sadinle_simulation}, we see that the two methods have comparable performance at all levels of error and overlap. In the specific case of high error and low overlap, widely regarded as the most difficult linkage scenario, we see that \texttt{fabl} performs slightly worse on average; however, the overall accuracy level remains high. 
 	
 	
 	%Each metric is provided explicitly below:
 	%$$\text{Recall } = \frac{\sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j, Z_j \leq n_1)}{\sum_{j=1}^{n_2} I(Z_j \leq n_1)}$$
 	%$$\text{Precision } = \frac{\sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j, Z_j \leq n_1)}{ \sum_{j=1}^{n_2} I(\hat{Z}_j \leq n_1)}$$
 	%$$\text{F-measure } = 2 \frac{\text{Recall } + \text{Precision}}{\text{Recall } \times \text{Precision}}$$
-	
-	
 	
 	\begin{figure}[t]
 		\begin{center}
@@ -501,7 +566,7 @@ Although sampling \(Z_j\) from the full conditional provided in Section \ref{gib
 	\hypertarget{partial}{%
 		\subsection{Accuracy under Partial Estimates}\label{partial}}
 	
-	By leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the negative predictive value (NPV), defined as the proportion of non-links that are actual non-matches. Mathematically, $\text{NPV} = \sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j = n_1 + j)$/$\sum_{j=1}^{n_2} I(\hat{Z}_j = n_1 + j)$. We continue to use the precision, which is renamed the positive predictive value (PPV) in this context. Lastly, we also examine the rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_2} I(\hat{Z}_j = R)/n_2$. \textcolor{red}{To convey this information alongside NPV and PPV, for which values close to 1 indicate strong performance, we report the decision rate (DR), defined as DR = $1 - RR$.}
+	By leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the negative predictive value (NPV), defined as the proportion of non-links that are actual non-matches. Mathematically, $\text{NPV} = \sum_{j=1}^{n_2} I(\hat{Z}_j = Z_j = n_1 + j)$/$\sum_{j=1}^{n_2} I(\hat{Z}_j = n_1 + j)$. We continue to use the precision, which is renamed the positive predictive value (PPV) in this context. Lastly, we also examine the rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_2} I(\hat{Z}_j = R)/n_2$. To convey this information alongside NPV and PPV, for which values close to 1 indicate strong performance, we report the decision rate (DR), defined as DR = $1 - RR$.
 	
 	In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} maintains equivalently strong PPV as \texttt{BRL} across all linkage settings. However, with high amounts of error, and thus fewer accurate and discerning fields of information, the rejection rate under \texttt{fabl} rises, leading to a decrease in NPV. Since \texttt{fabl} does not remove previously matched records from consideration for a new record, posterior probabilities of matches at times can be split across more records; in contrast, \texttt{BRL} is able to maintain higher confidence in matches in this setting. If one wishes to use partial estimates, \texttt{fabl} will possibly leave more linkages for the modeller to match by hand than would be left under \texttt{BRL}, but the decisions made by each method will have nearly equal accuracy. 
 	
@@ -540,9 +605,9 @@ Although sampling \(Z_j\) from the full conditional provided in Section \ref{gib
 	
 	%This last point nearly breaks the earlier mentioned assumption that there are no duplicates within files, and reveals a key difference between \texttt{BRL} and \texttt{fabl}.
 	
-	Following \cite{sadinle_bayesian_2017}, we utilize records that have non-missing entries for given and last name, which results in \(n_1 = 4420\) records in CHDES and \(n_2 = 1323\) records in ERTL. We standardize names to account for common misspellings and use a modified Levenstein distance when comparing names to account for the fact that second names are often omitted in Spanish. Place of death is recorded by municipality and department within that municipality; however, since department is missing in 95\% of records in CHDES and 80\% of records in ERTL, we exclude department from our analysis. Thus, we conduct record linkage using given name, last name, municipality, and day, month, and year of death. We again use flat priors for the \(\bm{m}\) and \(\bm{u}\) parameters.
+	Following \cite{sadinle_bayesian_2017}, we utilize records that have non-missing entries for given and last name, which results in \(n_1 = 4420\) records in CHDES and \(n_2 = 1323\) records in ERTL. We standardize names to account for common misspellings and use a modified Levenstein distance when comparing names to account for the fact that second names are often omitted in Spanish. Place of death is recorded by municipality and department within that municipality; however, since department is missing in 95\% of records in CHDES and 80\% of records in ERTL, we exclude department from our analysis. Thus, we conduct record linkage using given name, last name, municipality, and day, month, and year of death. We again flat priors for the \(\bm{m}\) and \(\bm{u}\) parameters.
 	
-	We initially followed the comparison vector constructions set by \cite{sadinle_bayesian_2017}, using using four levels of agreement for each field, according to the thresholds provided in Table \ref{Tab:el_salvador_cutoffs_1}. This results in \(4^5 \times 2 = 2048\) possible agreement patterns, with 1173 patterns realized in the data. However, after investigating the posterior distributions of the $\bm{m}$ and $\bm{u}$ parameters, we noticed that posterior distributions of several levels of the m and u parameters are nearly identical, suggesting that these levels are unnecessary.
+	We initially followed the comparison vector constructions set by \cite{sadinle_bayesian_2017}, using using four levels of agreement for each field, according to the thresholds provided in Table \ref{Tab:el_salvador_cutoffs_1}. This results in \(4^5 \times 2 = 2048\) possible agreement patterns, with 1173 patterns realized in the data. However, conducting record linkage, we noticed that the posterior distributions of several levels of the $\bm{m}$ and $\bm{u}$ parameters were nearly identical, suggesting that these levels were unnecessary.
 	
 %	\cite{sadinle_bayesian_2017} constructs the comparison vectors using four levels of agreement for each field, according to the thresholds provided in Table \ref{Tab:el_salvador_cutoffs_1}. This results in \(4^5 \times 2 = 2048\) possible agreement patterns, with 1173 patterns realized in the data. We initially used these comparisons to estimate fabl and BRL.  However, after investigating the posterior distributions of the $\bm{m}$ and $\bm{u}$ parameters, we noticed that posterior distributions of several levels of the m and u parameters are nearly identical, suggesting that these levels are unnecessary for meaningfully modeling the distribution of the comparison vectors. 
 	
@@ -566,9 +631,9 @@ Although sampling \(Z_j\) from the full conditional provided in Section \ref{gib
 		\caption{Construction of comparison vectors for El Salvador data resembling original implementation from \citep{sadinle2018bayesian}. This set up leads to 2048 possible agreement patterns in total.}\label{Tab:el_salvador_cutoffs_1}
 	\end{table}
 	
-	Therefore we re-ran our analysis with fewer agreement levels for each field according to Table \ref{Tab:el_salvador_cutoffs_2}. Among the 216 possible agreement patterns, 159 are realized in the data. With this revised comparison specification, fabl ran in 61 seconds, approximately 4 times faster than the \texttt{BRL} run time of 239 seconds.  The estimates of the $\bm{m}$ parameters under each method are very similar, as shown in Figure \ref{fig:m-and-u}. Traceplots for parameters of interest are provided in Appendix \ref{app:appendix-es}.
+	Therefore, we re-ran our analysis with fewer agreement levels for each field according to Table \ref{Tab:el_salvador_cutoffs_2}. Among the 216 possible agreement patterns, 159 are realized in the data. With this revised comparison specification, \texttt{fabl} ran in 61 seconds, approximately 4 times faster than the \texttt{BRL} run time of 239 seconds.  The estimates of the $\bm{m}$ parameters under each method are very similar, as shown in Figure \ref{fig:m-and-u}. \textcolor{red}{Estimates of $\bm{u}$ are indistinguishable, and thus omitted.} Traceplots for parameters of interest are provided in Appendix \ref{app:appendix-es}.
 	
-	For completeness, we note that the more detailed comparison vector produced a run time of 240 seconds for BRL, and 261 seconds for fabl.  Apparently, the number of patterns was sufficiently many that the computational savings from fabl does not overcome the inherent speed differences of C as opposed to R.
+	For completeness, we note that linkage with the more detailed comparison vectors required240 seconds for \texttt{BRL}, and 261 seconds for \texttt{fabl}.  Apparently, the number of patterns was sufficiently many that the computational savings from \texttt{fabl} does not overcome the inherent speed differences of C as opposed to \texttt{R}.
 	
 	\begin{table}
 		\centering
@@ -611,16 +676,15 @@ Although sampling \(Z_j\) from the full conditional provided in Section \ref{gib
 	\subsection{National Long Term Care Study}
 	\label{nltcs}
 	
-	The National Long Term Care Study (NLTCS) is a longitudinal study tracking the health outcomes of Medicare recipients. The initial survey began in 1982, with follow-up surveys taken approximately every five years. For this study, we seek to link records over the $n_1 = 20485$ records from 1982 to the $n_2 = 17466$ records from 1989. \textcolor{red}{In each iteration of the study, some participants are added to the lists, and others are lost due to loss of contact or death.} The NLTCS data have longitudinal links, so that in reality one does not need to conduct record linkage.  However, following the strategy in \cite{guha:reiter:BA} we break the longitudinal links and treat the data from 1982 and 1989 as stand-alone files.
+	The National Long Term Care Study (NLTCS) is a longitudinal study tracking the health outcomes of Medicare recipients. The initial survey began in 1982, with follow-up surveys taken approximately every five years. As such, patients are surveyed at most once in a given year, and many patients are surveyed across multiple years. In addition, patients can either drop out of the study, pass away, or enter as new patients. Hence, the assumptions of our model hold for this study. We seek to link records over the $n_1 = 20485$ records from 1982 to the $n_2 = 17466$ records from 1989. The NLTCS data have longitudinal links, so that in reality one does not need to conduct record linkage. However, following the strategy in \cite{guha:reiter:BA}, we break the longitudinal links and treat the data from 1982 and 1989 as stand-alone datafiles.
 	
-	We link records using sex, date of birth, and location using the thresholds shown in Table \ref{Tab:nltcs-comparisons}. Storing three comparison scores for each of $20485 \times 17466 \approx 400,000,000$ record pairs would require approximately 8GB of memory. Standard settings on a 16GB personal computer do not allow storage of an object of this size, and thus \texttt{BRL} is unable to perform this linkage task on such a machine. However, through the \texttt{fabl} framework, we compute comparisons over 30 smaller comparison tasks, hash results, and compress information through storage efficient indexing; the resulting data object is just 10 MB, approximately 0.1\% of what is required for the raw comparisons. Constructing the comparisons sequentially took approximately 40 minutes, which could be reduced considerably through parallel computing. 
+	We link records using sex, date of birth, and location using the thresholds shown in Table \ref{Tab:nltcs-comparisons}. Storing three comparison scores for each of $20485 \times 17466 \approx 400,000,000$ record pairs would require approximately 8GB of memory. Standard settings on a 16GB personal computer do not allow storage of an object of this size, and thus \texttt{BRL} is unable to perform this linkage task on such a machine. However, through the \texttt{fabl} framework, we compute comparisons over 30 smaller comparison tasks, hash results, and compress information through storage efficient indexing. The resulting data object is just 10 MB, approximately 0.1\% of what is required for the raw comparisons. Constructing the comparisons sequentially took approximately 40 minutes, which could be reduced considerably through parallel computing. 
 	
-	We run a Gibbs sampler for 1000 iterations, taking about 235 seconds. As shown in  \ref{fig:nltcs-overlap-plot}, the Bayes estimate of the linkage structure consists of 9634 matches, with a 95\% credible interval of (9581, 9740). Since we have access to the true linkage structure, we can calculate recall to be 0.89 and precision to be 0.98, resulting in an F-measure of 0.94. Traceplots indicate quick convergence, and are similar to those seen in Appendix \ref{app:appendix-sim} and \ref{app:appendix-es}
+	We run a Gibbs sampler for 1000 iterations, taking about 235 seconds. As shown in Figure \ref{fig:nltcs-overlap-plot}, the Bayes estimate of the linkage structure consists of 9634 matches, with a 95\% credible interval of (9581, 9740). Since we have access to the true linkage structure, we can calculate recall to be 0.89 and precision to be 0.98, resulting in an F-measure of 0.94. Traceplots do not suggest convergence issues, and are similar to those seen in Appendix \ref{app:appendix-sim} and \ref{app:appendix-es}
 	
 	\begin{table}
 		\centering
 		\begin{tabular}[t]{lllll}
-			\hline
 			\multicolumn{2}{c}{ } & \multicolumn{3}{c}{Level of Disagreement} \\
 			\cline{3-5}
 			Fields & Similarity & 1 & 2 & 3\\
@@ -679,8 +743,13 @@ Although sampling \(Z_j\) from the full conditional provided in Section \ref{gib
 	\section{Conclusion}
 	\label{discussion}
 	
-	In this paper, we have proposed \texttt{fabl}, a Bayesian record linkage method that scales to large data sets. We have proven that the proposed hashing method
-	and model assumptions allow for a linkage procedure whose computational complexity does not scale with the size of the larger dataset. This makes \texttt{fabl} computationally advantageous in many linkage scenarios, particularly when one datafile is substantially smaller than the other. We have demonstrated the speed and accuracy of \texttt{fabl} by replicating a simulation study and a case study in \cite{sadinle_bayesian_2017}, and through an additional case study that is computationally infeasible under \texttt{BRL}. Open source software to use \texttt{fabl} in \texttt{R} is available through \href{https://github.com/briankundinger/parlrdev}{Github}.
+	In this paper, we have proposed \texttt{fabl}, a Bayesian record linkage method that extends the work of \cite{sadinle_bayesian_2017} to scale to large data sets. We have proven that the proposed hashing method and model assumptions allow for a linkage procedure whose computational complexity does not scale with the size of the larger dataset. This makes \texttt{fabl} computationally advantageous in many linkage scenarios, particularly when one datafile is substantially smaller than the other. We have also shown that storage efficient indexing, in tandem with hashing, greatly reduces the memory costs required for all-to-all comparisons, giving practictioners an option for larger record linkage tasks without the use of blocking or indexing. We have demonstrated the speed and accuracy of \texttt{fabl} by replicating a simulation study and a case study in \cite{sadinle_bayesian_2017}, and through an additional case study that is computationally infeasible under \texttt{BRL}. 
+	
+	\textcolor{red}{Although the \texttt{fabl} method greatly reduces the memory costs for all-to-all comparisons, the computing all $n_1 \times n_2$ record pairs can still be infeasible for larger linkage tasks. Indeed, constructing the comparison vectors for the NLTCS linkage task involving around 40,000 records in Section \ref{nltcs} took around 40 minutes. Due to the quadratic nature of the comparison space, this computation time would grow quickly with the size of the linkage task, and would be infeasibly slow when dealing with millions of records. Although it is common to use deterministic blocking to reduce the comparison space and then apply probabilistic record linkage within each block, issues arise when sizes of blocks vary across the linkage task. Thus in future work, we seek to extend \texttt{fabl} to account for such deterministic blocking, making the framework amenable to arbitrarily large linkage tasks.}
+	
+	%Open source software to use \texttt{fabl} in \texttt{R} is available through \href{https://github.com/briankundinger/parlrdev}{Github}.
+
+\textcolor{blue}{This needs to address the concern of R3, where we didn't cite Sadinle/FS. I would also suggest that we take the time to elaborate on some future work.}	
 	
 	%Throughout our paper, we have discussed independent pairwise matching assumptions, one-to-one matching assumptions, and when such assumptions are not met in practice. We explored ``one-to-many'' scenarios in which one record in $\bm{X}_2$ has multiple plausible matches in $\bm{X}_1$, and showed how both \texttt{fabl} and \texttt{BRL} demonstrated undesirable qualities. Other issues arise under ``many-to-one'' scenarios, where one record in $\bm{X}_2$ has multiple plausible matches in $\bm{X}_1$, and ``many-to-many'' scenarios in which there is duplication both across and within datasets. Extending \texttt{fabl} in such scenarios with a more robust linkage structure parameter $\bm{Z}$ is a topic for future work. 
 	%
@@ -721,49 +790,51 @@ Although sampling \(Z_j\) from the full conditional provided in Section \ref{gib
 	\section*{Appendix}
 	\label{sec:appendix}
 	
-	\hypertarget{app:glossary}{%
-	\subsection{Summary of Notation}\label{app:glossary}}
-	
-		\begin{table}[h!]
-		\centering
-		\begin{tabular}[h!]{ll}
-			\hline
-			Symbol & Description \\
-			\hline
-			$\bm{X}_1, \bm{X}_2$ & datasets\\
-			$i \in 1, \ldots, n_1 $ & index over records in $\bm{X}_1$\\
-			$j \in 1, \ldots, n_2 $ & index over records in $\bm{X}_2$\\
-			$f \in 1, \ldots F$ & index over fields used for comparisons \\
-			$l \in 1, \ldots L_f$ & index over agreement levels for field $f$ \\
-			$n_{12}$ & number of entities in common between $\bm{X}_1$ and $\bm{X}_2$\\
-			$\bm{\gamma}_{ij}$ & comparison vector for records $i \in \bm{X}_1$ and $j \in \bm{X}_2$ \\
-			$Z_j = i$ & records $i \in \bm{X}_1$ and $j \in \bm{X}_2$ match \\
-			$Z_j = n_1 + j$ & record $j \in \bm{X}_2$ has no match in $\bm{X}_1$ \\
-			$m_{fl}$ & $P(\gamma_{ij}^f = l | Z_j = i)$ \\
-			$u_{fl}$ & $P(\gamma_{ij}^f = l | Z_j \neq i)$ \\
-			$\pi$ & probability that a record in $\bm{X}_2$ has a match in $\bm{X}_1$ \\
-			$r_{j_p}$ & list of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$ \\
-			$h_p$ & one hot encoding of agreement pattern $p$ \\
-			$H_{j_p}$ & number of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$ \\
-			$H_p$ & number of comparison vectors that exhibit pattern $p$ \\
-			\hline
-		\end{tabular}
-	\end{table}
+%	\hypertarget{app:glossary}{%
+%	\subsection{Summary of Notation}\label{app:glossary}}
+%	
+%		\begin{table}[h!]
+%		\centering
+%		\begin{tabular}[h!]{ll}
+%			\hline
+%			Symbol & Description \\
+%			\hline
+%			$\bm{X}_1, \bm{X}_2$ & datasets\\
+%			$i \in 1, \ldots, n_1 $ & index over records in $\bm{X}_1$\\
+%			$j \in 1, \ldots, n_2 $ & index over records in $\bm{X}_2$\\
+%			$f \in 1, \ldots F$ & index over fields used for comparisons \\
+%			$l \in 1, \ldots L_f$ & index over agreement levels for field $f$ \\
+%			$n_{12}$ & number of entities in common between $\bm{X}_1$ and $\bm{X}_2$\\
+%			$\bm{\gamma}_{ij}$ & comparison vector for records $i \in \bm{X}_1$ and $j \in \bm{X}_2$ \\
+%			$Z_j = i$ & records $i \in \bm{X}_1$ and $j \in \bm{X}_2$ match \\
+%			$Z_j = n_1 + j$ & record $j \in \bm{X}_2$ has no match in $\bm{X}_1$ \\
+%			$m_{fl}$ & $P(\gamma_{ij}^f = l | Z_j = i)$ \\
+%			$u_{fl}$ & $P(\gamma_{ij}^f = l | Z_j \neq i)$ \\
+%			$\pi$ & probability that a record in $\bm{X}_2$ has a match in $\bm{X}_1$ \\
+%			$r_{j_p}$ & list of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$ \\
+%			$h_p$ & one hot encoding of agreement pattern $p$ \\
+%			$H_{j_p}$ & number of records in $\bm{X}_1$ that share agreement pattern $p$ with record $j \in \bm{X}_2$ \\
+%			$H_p$ & number of total comparison vectors that exhibit pattern $p$ \\
+%			$H_p^m$ & number of matching comparison vectors that exhibit pattern $p$ \\
+%			$H_p^u$ & number of non-matching comparison vectors that exhibit pattern $p$ \\
+%			\hline
+%		\end{tabular}
+%	\end{table}
 	
 	\hypertarget{app:derivations}{%
 	\subsection{Derivations of Full Conditionals}\label{app:derivations}}
 
-The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{f\ell}$, we have
+We provide detailed derivations of the full-conditionals provided in Section \ref{gibbs_sampling}. The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
 \begin{align*}
 	p(m_{fl}| \Gamma, \bf{Z}) &\propto \prod_{i=1}^{n_1} \prod_{j=1}^{n_2} m_{fl}^{I(Z_j = i) I(\gamma_{ij}^f = l) I_{obs}(\gamma_{ij}^f)} \times  m_{fl}^{\alpha_{fl} - 1} \\
-	&= m_{fl}^{\alpha_{fl}(\bm{Z}) - 1}
+	&= m_{fl}^{\alpha_{fl}(\bm{Z}) - 1},
 \end{align*}
-where $\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j = i)$. Analogous procedures lead to the posterior distribution $p(u_{fl}| \Gamma, \bf{Z})$  $\propto u_{fl}^{\beta_{fl}(\bm{Z}) - 1}$, where $\beta_{fl}(\bm{Z})= \beta_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j \neq i)$. Thus for the vectors of parameters $\bf{m}_f$ and $\bf{u}_f$, we have
+where $\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j = i)$. Analogous procedures lead to the posterior distribution $p(u_{fl}| \Gamma, \bf{Z})$  $\propto u_{fl}^{\beta_{fl}(\bm{Z}) - 1}$, where $\beta_{fl}(\bm{Z})= \beta_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(z_j \neq i)$. Thus for the vectors of parameters $\bm{m}_f$ and $\bm{u}_f$, we have
 
-$$\bm{m}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}), \ldots, \alpha_{fL_f}(\bm{Z}))$$
+$$\bm{m}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}), \ldots, \alpha_{fL_f}(\bm{Z})),$$
 $$\bm{u}_f|\bm{Z}, \Gamma \sim \text{Dirichlet}(\beta_{f1}(\bm{Z}), \ldots, \beta_{fL_f}(\bm{Z})).$$
 
-In order to define the full conditional for $\bm{Z}$, we must provide the posterior distribution for $\pi$, and provide a more tractable expression for the portion of the likelihooh relevant to a particular record $j \in \bm{X}_2$. Since $\pi$ encodes the rate of matching across the two datasets, the posterior distribution $p(\pi|\Gamma, \bm{Z}, \Phi, \alpha_{\pi}, \beta_{\pi})$ depends only on the number of links $n_{12}(\bm{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + j)$ encoded by $\bm{Z}$ (and hyperparameters). Thus we use $p(\pi | \bf{Z}, \alpha_{\pi}, \beta_{\pi})$, and have 
+In order to define the full conditional for $\bm{Z}$, we must provide the posterior distribution for $\pi$, and provide a more tractable expression for the portion of the likelihood relevant to a particular record $j \in \bm{X}_2$. Since $\pi$ encodes the rate of matching across the two datasets, the posterior distribution $p(\pi|\Gamma, \bm{Z}, \bm{m}, \bm{u}, \alpha_{\pi}, \beta_{\pi})$ depends only on the number of links $n_{12}(\bm{Z}) = \sum_{i=1}^{n_2}I(z_j < n_1 + j)$ encoded by $\bm{Z}$ (and hyperparameters). Thus, we use $p(\pi | \bf{Z}, \alpha_{\pi}, \beta_{\pi})$ and have 
 \begin{align*}
 	p(\pi | \bm{Z}, \alpha_{\pi}, \beta_{\pi}) &\propto p(\bm{Z}|\pi)p(\pi) \\
 	&\propto \pi^{n_{12}(\bm{Z})} (1-\pi)^{n_2 - n_{12}(\bm{Z})} \pi^{\alpha_{\pi} -1} (1-\pi)^{\beta_{\pi} -1} \\
@@ -772,23 +843,23 @@ In order to define the full conditional for $\bm{Z}$, we must provide the poster
 Thus $\pi^{(s+1)}|\bm{Z}^{(s+1),  \alpha_{\pi}, \beta_{\pi}}$ has a $\text{Beta}(n_{12}(\bm{Z}) + \alpha_{\pi}, n_2 - n_{12}(\bm{Z}) + \beta_{\pi})$ distribution.
 
 Let \(\Gamma_{.j}\) denote the set of \(n_1\) comparison vectors with \(j \in \bm{X_2}\). We have
-%As a function of \(Z_j\), \(p(\Gamma_{.j}|Z_j, \Phi) = \mathcal{L}(Z_j|\Gamma_{.j}, \Phi)\) is a discrete distribution with
 \begin{align*}
-	p(\Gamma_{.j}|Z_j = z_j, \Phi) &\propto \prod_{i=1}^{n_1}\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\\
+	p(\Gamma_{.j}|Z_j = z_j, \bm{m}, \bm{u}) &\propto \prod_{i=1}^{n_1}\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\\
 	&\propto \prod_{i=1}^{n_1}\frac{\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}}{\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}}\\
 	&\propto \prod_{i=1}^{n_1}\left(\prod_{f=1}^{F}\prod_{l=1}^{L_f} \frac{m_{fl}}{u_{fl}}\right)^{I(z_j = i) I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
 	&=
 	\begin{cases} 
 		w_{z_j, j}  & z_j \leq n_1; \\
-		1 &  z_j  = n_1 + j \\
-	\end{cases},\\
+		1 &  z_j  = n_1 + j, \\
+	\end{cases}\\
 \end{align*}
 where
 $$w_{ij} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.$$
 
 With the likelihood in this form, we derive an expression for the posterior distribution of $\bm{Z}$. Because we sample each \(Z_j\) independently of all other \(Z_{j'}\), we use only the full conditional for an individual \(Z_j\):
 \begin{align*}
-	p\left(Z_j^{(s+1)}|\Gamma_{.j}, \Phi, \bm{Z^{(s)}}, \pi\right) &\propto p(\Gamma_{.j}| Z_j^{(s+1)}, \Phi) P(Z_j^{(s+1)}|\pi) \\
+	p&\left(Z_j^{(s+1)}|\Gamma_{.j}, \bm{m}, \bm{u}, \bm{Z^{(s)}}, \pi\right) \\
+	&\propto p(\Gamma_{.j}| Z_j^{(s+1)}, \bm{m}, \bm{u}) P(Z_j^{(s+1)}|\pi) \\
 	&\propto \left(\sum_{i=1}^{n_1}w_{z_j, j}I(z_j = i) + I(z_j = n_1 + j) \right) \left (\pi\sum_{i=1}^{n_1}\frac{1}{n_1}I(z_j = i) + (1-\pi)I(z_j = n_1 + j) \right) \\	
 	&= \frac{\pi}{n_1}\sum_{i=1}^{n_1}w_{z_j, j}I(z_j = i) + (1-\pi)I(z_j = n_1 + j). \\
 	&= \begin{cases} 
@@ -800,12 +871,13 @@ With the likelihood in this form, we derive an expression for the posterior dist
 For more direct comparability with the method from \cite{sadinle_bayesian_2017}, we avoid sampling $\pi$ directly, and instead integrate over it in the final full conditional for $Z_j$.
 
 \begin{align*}
-	p\left(Z_j^{(s+1)}  = i| \Gamma, \Phi, \bm{Z^{(s)}}\right) &= \int_{\pi}p\left(Z_j^{(s+1)} | \Gamma, \Phi, \bm{Z^{(s)}}, \pi\right) p\left(\pi| \bm{Z^{(s)}}\right) d\pi \\
+	p&\left(Z_j^{(s+1)}  = i| \Gamma, \bm{m}, \bm{u}, \bm{Z^{(s)}}\right)\\
+	&= \int_{\pi}p\left(Z_j^{(s+1)} | \Gamma, \bm{m}, \bm{u}, \bm{Z^{(s)}}, \pi\right) p\left(\pi| \bm{Z^{(s)}}\right) d\pi \\
 	&= \int_{\pi}\left[\frac{\pi}{n_1}w_{z_{j}, j} I(z_j\leq n_1) + (1-\pi)I(z_j = n_1 + j)\right] p\left(\pi| \bm{Z^{(s)}}\right) d\pi \\
 	&= \frac{\int_{\pi} \pi p\left(\pi| \bm{Z^{(s)}}\right) d\pi}{n_1}w_{z_{j}, j} I(z_j\leq n_1) + \left(1-\int_{\pi} \pi p\left(\pi| \bm{Z^{(s)}}\right) d\pi \right) I(z_j = n_1 + j) \\
 	&= \frac{n_{12}(\bm{Z}) + \alpha_{\pi}}{n_1 (n_2 + \alpha_{\pi} + \beta_{\pi})}w_{z_{j}, j} I(z_j\leq n_1) + \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_2 + \alpha_{\pi} + \beta_{\pi}}I(z_j = n_1 + j) \\
 	&\propto w_{z_j, j}I(z_j\leq n_1) + n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}}I(z_j = n_1 + j) \\
-	&\propto 
+	&=
 	\begin{cases} 
 		w_{z_j, j}  & z_j \leq n_1; \\
 		n_1 \frac{n_2 - n_{12}(\bm{Z}) + \beta_{\pi}}{n_{12}(\bm{Z}) + \alpha_{\pi}} & z_j   = n_1 + j. \\
@@ -814,48 +886,49 @@ For more direct comparability with the method from \cite{sadinle_bayesian_2017},
 
 	\clearpage
 	
-	\hypertarget{app:fabl-psuedocode}{%
-		\subsection{Summary of Fast Beta Linkage Method}\label{app:fabl-psuedocode}}
-	
-	\begin{algorithm}[h!]
-		\begin{algorithmic}[1]
-			
-			\Procedure{Hashing and Preprocessing}{}
-			\State Construct and enumerate set of unique patterns $\mathcal{P}$ from $F$ and $\{L_f\}$.
-			\State Partition files $\bm{X_1}$ and $\bm{X_1}$ into chunks $\{\bm{X_{1n}}\}$, $\{\bm{X_{2m}}\}$.
-			\For{each $n$, $m$}
-			\State Create comparison vectors between $\bm{X_{1n}}$ and $\bm{X_{2m}}$.
-			\State Hash records to $\mathcal{R}_{nm}$ and calculate summary statistics $\mathcal{H}_{nm}$.
-			\State Use SEI to reduce memory usage; $\mathcal{R}_{nm} \to \mathcal{R}_{nm}^{\text{SEI}}$.
-			\EndFor
-			\State Synthesize results across pairings to get $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{H} \}$.
-			\EndProcedure
-			
-			\Procedure{Gibbs Sampling}{}
-			\State Initialize $\Phi$, and $Z$ parameters.
-			
-			\For{$t \in \{1, \ldots, T\}$} 
-			\State Sample $\Phi^{t+1}|Z^{t}, \tilde{\Gamma}$.
-			\State Sample $h\left(Z^{t+1}\right)|\Phi^{t+1}, \tilde{\Gamma}$.  \Comment{Sample agreement pattern, not record}
-			\EndFor
-			\State Sample $Z | h(Z), \tilde{\Gamma}$. \Comment{Fills in record label based on agreement pattern}
-			
-			\EndProcedure
-			
-		\end{algorithmic}
-	\end{algorithm}
-	\clearpage
+%	\hypertarget{app:fabl-psuedocode}{%
+%		\subsection{Summary of Fast Beta Linkage Method}\label{app:fabl-psuedocode}}
+%	
+%	\textcolor{red}{I am getting rid of the notation $h(Z_j)$ for the agreement pattern between $j$ and its potential match. Instead, I am keeping notation that already exists, saying $(Z_j, j) \in h_p$. With this change, I don't see a good way to write lines 15 and 17. For that reason, I think I should remove this pseudo-code; it doesn't seem necessary, and invites criticism.}
+%	
+%	\begin{algorithm}[h!]
+%		\begin{algorithmic}[1]
+%			
+%			\Procedure{Hashing and Preprocessing}{}
+%			\State Construct and enumerate set of unique patterns $\mathcal{P}$ from $F$ and $\{L_f\}$.
+%			\State Partition files $\bm{X_1}$ and $\bm{X_2}$ into chunks $\{\bm{X_{1n}}\}$, $\{\bm{X_{2m}}\}$.
+%			\For{each $n$, $m$}
+%			\State Create comparison vectors between $\bm{X_{1n}}$ and $\bm{X_{2m}}$.
+%			\State Hash records to $\mathcal{R}_{nm}$ and calculate summary statistics $\mathcal{H}_{nm}$.
+%			\State Use SEI to reduce memory usage; $\mathcal{R}_{nm} \to \mathcal{R}_{nm}^{\text{SEI}}$.
+%			\EndFor
+%			\State Synthesize results across pairings to get $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{H} \}$.
+%			\EndProcedure
+%			
+%			\Procedure{Gibbs Sampling}{}
+%			\State Initialize $\bm{m}$, $\bm{u}$, and $Z$ parameters.
+%			
+%			\For{$t \in \{1, \ldots, T\}$} 
+%			\State Sample $\bm{m}^{t+1}|Z^{t}, \tilde{\Gamma}$ and  $\bm{u}^{t+1}|\bm{Z}^{t}, \tilde{\Gamma}$
+%			\State Sample $h\left(\bm{Z}^{t+1}\right)|\bm{m}^{t+1}, \bm{u}^{t+1}, \tilde{\Gamma}$.  \Comment{Sample agreement pattern, not record}
+%			\EndFor
+%			\State Sample $\bm{Z} | h(\bm{Z}), \tilde{\Gamma}$. \Comment{Fills in record label based on agreement pattern}
+%			
+%			\EndProcedure
+%			
+%		\end{algorithmic}
+%	\end{algorithm}
+%	\clearpage
 	
 	\hypertarget{app:ohe}{%
 		\subsection{One Hot Encoding Transformation}\label{app:ohe}}
 	
-	\texttt{fabl} makes use of one-hot encodings to aid in vectorized computations. For $\gamma_{ij}^f$ with $L_f$ levels, define $e_{ij}^f$ to be an $L_f \times 1$ vector.  When $\gamma_{ij}^f = \ell$, we set the $\ell^{th}$ element of $e_{ij}^f$ to be 1, and set the other $L_f - 1$ elements of $e_{ij}^f$ to be 0. We then concatenate the $e_{ij}^f$ for all $f \in \{1, \ldots, F\}$, resulting in the one-hot encoded comparison vector $e_{ij}$ of length $\sum_{f=1}^F L_f$.
+	As described in Section \ref{sec:efficiency}, \texttt{fabl} makes use of one-hot encodings to aid in vectorized computations. For $\gamma_{ij}^f$ with $L_f$ levels, define $e_{ij}^f$ to be an $L_f \times 1$ vector.  When $\gamma_{ij}^f = l$, we set the $l^{th}$ element of $e_{ij}^f$ to be 1, and set the other $L_f - 1$ elements of $e_{ij}^f$ to be 0. We then concatenate the $e_{ij}^f$ for all $f \in \{1, \ldots, F\}$, resulting in the one-hot encoded comparison vector $e_{ij}$ of length $\sum_{f=1}^F L_f$.
 	
 	For example, consider comparing the toy records shown in Table \ref{tab:ohe} with $L = (3, 3, 2, 2)$ levels of agreement for last name, first name, DOB, and city respectively. Since the first name differs by only one letter, a reasonable comparison vector for this pair would be $\gamma_{ij} = (1, 2, 1, 2)$. The one hot encoding representation of this vector is $e_{ij} = (1, 0, 0, 0, 1, 0, 1, 0, 0, 1)$. 
 	\begin{table}[h!]
 		\centering
 		\begin{tabular}[h!]{llll}
-			\hline
 			Last Name & First Name & DOB & City \\
 			\hline
 			Smith & Taylor & 01/01/2000 & Durham\\
@@ -900,13 +973,13 @@ For more direct comparability with the method from \cite{sadinle_bayesian_2017},
 	
 	\begin{figure}[h!]
 		\begin{center} \includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_speed_plot_slides2} 
-			\caption{Run-time for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, for increasing values of both $n_1$ and $n_2$. We see near quadratic growth in run-time for BRL, and near linear growth for fabl.}\label{fig:app-speed1}
+			\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations, including hashing step for \texttt{fabl}, for increasing values of both $n_1$ and $n_2$. We see near quadratic growth in run-time for \texttt{BRL}, and near linear growth for \texttt{fabl}.}\label{fig:app-speed1}
 		\end{center}
 	\end{figure}
 	
 	\begin{figure}[h!]
 		\begin{center} \includegraphics[width=0.6\textwidth]{../notes/figures/speed_plot_fixed_nB_slides2} 
-			\caption{Run-time for BRL and fabl to run 1000 Gibbs iterations, including hashing step for fabl, with increasing $n_1$, and $n_2$ fixed at 500. We see linear growth in run-time for BRL, and near constant run-time for fabl.}\label{fig:app-speed2}
+			\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations, including hashing step for \texttt{fabl}, with increasing $n_1$ and $n_2$ fixed at 500. We see linear growth in run-time for \texttt{BRL}, and near constant run-time for \texttt{fabl}.}\label{fig:app-speed2}
 		\end{center}
 	\end{figure}
 
@@ -918,21 +991,21 @@ For more direct comparability with the method from \cite{sadinle_bayesian_2017},
 	\begin{figure}[!h]
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_trace} 
-			\caption{Traceplot for number of matches found across datasets in El Salvador case study}\label{fig:overlap_trace}
+			\caption{Traceplot for number of matches found across datasets in El Salvador case study.} \label{fig:overlap_trace}
 		\end{center}
 	\end{figure}
 	
 	\begin{figure}[!h]
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_trace} 
-			\caption{Traceplot for m parameter in El Salvador case study}\label{fig:m_trace}
+			\caption{Traceplot for m parameter in El Salvador case study.} \label{fig:m_trace}
 		\end{center}
 	\end{figure}
 	
 	\begin{figure}[!h]
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/u_trace} 
-			\caption{Traceplot for u parameter in El Salvador case study}\label{fig:u_trace}
+			\caption{Traceplot for u parameter in El Salvador case study.} \label{fig:u_trace}
 		\end{center}
 	\end{figure}
 \end{document}
