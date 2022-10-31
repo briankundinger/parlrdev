@@ -87,17 +87,11 @@ file2 <- records %>%
   data.frame(.) %>% 
   mutate(occup = as.numeric(occup))
 
-# #old
-# cd <- suppressMessages(BRL::compareRecords(file1, file2, c(2, 3, 4, 5), 
-#                           types = c("lv", "lv", "bi", "bi")))
-# cd[[1]] <- apply(cd[[1]], 2, as.numeric)
 
 cd <- suppressMessages(BRL::compareRecords(file1, file2, c(2, 3, 5, 6), 
                           types = c("lv", "lv", "bi", "bi")))
 cd[[1]] <- apply(cd[[1]], 2, as.numeric)
 
-# cd[[1]] <- cd[[1]][, -c(10, 11, 13, 14)]
-# cd[[4]] <- c(4, 4, 2, 2)
 
   #parlr method
   ptm <- proc.time()
@@ -105,27 +99,6 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   elapsed <- proc.time() - ptm
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
-  
-  # bouncing_matches <- apply(Zchain[[1]][, (S- lag -1):(S-1)],1, function(x){
-  #   x[x<nA + 1] %>%
-  #   unique() %>%
-  #   length()
-  # })
-  # table(bouncing_matches)
-  # 
-  # ptm <- proc.time()
-  # Zchain_d <- BKSimple_hash_discount(cd)
-  # elapsed <- proc.time() - ptm
-  # Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
-  # eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
-  # 
-  #   bouncing_matches_d <- apply(Zchain_d[[1]][, (S- lag -1):(S-1)],1, function(x){
-  #   x[x<nA + 1] %>%
-  #   unique() %>%
-  #   length()
-  # })
-  #   table(bouncing_matches_d)
-  
   
   # Resolution Step
   Zhat_resolved <- ResolveConflicts(Zhat)

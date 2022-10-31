@@ -24,7 +24,7 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
   }
 
   ptm <- proc.time()
-  patterns <- GetUniquePatterns2(comparisons, fast, R, all_patterns)
+  patterns <- GetUniquePatterns2(comparisons)
   elapsed_hash <- proc.time() - ptm
 
   parameter_split <- as.vector(unlist(sapply(1:fields, function(x){

@@ -1,0 +1,162 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+devtools::load_all()
+library(parlrdev)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+
+
+```{r}
+files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
+overlap <- n2/2
+
+ProduceSyntheticData <- function(K){
+  small_files <- 1:K
+  file1_big <- data.frame()
+  file2_big <- data.frame()
+  
+  for(i in small_files){
+    records <- read_csv(files[i], col_types = cols())
+    records$file <- rep(2:1, length.out = dim(records)[1])
+    
+    records <- records %>% 
+      janitor::clean_names() %>% 
+      mutate(rec_id = as.numeric(str_extract(rec_id, "\\d{3}")) + 1) %>% 
+      mutate(occup = letters[occup])
+    
+    n1 <- 500
+    n2 <- 500
+    overlap <- n2/2
+    
+    Ztrue <- rep(n1 + 1, n2)
+    Ztrue[1:overlap] <- 1:overlap
+    
+    file1 <- records %>% 
+      filter(file ==1,
+             rec_id <= n1) %>% 
+      select(-rec_id) %>% 
+      as.matrix(.) %>% 
+      data.frame(.) %>% 
+      mutate(id=row_number()) %>% 
+      relocate(gender, .after = fname) %>% 
+      relocate(file, .before = gname) %>% 
+      relocate(id, .before = gname)
+    
+    
+    fields <- names(file1)[-c(1, 2)]
+    
+    file2 <- records %>% 
+      filter(file == 2,
+             rec_id %in% c(1:overlap, (n1 +1):(1000 - overlap))) %>% 
+      select(-rec_id) %>% 
+      as.matrix(.) %>% 
+      data.frame(.) %>% 
+      mutate(id=row_number()) %>% 
+      relocate(gender, .after = fname) %>% 
+      relocate(file, .before = gname) %>% 
+      relocate(id, .before = gname)
+    
+    
+    #file2$gname[Ztrue <= overlap] <- file1$gname[Ztrue <= overlap]
+    file1_big <- rbind(file1_big, file1)
+    file2_big <- rbind(file2_big, file2)
+    
+  }
+  file1_big <- file1_big %>% 
+    mutate(id = row_number()) %>% 
+    mutate(postcode = as.character(as.integer(as.factor(postcode))))
+  file2_big <- file2_big %>% 
+    mutate(id = row_number()) %>% 
+    mutate(postcode = as.character(as.integer(as.factor(postcode))))
+  
+  overlap <- n2/2
+  matches1 <- rep(1:overlap, times = length(small_files))
+  filecounter <- rep(n1 * (seq_along(small_files) - 1), each = overlap)
+  Z_matches <- matches1 + filecounter
+  
+  n1_big <- nrow(file1_big)
+  n2_big <- nrow(file2_big)
+  
+  Ztrue <- rep(n1_big + 1, n2_big)
+  Ztrue[Z_matches] <- Z_matches
+  
+  list(file1 = file1_big,
+       file2 = file2_big, 
+       Ztrue = Ztrue)
+}
+
+fabl_acc_samps <- array(NA, dim = c(length(files), 5, 3))
+fabl_acc_samps_resolved <- array(NA, dim = c(length(files), 5, 3))
+sad_acc_samps <- array(NA, dim = c(length(files), 5, 3))
+
+fabl_acc_samps2 <- array(NA, dim = c(length(files), 6, 3))
+fabl_acc_samps_resolved2 <- array(NA, dim = c(length(files), 6, 3))
+sad_acc_samps2 <- array(NA, dim = c(length(files), 6, 3))
+```
+
+```{r}
+dat <- ProduceSyntheticData(1)
+file1 <- dat$file1
+file2 <- dat$file2
+Ztrue <- dat$Ztrue
+
+file1
+cd <- suppressMessages(BRL::compareRecords(file1, file2, c(3, 4, 6, 7), 
+                          types = c("lv", "lv", "bi", "bi")))
+n1 <- cd$n1
+n2 <- cd$n2
+cd[[1]] <- apply(cd[[1]], 2, as.numeric)
+comparisons <- cd
+alpha <- beta <- 1
+
+
+  #parlr method
+  ptm <- proc.time()
+  Zchain <- BKSimple_hash2(cd)
+  elapsed <- proc.time() - ptm
+  Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
+  eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
+  
+  # Resolution Step
+  Zhat_resolved <- ResolveConflicts(Zhat)
+  eval_resolved <- GetEvaluations(Zhat_resolved, Ztrue, n1)
+  fabl_acc_samps_resolved[i, , j] <- c(eval_resolved, elapsed[3], overlap)
+  fabl_acc_samps[i, ,j] <- c(eval, elapsed[3], overlap)
+  
+  #Partial Estimate
+  Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, .1)
+  Zhat <- ResolveConflicts(Zhat)
+  eval <- GetEvaluations(Zhat, Ztrue, n1)
+  RR <- sum(Zhat == -1)/n2
+  eval[1] <- sum(Zhat == Ztrue & Ztrue > n1) / (sum(Zhat > n1))
+  fabl_acc_samps2[i, ,j] <- c(eval, RR, elapsed[3], overlap)
+  
+  #Sadinle 2017 Method
+  ptm <- proc.time()
+  Zchain <- BRL::bipartiteGibbs(cd)[[1]]
+  Zchain <- Zchain[,101:1000]
+  elapsed <- proc.time() - ptm
+  Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
+  eval <- GetEvaluations(Zhat, Ztrue, n1)
+  sad_acc_samps[i, ,j] <- c(eval, elapsed[3], overlap)
+  
+  Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, .1)
+  RR <- sum(Zhat == -1)/n2
+  eval <- GetEvaluations(Zhat, Ztrue, n1)
+  eval[1] <- sum(Zhat == Ztrue & Ztrue > n1) / (sum(Zhat > n1))
+  sad_acc_samps2[i, ,j] <- c(eval, RR, elapsed[3], overlap)
+  
+  print(i)
+```
+
