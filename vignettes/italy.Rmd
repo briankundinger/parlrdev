@@ -1,0 +1,26 @@
+---
+title: "italy"
+output: html_document
+date: "2023-03-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(fastLink)
+```
+
+```{r}
+linking_variables <- names(italy::italy08)[c(3, 4, 5, 6, 7, 8, 9, 10, 11, 12)]
+out <- fastLink(italy::italy08, italy::italy10, linking_variables)
+```
+
+```{r}
+View(out)
+sum(italy::italy08$id[out$matches$inds.a] == italy::italy10$id[out$matches$inds.b])
+
+
+c(italy::italy08$id, italy::italy10$id) %>% 
+  duplicated() %>% 
+  sum()
+```
+

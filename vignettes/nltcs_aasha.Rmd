@@ -1,0 +1,92 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-03-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#devtools::install()
+devtools::load_all()
+library(parlrdev)
+library(tidyverse)
+library(BRL)
+library(furrr)
+library(RecordLinkage)
+```
+
+```{r}
+S <- 900
+nltcs <- read.csv("../data/proc_nltcs.csv")
+df82 <- nltcs %>% 
+  filter(FILE == 82) %>% 
+  select(-FILE, -SEQ) %>% 
+  mutate(unique_ID = str_sub(REC, start = 3L),
+         DOB_DAY = str_pad(DOB_DAY, 2, pad = "0"), 
+         DOB_MONTH = str_pad(DOB_MONTH, 2, pad = "0"), 
+         DOB_YEAR = str_pad(DOB_YEAR, 2, pad = "0"),
+         STATE = str_pad(STATE, 2, pad = "0"),
+         REGOFF = str_pad(REGOFF, 2, pad = "0")) %>% 
+  #unite(dob, 2:4, sep = "") %>% 
+  unite(location, c(STATE, REGOFF), sep = "")
+  
+
+df89 <- nltcs %>% 
+  filter(FILE == 89) %>% 
+  select(-FILE, -SEQ) %>% 
+  mutate(unique_ID = str_sub(REC, start = 3L)) %>% 
+  mutate(unique_ID = str_sub(REC, start = 3L),
+         DOB_DAY = str_pad(DOB_DAY, 2, pad = "0"), 
+         DOB_MONTH = str_pad(DOB_MONTH, 2, pad = "0"), 
+         DOB_YEAR = str_pad(DOB_YEAR, 2, pad = "0"),
+         STATE = str_pad(STATE, 2, pad = "0"),
+         REGOFF = str_pad(REGOFF, 2, pad = "0")) %>% 
+ # unite(dob, 2:4, sep = "") %>% 
+  unite(location, c(STATE, REGOFF), sep = "")
+  
+nA <- nrow(df82)
+nB <- nrow(df89)
+Ztrue <- sapply(df89$unique_ID, function(x){
+  match <- which(df82$unique_ID == x)
+  if (length(match) == 0){
+    match <- nA + 1
+  }
+  match
+}) %>% 
+  unname()
+
+chunks <- 30
+chunk_size <- ceiling(dim(df89)[1]/chunks)
+chunk_id <- rep(1:chunks, each = chunk_size)[1:dim(df89)[1]]
+fields <- 1:5
+df89_partition <- split(df89, chunk_id)
+df1 <- df82
+df2 <- df89_partition[[1]]
+```
+
+# Training Data
+
+```{r}
+supervised_methods <- c("svm", "rpart", "ada", "bagging", "bumping")
+nA_train <- floor(nrow(df82)/10)
+nB_train <- floor(nrow(df89)/10)
+
+dfA_train <- df82[1:nA_train, ]
+dfB_train <- df89[1:nB_train, ]
+
+train_cd <- compare.linkage(dfA_train[, 1:5], dfB_train[, 1:5], 
+                            identity1 = dfA_train$unique_ID, 
+                            identity2 = dfB_train$unique_ID)
+
+model_list <- vector("list", length = length(supervised_methods))
+names(model_list) <- supervised_methods
+for(i in seq_along(supervised_methods)){
+    method <- supervised_methods[i]
+    model <- trainSupv(train_cd, method = paste(method))
+    model_list[[i]] <- model
+    print(i)
+}
+
+
+```
+

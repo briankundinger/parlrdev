@@ -1,0 +1,77 @@
+\documentclass{beamer}
+\usetheme{Rochester}
+\addtobeamertemplate{navigation symbols}{}{ \hspace{1em}    \usebeamerfont{footline}%
+	\insertframenumber / \inserttotalframenumber }
+\begin{document}
+	\title{Latent Class Models}
+	%\subtitle{Using Beamer}
+	\author{Brian Kundinger}
+	\date{\today}
+	
+%	\AtBeginSection[]{
+%		\begin{frame}
+%			\vfill
+%			\centering
+%			\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+%				\usebeamerfont{title}\insertsectionhead\par%
+%			\end{beamercolorbox}
+%			\vfill
+%		\end{frame}
+%	}
+
+
+%	\begin{frame}
+%	\frametitle{Outline}
+%	\tableofcontents
+%	\end{frame}
+
+\section{Latent Class Models}
+
+	\begin{frame}{Latent Class Models}
+	\begin{itemize}
+		\item In Dunson's STA 841 class "Categorical Data Analysis," we learned about a \emph{latent class models}
+		\item In class, we used to them to classify DNA sequences, but I think they may be effective in classifying individuals based on their travel path in a network
+		\item DNA sequences have complicated dependencies. The idea here is to model the sequences such that by conditioning on latent classes, the expressions in each position are independent.  
+		
+		
+		\item DISCLAIMER: I see many shortcomings of the model, but just wanted to share it as a potential idea
+	\end{itemize}
+	\end{frame}
+
+\begin{frame}{Data}
+	\begin{itemize}
+		\item Individuals $i \in \{1, \ldots, I \}$
+		\item Nucleotide position $p \in \{1, \ldots, P \}$
+		\item Nucleotide expression  $y_{ip} = d \in \{A, C, G, T\}$
+		\item Expert classification $e_i \in \{IE, EI, N\}$
+		
+		<2->\item We attempt to recover the expert classification through latent class $z_i = k \in \{1, \ldots, K\}$. Number of classes $K$ can be fixed or estimated nonparametrically
+		<2->\item Vector of expression probabilities $\theta_{kp} = (\theta_{kpA}, \ldots, \theta_{kpT})$ for each class and position
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Data}
+	\begin{itemize}
+		\includegraphics[width = \textwidth, height = .7\textwidth ]{data_snapshot.png}
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Model Formulation}
+	\begin{itemize}
+		\item $y_{ip} \sim \text{Multinomial} (\theta_{z_i, p})$
+		\item $z_i \sim \text{Dirichlet}(\alpha_1, \ldots, \alpha_K)$
+		\item $\theta_{z_i, p} \sim \text{Dirichlet}(\beta_1, \ldots, \beta_D)$
+		<2->\item $z_i$ can also be modeled through a Dirichlet process stick-breaking prior so that the number of clusters is inferred through the data
+		<3-> Parameters are estimated through straightforward Gibbs sampler
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Result}
+	\begin{itemize}
+		\includegraphics[width = \textwidth, height = .7\textwidth ]{latent_variable_plot.png}
+	\end{itemize}
+\end{frame}
+
+
+\end{document}

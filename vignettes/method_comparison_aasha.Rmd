@@ -1,0 +1,293 @@
+---
+title: "method_comparison_sadline"
+output: html_document
+date: "2023-02-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(fastLink)
+library(RecordLinkage)
+devtools::load_all()
+library(parlrdev)
+library(BRL)
+library(tidyverse)
+library(scales)
+
+```
+
+# El Salvador (Unsupervised)
+```{r}
+ER <- readRDS("../data/ER")
+CDHES <- readRDS("../data/CDHES")
+
+ER <- ER %>% 
+  select(-record_id, -muni, -dataset)
+
+CDHES <- CDHES %>% 
+  select(-record_id, -muni, -dataset)
+
+comparisons <- compare.linkage (ER, CDHES, blockfld = FALSE, strcmpfun = jarowinkler)
+#kmeans_link <- classifyUnsup(comparisons, "kmeans")
+#bclust_link <- classifyUnsup(comparisons, "bclust")
+weights <- emWeights(comparisons)
+FS_out <- emClassify(weights)
+fastlink_out <- fastLink(ER, CDHES, dedupe.matches = F, 
+                         varnames = names(ER))
+
+#fastlink_out$matches
+fabl_comparisons <- compareRecords(ER, CDHES, flds = c(1, 2, 3, 4, 5, 6), 
+               types = rep("bi", length(names(ER))))
+
+chain <- BKSimple_hash2(fabl_comparisons)
+Zhat <- LinkRecordsBK(chain$Z, dim(ER)[1], 1, 1, 2, Inf)
+fabl_matches <- sum(Zhat$Zhat < dim(ER)[1] + 1)
+
+
+```
+# Supervised Methods
+
+Record Linkage package can implement the following supervised methods:
+
+Support Vector Machine (svm)
+Recursive Partioning Tree (rpart)
+Stochasic boosting model (ada)
+Bagging with Classification Trees (bagging)
+Single hidden layer nueral net (nnet)
+Bootstrap classification true (bumping)
+
+Best way to do the comparisons when using different amounts of training data?
+How to handle violations of one-to-one? Some methods don't have a clear way of doing it.
+
+```{r}
+set.seed(1)
+match_identities <- identity.RLdata10000[duplicated(identity.RLdata10000)]
+
+match_rows <- sapply(match_identities, function(x){
+  which(identity.RLdata10000 == x)
+})
+matches_df1 <- RLdata10000[match_rows[1, ], ]
+matches_df2 <- RLdata10000[match_rows[2, ], ]
+
+all_match_rows <- as.vector(match_rows)
+nonmatch_records <- RLdata10000[-all_match_rows, ]
+nonmatches_df1 <- nonmatch_records[1:4000, ]
+nonmatches_df2 <- nonmatch_records[4001:8000, ]
+
+full_df1 <- rbind(matches_df1, nonmatches_df1) %>% 
+  select(-fname_c2, -lname_c2)
+full_df2 <- rbind(matches_df2, nonmatches_df2) %>% 
+  select(-fname_c2, -lname_c2)
+
+Z_true <- c(seq(1:nrow(matches_df1)),
+            seq(1:nrow(nonmatches_df1)) + nrow(full_df1))
+
+methods <- c("svm", "rpart", "ada", "bagging", "bumping",
+            "FS", "fabl", "fastlink")
+metrics <- c("precision", "recall", "violations")
+#train_prop_vec <- seq(.1, .9, .5)
+train_prop_vec <- .1
+eval_list <- vector(mode = "list", length = length(train_prop_vec))
+for(i in seq_along(train_prop_vec)){
+  train_prop <- train_prop_vec[i]
+  match_markers <- sample(c(TRUE, FALSE), 
+                          nrow(matches_df1), 
+                          replace=TRUE, 
+                          prob = c(train_prop, 1 - train_prop))
+  
+  nonmatch_markers <- sample(c(TRUE, FALSE), 
+                             nrow(nonmatches_df1), 
+                             replace=TRUE, 
+                             prob = c(train_prop, 1 - train_prop))
+  
+  train_matches1  <- matches_df1[match_markers, ]
+  train_matches2  <- matches_df2[match_markers, ]
+  test_matches1   <- matches_df1[!match_markers, ]
+  test_matches2   <- matches_df2[!match_markers, ]
+  
+  train_nonmatches1  <- nonmatches_df1[nonmatch_markers, ]
+  train_nonmatches2  <- nonmatches_df2[nonmatch_markers, ]
+  test_nonmatches1   <- nonmatches_df1[!nonmatch_markers, ]
+  test_nonmatches2   <- nonmatches_df2[!nonmatch_markers, ]
+  
+  train1 <- rbind(train_matches1, train_nonmatches1)
+  train2 <- rbind(train_matches2, train_nonmatches2)
+  test1 <- rbind(test_matches1, test_nonmatches1)
+  test2 <- rbind(test_matches2, test_nonmatches2)
+  
+  id1 <- 1:nrow(train1)
+  id2 <- 1:nrow(train2)
+  id2[(nrow(train_matches1) + 1 ): nrow(train2)] <-  id2[(nrow(train_matches1) + 1) : nrow(train2)]+ nrow(train1)
+  
+  train_cd <- compare.linkage(train1, train2, identity1 = id1, identity2 = id2)
+  id1 <- 1:nrow(test1)
+  id2 <- 1:nrow(test2)
+  id2[(nrow(test_matches1) + 1 ): nrow(test2)] <-  id2[(nrow(test_matches1) + 1) : nrow(test2)]+ nrow(test1)
+  
+  test_cd <- RLBigDataLinkage(test1, test2, identity1 = id1, identity2 = id2)
+  eval_df <- matrix(NA, nrow = length(methods), ncol = 4)
+  
+  Z_true <- c(seq(1:nrow(test_matches1)),
+            seq(1:nrow(test_nonmatches1)) + nrow(test1))
+  
+  
+  # Supervised Models
+  for(j in seq_along(methods)){
+    method <- methods[j]
+    if(method %in% c("svm", "rpart", "ada", "bagging", "nnet", 
+                     "bumping"))
+    model <- trainSupv(train_cd, method = paste(method))
+    out <- classifySupv(model, test_cd)
+    number_links <- out@data@pairs %>% 
+      as.data.frame() %>% 
+      mutate(prediction = out@prediction[]) %>% 
+      group_by(id1) %>% 
+      summarise(links = sum(prediction == "L")) %>% 
+      pull()
+    
+    violations_1to1 <- sapply(number_links, function(x){
+      if(x > 1){
+        x - 1
+      } 
+    }) %>% 
+      unlist() %>% 
+      sum()
+    
+    result <- getErrorMeasures(out)
+    recall <- result$sensitivity
+    precision <- result$precision
+    fmeasure <- 2 * (recall * precision) / (recall + precision)
+    eval_df[j, ] <- c(recall, precision, fmeasure, violations_1to1)
+    print(j)
+    
+    # if(method %in% c("kmeans", "bclust")){
+    # out <- classifySupv(test_cd, method)
+    # number_links <- out@data@pairs %>% 
+    #   as.data.frame() %>% 
+    #   mutate(prediction = out@prediction[]) %>% 
+    #   group_by(id1) %>% 
+    #   summarise(links = sum(prediction == "L")) %>% 
+    #   pull()
+    # 
+    # violations_1to1 <- sapply(number_links, function(x){
+    #   if(x > 1){
+    #     x - 1
+    #   } 
+    # }) %>% 
+    #   unlist() %>% 
+    #   sum()
+    # 
+    # result <- getErrorMeasures(out)
+    # recall <- result$sensitivity
+    # precision <- result$precision
+    # fmeasure <- 2 * (recall * precision) / (recall + precision)
+    # eval_df[j, ] <- c(recall, precision, fmeasure, violations_1to1)
+    # print(j)
+    # }
+    
+    if(method == "FS"){
+    weights <- emWeights(test_cd)
+    out <- emClassify(weights, my = .00001) #not interpretable
+    result <- getErrorMeasures(out)
+    recall <- result$sensitivity
+    precision <- result$precision
+    fmeasure <- 2 * (recall * precision) / (recall + precision)
+    
+    number_links <- out@data@pairs %>% 
+      as.data.frame() %>% 
+      mutate(prediction = out@prediction[]) %>% 
+      group_by(id1) %>% 
+      summarise(links = sum(prediction == "L")) %>% 
+      pull()
+    
+    violations_1to1 <- sapply(number_links, function(x){
+      if(x > 1){
+        x - 1
+      } 
+    }) %>% 
+      unlist() %>% 
+      sum()
+    
+    eval_df[j, ] <- c(recall, precision, fmeasure, violations_1to1)
+    print(j)
+    }
+    
+    if(method == "fabl"){
+      fabl_cd <- BRL::compareRecords(test1, test2,
+                                     flds = as.numeric(1:ncol(test1)), 
+               types = rep("bi", ncol(test1)))
+      chain <- BKSimple_hash2(fabl_cd)
+      out <- LinkRecordsBK(chain$Z, dim(test2)[1], 1, 1, 2, Inf)
+      eval <- GetEvaluations(out$Zhat, Z_true, dim(test1)[1])
+      violations_1to1 <- sum(duplicated(out$Zhat))
+      eval_df[j, ] <- c(eval[1], eval[2], eval[3], violations_1to1)
+      
+    }
+    
+      if(method == "fastlink"){
+      out <- fastLink(test1, test2, dedupe.matches = F, 
+                         varnames = names(test1), threshold.match = .5)
+      Zhat <- 1:nrow(test2) + nrow(test1)
+      Zhat[out[["matches"]][["inds.b"]]] <- out[["matches"]][["inds.a"]]
+      eval <- GetEvaluations(Zhat, Z_true, dim(test1)[1])
+      violations_1to1 <- sum(duplicated(Zhat))
+      eval_df[j, ] <- c(eval[1], eval[2], eval[3], violations_1to1)
+      
+    }
+
+  }
+  eval_list[[i]] <- eval_df
+  print(i)
+}
+
+eval_df %>% 
+  as.data.frame() %>% 
+  cbind(methods, .) %>% 
+  magrittr::set_colnames(c("method", "recall", "precision", "fmeasure", "violations"))
+# Unsupervised Models
+# FS (difficult specify desired false negative rate on record pairs)
+# fastLink
+# Fabl
+# dblink
+
+
+```
+
+```{r}
+
+#my_vec <- c(.05, .01, .005, .001, .00005, .00001, .000005, .000001, .0000005, .0000001)
+my_vec <- .1 ^ seq(1, 10)
+#my_vec <- seq(.01, .1, by = .01)
+
+fs_df <- matrix(NA, nrow = length(my_vec), ncol = 6)
+#weights <- emWeights(test_cd)
+for(i in seq_along(my_vec)){
+  my <-  my_vec[i]
+  out <- emClassify(weights, my = my) #not interpretable
+  result <- getErrorMeasures(out)
+  recall <- result$sensitivity
+  precision <- result$precision
+  alpha <- result$alpha
+  beta <- result$beta
+  fmeasure <- 2 * (recall * precision) / (recall + precision)
+  fs_df[i, ] <- c(my, alpha, beta, recall, precision, fmeasure)
+}
+fs_df <- as.data.frame(fs_df)
+names(fs_df) <- c("my", "alpha", "beta", "recall", "precision", "fmeasure")
+
+
+fs_long <- fs_df %>% 
+  pivot_longer(c(alpha, beta, recall, precision, fmeasure),
+               names_to = "metric")
+
+fs_long %>% 
+  filter(!(metric %in% c("alpha", "beta"))) %>% 
+  ggplot() +
+  aes(x = my, y = value) +
+  geom_line() +
+  facet_wrap(~metric, dir = "v", scales = "free") +
+  scale_x_continuous(trans = c("log10", "reverse"))+
+  labs(x = "Desired False Positive Rate")
+
+```
+

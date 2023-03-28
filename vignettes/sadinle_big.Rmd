@@ -23,7 +23,7 @@ library(tidyverse)
 
 ```{r}
 files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
-number_of_files <- 40
+number_of_files <- 5
 all_patterns = TRUE
 R = NULL
 n1 <- 500

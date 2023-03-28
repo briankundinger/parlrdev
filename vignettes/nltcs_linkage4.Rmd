@@ -51,7 +51,10 @@ df89 <- nltcs %>%
          REGOFF = str_pad(REGOFF, 2, pad = "0")) %>% 
  # unite(dob, 2:4, sep = "") %>% 
   unite(location, c(STATE, REGOFF), sep = "")
-  
+
+# df82 <- df82[-c(1:2000), ]
+# df89 <- df89[-c(1:2000), ]
+
 nA <- nrow(df82)
 nB <- nrow(df89)
 Ztrue <- sapply(df89$unique_ID, function(x){
