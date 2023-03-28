@@ -209,7 +209,7 @@ CompareRecords_fabl <- function(df1, df2, flds=NULL, flds1=NULL, flds2=NULL, typ
   #                 "' in 'df1' are being compared with the fields '",
   #                 paste(df2Fields,collapse="' '"), "' in 'df2'",
   #                 sep=""))
-  }
+  #}
 
   out <- list(comparisons=comparisons, n1=n1, n2=n2, nDisagLevs=nDisagLevs,
               compFields=compFields)

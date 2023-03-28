@@ -38,9 +38,9 @@ chunk_marker <- job_marker == taskID
 
 chunk89 <- df89[chunk_marker, ]
 
-cd <- (BRL::compareRecords(df82[, -c(7, 8)], chunk89[, -c(7, 8)],
+cd <- CompareRecords_fabl(df82[, -c(7, 8)], chunk89[, -c(7, 8)],
                                      c(1, 2, 3, 4, 5, 6),
-                                     types = c("bi", "bi", "bi", "bi", "bi", "bi")))
+                                     types = c("bi", "bi", "bi", "bi", "bi", "bi"))
 cd[[1]] <- apply(cd[[1]], 2, as.numeric)
 hash <- GetUniquePatterns2(cd, R = 10)
 saveRDS(hash, file = paste0("hash/", "hash_", taskID))

@@ -31,3 +31,7 @@ patterns <- list(patterns_hashed[[1]][[1]],
 
 comparisons <- list(comparisons, patterns)
 saveRDS(cd, file = paste0("full_hash/", "full_hash"))
+
+sapply(patterns_hashed, function(x){
+  x[[2]] %>% length()
+})
