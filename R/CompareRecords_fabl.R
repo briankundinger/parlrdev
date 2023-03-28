@@ -168,12 +168,12 @@ CompareRecords_fabl <- function(df1, df2, flds=NULL, flds1=NULL, flds2=NULL, typ
       same <- df1[pairInds1,flds1[fld]] == df2[pairInds2,flds2[fld]]
       AgrLev <- 1*same
       AgrLev[!same] <- 2
-      comparisons[[fld]] <- as.factor(AgrLev, levels = c(1, 2))
+      comparisons[[fld]] <- factor(AgrLev, levels = c(1, 2))
     }
     if(types[fld]=="nu"){
       absDiff <- abs(df1[pairInds1,flds1[fld]] - df2[pairInds2,flds2[fld]])
       AgrLev <- cut(absDiff, breaks=breaks[[fld]], labels=seq_len(length(breaks[[fld]])-1))
-      comparisons[[fld]] <- as.factor(AgrLev, levels = seq_len(length(breaks[[fld]]) + 1))
+      comparisons[[fld]] <- factor(AgrLev, levels = seq_len(length(breaks[[fld]]) + 1))
     }
     if(types[fld]=="lv"){
       # computing agreement levels for Levenshtein-based comparisons
@@ -185,7 +185,7 @@ CompareRecords_fabl <- function(df1, df2, flds=NULL, flds1=NULL, flds2=NULL, typ
         pmax(nchar(df1[,flds1[fld]])[pairInds1], nchar(df2[,flds2[fld]])[pairInds2])
 
       AgrLev <- cut(lvd, breaks=breaks[[fld]], labels=seq_len(length(breaks[[fld]])-1))
-      comparisons[[fld]] <- as.factor(AgrLev, levels = seq_len(length(breaks[[fld]]) + 1))
+      comparisons[[fld]] <- factor(AgrLev, levels = seq_len(length(breaks[[fld]]) + 1))
     }
   }
 
