@@ -121,6 +121,15 @@ counts_per_rec_big <- patterns_hashed %>%
 
   cd <- list(comparisons, patterns)
   
+  
+  Zchain %>% 
+    apply(., 2, function(x){
+      x < nA +1
+    }) %>% 
+    colSums()
+  
+  chain$m %>% 
+    rowMeans()
 ```
 
 ```{r load_hash}

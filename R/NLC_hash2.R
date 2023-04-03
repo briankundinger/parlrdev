@@ -480,10 +480,10 @@ BKSimple_hash2_big <- function(comparisons, m_prior = 1, u_prior = 1,
   N <- n1 * n2
   #indicators_raw <-comparisons[[1]]
 
-  if (fast) {
-    numCores <- parallel::detectCores()
-    cl <- parallel::makeCluster(numCores)
-  }
+  # if (fast) {
+  #   numCores <- parallel::detectCores()
+  #   cl <- parallel::makeCluster(numCores)
+  # }
 
   #patterns <- ProcessHash(comparisons, fast, R)
 

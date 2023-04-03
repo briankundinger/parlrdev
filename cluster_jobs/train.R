@@ -40,3 +40,4 @@ cd <- compare.linkage(train82[, -c(7, 8)], train89[, -c(7, 8)],
 
 model <- trainSupv(cd, method = paste(method))
 saveRDS(model, file = paste0("trained_models/", method))
+

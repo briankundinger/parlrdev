@@ -32,10 +32,13 @@ df89 <- nltcs %>%
 # df82 <- df82[-c(1:2000), ]
 # df89 <- df89[-c(1:2000), ]
 
-job_marker <- rep(1:88, each =200)
-job_marker <- job_marker[1:nrow(df89)]
-chunk_marker <- job_marker == taskID
+chunks <- 30
+chunk_size <- ceiling(dim(df89)[1]/chunks)
+chunk_id <- rep(1:chunks, each = chunk_size)[1:dim(df89)[1]]
 
+#job_marker <- rep(1:88, each =200)
+#job_marker <- job_marker[1:nrow(df89)]
+chunk_marker <- chunk_id == taskID
 chunk89 <- df89[chunk_marker, ]
 
 cd <- CompareRecords_fabl(df82[, -c(7, 8)], chunk89[, -c(7, 8)],
@@ -43,4 +46,5 @@ cd <- CompareRecords_fabl(df82[, -c(7, 8)], chunk89[, -c(7, 8)],
                                      types = c("bi", "bi", "bi", "bi", "bi", "bi"))
 cd[[1]] <- apply(cd[[1]], 2, as.numeric)
 hash <- GetUniquePatterns2(cd, R = 10)
-saveRDS(hash, file = paste0("hash/", "hash_", taskID))
+saveRDS(hash, file = paste0("hash/independent/", "hash_",
+                            str_pad(taskID, 2, pad = "0")))

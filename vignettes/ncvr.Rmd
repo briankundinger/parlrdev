@@ -1,0 +1,70 @@
+---
+title: "method_comparison_sadline"
+output: html_document
+date: "2023-02-13"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(fastLink)
+library(RecordLinkage)
+devtools::load_all()
+library(parlrdev)
+library(BRL)
+library(dplyr)
+library(scales)
+library(ggplot2)
+
+```
+
+```{r}
+ncvr <- read.csv("../data/ncvr/ncvr.csv")
+dfA <- ncvr %>% 
+  filter(file_id == "a")
+
+dfB <- ncvr %>% 
+  filter(file_id == "b")
+
+dfA <- dfA[!duplicated(dfA$voter_id), ]
+dfA$full_phone_num[dfA$full_phone_num == ""] <- NA
+dfB <- dfB[!duplicated(dfB$voter_id), ]
+dfB$full_phone_num[dfB$full_phone_num == ""] <- NA
+
+nA <- nrow(dfA)
+nB <- nrow(dfB)
+
+true_matches <- sum(dfA$voter_id %in% dfB$voter_id)
+```
+
+```{r}
+ralieghA <- dfA %>% 
+  filter(city == "raleigh")
+
+ralieghB <- dfB %>% 
+  filter(city == "raleigh")
+nA <- nrow(ralieghA)
+nB <- nrow(ralieghB)
+Ztrue <- sapply(ralieghB$voter_id, function(x){
+  match <- which(ralieghA$voter_id == x)
+  if (length(match) == 0){
+    match <- nA + 1
+  }
+  match
+}) %>%
+  unname()
+
+sum(Ztrue < nA)
+
+linking_vars <- names(dfA)[c(4, 5, 6, 7, 9, 13)]
+
+out <- fastLink(ralieghA, ralieghB, linking_vars, threshold.match = .5)
+
+Zhat <- rep(nA + 1, nB)
+Zhat[out$matches$inds.b] <- out$matches$inds.a
+
+GetEvaluations(Zhat, Ztrue, nA)
+# sum(ralieghA$voter_id %in% ralieghB$voter_id)
+
+
+```
+

@@ -70,6 +70,9 @@ fields <- 1:3
 df89_partition <- split(df89, chunk_id)
 df1 <- df82
 df2 <- df89_partition[[1]]
+
+thing <- readRDS("hash_1")
+thing
 ```
 
 
@@ -82,6 +85,7 @@ HashRecords <- function(df2){
 }
 
 patterns_hashed <- lapply(df89_partition, HashRecords)
+saveRDS(patterns_hashed, file = "../data/ntlcs_hash3_new_all.rds")
 #test <- HashRecords(df2)
 ```
 
@@ -121,8 +125,8 @@ counts_per_rec_big <- patterns_hashed %>%
 ```
 
 ```{r load_hash}
-#saveRDS(cd, file = "../data/ntlcs_hash3.rds")
-cd <- readRDS(file = "../data/ntlcs_hash3.rds")
+#saveRDS(cd, file = "../data/ntlcs_hash3_new_combine.rds")
+#cd <- readRDS(file = "../data/ntlcs_hash3.rds")
 ```
 
 
