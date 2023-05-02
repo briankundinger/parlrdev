@@ -1,6 +1,13 @@
 
-nltcs <- read.csv("../data/proc_nltcs.csv")
-true_matches <- 8866 #depends on training set
+#setwd("../cluster_jobs")
+library(dplyr)
+library(fastLink)
+library(parlrdev)
+library(purrr)
+library(stringr)
+
+#setwd("../cluster_jobs")
+nltcs <- read.csv("data/proc_nltcs.csv")
 df82 <- nltcs %>%
   filter(FILE == 82) %>%
   select(-FILE, -SEQ) %>%
@@ -28,20 +35,47 @@ nB <- nrow(df89)
 
 Ztrue <- MakeZtrue(df82$unique_ID, df89$unique_ID,
                    nA, nB)
+true_matches <- sum(Ztrue < nA + 1)
 
 
 fl_dedup <- fastLink(df82[, -c(7, 8)], df89[, -c(7, 8)],
-                    varnames = names(df82[, -c(7, 8)]),
-                    dedupe.matches = T,
-                    threshold.match = .5)
+                     varnames = names(df82[, -c(7, 8)]),
+                     dedupe.matches = T,
+                     threshold.match = .5)
 
 Zhat <- MakeZhat_from_fastlink(fl_dedup$matches$inds.a,
                                fl_dedup$matches$inds.b)
-eval <- c(GetEvaluations(Zhat, Ztrue, nA), 'fastlink')
+
+declared_correct <- sum(Zhat == Ztrue & Zhat < (nA + 1))
+eval <- c(GetEvaluations(Zhat, Ztrue, nA), 'fastlink_resolved')
 names(eval)[4] <- "method"
 
-saveRDS(eval, "eval/fastlink/result")
+# Full
+fl_full <- fastLink(df82[, -c(7, 8)], df89[, -c(7, 8)],
+                     varnames = names(df82[, -c(7, 8)]),
+                     dedupe.matches = F,
+                     threshold.match = .5)
+
+declared_correct <- imap(Ztrue, ~sum((fl_full$matches$inds.a == .x) &
+                                       (fl_full$matches$inds.b == .y))) %>%
+  unlist() %>%
+  sum()
+
+recall <- declared_correct/true_matches
+
+total_declared <- length(fl_full$matches$inds.a)
+precision <- declared_correct/total_declared
+fmeasure <- 2 * (recall * precision) / (recall + precision)
+
+eval_full <- c(recall, precision, fmeasure, "fastlink")
+names(eval_full) <- c("Recall", "Precision", "Fmeasure", "method")
+
+result <- rbind(eval_full, eval)
+rownames(result) <- NULL
+
+saveRDS(result, "eval/fastlink/result")
 # fl_full <- fastLink(df82[, -c(7, 8)], df89[, -c(7, 8)],
 #                     varnames = names(df82[, -c(7, 8)]),
 #                     dedupe.matches = F)
 # sum(df82$unique_ID[fl_out$matches$inds.a] == df89$unique_ID[fl_out$matches$inds.b])
+#setwd("cluster_jobs")
