@@ -1,0 +1,146 @@
+---
+title: "Sadinle_accuracy"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Sadinle_accuracy}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(devtools)
+load_all()
+library(parlrdev)
+library(tidyverse)
+rm(list = c("hash_field"))
+```
+
+
+```{r}
+files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
+all_patterns = TRUE
+
+m_prior = 1
+u_prior = 1
+alpha = 1
+beta = 1
+S = 1000
+burn = 100
+show_progress = T
+fast = F
+all_patterns = TRUE
+
+
+overlap_vals <- c(50, 250, 450)
+
+fabl_acc_samps <- array(NA, dim = c(length(files), 5, 3))
+fabl_acc_samps_resolved <- array(NA, dim = c(length(files), 5, 3))
+sad_acc_samps <- array(NA, dim = c(length(files), 5, 3))
+
+fabl_acc_samps2 <- array(NA, dim = c(length(files), 6, 3))
+fabl_acc_samps_resolved2 <- array(NA, dim = c(length(files), 6, 3))
+sad_acc_samps2 <- array(NA, dim = c(length(files), 6, 3))
+
+j <-  2
+i <-  299
+  
+overlap <- overlap_vals[j]
+
+records <- read_csv(files[i], col_types = cols())
+records$file <- rep(2:1, length.out = dim(records)[1])
+
+records <- records %>% 
+  janitor::clean_names() %>% 
+  mutate(rec_id = as.numeric(str_extract(rec_id, "\\d{3}")) + 1)
+
+n1 <- 500
+n2 <- 500
+#overlap <- n2/2
+
+Ztrue <- n1 + 1:n2
+Ztrue[1:overlap] <- 1:overlap
+
+file1 <- records %>% 
+  filter(file ==1,
+         rec_id <= n1) %>% 
+  select(-rec_id) %>% 
+  as.matrix(.) %>% 
+  data.frame(.) %>% 
+  mutate(occup = as.numeric(occup))
+
+file2 <- records %>% 
+  filter(file == 2,
+         rec_id %in% c(1:overlap, (n1 +1):(1000 - overlap))) %>% 
+  select(-rec_id) %>% 
+  as.matrix() %>% 
+  data.frame(.) %>% 
+  mutate(occup = as.numeric(occup))
+
+
+cd <- suppressMessages(BRL::compareRecords(file1, file2, c(2, 3, 5, 6), 
+                          types = c("lv", "lv", "bi", "bi")))
+cd[[1]] <- apply(cd[[1]], 2, as.numeric)
+R_vals <- c(1, 2, 5, 10, 20)
+iterations <- 40
+Zs <- matrix(NA, nrow = n2, ncol = iterations)
+evals <- matrix(NA, nrow = 3, ncol = iterations)
+Z_list <- vector(mode = "list", length = length(R_vals) + 1)
+eval_list <- vector(mode = "list", length = length(R_vals) + 1)
+for(k in seq_along(R_vals)){
+    R <- R_vals[k]
+  for(iter in 1:iterations){
+    Zchain <- BKSimple_hash2(cd, R = R, S = 250)
+    Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
+    eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
+    Zs[, iter] <- Zhat[[1]]
+    evals[, iter] <- eval
+    print(iter)
+  }
+  Z_list[[k]] <- Zs
+  eval_list[[k]] <- evals
+  print(k)
+}
+
+R <- NULL
+for(iter in 1:iterations){
+  Zchain <- BKSimple_hash2(cd, R = R, S = 250)
+  Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
+  eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
+  Zs[, iter] <- Zhat[[1]]
+  evals[, iter] <- eval
+  print(iter)
+}
+Z_list[[k+1]] <- Zs
+eval_list[[k+1]] <- evals
+
+lapply(Z_list, function(x){
+  dim(unique(x, MARGIN = 2))[2]
+})
+
+lapply(eval_list, function(x){
+  var(x[1, ])
+})
+
+
+lapply(eval_list, function(x){
+  var(x[2, ])
+})
+
+```
+
+```{r}
+lapply(Z_list, function(x){
+  unique(x, margin = 1) %>% 
+    ncol()
+})
+
+Z_list
+```
+

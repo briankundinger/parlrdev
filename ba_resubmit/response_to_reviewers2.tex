@@ -190,11 +190,20 @@ matchings”. Does the alternate approach presented in this paper provide a diff
 than directly integrating the prior distribution? Is the presented alternative approach justified?}
 
 \reply{%
- {\color{red}{I really don't know how to answer this. I don't know how I would ''directly integrate" $\pi$, and I don't know if what I do is ''justified." Its kind of an intellectual relic to how I was originally thinking about the problem, and it reveals a quantity similar to what Sadinle was working with.
- 		
- It is theoretically more straightforward to just not integrate out $\pi$, and use samples from $\pi$ in Gibbs sampler like I do with all other parameters. Would that be too large a change at this stage?
-
- Without integrating out $\pi$, the full conditional is given on page 26 of the Appendix.}}
+	The reviewer raises important questions. The main difference between the full conditionals in Sadinle (2017) and ours is that for him, $Z$ is a partition, while for us, it is not. This is what required him to integrate out $\pi$ in the prior, and then sequentially update each component of the $Z$ vector. 
+	
+	The approach we have is justified, as indicated in the proof provided. However, under closer review, we have determined that it is unnecessary. Without integrating out $\pi$, all paramaters are updated through a standard Gibbs sampler. Furthermore, in other work we are developing, we actually need samples of $\pi$ in different applications. 
+	
+	We reran all case studies and simulation using samples of $\pi$ in the full conditional for $Z$, and found no difference in results. This is unsuprsing, because with high numbers of observations, the posterior of the beta distrubution is highly concentrated around its mean.
+	
+	Therefore, we have updated the paper with full conditionals for the standard Gibbs sampler. We leave the remark about marginalization in the Appendix to highlight the similarity to Sadinle's method.
+	
+%	
+% {\color{red}{I really don't know how to answer this. I don't know how I would ''directly integrate" $\pi$, and I don't know if what I do is ''justified." Its kind of an intellectual relic to how I was originally thinking about the problem, and it reveals a quantity similar to what Sadinle was working with.
+% 		
+% It is theoretically more straightforward to just not integrate out $\pi$, and use samples from $\pi$ in Gibbs sampler like I do with all other parameters. Would that be too large a change at this stage?
+%
+% Without integrating out $\pi$, the full conditional is given on page 26 of the Appendix.}}
 }
 
 \pointRaised{R}{%
@@ -220,7 +229,6 @@ than directly integrating the prior distribution? Is the presented alternative a
 We show in the revised Section 4.3 that $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N} \}$ is a set of statistics that are sufficient for $m$, $u$, and $Z$. 
 
 {\color{red}{I drafted a whole bunch of material to argue more rigoursly that $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N} \}$ is  set of sufficient statistics. If this argument seems weak, or is too much new material, I can also just keep what I had, and use less rigorous term "summary statistics" instead.}} \todo
-
 }
 
 \pointRaised{R}{%

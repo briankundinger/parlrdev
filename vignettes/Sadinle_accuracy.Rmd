@@ -26,7 +26,6 @@ rm(list = c("hash_field"))
 ```{r}
 files <- list.files(path = "../data/SimulationDatafiles", full.names = T)
 all_patterns = TRUE
-R = NULL
 
 m_prior = 1
 u_prior = 1
@@ -38,7 +37,6 @@ show_progress = T
 fast = F
 R = NULL
 all_patterns = TRUE
-lag = 10
 
 
 overlap_vals <- c(50, 250, 450)
@@ -95,10 +93,11 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
 
   #parlr method
   ptm <- proc.time()
-  Zchain <- BKSimple_hash2(cd)
+  Zchain <- BKSimple_hash2(cd, R = R)
   elapsed <- proc.time() - ptm
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
+  eval
   
   # Resolution Step
   Zhat_resolved <- ResolveConflicts(Zhat)

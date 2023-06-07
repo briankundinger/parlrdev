@@ -341,7 +341,7 @@ With \texttt{fabl}, we introduce two techniques to further expand the scalabilit
 	\subsection{Data Representation, Hashing, and
 		Storage}\label{data-representation-hashing-and-storage}}
 	
-Since each component $\gamma_{ij}^f$ is discrete, there are only finitely many possible realizations of the comparison vector $\gamma_{ij}$. Let $P$ be the number of patterns realized in $\Gamma$ and note that it is bounded above by $P^{*} = F + \prod_{f=1}^F L_f$, where we have noted the possibility of missing values. Note that this quantity is controlled by the modeller in their choices for $F$ and $L_f$, and does not scale with $n_A$ or $n_B$. To obtain a memory efficient representation of the data, we map the agreement pattern of each record pair to a unique integer. \cite{enamorado2019using} accomplished this through the hashing function
+Since each component $\gamma_{ij}^f$ is discrete, there are only finitely many possible realizations of the comparison vector $\gamma_{ij}$. Let $P$ be the number of patterns realized in $\Gamma$ and note that it is bounded above by $P^{*} =  \prod_{f=1}^F (L_f + 1)$, where we have noted the possibility of missing values. Note that this quantity is controlled by the modeller in their choices for $F$ and $L_f$, and does not scale with $n_A$ or $n_B$. To obtain a memory efficient representation of the data, we map the agreement pattern of each record pair to a unique integer. \cite{enamorado2019using} accomplished this through the hashing function
 \begin{align}
 	\label{eqn:hashing}
 	h^{*}(i, j) = \sum_{f = 1}^F I(\gamma_{ij}^f > 0)2^{\gamma_{ij}^f + I(f>1)\sum_{d=1}^{f-1}(L_d -1)}.

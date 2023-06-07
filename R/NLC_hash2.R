@@ -24,7 +24,7 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
   }
 
   ptm <- proc.time()
-  patterns <- GetUniquePatterns2(comparisons)
+  patterns <- GetUniquePatterns2(comparisons, R = R)
   elapsed_hash <- proc.time() - ptm
 
   parameter_split <- as.vector(unlist(sapply(1:fields, function(x){
@@ -50,6 +50,7 @@ BKSimple_hash2 <- function(comparisons, m_prior = 1, u_prior = 1,
 
   m <- u <- rep(0, length(parameter_split))
   matches <- rep(0,P)
+  #set.seed(1)
 
   # Gibbs
   for(s in 1:S){

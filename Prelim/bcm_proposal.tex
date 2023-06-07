@@ -1,0 +1,190 @@
+\documentclass{beamer}
+\usetheme{Rochester}
+\addtobeamertemplate{navigation symbols}{}{ \hspace{1em}    \usebeamerfont{footline}%
+	\insertframenumber / \inserttotalframenumber }
+
+\begin{document}
+	\title{Bayesian Causal Matching with Fellegi Sunter}
+	%\subtitle{Using Beamer}
+	\author{Brian Kundinger}
+	\institute{Duke University}
+	\date{\today}
+	
+%	\AtBeginSection[]{
+%		\begin{frame}
+%			\vfill
+%			\centering
+%			\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+%				\usebeamerfont{title}\insertsectionhead\par%
+%			\end{beamercolorbox}
+%			\vfill
+%		\end{frame}
+%	}
+
+\AtBeginSection[]
+{
+	\begin{frame}
+		\frametitle{Table of Contents}
+		\tableofcontents[currentsection]
+	\end{frame}
+}
+	
+	\begin{frame}
+		\titlepage
+	\end{frame}
+
+\section{Matching in Causal Inference}
+\begin{frame}{Overview of Approaches}
+	\begin{itemize}
+		\item Exact Matching
+		\item Mahalonobis Distance
+		\item Propensity Score
+		\item Almost Exact Matching
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Mahalonobis Distance}
+	\begin{itemize}
+	\item One method of matching has been to calculate distance in the covariate space through
+		\begin{align}
+			d(X_1, X_2) = \sqrt{|X_1 - X_2| S^{-1} |X_1 - X_2|}
+		\end{align}
+	\item An algorithm then matches each unit in control to closest unit in treated
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Propensity Score}
+	\begin{itemize}
+	\item Another method is to estimate propensity scores $p(Z_n = 1 |X_n)$ for each unit in the data, and match units based on this score.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Pitfalls of Both Approaches}
+	\begin{itemize}
+		\item The pros and cons of each method are summarized very well on this \href{https://stats.stackexchange.com/questions/511294/what-are-the-pros-and-cons-of-using-mahalanobis-distance-instead-of-propensity-s}{Stack Exchange} page
+
+		\item Essentially, propensity scores can end up matching units with that have similar probability of treatment, but have very different covariate values
+		\item Conversely, Mahalonobis can end up matching units that are similar on features that are irrelevant to the outcome of interest
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Blending the Two Approaches}
+	\begin{itemize}
+		\item There is also a good summary on page 5 of \href{https://www.jstatsoft.org/article/view/v042i07}{Sekhot (2011)} recommends including the propensity score into the Malahalonobis distance. This was the genesis for the idea to come
+	\end{itemize}
+\end{frame}
+
+\section{Proposed Idea}
+
+\begin{frame}{My Idea}
+	\begin{itemize}
+		\item The machinery of Fellegi Sunter record linkage is very good at identifying duplicate records. It should also be good at identifying separate individuals that are similar.
+		\item FS does matching purely on the reliability and uniqueness ($m$ and $u$ parameters) of fields of information. It does not take into account any relationship with an outcome variable. Conceptually, this is very similar to the Mahalonobis distance, but allows for uncertainty quantification.
+		\item If we include propensity scores into FS, the model will place high weight on units with ``similar" scores. Then, the FS machinery for the other fields should find the units that are most similar. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{A Similar Idea}
+	\begin{itemize}
+		\item\href{https://arxiv.org/pdf/2105.02362.pdf}{Alvarez and Levin (2021)} (Section 2, pages 5 - 7) use a Bayesian model to create draws of the propensity scores. For set of scores, they use a deterministic algorithm to match records. 
+		\item I imagine that each particular draw of matched pairs may have the issues presented earlier. Propensities are matched, but units may actually look quite different.
+		\item Information does not seem to propagate correctly through the Gibbs Sampler
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{My Idea}
+	\begin{itemize}
+		\item Data is $\{y_n, z_n, x_n\}_{n = 1}^N$ where $y_n$ is the outcome, $z_n$ is the treatment indicator, and $x_n$ is a vector of $F$ fields of covariates. 
+		\item Split data into a datasets $T$ with records $i \in \{1, \ldots, n_T\}$ for treated units and $C$ with records $j \in \{1, \ldots, n_C\}$. 
+		\item At each step of the Gibbs Sampler, calculate propensity score $PS(i) = P(Z_i = 1 | X)$ for each data point (logistic or probit regression)
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{My Idea}
+	\begin{itemize}
+		\item Define comparison field 
+		\begin{align}
+			\Gamma_{0} = \begin{cases}
+				1 & $PS(i)$ and $PS(j)$ \text{ are sufficently close} \\
+				0 & \text{otherwise} \\
+			\end{cases}
+		\end{align} 
+		\item ''Sufficiently close" could mean all units with scores within a certain caliper, or it could mean the $K$ nearest scores.
+		\item Conduct Fellegi Sunter Matching on new full set of comparison vectors $\Gamma^{*} = (\Gamma_0, \gamma)$.
+		Note $\gamma$ is fixed data, but the $\Gamma$ are random. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+	\begin{itemize}
+		\item Each iteration of the Gibbs sampler will provide a matched dataset, from which you can calculate an MCMC sample of the treatment effect (TE) or other quantities of interest
+		\item We obtain measures of match quality as usual, through the posterior samples of the linkage structure
+		\item I believe this to be first causal matching method to produce matchings probabilistically
+		\item The proposed method is fully model based, with no deterministic algorithms. It propogates uncertainty between the matching procedure and the treatment effect estimation. 
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Model (Basic)}
+	\begin{align}
+		Z_n &= x_n' \beta + \epsilon \\
+		\beta &\sim N(0, \tau) \\
+		\epsilon &\sim N(0, \sigma^2) \\
+	\mathcal{L}(\Delta, m, u \mid \Gamma^{*}, \beta) &= \prod_{i=1}^{n_T}  \prod_{j=1}^{n_C}\prod_{f=0}^{F}\prod_{l=1}^{L_f}\left[  m_{fl}^{\Delta_{ij} = 1}u_{fl}^{\Delta_{ij} = 0}\right]^{I(\gamma_{ij}^f = l) \\
+		m, u \sim \text{Dirichlet}
+		\Delta \sim \text{Desired Record Linkage Prior}
+	\end{align}
+\end{frame}
+
+\begin{frame}{Model (With Variable Selection)}
+	\begin{itemize}
+		\item In causal matching, it is especially important not to match on irrelevant features. Therefore, we can use a spike and slab prior on $\beta$, and only use fields where $\beta_f \neq 0$ in the linkage.
+	\end{itemize}
+\begin{align}
+	\beta_j &\sim \pi_0 \delta_0 + \(1 - \pi\)N(0, \tau_j) \\
+	\mathcal{L}(\Delta, m, u \mid \Gamma^{*}, \beta) &= \prod_{i=1}^{n_T}  \prod_{j=1}^{n_C}\prod_{f=0}^{F}\left[\prod_{l=1}^{L_f}\left[  m_{fl}^{\Delta_{ij} = 1}u_{fl}^{\Delta_{ij} = 0}\right]^{I(\gamma_{ij}^f = l)\right]^{\beta_j \neq 0} \\
+\end{align}
+\end{frame}
+
+\begin{frame}{Full Conditional for $\beta$}
+	\begin{itemize}
+		\item The full condition for $\beta_j$ includes a measure of the quality of matches along field $f$
+	\end{itemize}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}{Conclusion}
+	\begin{itemize}
+		\item Mathematically, any record linkage prior could work. Sadinle, fabl, or original FS (one-to-one, one-to-many, many-to-many) may all be useful , depending on the analysis
+		\item If this works, would be a very strong final thesis chapter
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Caveats}
+	\begin{itemize}
+		\item Using a comparison vector made from the propensity score may technically violate the conditional independence assumption of FS
+		\item I can't imagine this idea totally failing, but I'm sure that it won't be cutting edge. Sekhot further devised a method that estimates
+		\begin{align}
+			d(X_1, X_2) = \sqrt{|X_1 - X_2| S^{-1/2} W S^{-1/2} |X_1 - X_2|}
+		\end{align}
+		where the entries in $W$ are fine tuned through optimization methods that encourage covariate balance across datasets, based on t-tests and all sorts of other measures. This is almost certainly outperform what I have presented, because it is able to use more information.
+		\item Propensity and Mahalonobis matching both have theoretic garuntees. I don't know right now if this method would have them
+		\item I know very little about causal inference! This would be a large undertaking
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Questions}
+	\begin{itemize}
+		\item What do you all think of this idea?
+		\item Jerry, how well versed are you in matching for causal inference? To what extent to should I seek guidance/collaboration from Fan Li or Alex Volfovsky?
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Possible Theoretical Question}
+	\begin{itemize}
+		\item I'm really struck by the conceptual similarity between Mahalanobis distance and the FS weights. If you make some assumptions (categorical data, one-to-one matching), it might be possible to prove a correspondence between the two. 
+	\end{itemize}
+\end{frame}
+
+
+\end{document}
