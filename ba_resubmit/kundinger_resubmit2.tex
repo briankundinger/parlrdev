@@ -131,14 +131,14 @@ This sparse matrix representation can become cumbersome for large linkage tasks.
 \end{align}
 We can go back and forth between the two using $\Delta_{ij} = I(Z_j = i),$ where $I(\cdot) = 1$ when the expression inside the parentheses is true, and $I(\cdot) = 0$ otherwise. 
 
-{\color{red}{The following paragraph is pretty unnecessary, I never use this notation}}
+%{\color{red}{The following paragraph is pretty unnecessary, I never use this notation}}
 Denote the set of matches by $\bm{M} = \{(i,j): i \leq n_A, j \leq n_B, \Delta_{ij} = 1\}$, and the set of non-matches by 
 $\bm{U} =  \{(i,j): i \leq n_A, j \leq n_B, \Delta_{ij} = 0\}.$ The record linkage task can be viewed as identifying  $\bm{M}$ and  $\bm{U}.$ We refer to record pairs that are estimated as matches as ``links'' and to record pairs that are estimated as non-matches as ``non-links.''
 
 %\subsection{Comparison Vectors}
 %\label{comparison-vectors}
 
-{\color{red}{Beka suggested eliminating the following two paragraphs. Thoughts? I think the first one is good, the second seems unneccesary.}}
+%{\color{red}{Beka suggested eliminating the following two paragraphs. Thoughts? I think the first one is good, the second seems unneccesary.}}
 
 Intuitively, matching records (those that refer to the same entity) should be similar; records that are non-matching should be dissimilar. \cite{fellegi_theory_1969} proposed encoding this using a comparison vector $\gamma_{ij}$ computed for each record pair $(i,j)$ in $A \times B.$ Denote the number of criteria for comparing records by $F$, such that $\gamma_{ij} = (\gamma_{ij}^1, \ldots, \gamma_{ij}^F).$ {\color{red}{We use $\Gamma_{ij}$ when referring to the vector as a random variable, and $\gamma_{ij}$ when referring to observed data. We collect the vectors $\gamma_{ij}$ as the comparison matrix $\gamma \in \mathbb{R}^{n_A n_B \times F}$}}.
 

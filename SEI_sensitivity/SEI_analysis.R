@@ -24,13 +24,13 @@ rownames(Zs) <- NULL
 Z_plot <-  Zs %>%
   ggplot() +
   aes(x = R, y = value, group = 1) +
-  geom_line() +
-  labs(y = "Distinct Z Estimates", x = "S") +
-  theme_bw(base_size = 10)
+  geom_line(size = .5) +
+  theme_bw(base_size = 6) +
+  labs(y = "Distinct Z Estimates", x = "S")
 
 Z_plot
 
-#ggsave(plot = Z_plot, filename = "SEI_sensitvity/Z_plot.png")
+ggsave(plot = Z_plot, filename = "SEI_sensitivity/Z_plot.png")
 
 eval_paths <- list.files(path = "SEI_sensitivity/out/eval", full.names = T)
 eval_list <- lapply(eval_paths, readRDS)
@@ -51,10 +51,12 @@ eval_plot <- eval_summary %>%
   filter(metric != "fmeasure") %>%
   ggplot(aes(x = R, y = avg,
              ymin  = lower, ymax = upper)) +
-  geom_pointrange(position = position_dodge2(width = .5)) +
-  facet_wrap(~metric, scales = "free") +
+  geom_pointrange(size = .2) +
+  facet_wrap(~metric) +
+  theme_bw(base_size = 6) +
+  scale_x_discrete(guide = guide_axis(check.overlap = TRUE))+
   labs(y = "Value", x = "S")
-  theme_bw(base_size = 10)
+
 
 eval_plot
 
