@@ -1,0 +1,543 @@
+\documentclass[ba]{imsart}
+%
+\pubyear{0000}
+\volume{00}
+\issue{0}
+\doi{0000}
+%\arxiv{}
+\firstpage{1}
+\lastpage{1}
+
+\usepackage{amsthm, amssymb}
+\usepackage{amsmath}
+\usepackage{natbib}
+\usepackage[colorlinks,citecolor=blue,urlcolor=blue,filecolor=blue,backref=page]{hyperref}
+\usepackage{graphicx}
+\newtheorem{lemma}{Lemma}
+\usepackage{booktabs}       % professional-quality tables
+\usepackage{algorithm}      % algorithm environment
+\usepackage{algpseudocode}
+
+
+\newcommand{\bem}{\boldsymbol{m}}    
+\newcommand{\bu}{\boldsymbol{u}}    
+\newcommand{\bM}{\boldsymbol{M}}  
+\newcommand{\bU}{\boldsymbol{U}}    
+\newcommand{\bZ}{\boldsymbol{Z}}  
+\newcommand{\bX}{\boldsymbol{X}}
+\newcommand{\bDelta}{\boldsymbol{\Delta}}
+\newcommand{\bGamma}{\boldsymbol{\Gamma}}
+\newcommand{\bgamma}{\boldsymbol{\gamma}}
+
+\startlocaldefs
+%\input{subfiles/preamble.tex}
+\endlocaldefs
+
+\begin{document}
+
+%% *** Frontmatter *** 
+
+\begin{frontmatter}
+\title{Efficient and Scalable Bipartite Matching with Fast Beta Linkage  (fabl) \\ DO NOT SHARE}
+%\title{A Sample Document\thanksref{T1}}
+%\thankstext{T1}{<thanks text>}
+\runtitle{Efficient and Scalable Bipartite Matching with Fast Beta Linkage  (fabl)}
+
+\begin{aug}
+\author{\fnms{Anonymous} \snm{Authors}\thanksref{addr1}\ead[label=e1]{}
+%\author{\fnms{} \snm{}\thanksref{addr1}\ead[label=e2]{}}
+%\and
+%\author{\fnms{} \snm{}\thanksref{addr2}\ead[label=e3]{}
+}
+
+%\runauthor{Kundinger et al.}
+
+\address[addr1]{Anonymous Address
+  \printead{e1}, % print email address of "e1"
+%  \printead*{e2}
+}
+
+%\address[addr2]{Departments of Statistical Science and Computer Science,
+%  Duke University,
+%  P.O.\ Box 90251,
+%  Durham, NC 27708, USA
+%  \printead{e3}
+%}
+
+%\thankstext{<id>}{<text>}
+\end{aug}
+
+%\begin{aug}
+%\author{\fnms{Brian} \snm{Kundinger}\thanksref{addr1}\ead[label=e1]{brian.kundinger@duke.edu}},
+%\author{\fnms{Jerome} \snm{Reiter}\thanksref{addr1}\ead[label=e2]{jreiter@duke.edu}}
+%\and
+%\author{\fnms{Rebecca C.} \snm{Steorts}\thanksref{addr2}\ead[label=e3]{beka@stat.duke.edu}}
+%
+%\runauthor{Kundinger et al.}
+%
+%\address[addr1]{Department of Statistical Science,
+%  Duke University,
+%  P.O.\ Box 90251,
+%  Durham, NC 27708, USA
+%  \printead{e1}, % print email address of "e1"
+%  \printead*{e2}
+%}
+%
+%\address[addr2]{Departments of Statistical Science and Computer Science,
+%  Duke University,
+%  P.O.\ Box 90251,
+%  Durham, NC 27708, USA
+%  \printead{e3}
+%}
+%
+%%\thankstext{<id>}{<text>}
+%\end{aug}
+
+
+\begin{abstract}
+
+\end{abstract}
+
+%% ** Keywords **
+\begin{keyword}%[class=MSC]
+\kwd{bipartite record linkage}
+\kwd{Bayesian methods}
+\kwd{hashing techniques}
+\kwd{parallel/distributed computing}
+\kwd{Markov chain Monte Carlo}
+\end{keyword}
+
+\end{frontmatter}
+
+\section{Introduction}
+\label{sec:intro}
+
+
+\section{The Bipartite Record Linkage Problem}
+\label{sec:problem}
+Assume two databases (data sources or data files) $\bX_1$ and $\bX_2$ contain $n_1$ and $n_2$ records, respectively. Without loss of generality, assume $n_1 \geq n_2.$ In addition, assume duplicate records occur across databases but not within a single database, which is known as \textit{bipartite record linkage}. The goal of this problem is to ascertain which records refer to the same entity across the two databases.
+
+\subsection{The Bipartite Record Linkage Matching}
+\label{sec:bipartite}
+
+
+This problem can be formulated by a \textit{bipartite matching} between two sets of records from the two databases. Within the bipartite record linkage framework, let us consider records from $\bX_1$ and $\bX_2$ as disjoint set of nodes (containing all the feature or attribute information). An edge between two records represents them being a \textit{match} or \textit{coreferent}. 
+
+One way of representing a bipartite matching is through a \textit{coreference matrix} (or linkage structure) \citep{Fortinietal01, Larsen02, Larsen05,  liseo_2011, sadinle_detecting_2014, steorts_bayesian_2016}. The coreference matrix $\bDelta$ is a $n_1 \times n_2$ matrix whose $(i,j)$th entry is
+%%
+\begin{align}
+\Delta_{ij} &=
+\begin{cases}
+1  & \text{if records} \; i \in \bX_1 \; \text{and}\; j \in \bX_2 \; \text{refer to the same entity;} \\
+0 &  \text{otherwise.}
+\end{cases}
+\end{align}
+While this construction has been used in the literature, it is not computationally convenient. The \textit{matching label} 
+$\bZ = (Z_1, \ldots, Z_{n_2})$ for the records in database $n_2$ was introduced by \cite{sadinle_bayesian_2017} such that 
+
+\begin{align}
+Z_j &=
+\begin{cases}
+i  & \text{if records} \; i \in \bX_1 \; \text{and}\; j \in \bX_2 \; \text{refer to the same entity;} \\
+n_1 + j &  \text{if record} \; j \in \bX_2 \; \text{does not have a match in database} \; \bX_1. 
+\end{cases}
+\end{align}
+The coreference matrix and the matching label are interchangeable because $\Delta_{ij} = I(Z_j = i),$ where $I(\cdot)$ is the indicator function. 
+
+\subsection{Approaches to Bipartite Record Linkage}
+\label{sec:approaches}
+
+There are two main approaches to Bayesian bipartite record linkage --- comparison and direct based frameworks. Direct-based approaches generatively model the field (feature or attribute) information in the databases \citep{gutman_bayesian_2013, steorts_smered_2014, steorts_entity_2015, zanella_flexible_2016, steorts_performance_2017, kaplan_posterior_2018}. On the other hand, comparison-based approaches model the field comparisons between record pairs \citep{sadinle_detecting_2014, sadinle_bayesian_2017, mcveigh2019scaling}. 
+
+In this paper, we propose a scalable extension of \cite{sadinle_bayesian_2017}, which relaxes the bipartite extension implicitly in the prior and ``corrects" for this in a post-processing step of \cite{jaro_1989}. As such, we provide the first independent updates to the matching label $\bZ,$ contrasting prior work of sequential updates. Furthermore, we propose additional computational speeds up (see section \ref{}). 
+
+\section{The Fellegi-Sunter Approach}
+\label{sec:fellegi}
+
+Based upon the original paper of \cite{fellegi_theory_1969}, we can think of the set of ordered record pairs $\bX_1 \times \bX_2$ as the union of the set of matches and non-matches
+\begin{align}
+&\bM = \{
+(i,j); \;  i \in \bX_1, \; j \in \bX_2,\;  \Delta_{ij} = 1
+\};\\
+&\bU = \{
+(i,j); \;  i \in \bX_1, \; j \in \bX_2,\;  \Delta_{ij} = 0
+\}.
+\end{align}
+Record pairs that are estimated as matches are called \textit{links}; pairs estimated as non-matches are called \textit{non-links}. The FS approach uses pairwise comparisons of the records to estimate their match status. 
+
+\subsection{Comparison Data}
+\label{sec:comparison}
+
+In record linkage applications, records that refer to the same entity should be similar. Records that refer to different entities should be dissimilar. This motivates a \textit{comparison vector} 
+\begin{align}
+\bgamma_{ij} &= (\gamma_{ij}^1, \ldots, \gamma_{ij}^f, \ldots, \gamma_{ij}^F),
+\end{align}
+where $F$ denotes the number of criteria used to compare the records. Often the $F$ criteria correspond to one comparison per field that the databases have in common. For instance, binary agreement is the commonly used due to its simplicity; others have used partial agreement patterns using similarity metrics or distance functions \citep{sadinle_bayesian_2017}. 
+
+%\subsection{Fellegi-Sunter Model}
+%\textcolor{red}{talk about FS Model here.}
+
+%\subsection{Fellegi-Sunter Decision Rule}
+%\textcolor{red}{remove.}
+%The comparison vector $\bgamma_{ij}$ is not enough to determine the match status of record pairs due to typographical, transcription, or other errors in data. \cite{fellegi_theory_1969} proposed a likelihood ratio based method, where they computed
+%\begin{align}
+%\label{eqn:fellegi}
+%w_{ij} &= \log \bigg[
+%\mathbb{P}
+%\frac{\bgamma_{ij} \mid \Delta_{ij} = 1}
+%{\bgamma_{ij} \mid \Delta_{ij} = 0}
+%\bigg]
+%\end{align}
+%as weights to estimated matched record pairs. Equation \ref{eqn:fellegi} assumes the realization  $\bgamma_{ij}$ of the random variable $\bGamma_{ij}$ depends on the coreference matrix (or match status) $\Delta_{ij}$ of record pair $(i,j).$ When this ratio is large, equation~\ref{eqn:fellegi} favors a record pair being a match; otherwise it favors a nonmatch. The authors formalized their proposal (the Fellegi and Sunter (FS) decision rule) and showed that it was optimal \cite{fellegi_theory_1969}. Note that the original FS decision rule does not enforce the bipartite record linkage assumption (or rather the one-to-one assignment restriction). 
+
+\subsection{Fellegi-Sunter Model}
+\label{sec:fellegi-sunter-model}
+In this section, we review the Fellegi and Sunter (FS) model of \cite{fellegi_theory_1969}.
+%Unfortunately, the comparison vector $\bgamma_{ij}$ is insufficient to estimate links and nonlinks because observed data is likely to have noise and or missing observations. 
+Note that $\bgamma_{ij}$ is a realization of a random variable $\bGamma_{ij}$ whose distribution depends on the coreference matrix $\Delta_{ij}$ of a record pair $(i,j).$ Let $\mathcal{M}$ and $\mathcal{U}$ denote a product of individual models for each of the comparison components under a conditional independence assumption \citep{Winkler1988, jaro_1989} or a complex log-linear model \citep{larsen_2001}. 
+Let the comparison vector $\bgamma_{ij}$ be a realization of the random vector $\bGamma_{ij}$ that can take distribution 
+$\mathcal{M}(\bem)$ or $\mathcal{U}(\bu),$ depending on whether the observed record pair is a match or non-match with 
+$\bem$ and $\bu$ representing vectors of the parameters. Let $p$ denote the proportion of matches. 
+Following \cite{Winkler1988, jaro_1989, larsen_2001} consider
+
+\begin{align}
+\label{eqn:model-estimation}
+\bGamma_{ij} \mid \Delta_{ij} = 1 &\stackrel{iid}{\sim} \mathcal{M}(\bem), \notag \\
+\bGamma_{ij} \mid \Delta_{ij} = 0 &\stackrel{iid}{\sim} \mathcal{U}(\bu), \quad \Delta_{ij} \stackrel{iid}{\sim} \text{Bernoulli}(p),
+\end{align}
+where $p$ denotes the proportion of matches.
+
+The mixture model of equation \ref{eqn:model-estimation} relies on two assumptions: the comparison vectors are independent given the bipartite matching and the matching status of the record pairs are independent of another. Both assumptions imply the comparison vectors are marginally independent. Estimation has been typically accomplished via the expectation-maximization (EM) algorithm \citep{dempster1977maximum}. 
+%It is important to note that the FS method does not satisfy the one-to-one assignment restriction of bipartite record linkage without some post-processing.
+
+\subsection{Beta Record Linkage Model}
+\label{sec:brl}
+As such, this motivated the mixture model of \cite{sadinle_bayesian_2017}, who considered the matching status of the record pairs via a bipartite matching
+%%
+\begin{align}
+\bGamma_{ij} \mid Z_i = i &\stackrel{iid}{\sim} \mathcal{M}(\bem), \notag \\
+\bGamma_{ij} \mid Z_i \neq i &\stackrel{iid}{\sim} \mathcal{U}(\bu), \quad \bZ \sim \mathcal{B},
+\end{align}
+where $\mathcal{M}(\bem)$ and $\mathcal{U}(\bu)$ are models for the comparison vectors for matches and non-matches and $\mathcal{B}$ is a prior of the space of bipartite matches such as the beta prior of \cite{sadinle_bayesian_2017}. For complete details, we refer to the aforementioned paper, which inherently provides the one-to-one constraint of the bipartite matching problem. While theoretically desirable, unfortunately, the Gibbs sampling updates to the matching label $\bZ$ are sequential. 
+
+\section{The Fast Beta Linkage (fabl) Model}
+\label{sec:fabl}
+In this section, we propose the fast beta linkage method (fabl), which relaxes the bipartite assumption of \cite{sadinle_bayesian_2017} to induce a Gibbs sampler that is independent in its updates for the matching label $\bZ.$ This allows for much scalable computation. 
+
+
+\subsection{Likelihood for Comparison Data}
+\label{sec:like}
+
+Following \cite{sadinle_bayesian_2017}, the comparison fields are conditionally independent given the matching status of the record pairs, which provides the likelihood of the comparison data 
+\begin{align}
+\label{eqn:likelihood}
+\mathcal{L}(\bZ, \Phi \mid \bgamma) &= \prod_{i=1}^{n_1} 
+\prod_{j=1}^{n_2}
+\prod_{f=1}^{F}
+\prod_{\ell=1}^{L_f}
+\bigg[
+m_{f\ell}^{
+I(Z_j = i)
+}
+u_{f\ell}^{
+I(Z_j \neq i)
+}
+\bigg]^{
+I(\gamma^f_{ij} = \ell)
+},
+\end{align}
+where
+$
+m_{f\ell}
+= \mathbb{P}(\Gamma_{ij}^f = \ell \mid Z_j = i )
+$
+denotes the probability of a match having a level $\ell$ of disagreement in field $f$ and 
+$
+u_{f\ell}
+= \mathbb{P}(\Gamma_{ij}^f = \ell \mid Z_j \neq i )
+$
+denotes the probability of a non-match having a level $\ell$ of disagreement in field $f.$
+%%
+Denote $\bem_f = (m_{f1}, \ldots, m_{fL_f}),$  $\bu_f = (u_{f1}, \ldots, u_{fL_f}),$ $\bem = (\bem_1, \ldots, \bem_F),$
+$\bu = (\bu_1, \ldots, \bu_F),$ and $\Phi = (\bem, \bu).$
+
+Following \cite{sadinle_bayesian_2017}, we modify the model to take into account data that is missing completely at random. That is, using equation \ref{eqn:likelihood} and the assumption of ignorability, we marginalize over the missing comparisons to find
+%%%
+\begin{align}
+\label{eqn:sadinle-likelihood}
+\mathcal{L}(\bZ, \Phi \mid \bgamma^{\text{obs}}) 
+&= 
+\prod_{f=1}^{F}
+\prod_{\ell=1}^{L_f}
+\bigg[
+m_{f\ell}^{
+\sum_{i,j} I_{\text{obs}}(\gamma_{ij}^f)I(\gamma_{ij}^f = \ell)I(Z_j = i)
+}
+\times
+u_{f\ell}^{
+\sum_{i,j} I_{\text{obs}}(\gamma_{ij}^f)I(\gamma_{ij}^f = \ell)I(Z_j \neq i)
+}
+\bigg]\\
+& = 
+\prod_{f=1}^{F}
+\prod_{\ell=1}^{L_f}
+\bigg[
+m_{f\ell}^{a_{f\ell}(\bZ)}
+u_{f\ell}^{b_{f\ell}(\bZ)}
+\bigg],
+\end{align}
+%%%
+where 
+\begin{align}
+\label{eqn:ab}
+a_{f\ell}(\bZ) &= \sum_{i,j} I_{\text{obs}}(\gamma_{ij}^f)I(\gamma_{ij}^f = \ell)I(Z_j = i) \quad \text{and} \\
+b_{f\ell}(\bZ) &= \sum_{i,j} I_{\text{obs}}(\gamma_{ij}^f)I(\gamma_{ij}^f = \ell)I(Z_j \neq i), \notag
+\end{align}
+
+which for a given matching label $\bZ$ represents the number of matches and nonmatches with observed disagreement level $\ell$ in comparison $f$ and $I_{\text{obs}}(\cdot)$ is the indicator of whether its argument is observed.
+
+%Note how $a_{f\ell}(\bZ)$ and $b_{f\ell}(\bZ)$ see the combination of the conditional independence and ignorabililty assumptions that allow us to ignore comparisons that are not observed using a simple, tractable solution. 
+
+Under equation \ref{eqn:sadinle-likelihood}, it is convenient to use independent, conditionally conjugate priors
+\begin{align}
+\label{eqn:fabl-priors}
+&\bem_f \sim \text{Dirichlet}(\alpha_{f0}, \ldots, \alpha_{fL_f}) \\
+&\bu_f \sim \text{Dirichlet}(\beta_{f0}, \ldots, \beta_{fL_f}),
+\end{align}
+for $f=1, \ldots, F.$
+
+\subsection{Fast Beta Linkage Prior}
+\label{sec:fabl-prior}
+
+While the bipartite prior of \cite{sadinle_bayesian_2017} may be theoretically desirable, we propose a \textit{non-bipartite prior} for purely computational reasons. That is, for each $Z_j,$ $j \in \{1, \ldots, n_1, n_1 + j \}$ assume independent draws from
+
+\begin{align}
+\mathbb{P}(Z_j = i \mid \pi) 
+&=
+\begin{cases}
+ \dfrac{\pi}{n_1}  &  \text{if}  \; z_j \leq n_1\\
+  1- \pi & z_j = n_1 + j.
+\end{cases}
+\end{align}
+
+Also, assume 
+
+\begin{align}
+  \pi &\stackrel{ind}{\sim} \text{Beta}(\alpha_{\pi}, \beta_{\pi}),
+\end{align}
+where $\alpha_{\pi}$ and $\beta_{\pi}$ are fixed and known. As already mentioned, the independence assumption above leads to a Gibbs sampler that is independent and does not require sequential updates of the matching label $\bZ.$
+
+%\subsection{Appendix A of fabl -- describe here regarding the loss function}
+%We represent a Bayes estimate as $\hat{\bZ} = (\hat{Z}_1, \ldots, \hat{Z}_{n2}),$ where $\hat{Z}_j \in \{1, \ldots, n_1, n_1 + j, R\},$ where 
+%$R$ represents a rejection option. We use the loss of \cite{} 
+%$L(\bZ, \hat{\bZ}) = \sum_{j=1}^{n_2} L(Z_j, \hat{Z}_j),$ where
+%\begin{align}
+%L(Z_j, \hat{Z}_j) 
+%&=
+%\begin{cases}
+%0, \quad  &  \text{if} \quad Z_j = \hat{Z}_j; \\
+%\lambda_{R}, \quad  &  \text{if} \quad \hat{Z}_j = R; \\
+%\lambda_{\text{FNM}}, \quad  &  \text{if} \quad Z_j \leq n_1, \hat{Z}_j = n_1 + j; \\
+%\lambda_{\text{FM1}}, \quad  &  \text{if} \quad Z_j = n_1, \hat{Z}_j \leq n_1; \\
+%\lambda_{\text{FM2}}, \quad  &  \text{if} \quad Z_j, \hat{Z}_j \leq n_1, Z_j \neq \hat{Z}_j; \\
+%\end{cases}
+%\end{align}
+%where $\lambda_{R}$ is the loss from not taking a decision, $\lambda_{\text{FNM}}$ is the loss from a false non-match decision (FNM), $\lambda_{\text{FM1}}$
+%is the loss from a false match decision when the record does not actually match any other record, and $\lambda_{\text{FM2}}$ is the loss from a false match decision when the record truly matches a different record than the one assigned to it. The posterior expected loss is given by 
+%$E[L(\bZ, \hat{Z} ) \mid \bgamma_{obs}] = \sum_{j=1}^{n_2} \epsilon_j (\hat{Z}_j), $ where 
+%$\epsilon_j (\hat{Z}_j) = E[L(Z_j, \hat{Z}_j ) \mid \bgamma_{obs}].$ 
+%
+%\textcolor{red}{todo, formalize this idea and proof more cleaning and clearly.}
+
+
+\subsection{Gibbs Sampler}
+\label{sec:gibbs}
+In this section, we provide the Gibbs sampler of fabl for completeness that explores the joint posterior distribution of $\bZ$, $\Phi$, and $\pi$ given the observed comparison data $\bgamma_{\text{obs}},$ for the likelihood and priors presented earlier. 
+
+We start the sampler with an empty matching, such that, $Z_{j}^{[0]} = n_1 + j$ for all $j \in \{1, \ldots, n_2 \}.$ For a current value of the matching labeling $\bZ^{[t]},$ we obtain the next values of the Gibbs sampler iteration 
+$\bem_f^{[t+1]} = (m_{f0}^{[t+1]}, \ldots, m_{f L_f}^{[t+1]})$, 
+$\bu_f^{[t+1]} =  (u_{f0}^{[t+1]}, \ldots, u_{f L_f}^{[t+1]}),$ for $f=1, \ldots, F,$ 
+$\pi^{[t+1]}$, and $\bZ^{(t+1)} = (Z_1^{(t+1)}, \ldots, Z_{n2}^{(t+1)})$ as follows:
+
+\begin{enumerate}
+\item For $f=1, \ldots, F$ sample
+$$\bem_f^{[t+1]} \mid \bgamma_{\text{obs}}, \bZ^{[t]} \sim
+\text{Dirichlet}(
+a_{f0}(\bZ^{(t)})  + \alpha_{f0}, \ldots, a_{f L_f}(\bZ^{(t)} ) + \alpha_{f L_f})
+),
+$$
+and
+$$\bu_f^{[t+1]} \mid \bgamma_{\text{obs}}, \bZ^{[t]} \sim
+\text{Dirichlet}(
+b_{f0}(\bZ^{(t)})  + \beta_{f0}, \ldots, b_{f L_f}(\bZ^{(t)} ) + \beta_{f L_f})
+). 
+$$
+Collect these updated parameters into $\Phi^{[t+1]},$ where the functions $a_{f \ell}(\cdot)$ and $b_{f \ell}(\cdot)$ were defined in equation \ref{eqn:ab}. 
+\item Sample $$\pi^{[t+1]} \mid  \bgamma_{\text{obs}}, \bZ^{(t)}
+\sim \text{Beta}(
+n_{12}(\bZ^{(t)} )+ \alpha_{\pi}, n_2 - n_{12}(\bZ^{(t)}) + \beta_{\pi} - 1)
+)
+$$
+\item Sample the entries of $\bZ^{[t+1]}$ as follows:
+
+%As we have sampled the first $j-1$ entries of $\bZ^{[t+1]},$ we define 
+%$\bZ_{-j}^{(t + (j-1)/n_2)} = (
+%Z_{1}^{[t+1]}, \ldots, Z_{j-1}^{[t+1]}, Z_{j+1}^{[t+1]}, \ldots, Z_{n_2}^{[t+1]}
+%).
+%$
+%We sample a new label $Z_{j}^{[t+1]}$ with probability of \textcolor{blue}{selecting label} $q \in \{1, \ldots, n_1, n_1 + j \}$ given by 
+
+\begin{align}
+\label{eqn:partition-independent}
+P(Z_{j}^{[t+1]} \mid \Phi, \bgamma_{obs}, \pi) \propto 
+\begin{cases}
+\frac{\pi}{n_1}\exp(w_{qj}(\Phi) )  & \text{if} \; q \leq n_1 \\
+1- \pi
+%  \frac{n_1}\frac{n_2}{n_{12}(\bZ_{-j}) + \beta_{\pi}}{n_{12}(\bZ_{-j}) + \alpha_{\pi}}
+   &  \text{if} \; q = n_1 + j.
+\end{cases}
+\end{align}
+\end{enumerate}
+
+\begin{align}
+P(\bZ^{[t+1]}\mid \Phi, \bgamma_{obs}, \pi) \propto \prod_j  \prod_q
+P(Z_{j}^{[t+1]} = q \mid \Phi, \bgamma_{obs}, \pi),
+\end{align}
+which does not depend on the update of $Z_{j}^{[t+1]}.$ Therefore, we can update the partition independently and in parallel. 
+
+See Appendix \ref{app:full-conditional} for derivations of the full conditional distributions.
+
+\newpage
+
+\bibliographystyle{ba}
+\bibliography{vabl}
+
+\appendix
+
+\section{Full Conditionals}
+\label{app:full-conditional}
+
+In this section, we provide the full conditional distributions for our Gibbs sampler in section \ref{sec:gibbs}. 
+
+First, we consider the full conditional distributions for $\bem_{f\ell}$ and $\bu_{f\ell}.$
+It follows from equations \ref{eqn:sadinle-likelihood} and \ref{eqn:fabl-priors} that this is a standard Multinomial-Dirichlet:
+%
+\begin{align}
+\bem_{f\ell} \mid \bZ, \bgamma_{\text{obs}} &\sim \text{Dirichlet}(a_{f\ell}(\bZ) + \alpha_{f\ell})\\
+&=  \text{Dirichlet}(\sum_{i,j} I_{\text{obs}}(\gamma_{ij}^f)I(\gamma_{ij}^f = \ell)I(Z_j = i) + \alpha_{f\ell})
+\end{align}
+and 
+\begin{align}
+\bu_{f\ell} \mid \bZ, \bgamma_{\text{obs}} &\sim \text{Dirichlet}(b_{f\ell}(\bZ) + \beta_{f\ell})\\
+&=  \text{Dirichlet}(\sum_{i,j} I_{\text{obs}}(\gamma_{ij}^f)I(\gamma_{ij}^f \neq \ell)I(Z_j = i) + \beta_{f\ell}).
+\end{align}
+
+Second, we consider the full conditional distribution for $\pi.$ Recall that $\pi$ provides the proportion of matches across the two databases subject to the restriction that the total number of links across both databases is $n_{12} (\bZ).$ Recall that $n_2$ is the larger of the two databases. 
+This implies that the conditional distribution is
+\begin{align}
+p(\pi \mid \bZ)& \propto p(\bZ \mid \pi) p(\pi) \\
+& \propto \pi^{n_{12}(\bZ)} (1-\pi)^{n_2(\bZ) - n_{12}(\bZ)} \times \pi^{\alpha_\pi - 1} (1 - \pi)^{\beta_{\pi} - 1} \\
+& \propto \pi^{n_{12}(\bZ) + \alpha_\pi - 1} (1-\pi)^{n_2(\bZ) - n_{12}(\bZ) + \beta_{\pi} - 1} 
+\end{align}
+This implies $$\pi \mid \bZ \sim \text{Beta}(n_{12}(\bZ) + \alpha_\pi , n_2(\bZ) - n_{12}(\bZ) + \beta_{\pi}).$$
+
+
+\newpage
+Recall the full likelihood from equation \ref{eqn:sadinle-likelihood}
+
+\begin{align}
+\mathcal{L}(\bZ, \Phi \mid \bgamma^{\text{obs}}) 
+&= 
+\prod_{f=1}^{F}
+\prod_{\ell=1}^{L_f}
+\bigg[
+m_{f\ell}^{
+\sum_{i,j} I_{\text{obs}}(\gamma_{ij}^f)I(\gamma_{ij}^f = \ell)I(Z_j = i)
+}
+\times
+u_{f\ell}^{
+\sum_{i,j} I_{\text{obs}}(\gamma_{ij}^f)I(\gamma_{ij}^f = \ell)I(Z_j \neq i)
+}
+\bigg]\\
+& = 
+\prod_{f=1}^{F}
+\prod_{\ell=1}^{L_f}
+\bigg[
+m_{f\ell}^{a_{f\ell}(\bZ)}
+u_{f\ell}^{b_{f\ell}(\bZ)}
+\bigg],
+\end{align}
+%%%
+where 
+\begin{align}
+\label{eqn:ab}
+a_{f\ell}(\bZ) &= \sum_{i,j} I_{\text{obs}}(\gamma_{ij}^f)I(\gamma_{ij}^f = \ell)I(Z_j = i) \quad \text{and} \\
+b_{f\ell}(\bZ) &= \sum_{i,j} I_{\text{obs}}(\gamma_{ij}^f)I(\gamma_{ij}^f = \ell)I(Z_j \neq i). \notag
+\end{align}
+
+
+Now, let us consider when we have a match. This corresponds when record $i \leq n_1$ and leads to the following expression:
+\begin{align}
+\mathcal{L}_{ij}(\bZ, \Phi \mid \bgamma^{\text{obs}}) 
+&= \prod_{f=1}^F 
+\bigg[
+\prod_{\ell=1}^{L_f} 
+\bigg(
+\frac{m_{f \ell}}
+{u_{f \ell}
+}
+\bigg) ^{
+I(\gamma_{ij}^f = \ell)
+}
+\bigg]^{I_{\text{obs}}(\gamma_{ij}^f)} \\
+&= \exp  
+\bigg \{
+\sum_{f=1}^F
+I_{\text{obs}}(\gamma_{ij}^f)
+\sum_{\ell =1}^{L_f}
+\log 
+\bigg(
+\frac{m_{f \ell}}
+{u_{f \ell}
+}
+\bigg)
+I(\gamma_{ij}^f = \ell)
+\bigg\} \\
+&=: \exp \{ w_{ij}(\Phi) \}.
+\end{align}
+In the case of a non-match, $i = n_1 + j,$ and the likelihood is proportional to a constant. This result immediately follows from Sadinle (2017) and Wortman (2019), where the later provides more explicit derivational details for each of the two cases. 
+
+It follows that 
+\begin{align}
+\mathcal{L}_{ij}(\bZ, \Phi \mid \bgamma^{\text{obs}}) 
+&\propto
+\begin{cases}
+  \exp \{ w_{ij}(\Phi) \}  & \text{if} \quad  i \leq n_1 \\
+  1 & \text{if} \quad i = n_1 + j
+\end{cases}
+\end{align}
+
+
+It follows that we can update $Z_j$ using the following expression:
+\begin{align}
+\label{eqn:partition}
+p_{ij} (Z_{j} \mid \Phi, \bgamma^{\text{obs}}, \pi) 
+\propto P(Z_j \mid \pi) \times \mathcal{L}_{ij}(\bZ, \Phi \mid \bgamma^{\text{obs}}) 
+&\propto
+\begin{cases}
+ \frac{\pi}{n_1} \exp \{ w_{ij}(\Phi) \}  & \text{if} \quad  i \leq n_1 \\
+  1 - \pi & \text{if} \quad i = n_1 + j
+\end{cases}\\
+\end{align}
+
+We sample the conditional distribution for each $Z_j$ by normalizing the probabilities $\frac{\pi}{n_1} \exp \{ w_{ij}(\Phi) \}$ in equation \ref{eqn:partition} for each $i \leq n_1$ and equal to $1-\pi$ for $i = n_1 + j,$ where $j$ is any new label. 
+
+Using these probabilities, we randomly sample $Z_j$ conditional on $\Phi, \bgamma^{\text{obs}}, \pi.$ Observe that for any $i, j$ $(i \neq j)$ the conditional update does not depend on the matching label providing a posteriori independence. It follows that we can update the conditional distribution of the entire matching label independently:
+\begin{align}
+p(\bZ \mid \Phi, \bgamma^{\text{obs}}, \pi) \propto \prod_j \left[ \prod_i p_{ij} (Z_{j} \mid \Phi, \bgamma^{\text{obs}}, \pi) \right].
+\end{align}
+
+
+
+\end{document}
+

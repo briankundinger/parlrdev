@@ -38,7 +38,7 @@ Ztrue <- sapply(df89$unique_ID, function(x){
 }) %>%
   unname()
 
-comparisons <- readRDS("full_hash/independent/full_hash")
+comparisons <- readRDS("cluster_jobs/full_hash/independent/full_hash")
 chain <- BKSimple_hash2_big(comparisons)
 Zchain <- chain$Z
 Zhat <- LinkRecordsBK(Zchain, nA, 1, 1, 2, Inf)
@@ -50,3 +50,8 @@ results <- rbind(eval, eval_resolved) %>%
 row.names(results) <- NULL
 results$method <- c("fabl_ind_flds", "fabl_ind_flds_resolved")
 saveRDS(results, "eval/fabl/independent")
+
+# thing <- comparisons[[2]][[4]] %>%
+#   sapply(., function(x){sapply(x, length)})
+
+sort(thing, decreasing = T)

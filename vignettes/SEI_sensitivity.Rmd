@@ -87,8 +87,8 @@ file2 <- records %>%
 cd <- suppressMessages(BRL::compareRecords(file1, file2, c(2, 3, 5, 6), 
                           types = c("lv", "lv", "bi", "bi")))
 cd[[1]] <- apply(cd[[1]], 2, as.numeric)
-R_vals <- c(1, 2, 5, 10, 20)
-iterations <- 40
+R_vals <- c(1, 2, 5, 10)
+iterations <- 10
 Zs <- matrix(NA, nrow = n2, ncol = iterations)
 evals <- matrix(NA, nrow = 3, ncol = iterations)
 Z_list <- vector(mode = "list", length = length(R_vals) + 1)

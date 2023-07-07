@@ -45,6 +45,6 @@ cd <- CompareRecords_fabl(df82[, -c(7, 8)], chunk89[, -c(7, 8)],
                                      c(1, 2, 3, 4, 5, 6),
                                      types = c("bi", "bi", "bi", "bi", "bi", "bi"))
 cd[[1]] <- apply(cd[[1]], 2, as.numeric)
-hash <- GetUniquePatterns2(cd, R = 10)
+hash <- GetUniquePatterns2(cd, R = NULL)
 saveRDS(hash, file = paste0("hash/independent/", "hash_",
                             str_pad(taskID, 2, pad = "0")))
