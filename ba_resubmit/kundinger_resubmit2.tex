@@ -922,6 +922,14 @@ Lastly, we multiply the likelihood by the fast beta prior in (\ref{eqn:fast_beta
 	\end{cases}
 \end{align}
 
+\textcolor{blue}{Observe that the full conditional in (\ref{eqn:z_full_conditional2}) does not depend on $\bm{Z}^{(s)},$ implying that 
+\begin{align}
+p(\bm{Z}^{(s+1)} \mid \gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi) \propto \prod_q \left(\prod_j
+p\left(Z_j^{(s+1)}  = q \mid \gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi \right)
+\right).
+\end{align}
+Therefore, we update the full conditional for $\bm{Z}^{(s+1)}$ in parallel. This contrasts the Gibbs sampler of  \cite{sadinle_bayesian_2017}, where the update to the matching matrix is sequential and accomplished using a partially collapsed Gibbs sampler, where one integrates out $\pi.$ We do not opt for this approach as it would lead to similar sequential updates, which are computationally slow.}
+
 %Let $\gamma_{.j}$ denote the set of $n_A$ comparison vectors with $B_j$. We have
 %\begin{align*}
 %	p(\gamma_{.j}|Z_j = q, \bm{m}, \bm{u}) &\propto \prod_{i=1}^{n_A}\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\\
