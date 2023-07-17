@@ -1,0 +1,222 @@
+\documentclass{beamer}
+\usetheme{Rochester}
+\addtobeamertemplate{navigation symbols}{}{ \hspace{1em}    \usebeamerfont{footline}%
+	\insertframenumber / \inserttotalframenumber }
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+
+\begin{document}
+	\title{Coarse Probabilistic Matching for Causal Inference through Bayesian Fellegi Sunter}
+	%\subtitle{Using Beamer}
+	\author{Brian Kundinger}
+	\institute{Duke University}
+	\date{\today}
+	
+%	\AtBeginSection[]{
+%		\begin{frame}
+%			\vfill
+%			\centering
+%			\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+%				\usebeamerfont{title}\insertsectionhead\par%
+%			\end{beamercolorbox}
+%			\vfill
+%		\end{frame}
+%	}
+
+\AtBeginSection[]
+{
+	\begin{frame}
+		\frametitle{Table of Contents}
+		\tableofcontents[currentsection]
+	\end{frame}
+}
+	
+	\begin{frame}
+		\titlepage
+	\end{frame}
+
+\section{Record Linkage with Fellegi Sunter}
+
+\begin{frame}{Linkage through Comparison Vectors}
+	\includegraphics<1>[width = \textwidth, height = .6\textwidth ]{graphics/Slide3.png}
+	\includegraphics<2>[width = \textwidth, height = .6\textwidth ]{graphics/Slide4.png}
+	\includegraphics<3>[width = \textwidth, height = .6\textwidth ]{graphics/Slide5.png}
+\end{frame}
+
+\begin{frame}{Review of Fellegi Sunter}
+	Let $\Delta_{ij} \sim \text{Bernoulli}(\lambda)$ be the indicator that  $(A_i, B_j)$ is a match. Let $m_{fl} = p(\gamma_{ij}^f = l | \Delta_{ij} = 1)$, and $u_{fl} = p(\gamma_{ij}^f = l | \Delta_{ij} = 0)$. \linebreak
+	
+	The Fellegi Sunter Model is:
+	\begin{align*}
+		p(\Gamma| m, u, \Delta) = \prod_{i}^{n_A} \prod_j^{n_B} \lambda\left[\prod_{f=1}^F \prod_{l = 1}^{L_f}m_{fl}^{\gamma_{ij}^f = l}\right]  + (1 - \lambda) \left[\prod_{f=1}^F \prod_{l = 1}^{L_f}u_{fl}^{\gamma_{ij}^f = l}\right] 
+	\end{align*}
+\end{frame}
+
+\begin{frame}{Bayesian Fellegi Sunter}
+	\begin{itemize}
+		\item Different Bayesian priors on $\Delta$ can enforce many-to-many, many-to-one, or one-to-one matchings.
+		\item Bayesian methods average results over sets of plausible matchings, and provide uncertainty quantification.
+		\item Extensions for enhanced speed and scalability
+	\end{itemize}
+\end{frame}
+
+\section{Matching in Causal Inference}
+
+\begin{frame}{Matching in Causal Inference}
+	\begin{itemize}
+		\item When estimating causal effects using observational data, it is desirable to replicate a randomized experiment as closely as possible by obtaining treated and control groups with similar covariate distributions.
+		\item This goal can often be achieved by choosing well-matched samples of the original treated and control groups, thereby reducing bias due to the covariates
+		<2->\item If Fellegi Sunter works for record linkage, why not for causal inference?
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Mahalonobis Distance and Propensity Matching}
+	\begin{itemize}
+		\item One approach to matching is to use the Mahalonobis distance, which measures distance between units purely in the covariate space, without regard to which features are related to the outcome of interest. It is defined by
+		\begin{align*}
+			d(X_1, X_2) = \sqrt{|X_1 - X_2| S^{-1} |X_1 - X_2|}
+		\end{align*}
+		\item Another method is to estimate propensity scores $p(Z_n = 1 |X_n)$ for each unit in the data, and match units based on this score.
+		\item Both methods are Equal Percent Bias Reducing (EPBR), meaning that
+			$$E(\bar{X}_{m_T} - \bar{X}_{m_C})  \gamma E(\bar{X}_{n_T} - \bar{X}_{n_C})$$
+		for $0 \leq \gamma < 1,$ where $m_T, m_C$ are the matched treated and control data, and $n_T, n_C$ are the full data
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Critique of Propensity Score Matching}
+	\begin{itemize}
+		\item David King published a strong critique of EPBR methods in general, and PS matching in particular
+		\item The theoretical garauntees for EPBR occur in expectation across many experiments (expectation on the RHS)
+		\item Only one parameter $\gamma$ for all fields, no way to match more precisely for specific fields
+		\item PS matching reduces all of the information in $X$ to single score, often matches units that do not actually appear similar
+		\item PS attempts to recreate a \emph{completely} randomized experiment, but it is better to recreate a \emph{blocked} randomized experiment
+	\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}{King's Coarse Exact Matching (CEM)}
+	\begin{itemize}
+		\item Coarsen each variable to integer values based on reasonable knowledge (or using automated recommendations)
+		\item Each data unit has effectively been transformed to a set of integer values. 
+		\item Call treated and control units a match if they match at the coarsened level for \emph{all} variables
+		\item This coarsening is controversial, but it allows CEM to be Monotonic Imbalance Bounding (MIB). Shown to have better covariate balance, at expense of sample size.
+		\item<2> THOUGHT: This coarsening sounds a lot like Fellegi-Sunter...
+	\end{itemize}
+\end{frame}
+
+\section{Fellegi Sunter as Expected Imbalance Bounding}
+
+\begin{frame}{Monotonic Imbalance Bounding}
+	As defined by \href{https://gking.harvard.edu/files/gking/files/cem_jasa.pdf}{Iacus, King, Porro (2012)}, a matching method is \emph{Monotonic Imbalance Bounding} on a function $f$ with respect to a distance $D(\cdot, \cdot)$, if for a monotonically increasing function $\gamma_{f, D}(\cdot)$ and any $\pi \in \mathbb{R}_{+}^K$, we have
+	\begin{align*}
+		D(f(\mathcal{X}_{m_T(\pi)}), f(\mathcal{X}_{m_C(\pi)})) \leq \gamma_{f, D}(\pi)
+	\end{align*}
+	
+	Here, $\pi$ is a vector of scalar parameters relating the coarsening of each feature. Also ${m_T(\pi)}$ and ${m_C(\pi)}$ are the sizes of the matched sets, importantly determined by $\pi$, and not determined by the modeller. Lastly, $\mathcal{X}_{m_T}$ and $\mathcal{X}_{m_C}$ are the matched subsets of $T$ and $C$.
+\end{frame}
+
+\begin{frame}{Expected Imbalance Bounding}
+	King's CEM is deterministic, and therefore is able to satisfy stronger criteria. No probabilistic method can fulfill this. However, I propose we think about  a class of Expected Imbalance Bounding (EIB) matching methods, as somewhat of a middle ground between MIB and EPBR. Such methods would satisfy:
+	\begin{align*}
+		E\left[D(f(\mathcal{X}_{m_T(\pi)}), f(\mathcal{X}_{m_C(\pi)}))\right] \leq \gamma_{f, D}(\pi)
+	\end{align*}
+	
+\end{frame}
+
+\begin{frame}{Review of Fellegi Sunter}
+	Let $\Delta_{ij} \sim \text{Bernoulli}(\lambda)$ be the indicator that  $(A_i, B_j)$ is a match. Let $m_{fl} = p(\gamma_{ij}^f = l | \Delta_{ij} = 1)$, and $u_{fl} = p(\gamma_{ij}^f = l | \Delta_{ij} = 0)$. \linebreak
+	
+	The Fellegi Sunter Model is:
+	\begin{align*}
+		p(\Gamma| m, u, \Delta) = \prod_{i=1}^{n_A} \prod_{j=1}^{n_B} \lambda\left[\prod_{f=1}^F \prod_{l = 1}^{L_f}m_{fl}^{\gamma_{ij}^f = l}\right]  + (1 - \lambda) \left[\prod_{f=1}^F \prod_{l = 1}^{L_f}u_{fl}^{\gamma_{ij}^f = l}\right] 
+	\end{align*}
+\end{frame}
+
+\begin{frame}{MIB for Binary Covariates}
+	Let $X_{m_T}$ and $X_{m_C}$ be vectors of binary covariates for units matched through Fellegi-Sunter (and with matchings encoded in $\Delta$)
+	
+	\begin{align*}
+		E[|\bar{X}_{m_T} - \bar{X}_{m_C}|] &= \frac{1}{n}E\left[|\sum{X}_{m_T, i} - \sum{X}_{m_C, j}|| \Delta\right] \\
+		&\leq \frac{1}{n} E\left[\sum |X_i - X_j| | \Delta_{ij} = 1\right] \\
+		&= 0 \cdot m_{1} + 1 \cdot m_{2} \\
+		&=m_{2}
+	\end{align*}
+\end{frame}
+
+\begin{frame}{MIB for Continuous Covariates}
+	I can prove this for continuous covariates as well. Suppose $X$ has range $R = X_{\max} - X_{\min}$, and bin the data according to $\epsilon = \frac{R}{K}$, where $\pi_j = K$ is our coarsening parameter. Then the upper bound becomes $\epsilon \sum_{k=1}^K k m_k$. Note that this is increasing in $K$. \linebreak
+	
+	Note that we can directly compute this bound, and check that it holds on actual matched samples. Therefore, we can use desired bounds on covariate imbalance as a way to set priors for the $m$ parameters!
+\end{frame}
+
+\section{Fellegi Sunter as Course Probabilistic Matching}
+
+\begin{frame}{Course Probabilistic Matching}
+	In this context, I'd like to propose Course Probabilistic Matching (CPM). As in Fellegi-Sunter, we create rules to characterize the level of agreement between different values. For example, we could have $\gamma_{ij}^f = |C(X_{i, f}) - C(X_{j, f})|$, where $C(\cdot)$ is a coarsening function mapping bins in the covariate space to integer values. \linebreak
+	
+	We calculate probabilities exactly as we would under FS:
+	\begin{align*}
+		P(\gamma_{ij}| \Delta_{ij} = 1) &= \prod_{f=1}^F p(\gamma_{ij}^f|\Delta_{ij}= 1) \\
+		P(\gamma_{ij}| \Delta_{ij} = 0) &= \prod_{f=1}^F p(\gamma_{ij}^f|\Delta_{ij}= 0)
+	\end{align*}
+These are just products of relevant $m$ and $u$ probabilities.
+\end{frame}
+
+\begin{frame}{Course Exact Matching}
+	Then, CEM can be viewed as a special case of CPM, where comparison vectors are constructed through $\gamma_{ij}^f = I(C(X_{i, f}) = C(X_{j, f}))$, and probabilities are assigned deterministically through \linebreak
+\begin{align*}
+	P(\Delta_{ij} = 1 | C(X_i) = C(X_j)) &= P(\Delta_{ij} = 1 |\gamma_{ij}^f = 1 , \forall f) = 1 \\
+	P(\Delta_{ij} = 1 | C(X_i) \neq C(X_j)) &= 0 \\
+\end{align*}
+Additionally, if the $m$ parameter gives all its probability mass to exact agreement, then the MIB bound for FS,  $\epsilon \sum_{k=1}^K k m_k$,  reduces down to just $\epsilon$, as provided in the paper.
+\end{frame}
+
+\begin{frame}{One Difficulty}
+	Ordinarily, we use $m^f \sim \text{Dirichlet}(\alpha_1, \ldots, \alpha_{L_f})$ as a prior for each field. However, I sense that this will be too unstructured, and the sampler would be too flexible in choosing matches. \linebreak
+		
+	However, if we decide on acceptable bounds for covariate imbalance, we can use these bounds to construct these priors.
+\end{frame}
+
+\begin{frame}{Stacked Truncated Beta Priors}
+	Sadinle 2014 used a series of beta distributions as follows. Define $m^{*}_{f0} = P(\Gamma_{ij}^f = 0)$ and $m^{*}_{fl} = P(\Gamma_{ij}^f = l|\Gamma_{ij}^f > l-1)$. \linebreak
+	
+	These are related to the standard Fellegi Sunter parameters through:
+	\begin{align}
+		m_{fl} = P(\Gamma_{ij}^f = l | \Delta_{ij} = 1) = \prod_{l=1}^{L_f - 1} m_{fl}^{*I(\gamma_{ij} = l)}(1 - m_{fl})^{*I(\gamma_{ij} > l)}
+	\end{align}
+
+\end{frame}
+
+\begin{frame}{Prior Specification}
+	This parameterization is more useful because we can more directly control the kinds of matches we want to make through setting the support of the prior. We would use $m^{*}_{f0} \sim \text{TBeta}(\alpha_{fl}, \beta_{fl}, \lambda_{fl}, 1)$ prior distribution, where $\lambda_{fl}$ is a lower bound for the support. \linebreak
+	
+	This may seem overly informative, but these $\lambda$ effectively set bounds for the allowable covariate imbalance, and it is common for this to be chosen by the matcher.
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}{Concluding Thoughts}
+	\begin{itemize}
+		\item I suspect the Coarse Probabilistic Matching would outperform Course Exact Matching pretty easily. It would find all of the coarsened "exact" matches, plus additional near matches, resulting in mild increases in covariate imbalance with substantial increases in sample size after matching
+		\item Since this matching method is fully Bayesian and probabilistic, we can create joint models for the matching and treatment effect estimation, propagating uncertainty between the steps, and averaging over many plausible matchings.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Tons of Ways Forward}
+	\begin{itemize}
+		\item Establish theory for CPM in the context of other matching methods, compare out of box performance. Particularly interested in comparisons with King's Matching Frontier and Morucci's Matching Bounds.
+		\item Incorporate propensity scores in the CPM method (construct a comparison feature based on that score)
+		\item Variable selection prior for propensity score, feeding into a record linkage model on the selected covariates
+		\item Many other ideas!
+		%\item Empirical Process for deriving bounds on covariate imbalance
+	\end{itemize}
+\end{frame}
+
+\end{document}
