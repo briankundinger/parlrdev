@@ -68,14 +68,16 @@ Within the field of record linkage, Bayesian methods have the crucial advantage 
 
 \end{abstract}
 
+
 %% ** Keywords **
 \begin{keyword}%[class=MSC]
-\kwd{data fusion}
-\kwd{distributed computing}
+\kwd{bipartite record linkage}
 \kwd{entity resolution}
+\kwd{data cleaning}
+\kwd{parallelization}
 \kwd{hashing}
-\kwd{record linkage}
 \end{keyword}
+
 
 \end{frontmatter}
 
@@ -95,11 +97,14 @@ Many probabilistic record linkage methods are rely on the seminal work of \cite{
 % Possible citation for bipartite matching. 
 %\citep{fellegi_theory_1969, jaro1989, Winkler1988, belin_A995, larsen_2001, liseo_2011,  herzog2007data, gutman_bayesian_2013, sadinle_bayesian_2017}.
 
-The independent pairwise matching assumption from \cite{fellegi_theory_1969} is popular mainly for its mathematical simplicity. However, In many situations, there are no duplications within a data file, meaning that each record in one file should be linked with at most one other record in the other file. Thus, when the procedure results in many-to-one matches, some of these links must be false. To address this potential problem, data analysts typically use an additional post-processing step, for example, applying an optimization routine that turns the list of linked records into a bipartite matching \citep{jaro1989}, but this model misspecification can still lead to poor results \citep{sadinle_bayesian_2017}.
+The independent pairwise matching assumption from \cite{fellegi_theory_1969} is popular mainly for its mathematical simplicity. However, in many situations, there are no duplications within a data file, meaning that each record in one file should be linked with at most one other record in the other file. Thus, when the procedure results in many-to-one matches, some of these links must be false. To address this potential problem, data analysts typically use an additional post-processing step, for example, applying an optimization routine that turns the list of linked records into a bipartite matching \citep{jaro1989} \textcolor{teal}{or using decision theoretic procedures, such as those of \cite{sadinle_bayesian_2017} and \cite{steorts_bayesian_2016}. For example, the decision theoretic work of \cite{steorts_bayesian_2016}, ensures that the resulting records are bipartite (or rather transitive).}
+
+%but this model misspecification can still lead to poor results \citep{sadinle_bayesian_2017}.
 
 Alternatively, analysts can embed one-to-one matching requirements into the model specification, at an additional computational cost. \cite{Larsen05} employed a Metropolis-Hastings algorithm to only allow sampling matches that respected one-to-one assumptions, but such algorithms exhibit slow mixing due to the combinatorial nature of the constrained matching space. \cite{fortunato_2010} used simulated annealing to target the space of matches permitted under the one-to-one constraint, but the method is computationally intensive and, to our knowledge, has not been applied on data files with more than 100 records. \cite{sadinle_bayesian_2017} proposed the Beta Record Linkage model (\texttt{BRL}), using a prior distribution over the space of bipartite matchings to strictly enforce one-to-one requirements throughout a Gibbs sampler. Additionally, he introduced a class of loss functions that allows for a flexible estimation of the linkage structure, such that the modeler can weigh the relative importance of false positives and false negatives, and identify records pairings to be decided through clerical review. \texttt{BRL} has been shown to work on larger tasks than previous one-to-one methods, but in our experience, it becomes slow when applied to files with more than a few thousand records. 
 
-In this article, we propose fast beta linkage (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. {\color{red}{We use independent priors for the matching status of each record, inducing a dependency that is stronger than the record pair independence in the original \cite{fellegi_theory_1969} but weaker that the one-to-one requirement of \cite{sadinle_bayesian_2017}.}} This allows us to (1) employ hashing techniques that speed up calculations and reduce computational costs, (2) compute the pairwise record comparisons over large data files via parallel computing, and (3) reduce memory costs through what we call storage efficient indexing. These contributions allow \texttt{fabl} to perform record linkage on much larger data files than previous Bayesian Fellegi-Sunter models at significantly increased speed with similar levels of accuracy. In particular, computation time under \texttt{BRL} grows quadratically, with the size of each data file, while computation time under \texttt{fabl} grows linearly, only with the size of the smaller data file.
+In this article, we propose fast beta linkage (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. {\color{red}{We use independent priors for the matching status of each record, inducing a dependency that is stronger than the record pair independence in the original \cite{fellegi_theory_1969} but weaker that the one-to-one requirement of \cite{sadinle_bayesian_2017}.}} \textcolor{teal}{This independence assumption allows for a scalable update of the Gibbs sampler, contrasting sequential updates of \cite{sadinle_bayesian_2017}. We employ the technique of \cite{steorts_bayesian_2016} in order to ensure our method after record linkage is bipartite.}
+This \textcolor{teal}{discovery} allows us to (1) employ hashing techniques that speed up calculations and reduce computational costs, (2) compute the pairwise record comparisons over large data files via parallel computing, and (3) reduce memory costs through what we call storage efficient indexing. These contributions allow \texttt{fabl} to perform record linkage on much larger data files than previous Bayesian Fellegi-Sunter models at significantly increased speed with similar levels of accuracy. In particular, computation time under \texttt{BRL} grows quadratically, with the size of each data file, while computation time under \texttt{fabl} grows linearly, only with the size of the smaller data file.
 
 %Following the suggestion in \cite{wortman2019}, we relax the one-to-one matching requirement of \texttt{BRL} and use independent priors over the matching space.
 
