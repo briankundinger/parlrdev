@@ -129,9 +129,15 @@ This \textcolor{teal}{discovery} allows us to (1) employ hashing techniques that
 
 	\pointRaised{R}{%
 	For the missing data treatment now included just before Section 2.1, is the assumption truly missing at random, or missing completely at random? Or, does this distinction not matter because of the independence assumed across elements of the comparison vector?}
+	
+	\textcolor{teal}{See two comments below regarding MAR versus MCAR.}
+	
+	\textcolor{teal}{Answer for MAR: Yes, the assumption is truly missing at random. This distinction between truly missing at random and missing completely at random does not matter due to two assumptions. Following Sadinle (2017), we assume that the fields in the comparison vectors are conditionally independent given the coreference matrix and we assume that the missing comparisons are ignorable (Sadinle (2017). Therefore, our likelihood is the same as in Sadinle (2017) (see equations (3) and (4) of his paper). As stated by Sadinle (2017), ``we work under the assumption of ignorability of the missingness mechanism for the comparisons so that we can base our inferences on the marginal distribution of the observed comparisons (Little and Rubin, p. 90)."  We refer to Sadinle (2017), Section 4.2, page 604 for further details.}
+	
+	\textcolor{teal}{Answer for MCAR: The assumption is missing completely at random due to fact that we assume the fields in the comparison vectors are conditionally independent given the coreference matrix. The assumption is not missing at random as we do not assume that the missing comparisons are ignorable.}
 
 	\reply{% 
-		The assumption is missing completely at random. You are correct that this is a result of the independence assumed across elements of the comparison vector. This has been clarified.
+		The assumption is missing completely at random. You are correct that this is a result of the independence assumed across elements of the comparison vector. This has been clarified. 
 	}
 
 	\pointRaised{R}{%
@@ -167,6 +173,8 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 
 \pointRaised{R}{%
 	I do not understand the statement just below Equation (10): “When j has no match in $X_1$, we write $(n_1 +j, j) \in h_{P+1}$” My understanding of these patterns is that they are based on observed comparison vectors without consideration of Z (matches). In the second paragraph of Section 4.3, the H notation includes the matches (Z), in notation and definition that seems to conflict with the statement just below Equation (10). This also comes into play in Equation (16)}
+	
+	\textcolor{teal}{Comments: Tell the AE they are correct and mention where you correct the confusion. Then move on. (No need to state what you intended). Mention what equations numbers have been updated to help the AE now given the major revision. \textcolor{red}{Please redo this one to answer the question more directly.}}
 
 	\reply{%
 	You are correct that the comparison vectors are created (and therefore, patterns are assigned) without regard to $Z$. This notation was created purely to be able to denote when a record was left unlinked during the Gibbs Sampler as in Equation 16 in the submitted draft. 
@@ -177,12 +185,22 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 \pointRaised{R}{%
 	Third paragraph of Section 4.1: The authors claim they are computing “sufficient statistics”. What exactly are these statistics sufficient for?
 	}
+	
+	\textcolor{teal}{Comment: Make it more brief and no need to provide notation when it's not needed.}
+	
+	\textcolor{teal}{Thank for pointing out our typo. We have revised the text to state ``summary statistics" instead of ``sufficient statistics."}
 
 	\reply{%
 		We show in the revised Section 4.2 that we can write conditional likelihoods  and posterior updates for $\bm{m}$, $\bm{u}$, and $\bm{Z}$ using the statistics in $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N} \}$. However, we cannot express the full likelihood in (14) through these statistics. Therefore, we have revised to text to say ``summary statistics" instead of  ``sufficient statistics."}
 
 \pointRaised{R}{%
 	First paragraph of Section 4.2: The authors state: “Posterior calculations still attribute the appropriate weight to all records through the summary statistics…” What is meant by the term “weight”? Which records are appropriately weighted – those in X2?}
+	
+	\textcolor{teal}{Comment: Brian, you have not answered the reviewer's question regarding what is meant by weight and what records are appropriately weighted. \textcolor{red}{Please revise to directly answer the question in the revised text with equation numbers.}}
+	
+	\textcolor{teal}{
+	We have revised the ordering of Sections 4.2 and 4.3, so that we first discuss hashing, then posterior inference, then chunkwise computation of the comparison matrix, and then SEI. With this new ordering, and with the newly provided equations 15 -19, we hope that the contribution of \emph{all} record pairs is recorded through the summary statistics in $\mathcal{N}$ is now more clear. 	
+	}
 
 \reply{%
 	
@@ -191,10 +209,17 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 
 \pointRaised{R}{%
 	Second paragraph of Section 4.2: “and delete those comparison vectors”. Which are “those” vectors?}
+	
+	\reply{
+	
+	\textcolor{teal}{``Those comparison vectors" referred to removing the larger (and expensive) $\Gamma^{ab}$ from memory and continuing our calculations with the compressed comparison vectors $\tilde{\Gamma}^{ab}.$ }
+	
+	The revised text states: ``\textcolor{teal}{Then, we} conduct hashing, obtain the compressed \textcolor{teal}{comparison vectors} $\tilde{\gamma}^{ab}$, and \textcolor{teal}{remove} the \textcolor{teal}{memory-intensive} \textcolor{teal}{comparison vectors} $\gamma^{ab}$ before continuing with the next chunk of data. See Section 4.3, page 10. 
+	}
 
-\reply{%
-	We have revised that sentence to read ''We then conduct hashing, obtain the compressed $\tilde{\Gamma}^{ab}$ for later calculations, and delete the larger $\Gamma^{ab}$ from memory before continuing with the next chunk of data."
-}
+%\reply{%
+%	We have revised that sentence to read ''We then conduct hashing, obtain the compressed $\tilde{\Gamma}^{ab}$ for later calculations, and delete the larger $\Gamma^{ab}$ from memory before continuing with the next chunk of data."
+%}
 
 \pointRaised{R}{%
 	Where does $R^{SEI, cd}$ come into play in the partitioned algorithm presented in Equations (13) and (14)? I recommend that the authors either refrain from suppressing the SEI notation or further explain how the SEI algorithm has changed the quantities in these equations.}
