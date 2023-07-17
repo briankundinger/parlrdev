@@ -845,11 +845,13 @@ Although the figures suggest that $S=2$ is adequate for maintaining linkage perf
 	
 	\clearpage
 	
-	\section{Appendix}
-	\label{sec:appendix}
+%	\section{Appendix}
+%	\label{sec:appendix}
+
+\appendix
 	
 	\hypertarget{bayes-estimate}{%
-		\subsection{Bayes Estimate}
+		\section{Bayes Estimate}
 		\label{bayes-estimate}}
 	
 We calculate a Bayes estimate $\hat{\bm{Z}}$ for the linkage parameter $\bm{Z}$ by assigning different positive losses to different types of errors, and minimizing posterior expected loss. We adopt the loss function proposed in \cite{sadinle_bayesian_2017} in which $\hat{Z}_j \in \{1, \ldots, n_A, n_A + j, R\}$, with $R$ representing the option to leave the matching undetermined by the model. Specifically, we have
@@ -873,7 +875,7 @@ When we seek a partial estimate of the linkage structure, leaving a portion of r
 	
 	
 	\hypertarget{app:derivations}{%
-	\subsection{Derivations of Full Conditionals}\label{app:derivations}}
+	\section{Derivations of Full Conditionals}\label{app:derivations}}
 
 We provide detailed derivations of the full-conditionals provided in Section \ref{gibbs_sampling}. The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
 \begin{align*}
@@ -1062,7 +1064,7 @@ Therefore, we update the full conditional for $\bm{Z}^{(s+1)}$ in parallel. This
 %	\end{table}
 
 	\hypertarget{partial}{%
-	\subsection{Accuracy under Partial Estimates}\label{partial}}
+	\section{Accuracy under Partial Estimates}\label{partial}}
 
 In this section, we repeat the simulation study in Section \ref{accuracy} of the main text, allowing for clerical review rather than forcing all records to have or not have links.  Specifically, by leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the negative predictive value (NPV), defined as the proportion of non-links that are actual nonmatches. Mathematically, $\text{NPV} = \sum_{j=1}^{n_B} I(\hat{Z}_j = Z_j = n_A + j)$/$\sum_{j=1}^{n_B} I(\hat{Z}_j = n_A + j)$. We continue to use the precision, which is renamed the positive predictive value (PPV) in this context. Lastly, we also examine the rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_B} I(\hat{Z}_j = R)/n_B$. To convey this information alongside NPV and PPV, for which values close to 1 indicate strong performance, we report the decision rate (DR), defined as DR = $1 - RR$.
 
@@ -1082,7 +1084,7 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 	
 	
 	\hypertarget{appendix-sim}{%
-		\subsection{Traceplots for Simulation Study}\label{app:appendix-sim}}
+		\section{Traceplots for Simulation Study}\label{app:appendix-sim}}
 	Figures \ref{fig:sim_overlap_trace}, \ref{fig:sim_m_trace}, and \ref{fig:sim_u_trace} are traceplots for one of the 900 linkage tasks that comprise the simulation in Section \ref{accuracy}. It is set up with one error across the linkage fields and 50 duplicates across files. Traceplots across other settings exhibit similar behavior. Note that traceplots for $\bm{u}$ parameters show very little variation because the overwhelming majority of record pairs are nonmatching.  
 	
 	\begin{figure}[!h]
@@ -1110,7 +1112,7 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 \clearpage
 
 	\hypertarget{appendix-speed}{%
-	\subsection{Additional Speed Simulation Study}\label{app:appendix-speed}}
+	\section{Additional Speed Simulation Study}\label{app:appendix-speed}}
 	Figures \ref{fig:app-speed1} and \ref{fig:app-speed2} illustrate that different constructions of the comparison vectors lead to similar speed gains. We replicate the speed study of Section \ref{speed} under different settings. Here, we use four fields of comparison, each with three possible levels of agreement, resulting in $3^4 = 81$ possible patterns. The $\bm{m}$ and $\bm{u}$ parameters for this simulation are shown Table \ref{Tab:distributions_2}.
 	
 		\begin{table}[t]
@@ -1144,7 +1146,7 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 \clearpage
 	
 	\hypertarget{appendix-es}{%
-		\subsection{Traceplots for El Salvador Case Study}\label{app:appendix-es}}
+		\section{Traceplots for El Salvador Case Study}\label{app:appendix-es}}
 	
 	\begin{figure}[!h]
 		\begin{center}
