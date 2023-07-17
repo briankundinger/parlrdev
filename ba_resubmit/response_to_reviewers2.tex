@@ -188,7 +188,7 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 	
 	%% RCS: Tried to answer this from the original paper and the updated paper. Tried to make it shorter and close it out very quickly. 
 	
-	\reply{Yes, in the original manuscript, the comparison vectors are created and therefore, patterns are assigned) without regard to $Z$. Given the confusion caused to the Associate Editor, we removed the confusing sentence.	}
+	\reply{Yes, in the original manuscript, the comparison vectors are created and therefore, patterns are assigned) without regard to $Z$. Given the confusion caused to the Associate Editor, we removed the sentence.	}
 
 %	\reply{%
 %	You are correct that the comparison vectors are created (and therefore, patterns are assigned) without regard to $Z$. This notation was created purely to be able to denote when a record was left unlinked during the Gibbs Sampler as in Equation 16 in the submitted draft. 
@@ -251,11 +251,17 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 \pointRaised{R}{%
 	Where does $R^{SEI, cd}$ come into play in the partitioned algorithm presented in Equations (13) and (14)? I recommend that the authors either refrain from suppressing the SEI notation or further explain how the SEI algorithm has changed the quantities in these equations.}
 	
-	\textcolor{red}{I'm checking over this. This probably needs to be explained in more detail. Go check very carefully.}
+\reply{
+	\textcolor{teal}{In order to attempt to make the SEI algorithm more clear, we have revised the ordering of Sections 4.2 and 4.3, so that 1) hashing, 2) posterior inference, 3) chunkwise computation of the comparison matrix, and 4) SEI. With this new ordering, and with the newly provided equations 15 -19, we hope that the contribution of \emph{all} record pairs is recorded through the summary statistics in $\mathcal{N}$ is now more clear. In addition, we hope that the SEI algorithm updates will now be more clear that the updates in (16a), (16b), and (18) only depend on $\mathcal{N}$. The SEI algorithm affects the step shown in (19). 
+	}
+	}	
+	
+	
 
-\reply{%
-	We have reordered Section 4 so that all posterior inference is presented before SEI. This makes it clear that the posterior updates in (16a), (16b), and (18) depend only on $\mathcal{N}$. SEI only affects the step shown in (19).
-}
+
+%\reply{%
+%	We have reordered Section 4 so that all posterior inference is presented before SEI. This makes it clear that the posterior updates in (16a), (16b), and (18) depend only on $\mathcal{N}$. SEI only affects the step shown in (19).
+%}
 
 \pointRaised{R}{%
 	Section 4.2: I appreciate the practical advice about choosing S for the SEI method. However, this choice seems arbitrary in the absence of further discussion/evidence. Given that the primary novelty of the manuscript is in methods to speed and otherwise improve computation, I am surprised that this aspect of computational innovation is presented with virtually no theoretical or empirical exploration. Presumably the SEI method has some sort of accuracy trade-off, as the authors warn that linkage results may be “distorted” if S is low. However, this trade-off is not quantified or even discussed in practical terms beyond the terse recommendation to choose S=10.
