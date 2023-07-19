@@ -219,7 +219,7 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 	Thank for pointing out our typo. We have revised the text to state ``summary statistics" instead of ``sufficient statistics."
 	}
 	
-	\newpage	
+	
 
 %	\reply{%
 %		We show in the revised Section 4.2 that we can write conditional likelihoods  and posterior updates for $\bm{m}$, $\bm{u}$, and $\bm{Z}$ using the statistics in $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N} \}$. However, we cannot express the full likelihood in (14) through these statistics. Therefore, we have revised to text to say ``summary statistics" instead of  ``sufficient statistics."}
@@ -234,8 +234,13 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 	\textcolor{teal}{In the revised manuscript, we define $m_p$ and $u_p,$ which are the 
 	 probabilities that records $A_i$ and $B_j$ form agreement pattern $p$ given that
  they are a match and non-match, respectively. For each pattern $p,$ we define $w_p = m_p/u_p.$ We hope that this will be more clear than our previous presentation of the material. See Section 4.1, pages 8--9.}
+ 
+ 
  }
+ 
+
 	
+
 	
 	
 
@@ -254,14 +259,20 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 	
 	\reply{
 	
-	``Those comparison vectors" refer to removing the larger (and expensive) $\Gamma^{ab}$ from memory and continuing our calculations with the compressed comparison vectors $\tilde{\Gamma}^{ab}.$ 
+%	In the revised paper, ``vector" is replaced with ``matrix" when referring to $\gamma.$ (See R.13 regarding making the paper consistent below).
 	
-	The revised text states: ``Then, we conduct hashing, obtain the compressed comparison vectors $\tilde{\gamma}^{ab}$, and remove the memory-intensive comparison vectors $\gamma^{ab}$ before continuing with the next chunk of data. See Section 4.3, page 10. 
+	\textcolor{teal}{In the original manuscript, ``those comparison vectors" refer to removing the larger (and expensive) $\Gamma^{ab}$ from memory and continuing our calculations with the compressed comparison vectors $\tilde{\Gamma}^{ab}.$ }
+	
+	\textcolor{teal}{The revised text states: ``Then, we conduct hashing, obtain the compressed comparison matrix, $\tilde{\gamma}^{ab}$, and remove the memory-intensive comparison matrix, $\gamma^{ab}$, before continuing with the next chunk of data. See Section 4.3, page 10. }
+	
+%	 \textcolor{red}{Question for Brian: is lowercase $\gamma$ always a matrix? Let's make sure we're not swapping between vectors and matrices. In the previous version this was a vector and now its listed as a matrix. I would argue that a matrix should use capital notation, such as $\Gamma.$}
 	}
 
 %\reply{%
 %	We have revised that sentence to read ''We then conduct hashing, obtain the compressed $\tilde{\Gamma}^{ab}$ for later calculations, and delete the larger $\Gamma^{ab}$ from memory before continuing with the next chunk of data."
 %}
+
+
 
 \pointRaised{R}{%
 	Where does $R^{SEI, cd}$ come into play in the partitioned algorithm presented in Equations (13) and (14)? I recommend that the authors either refrain from suppressing the SEI notation or further explain how the SEI algorithm has changed the quantities in these equations.}
@@ -297,7 +308,7 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 	Equation (6a): The indices do not match the subscripts in the indicator function in each summand, or their standard meaning in table 1.}
 
 \reply{%
-	This has been fixed.
+	\textcolor{teal}{The typo has been fixed.}
 }
 
 \pointRaised{R}{%
@@ -319,7 +330,7 @@ Equations (8) and (9): Should the weights have superscript (s) (as the Zs do)?}
 }
 
 \reply{%
-	$\gamma$ is a matrix comprised by comparison vectors. All references to $\gamma$ as a set have been removed.
+	\textcolor{teal}{Note that $\gamma$ is a comparison matrix comprised by comparison vectors. All references to $\gamma$ as a set have been removed. See Section 2, page 3, where we define both the comparison vector and comparison matrix.}
 }
 
 \pointRaised{R}{% 
