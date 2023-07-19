@@ -44,6 +44,7 @@ fabl_gibbs <- function(comparisons, m_prior = 1, u_prior = 1,
   M.SAMPS <- matrix(NA, nrow = length(parameter_split), ncol = S)
   U.SAMPS <- matrix(NA, nrow = length(parameter_split), ncol = S)
   L.SAMPS <- vector(length = S)
+  PI.SAMPS <- vector(length = S)
   Z.temp <- rep(0, n1*n2)
   Z <- rep(n1+1, n2)
   L <- 0
@@ -91,9 +92,10 @@ fabl_gibbs <- function(comparisons, m_prior = 1, u_prior = 1,
     hash_weights <- lapply(counts_by_rec, function(x){
       x * unique_weights
     })
-    offset <- n1*(n2 - L + beta)/(L+ alpha)
+    #offset <- n1*(n2 - L + beta)/(L+ alpha)
+    pi <- rbeta(1, L + alpha, n2 - L + beta)
     Z <- unname(sapply(hash_weights, function(x){
-      sample(candidates_P, 1, prob = c(x, offset))
+      sample(candidates_P, 1, prob = c(x * pi / n1, 1 - pi))
     }))
     L <- sum(Z < P + 1)
     hash_matches <- factor(Z, levels = 1:(P+1))
@@ -108,6 +110,7 @@ fabl_gibbs <- function(comparisons, m_prior = 1, u_prior = 1,
     M.SAMPS[,s] <- m
     U.SAMPS[,s] <- u
     L.SAMPS[s] <- L
+    PI.SAMPS[S] <- pi
 
     if(show_progress){
       if (s %% (S / 100) == 0) {
@@ -130,6 +133,7 @@ fabl_gibbs <- function(comparisons, m_prior = 1, u_prior = 1,
        m = M.SAMPS,
        u = U.SAMPS,
        hash_time = elapsed_hash[3],
-       overlap = L.SAMPS)
+       overlap = L.SAMPS,
+       pi = PI.SAMPS)
 
 }
