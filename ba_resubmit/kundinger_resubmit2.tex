@@ -121,8 +121,9 @@ When linking variable $f$ is categorical, a common way to define $\gamma_{ij}^f$
 
 More generally, let $\mathcal{S}_f(i,j)$ denote a similarity measure for linking variable $f$ of records $A_i$ and $B_j.$ The range of $\mathcal{S}_f$ can be divided into $L_f$ intervals denoted by $I_{f1}, \ldots, I_{fL_f}$. Here, $I_{f1}$ represents the highest level of agreement (including complete agreement) and $I_{fL_f}$ represents the highest level of disagreement (including complete disagreement). Thus, we can construct comparison vectors such that $\gamma_{ij}^f = l \; \text{if} \; \mathcal{S}_f(i,j) \in I_{fl}.$ The choices of $I_{fl}$ are application specific, as we discuss in the simulation and case studies.
 
-In the construction of comparison vectors, it is common to encounter missing information in record $A_i$ or $B_j$. As a result, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. 
-We assume that this missingness occurs completely at random (MCAR, per \cite{LittleRubin2002}). To notate a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. With the MCAR assumption, we can marginalize over the missing data, and do all computation simply using the observed data.
+
+%\textcolor{red}{In the construction of comparison vectors, it is common to encounter missing information in record $A_i$ or $B_j$. As a result, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. 
+%We assume that this missingness occurs completely at random (MCAR, per \cite{LittleRubin2002}). To notate a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. With the MCAR assumption, we can marginalize over the missing data, and do all computation simply using the observed data.}
 
 Having defined comparison vectors, we now turn to the \cite{fellegi_theory_1969} model for record linkage.  We begin with notation for defining linkages. Under bipartite matching, the set of matches across $A$ and $B$ can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_An_B}$, where
 \begin{align}
@@ -177,6 +178,14 @@ For each $Z_j$, we have
 \end{align}
 \end{subequations}
 We can interpret (\ref{eqn:fast_beta_prior}) as follows: record $B_j$ has some match in $A$ with probability $\pi$, and each record $A_i$ is equally likely to be that match. The hyperparameters $\alpha_{\pi}$ and $\beta_{\pi}$ encode prior beliefs about  the proportion of records in $B$ that have matches in $A.$ 
+
+%\textcolor{red}{In the construction of comparison vectors, it is common to encounter missing information in record $A_i$ or $B_j$. As a result, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. 
+%We assume that this missingness occurs completely at random (MCAR, per \cite{LittleRubin2002}). To notate a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. With the MCAR assumption, we can marginalize over the missing data, and do all computation simply using the observed data.}
+
+\textcolor{teal}{We now explain how we accomodate missing fields, which leads to missing comparison vectors. To denote a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. Assume the comparison vectors are conditionally independent given the coreference matrix (or matching label) and that missing comparisons are missing completely at random (MCAR, per \cite{LittleRubin2002}). With the MCAR assumption, we can marginalize over the missing data in (\ref{eqn:likelihood}), and do all computation simply using the observed data.}
+
+%are ignorable (or random) \citep{LittleRubin2002}. The likelihood becomes that in (\ref{eqn:likelihood}), following directly from \cite{sadinle_bayesian_2017}. Note that both assumptions used here are for computational convenience. Missing completely at random (MCAR) applies when the probability that a value of a variable is missing does not depend on the observed or unobserved variables. Missing at random (MAR) is present when the probability of missingness depends only on (the values of other) observed variables.}
+%\textcolor{red}{In Sadinle (2017), he assumes MAR and in the JASA paper he assumes ignorability.}
 
 \textcolor{teal}{We summarize our proposed approach as follows:} 
 
