@@ -267,6 +267,7 @@ where
 
 Next, the full conditional for $\pi$ is given by
 \begin{align}
+\label{eqn:pi}
 	\pi^{(s+1)}|\bm{Z}^{(s)},  \alpha_{\pi}, \beta_{\pi}, \pi \sim  \text{Beta}(n_{AB}(\bm{Z}^{(s)}) + \alpha_{\pi}, n_B - n_{AB}(\bm{Z}^{(s)}) + \beta_{\pi}).
 \end{align}
 where $n_{AB}(\bm{Z}^{(s)}) = \sum_{j=1}^{n_B} I(Z_j^{(s)} \leq n_A)$.
@@ -405,7 +406,7 @@ Additionally, let $\bm{\alpha_0} = (\alpha_{11}, \ldots, \alpha_{F L_F})$ and $\
 
 \textcolor{teal}{Observe that we compute the vectorized summations in (\ref{efficient_alpha}) and (\ref{efficient_beta}) more efficiently than the previous updates in (\ref{eqn:alpha_update}) and (\ref{eqn:beta_update}), which require summing over $n_A n_B$ record pairs for each field and agreement level.}
 
-\textcolor{red}{Some statement regarding $\pi$ needs to go here even if it's that you draw from the same distribution as in the original sampler.}
+\textcolor{teal}{Turning to sampling for $\pi,$ it remains the same as in (\ref{eqn:pi}). }
 
 We also use (\ref{likelihood_efficient}) to sample $\bm{Z}$ efficiently. For each pattern $p$, let $w_p =\frac{m_p}{u_p}$.  The contribution to the likelihood in the full conditional for $Z_j$ can be expressed as
 \begin{align}
