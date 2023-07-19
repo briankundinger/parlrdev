@@ -15,6 +15,8 @@
 \usepackage[colorlinks,citecolor=blue,urlcolor=blue,filecolor=blue,backref=page]{hyperref}
 \usepackage{graphicx}
 \newtheorem{lemma}{Lemma}
+\newtheorem{example}{Example}
+\newtheorem{rem}{Remark}
 \usepackage{booktabs}       % professional-quality tables
 \usepackage{algorithm}      % algorithm environment
 \usepackage{algpseudocode}
@@ -153,7 +155,7 @@ Let $\Gamma_{ij}$ represent a random variable for the comparison vector for arbi
 \end{subequations}
 Here, $\mathcal{M}$ and $\mathcal{U}$ are the distributions for matching and nonmatching record pairs, $\bm{m}$ and $\bm{u}$ are their respective sets of parameters, and $\lambda$ is the marginal probability that a record pair is a match. When using comparison vectors with discrete agreement levels, $\mathcal{M}$ and $\mathcal{U}$ are collections of independent multinomial distributions for each linkage feature. Accordingly, $\bm{m} = (\bm{m}_1, \ldots, \bm{m}_F)$, where $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$ and $m_{fl} = p(\gamma_{ij}^f = l|\Delta_{ij} = 1)$ for all fields $f$ and agreement levels $l$. The $\bm{u}$ parameters are defined similarly, with $u_{fl} = p(\gamma_{ij}^f = l|\Delta_{ij} = 0)$.
 
-\cite{sadinle_bayesian_2017} presents a Bayesian version of the model in \eqref{eqn:fs_model} through \eqref{eqn:lambda_dist}.  He uses uniform Dirichlet prior distributions for each $\bm{m}_f$ and $\bm{u}_f$.  As the prior distriburion for  $\bm{Z}$, he proposes the ``beta distribution for bipartite matching."  This assigns a Bernoulli distribution for the indicator that a record in $B$ has a match in $A$, that is, $I(Z_j \leq n_A) \sim \text{Bernoulli}(\pi)$.  Additionally, $\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi})$, \textcolor{teal}{where  $\alpha_{\pi}, \beta_{\pi}$ are known hyper-parameters.}
+\cite{sadinle_bayesian_2017} presents a Bayesian version of the model in \eqref{eqn:fs_model} through \eqref{eqn:lambda_dist}.  He uses uniform Dirichlet prior distributions for each $\bm{m}_f$ and $\bm{u}_f$.  As the prior distribution for  $\bm{Z}$, he proposes the ``beta distribution for bipartite matching."  This assigns a Bernoulli distribution for the indicator that a record in $B$ has a match in $A$, that is, $I(Z_j \leq n_A) \sim \text{Bernoulli}(\pi)$.  Additionally, $\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi})$, \textcolor{teal}{where  $\alpha_{\pi}, \beta_{\pi}$ are known hyper-parameters.}
 
 It follows that the number of records in $B$ that have matches, denoted $n_{AB}(\bm{Z}) = \sum_{j=1}^{n_B} I(Z_j \leq n_A)$, is distributed according to a $\text{Beta-Binomial}(n_B, \alpha_{\pi}, \beta_{\pi})$. Conditioning on the set of records in $B$ that have matches, formally denoted $\{I(Z_j \leq n_A)\}_{j=1}^{n_B}$, all $n_A ! / (n_A - n_{AB}(\bm{Z}))!$ bipartite matchings are taken to be equally likely. Thus, the prior distribution used by \cite{sadinle_bayesian_2017} is given by
 \begin{align}
@@ -184,7 +186,7 @@ We can interpret (\ref{eqn:fast_beta_prior}) as follows: record $B_j$ has some m
 %\textcolor{red}{In the construction of comparison vectors, it is common to encounter missing information in record $A_i$ or $B_j$. As a result, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. 
 %We assume that this missingness occurs completely at random (MCAR, per \cite{LittleRubin2002}). To notate a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. With the MCAR assumption, we can marginalize over the missing data, and do all computation simply using the observed data.}
 
-\textcolor{teal}{We now explain how we accomodate missing fields, which leads to missing comparison vectors. To denote a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. Assume the comparison vectors are conditionally independent given the coreference matrix (or matching label) and that missing comparisons are missing completely at random (MCAR, per \cite{LittleRubin2002}). With the MCAR assumption, we can marginalize over the missing data in (\ref{eqn:likelihood}), and do all computation simply using the observed data.}
+\textcolor{teal}{We now explain how we accommodate missing fields, which leads to missing comparison vectors. To denote a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. Assume the comparison vectors are conditionally independent given the coreference matrix (or matching label) and that missing comparisons are ignorable or missing at random (MAR, per \cite{LittleRubin2002}). With either the ignorability or MAR assumption, we can marginalize over the missing data in (\ref{eqn:likelihood}), and do all computation simply using the observed data. For details, refer to \cite[Section 6.2]{LittleRubin2002} and \cite[Section 3.1]{sadinle_detecting_2014}, and \citep[Section 4.2]{sadinle_bayesian_2017}. Due to the conditional independence assumption, the missingness mechanism is equivalent to being missing completely at random (MCAR, per \cite[p. 12]{LittleRubin2002}). To summarize, we can assume the missingness is ignorable, MAR, or MCAR in this situation.}
 
 %are ignorable (or random) \citep{LittleRubin2002}. The likelihood becomes that in (\ref{eqn:likelihood}), following directly from \cite{sadinle_bayesian_2017}. Note that both assumptions used here are for computational convenience. Missing completely at random (MCAR) applies when the probability that a value of a variable is missing does not depend on the observed or unobserved variables. Missing at random (MAR) is present when the probability of missingness depends only on (the values of other) observed variables.}
 %\textcolor{red}{In Sadinle (2017), he assumes MAR and in the JASA paper he assumes ignorability.}
@@ -206,13 +208,13 @@ We can interpret (\ref{eqn:fast_beta_prior}) as follows: record $B_j$ has some m
 \end{subequations}
 \textcolor{teal}{where recall that $\alpha_{\pi}, \beta_{\pi}$ are fixed hyper-parameters.} 
 
-\begin{remark}
+\begin{rem}
 In the \cite{wortman2019} flat prior, each value $\{1, \ldots, n_A, n_A +j\}$ is a priori equally likely for $Z_j$. This amounts to a prior probability of $n_A / (n_A + 1)$ that record $B_j$ has a match in $A$. In our preliminary studies, the this highly informative prior weighting on matching can result in overly optimistic match rates. Hence, we prefer (\ref{eqn:fast_beta_prior}). We also note that the flat prior is equivalent to a special case of the fast Beta prior with $\pi$ fixed at the mean of a $\text{Beta}\left(1, 1 / n_A \right)$ random variable.
-\end{remark}
+\end{rem}
 
-\begin{remark}
+\begin{rem}
 Linkage with \texttt{fabl} is conducted at the record level, rather than at the record pair level, as in the Fellegi-Sunter model. That is, $\pi$ under \texttt{fabl} estimates the proportion of records in $B$ that have matches, whereas $\lambda$ in the Fellegi-Sunter model estimates the proportion of record pairs that are matches. In the bipartite case, we conjecture that some analysts will find $\pi$ in (\ref{eqn:fast_beta_prior2}) to be more a interpretable parameter than $\lambda$ in (\ref{eqn:lambda_dist}). In this setting, there are at most $n_B$ matching pairs out of $n_A n_B$ total pairs, meaning that $\lambda$ is bounded above by $\frac{1}{n_A}$ and tends towards 0 as the size of the linkage task grows. Additionally, while the Fellegi-Sunter model makes $n_A  n_B$ independent matching decisions and \texttt{BRL} makes $n_B$ dependent matching decisions, \texttt{fabl} strikes a middle ground between the two, making $n_B$  independent matching decisions. As shown in Sections \ref{sec:simulations} and \ref{sec:case-studies}, this allows \texttt{fabl} to fit a Bayesian record linkage model like \texttt{BRL} while making computational efficiency gains possible by exploiting independence. 
-\end{remark}
+\end{rem}
 
 
 
@@ -307,26 +309,46 @@ In fact, to our knowledge, our approach and that of \cite{wortman2019} are the o
 \section{Efficient and Scalable Implementation}
 \label{sec:efficiency}
 
-The scale of linkage tasks possible through \texttt{BRL} is limited by the memory costs of storing $n_A  n_B$ comparison vectors for every pair of records across the two data files, and the speed of the linkage algorithm over those comparison vectors. One approach to reduce the number of comparisons is blocking, which places similar records into partitions, or ``blocks'' \citep{christen2019data}. In deterministic blocking, the modeler chooses fields thought to be highly reliable and only compares records that agree on those fields. The record linkage method is  applied independently across all blocks, which can be done in parallel for additional speed gains. Of note, blocking on an unreliable field can lead to missed matches, making this form of blocking undesirable in some situations \citep{steorts_comparison_2014}.
+The scale of linkage tasks possible through \texttt{BRL} is limited by the memory costs of storing $n_A  n_B$ comparison vectors for every pair of records across the two data files, and the speed of the linkage algorithm over those comparison vectors. One approach to reduce the number of comparisons is blocking, which places similar records into partitions, or ``blocks'' \citep{christen2019data}. In deterministic blocking, the modeler chooses fields thought to be highly reliable and only compares records that agree on those fields. The record linkage method is  applied independently across all blocks, which can be done in parallel for additional speed gains. Of note, blocking on an unreliable field can lead to missed matches, making this form of blocking \textcolor{teal}{often}
+ undesirable %in some situations 
+\citep{steorts_comparison_2014}.
 
 After computing all comparison vectors within a block, the modeler can further reduce the number of comparison vectors used in the linkage algorithm through indexing. For example, one might only consider pairs with a certain similarity score on a field deemed to be important, like last name, or only pairs that exactly match on a specified number of fields. However, the impact of indexing on model parameters is not well understood; \citep{murray2016probabilistic} reviewed this issue in the context of the frequentist Fellegi-Sunter model, leaving the effect of indexing on Bayesian record linkage models to future work.
 
-With \texttt{fabl}, we introduce two techniques to further expand the scalability of probabilistic record linkage. First, we propose hashing methods that allow us to compute summary statistics that reduce the computational complexity of the Gibbs sampler and the memory requirements of the storing the comparison vectors. Second, we introduce storage efficient indexing, which reduces the memory costs associated with unlikely matches. 
+With \texttt{fabl}, we introduce two techniques to expand the scalability of probabilistic record linkage. First, we propose hashing methods that allow us to compute summary statistics that reduce the computational complexity of the Gibbs sampler and the memory requirements of the storing the comparison vectors. Second, we introduce storage efficient indexing, which reduces the memory costs associated with unlikely matches. 
 
 
 \hypertarget{data-representation-hashing-and-storage}{%
 	\subsection{Data Representation, Hashing, and
 		Storage}\label{data-representation-hashing-and-storage}}
 	
-Since each component $\gamma_{ij}^f$ is discrete, there are only finitely many possible realizations of the comparison vector $\gamma_{ij}$. Let $P$ be the number of patterns realized in $\gamma$. It is bounded above by $P^{*} =  \prod_{f=1}^F (L_f + 1)$, where the addition of 1 to $L_f$ for each field accounts for the possibility of missing values. This quantity is determined by $F$ and $L_f$, and does not scale with $n_A$ or $n_B$. To obtain a memory efficient representation, we map the agreement pattern of each record pair to a unique integer. \cite{enamorado2019using} accomplished this through a hashing function, which we modify to explicitly handle missing values:
+Since each component $\gamma_{ij}^f$ is discrete, there are only finitely many possible realizations of the comparison vector $\gamma_{ij}$. Let $P$ be the number of patterns realized in $\gamma$. 
+%It is
+\textcolor{teal}{The comparison vector} is
+ bounded above by $P^{*} =  \prod_{f=1}^F (L_f + 1).$
+% This comment below seems obvious and not needed.  
+% where the addition of 1 to $L_f$ for each field accounts for the possibility of missing values. 
+\textcolor{teal}{The quantity $P^{*}$ clearly depends only on $F$ and $L_f.$ Observe it does not depend (or scale) with $n_A$ or $n_B.$}
+%is determined by $F$ and $L_f$, and does not scale with $n_A$ or $n_B$. 
+
+To obtain a memory efficient representation, we map the agreement pattern of each record pair to a unique integer. \cite{enamorado2019using} accomplished this through a hashing function, which we modify to explicitly handle missing values:
 \begin{align}
 	\label{eqn:hashing}
 	h^{*}(\gamma_{ij}) = \sum_{f = 1}^F I_{obs}(\gamma_{ij}^f)2^{\gamma_{ij}^f + I(f>1)\sum_{d=1}^{f-1}(L_d)}.
 \end{align}
 
-We then map these integers to sequential integers $\{1, \ldots, P\}$. We refer to each unique agreement pattern as $h_p$, and to the set of unique agreement patterns as $\mathcal{P} = \{h_1, \ldots, h_P\}$. When the $(i,j)$ record pair exhibits agreement pattern $p$, we say $\gamma_{ij} = h_p$. In calculations, we will at times use the one-hot encoding of agreement pattern $h_p$, denoted $e(h_p)$. This is a vector of length $\sum_{f=1}^F L_f$ in which the $l + \sum_{k=1}^{f-1} L_k$ component is 1 when $\gamma_{ij}^f = l$, and 0 otherwise. 
+%\textcolor{red}{Do you mean what I have below or something else? This still is a bit hard to parse.}
+We then map \textcolor{teal}{these integers in (\ref{eqn:hashing})} to sequential integers $\{1, \ldots, P\}$. \textcolor{teal}{Denote} each unique agreement pattern as $h_p$, and the set of unique agreement patterns as $\mathcal{P} = \{h_1, \ldots, h_P\}$. When record pair, \textcolor{teal}{$(i,j)$,} exhibits agreement pattern $p$, \textcolor{teal}{let} $\gamma_{ij} = h_p$. 
 
-For example, with five fields with binary agreements and possible missingness, the number of possible patterns is bounded above by $P^{*} = 3^5 = 243$. Records $A_5$ and $B_7$ may exhibit agreement pattern $\gamma_{5,7} = (1, 1, 1, NA, 2)$, indicating exact agreement on the first three fields, missing information in the fourth field, and disagreement in the fifth field. Then (\ref{eqn:hashing}) gives $h^{*}(\gamma_{5,7}) = 2^1 + 2^3 + 2^5 + 0 + 2^{10} = 1066$. We map the unique values of $h^{*}(\gamma)$ to sequential integers. If 1066 is mapped to, for example, 42, then we would have $\gamma_{5,7} = h_{42}.$ This agreement pattern has the one hot encoding $e(h_{42}) = (1, 0, 1, 0, 1, 0, 0, 0, 0, 1)$.
+In calculations, we will at times use the one-hot encoding of agreement pattern $h_p$, denoted $e(h_p)$. This is a vector of length $\sum_{f=1}^F L_f$ in which the $l + \sum_{k=1}^{f-1} L_k$ component is 1 when $\gamma_{ij}^f = l$, and 0 otherwise. 
+
+
+\begin{example}
+\label{ex:one-hot}
+For example, with five fields with binary agreements and possible missingness (NA), the number of possible patterns is bounded above by $P^{*} = 3^5 = 243$. Records $A_5$ and $B_7$ may exhibit agreement pattern $\gamma_{5,7} = (1, 1, 1, \text{NA}, 2)$, indicating exact agreement on the first three fields, missing information in the fourth field, and disagreement in the fifth field. Then (\ref{eqn:hashing}) gives $h^{*}(\gamma_{5,7}) = 2^1 + 2^3 + 2^5 + 0 + 2^{10} = 1066$. We map the unique values of $h^{*}(\gamma)$ to sequential integers. \textcolor{teal}{Suppose that 1066 maps to 42. This implies $\gamma_{5,7} = h_{42}.$}
+%If 1066 is mapped to, for example, 42, then we would have $\gamma_{5,7} = h_{42}.$ 
+This agreement pattern has the one hot encoding $e(h_{42}) = (1, 0, 1, 0, 1, 0, 0, 0, 0, 1)$.
+\end{example}
 
 We then identify the records in $A$ with comparison vectors corresponding to each pattern $p$ for each record $B_j$. We denote this set $r_{p_j} = \{i \in 1, \dots, n_A | \gamma_{ij} = h_p\}$, and collect all such sets in the nested list $\mathcal{R} = \{r_{p_j} | p \in \{1, \ldots, P\}, j \in \{1, \ldots, n_B\} \}$. We compute the number of records in $A$ that share agreement pattern $p$ with record $B_j$, given by
 \begin{align}\label{eqn:N}
@@ -341,35 +363,48 @@ Together, the set $\tilde{\gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N}\}$ f
 		u_p =  p(\gamma_{ij} = h_p|Z_j \neq i) = \prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\label{eqn:u_p}
 	\end{align}
 \end{subequations}
-to express the probability that records $A_i$ and $B_j$ form agreement pattern $p$ given that they are a match, in (\ref{eqn:m_p}), and not a match, in (\ref{eqn:u_p}). Viewed through the perspective of agreement patterns, the likelihood in (\ref{eqn:likelihood}) is equivalent to
+to express the probability that records $A_i$ and $B_j$ form agreement pattern $p$ given that they are a match, in (\ref{eqn:m_p}), and not a match, in (\ref{eqn:u_p}). Viewed through the perspective of agreement patterns, the likelihood in (\ref{eqn:likelihood}) \textcolor{teal}{can be expressed as}
+%is equivalent to
 
 \begin{align}\label{likelihood_efficient}
 	\mathcal{L}(\bm{Z}, \bm{m}, \bm{u} \mid \tilde{\gamma}) = \prod_{j=1}^{n_B}\prod_{p=1}^P \prod_{i \in r_{p_j}} m_p^{I(Z_j = i)}u_p^{1 - I(Z_j = i)}. 
 \end{align}
 The likelihood in (\ref{likelihood_efficient}) allows for more
-efficient posterior inference for $\bm{m}$, $\bm{u}$, and $\bm{Z}$, as we now describe.
+efficient \textcolor{teal}{approximate posterior inference of the Gibbs sampler in Section~\ref{sec:fast-beta-linkage},}  as we \textcolor{teal}{describe in the next section}.
+
+%% These are not the full conditional distributions.
+%for $\bm{m}$, $\bm{u}$, and $\bm{Z}$
 
 \hypertarget{efficient-posterior}{%
 	\subsection{Efficient Posterior Inference }\label{efficient-posterior}}
+	
+\textcolor{red}{Note that 	$\gamma_{Z_j, j}$ doesn't appear to be defined.}
 
-Turning first to the posterior updates for $\bm{m}$ and $\bm{u}$, we first note that these parameters depend on the data only through quantities that can be calculated through $\mathcal{N}$ and $\mathcal{P}$. Let $n_p(\bm{Z}) = \sum_{j=1}^{n_B} I\left(\gamma_{Z_j, j} = h_p \right)$ be the number of matching record pairs with agreement pattern $p$, and $N_p = \sum_{j=1}^{n_B} N_{p_j}$ be the total occurrence of pattern $p$ in the data across all record pairs. Then, conditional on $Z$, we can express the contribution to the likelihood in the full conditional for $\bm{m}$ and $\bm{u}$ as
+Turning first to the \textcolor{teal}{full conditional updates}
+%posterior updates 
+for $\bm{m}$ and $\bm{u}$, we observe that these parameters only depend on the \textcolor{teal}{observed} data  through quantities that are calculated through $\mathcal{N}$ and $\mathcal{P}$. Let $n_p(\bm{Z}) = \sum_{j=1}^{n_B} I\left(\gamma_{Z_j, j} = h_p \right)$ be the number of matching record pairs with agreement pattern $p$, and $N_p = \sum_{j=1}^{n_B} N_{p_j}$ be the total occurrence of pattern $p$ in the data across all record pairs. Then, conditional on $Z$, we can express the contribution to the likelihood in the full conditional distribution for $\bm{m}$ and $\bm{u}$ as
 \begin{align}
 	\mathcal{L}(\bm{m}, \bm{u} \mid \tilde{\gamma}, \bm{Z}, \pi)  &=  \prod_{p=1}^P m_p^{n_p(\bm{Z})}u_p^{N_p - n_p(\bm{Z})}  \label{likelihood_efficient_m_u}.
 \end{align}
-Additionally, let $\bm{\alpha_0} = (\alpha_{11}, \ldots, \alpha_{F L_F})$ and $\bm{\beta_0}= (\beta_{11}, \ldots, \beta_{F L_F})$ be a concatenated vectors of prior parameters for the $\bm{m}$ and $\bm{u}$ distributions respectively. The terms needed for the posterior updates for the $\bm{m}$ and $\bm{u}$ parameters are given by the appropriate components of the vectors
+Additionally, let $\bm{\alpha_0} = (\alpha_{11}, \ldots, \alpha_{F L_F})$ and $\bm{\beta_0}= (\beta_{11}, \ldots, \beta_{F L_F})$ be a concatenated vectors of prior parameters for the $\bm{m}$ and $\bm{u}$ distributions respectively. The terms needed for the \textcolor{teal}{full conditional} updates for the $\bm{m}$ and $\bm{u}$ parameters are given by the appropriate components of the vectors
 \begin{subequations}
 	\begin{align}
 		\bm{\alpha(Z}^{(s)}\bm{)} &= \bm{\alpha_0} + \sum_{p=1}^P n_p\left(\bm{Z}^{(s)}\right) \times e(h_p), \label{efficient_alpha} \\
 		\bm{\beta(Z}^{(s)}\bm{)} &= \bm{\beta_0} + \sum_{p=1}^P \left(N_p - n_p\left(\bm{Z}^{(s)}\right)\right) \times e(h_p). \label{efficient_beta}
 	\end{align}
 \end{subequations}
-Specifically, the $l + \sum_{k=1}^{f-1} L_k$ component of (\ref{efficient_alpha}) and (\ref{efficient_beta}) provides the the posterior updates for level $l$ and field $f$ in (\ref{eqn:alpha_update}),and (\ref{eqn:beta_update}). However, the vectorized summations in (\ref{efficient_alpha}) and (\ref{eqn:beta_update}) can be computed more efficiently than summing over $n_A n_B$ record pairs for each field and agreement level.
+%Specifically, the $\ell + \sum_{k=1}^{f-1} L_k$ component of (\ref{efficient_alpha}) and (\ref{efficient_beta}) provides the the posterior updates for level $\ell$ and field $f$ in (\ref{eqn:alpha_update}) and (\ref{eqn:beta_update}). However, the vectorized summations in (\ref{efficient_alpha}) and (\ref{efficient_beta}) can be computed more efficiently than summing over $n_A n_B$ record pairs for each field and agreement level.
 
-We also use (\ref{likelihood_efficient}) to sample Z efficiently. For each pattern $p$, let $w_p =\frac{m_p}{u_p}$.  The contribution to the likelihood in the full conditional for $Z_j$ can be expressed as
+%Specifically, the $\ell + \sum_{k=1}^{f-1} L_k$ component of (\ref{efficient_alpha}) and (\ref{efficient_beta}) provides the the posterior updates for level $\ell$ and field $f$ in (\ref{eqn:alpha_update}) and (\ref{eqn:beta_update}). However, the vectorized summations in (\ref{efficient_alpha}) and (\ref{efficient_beta}) can be computed more efficiently than summing over $n_A n_B$ record pairs for each field and agreement level.
+
+\textcolor{teal}{Observe that we compute the vectorized summations in (\ref{efficient_alpha}) and (\ref{efficient_beta}) more efficiently than the previous updates in (\ref{efficient_alpha}) and (\ref{efficient_beta}), which require summing over $n_A n_B$ record pairs for each field and agreement level.}
+
+We also use (\ref{likelihood_efficient}) to sample $\bm{Z}$ efficiently. For each pattern $p$, let $w_p =\frac{m_p}{u_p}$.  The contribution to the likelihood in the full conditional for $Z_j$ can be expressed as
 \begin{align}
 	\mathcal{L}(Z_j\mid  \tilde{\gamma}, \bm{m}, \bm{u}, \pi) = \prod_{p=1}^P u_p^{N_{p_j}} \prod_{i \in r_{p_j}} w_p^{I(Z_j = i)}. \label{likelihood_efficient_z}
 \end{align}
-This likelihood lends itself to markedly faster posterior computations. Sampling $Z_j$ from the full conditional provided in (\ref{eqn:z_full_conditional}) can become computationally expensive when $n_A$ is large. This is because sampling a value from $n_A$ options with unequal weights requires normalizing the weights to probabilities, which has a computational cost that scales with $n_A$. To speed up computation, we break this sampling step into two. 
+This likelihood lends itself to markedly faster posterior computations. Sampling $Z_j$ from the full conditional provided in (\ref{eqn:z_full_conditional}) can become computationally expensive when $n_A$ is large. This is because sampling a value from $n_A$ options with unequal weights requires normalizing the weights to probabilities, which has a computational cost that scales with $n_A$. \textcolor{teal}{We consider two sampling steps.}
+%To speed up computation, we break this sampling step into two. 
 
 We first sample among $P + 1$ options for the agreement pattern between $B_j$ and its potential link, according to
 \begin{align}
