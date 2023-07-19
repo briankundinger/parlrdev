@@ -377,8 +377,14 @@ efficient \textcolor{teal}{approximate posterior inference of the Gibbs sampler 
 
 \hypertarget{efficient-posterior}{%
 	\subsection{Efficient Posterior Inference }\label{efficient-posterior}}
-	
-\textcolor{red}{Note that 	$\gamma_{Z_j, j}$ doesn't appear to be defined.}
+
+\textcolor{teal}{In our derivations below, we assume the new update to the Gibbs sampler is $s+1$ and the current state of the sampler is $s.$ As to not overload notation, we suppress the state of the sampler until presenting the updates to each full conditional distribution based upon our computational proposals using hashing.} 
+
+\begin{enumerate}	
+\item \textcolor{red}{Note that 	$\gamma_{Z_j, j}$ doesn't appear to be defined.}
+\item \textcolor{red}{There appears to be no update for $\pi$ in this section.}
+\item Make sure when you give the update for the new efficient full conditional, you give the s, s+1. Example, it's missing on the update for $m$ and $u$ so it's not immediately clear how one would draw this directly. Wouldn't it just be a vectorized Dirichlet, where the computational savings come from vectorizing the hyperparameters of the Dirichlet?
+\end{enumerate}
 
 Turning first to the \textcolor{teal}{full conditional updates}
 %posterior updates 
@@ -397,7 +403,9 @@ Additionally, let $\bm{\alpha_0} = (\alpha_{11}, \ldots, \alpha_{F L_F})$ and $\
 
 %Specifically, the $\ell + \sum_{k=1}^{f-1} L_k$ component of (\ref{efficient_alpha}) and (\ref{efficient_beta}) provides the the posterior updates for level $\ell$ and field $f$ in (\ref{eqn:alpha_update}) and (\ref{eqn:beta_update}). However, the vectorized summations in (\ref{efficient_alpha}) and (\ref{efficient_beta}) can be computed more efficiently than summing over $n_A n_B$ record pairs for each field and agreement level.
 
-\textcolor{teal}{Observe that we compute the vectorized summations in (\ref{efficient_alpha}) and (\ref{efficient_beta}) more efficiently than the previous updates in (\ref{efficient_alpha}) and (\ref{efficient_beta}), which require summing over $n_A n_B$ record pairs for each field and agreement level.}
+\textcolor{teal}{Observe that we compute the vectorized summations in (\ref{efficient_alpha}) and (\ref{efficient_beta}) more efficiently than the previous updates in (\ref{eqn:alpha_update}) and (\ref{eqn:beta_update}), which require summing over $n_A n_B$ record pairs for each field and agreement level.}
+
+\textcolor{red}{Some statement regarding $\pi$ needs to go here even if it's that you draw from the same distribution as in the original sampler.}
 
 We also use (\ref{likelihood_efficient}) to sample $\bm{Z}$ efficiently. For each pattern $p$, let $w_p =\frac{m_p}{u_p}$.  The contribution to the likelihood in the full conditional for $Z_j$ can be expressed as
 \begin{align}
