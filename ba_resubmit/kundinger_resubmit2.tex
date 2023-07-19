@@ -153,7 +153,9 @@ Let $\Gamma_{ij}$ represent a random variable for the comparison vector for arbi
 \end{subequations}
 Here, $\mathcal{M}$ and $\mathcal{U}$ are the distributions for matching and nonmatching record pairs, $\bm{m}$ and $\bm{u}$ are their respective sets of parameters, and $\lambda$ is the marginal probability that a record pair is a match. When using comparison vectors with discrete agreement levels, $\mathcal{M}$ and $\mathcal{U}$ are collections of independent multinomial distributions for each linkage feature. Accordingly, $\bm{m} = (\bm{m}_1, \ldots, \bm{m}_F)$, where $\bm{m}_f = (m_{f1}, \ldots, m_{fL_f})$ and $m_{fl} = p(\gamma_{ij}^f = l|\Delta_{ij} = 1)$ for all fields $f$ and agreement levels $l$. The $\bm{u}$ parameters are defined similarly, with $u_{fl} = p(\gamma_{ij}^f = l|\Delta_{ij} = 0)$.
 
-\cite{sadinle_bayesian_2017} presents a Bayesian version of the model in \eqref{eqn:fs_model} through \eqref{eqn:lambda_dist}.  He uses uniform Dirichlet prior distributions for each $\bm{m}_f$ and $\bm{u}_f$.  As the prior distriburion for  $\bm{Z}$, he proposes the ``beta distribution for bipartite matching."  This assigns a Bernoulli distribution for the indicator that a record in $B$ has a match in $A$, that is, $I(Z_j \leq n_A) \sim \text{Bernoulli}(\pi)$.  Additionally, $\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi})$. It follows that the number of records in $B$ that have matches, denoted $n_{AB}(\bm{Z}) = \sum_{j=1}^{n_B} I(Z_j \leq n_A)$, is distributed according to a $\text{Beta-Binomial}(n_B, \alpha_{\pi}, \beta_{\pi})$. Conditioning on the set of records in $B$ that have matches, formally denoted $\{I(Z_j \leq n_A)\}_{j=1}^{n_B}$, all $n_A ! / (n_A - n_{AB}(\bm{Z}))!$ bipartite matchings are taken to be equally likely. Thus, the prior distribution used by \cite{sadinle_bayesian_2017} is given by
+\cite{sadinle_bayesian_2017} presents a Bayesian version of the model in \eqref{eqn:fs_model} through \eqref{eqn:lambda_dist}.  He uses uniform Dirichlet prior distributions for each $\bm{m}_f$ and $\bm{u}_f$.  As the prior distriburion for  $\bm{Z}$, he proposes the ``beta distribution for bipartite matching."  This assigns a Bernoulli distribution for the indicator that a record in $B$ has a match in $A$, that is, $I(Z_j \leq n_A) \sim \text{Bernoulli}(\pi)$.  Additionally, $\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi})$, \textcolor{teal}{where  $\alpha_{\pi}, \beta_{\pi}$ are known hyper-parameters.}
+
+It follows that the number of records in $B$ that have matches, denoted $n_{AB}(\bm{Z}) = \sum_{j=1}^{n_B} I(Z_j \leq n_A)$, is distributed according to a $\text{Beta-Binomial}(n_B, \alpha_{\pi}, \beta_{\pi})$. Conditioning on the set of records in $B$ that have matches, formally denoted $\{I(Z_j \leq n_A)\}_{j=1}^{n_B}$, all $n_A ! / (n_A - n_{AB}(\bm{Z}))!$ bipartite matchings are taken to be equally likely. Thus, the prior distribution used by \cite{sadinle_bayesian_2017} is given by
 \begin{align}
 \label{eqn:sadinle_prior}
 p(\bm{Z}|\alpha_{\pi}, \beta_{\pi}) = \frac{(n_A - n_{AB}(\bm{Z}))!}{n_A !}\frac{\text{B}(n_{AB}(\bm{Z}) + \alpha_{\pi}, n_B - n_{AB}(\bm{Z}) + \beta_{\pi})}{\text{B}(\alpha_{\pi}, \beta_{\pi})},
@@ -199,9 +201,10 @@ We can interpret (\ref{eqn:fast_beta_prior}) as follows: record $B_j$ has some m
 		\frac{1}{n_A}\pi,  & q \leq n_A; \\
 		1-\pi, &  q  = n_A + j; \\
 	\end{cases} \label{eqn:z}\\
-	\pi &\sim \text{Beta}(\alpha_{\pi}, \beta_{\pi})\label{eqn:pi}.
+	\pi &\sim \text{Beta}(\alpha_{\pi}, \beta_{\pi})\label{eqn:pi},
 \end{align}
 \end{subequations}
+\textcolor{teal}{where $\alpha_{\pi}, \beta_{\pi}$ are fixed hyper-parameters.} 
 
 \begin{remark}
 In the \cite{wortman2019} flat prior, each value $\{1, \ldots, n_A, n_A +j\}$ is a priori equally likely for $Z_j$. This amounts to a prior probability of $n_A / (n_A + 1)$ that record $B_j$ has a match in $A$. In our preliminary studies, the this highly informative prior weighting on matching can result in overly optimistic match rates. Hence, we prefer (\ref{eqn:fast_beta_prior}). We also note that the flat prior is equivalent to a special case of the fast Beta prior with $\pi$ fixed at the mean of a $\text{Beta}\left(1, 1 / n_A \right)$ random variable.
@@ -216,16 +219,50 @@ Linkage with \texttt{fabl} is conducted at the record level, rather than at the 
 
 
 
+%We \textcolor{teal}{approximate} the posterior distribution of the parameters in (\ref{eqn:likelihood} - \ref{eqn:pi}) using a Gibbs sampler. 
+%We initialize $\bm{m}$ and $\bm{u}$ from random draws from their prior distributions, and initialize $\bm{Z}$ to reflect no matches across data files; that is, $\bm{Z} = (n_A + 1, \ldots, n_A + n_B)$. To take the $(s+1)$th sample of each $\bm{m}_f$ and $\bm{u}_f$ given $\bm{Z}^{(s)}$, we use the full conditionals,
+
+
 We \textcolor{teal}{approximate} the posterior distribution of the parameters in (\ref{eqn:likelihood} - \ref{eqn:pi}) using a Gibbs sampler. 
 We initialize $\bm{m}$ and $\bm{u}$ from random draws from their prior distributions, and initialize $\bm{Z}$ to reflect no matches across data files; that is, $\bm{Z} = (n_A + 1, \ldots, n_A + n_B)$. To take the $(s+1)$th sample of each $\bm{m}_f$ and $\bm{u}_f$ given $\bm{Z}^{(s)}$, we use the full conditionals,
-\begin{subequations}
+
+\textcolor{teal}{We present a Gibbs sampler to approximate the joint posterior distribution of $\bm{Z}, \bm{m}, \bm{u}$ given the observed comparison data from the likelihood and priors assumed in (\ref{eqn:likelihood} - \ref{eqn:pi}). While it is easy to marginalize over $\pi$ and derive a collapsed Gibbs sampler, the sampler is sequential in nature as is that of \cite{}. Thus, we proceed with a traditional Gibbs sampler, where we show in Appendix \ref{}, the updates are parallel, making our approach scalable.}
+
+We initialize $\bm{m}$ and $\bm{u}$ from random draws from their prior distributions, and initialize $\bm{Z}$ to reflect no matches across data files; that is, $\bm{Z} = (n_A + 1, \ldots, n_A + n_B)$. \textcolor{red}{Need to initialize all random variables, such as $\pi$.} \textcolor{teal}{Denote the current draw of the sampler by $s$ and the updated draw by $s+1$.} \textcolor{teal}{For all $f=1, \ldots, F$ sample}
+
+
+%\begin{subequations}
+%\begin{align}
+%	\bm{m}_f^{(s+1)}|\gamma, \bm{Z}^{(s)} &\sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}^{(s)}), \ldots, \alpha_{fL_f}(\bm{Z}^{(s)})), \label{eqn:m_update}  \\
+%	\bm{u}_f^{(s+1)}|\gamma, \bm{Z}^{(s)} &\sim \text{Dirichlet}(\beta_{f1}(\bm{Z}^{(s)}), \ldots, \beta_{fL_f}(\bm{Z}^{(s)})), \label{eqn:u_update} \\
+%	\text{where }\alpha_{fl}(\bm{Z}^{(s)})&= \alpha_{fl} + \sum_{i=1}^{n_A}\sum_{j=1}^{n_B} I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = l) I(Z_j^{(s)} = i), \label{eqn:alpha_update} \\
+%	\text{and } \beta_{fl}(\bm{Z}^{(s)})&=  \beta_{fl} + \sum_{i=1}^{n_A}\sum_{j=1}^{n_B}  I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = l) I(Z_j^{(s)} \neq i) \label{eqn:beta_update}.
+%\end{align}
+%\end{subequations}
+
+%\begin{subequations}
+%
+%	\text{where }\alpha_{fl}(\bm{Z}^{(s)})&= \alpha_{fl} + \sum_{i=1}^{n_A}\sum_{j=1}^{n_B} I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = l) I(Z_j^{(s)} = i), \label{eqn:alpha_update} \\
+%	\text{and } \beta_{fl}(\bm{Z}^{(s)})&=  \beta_{fl} + \sum_{i=1}^{n_A}\sum_{j=1}^{n_B}  I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = l) I(Z_j^{(s)} \neq i) \label{eqn:beta_update}.
+%\end{align}
+%\end{subequations}
+
 \begin{align}
-	\bm{m}_f^{(s+1)}|\gamma, \bm{Z}^{(s)} &\sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}^{(s)}), \ldots, \alpha_{fL_f}(\bm{Z}^{(s)})), \label{eqn:m_update} \\
-	\bm{u}_f^{(s+1)}|\gamma, \bm{Z}^{(s)} &\sim \text{Dirichlet}(\beta_{f1}(\bm{Z}^{(s)}), \ldots, \beta_{fL_f}(\bm{Z}^{(s)})), \label{eqn:u_update} \\
-	\text{where }\alpha_{fl}(\bm{Z}^{(s)})&= \alpha_{fl} + \sum_{i=1}^{n_A}\sum_{j=1}^{n_B} I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = l) I(Z_j^{(s)} = i), \label{eqn:alpha_update} \\
-	\text{and } \beta_{fl}(\bm{Z}^{(s)})&=  \beta_{fl} + \sum_{i=1}^{n_A}\sum_{j=1}^{n_B}  I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = l) I(Z_j^{(s)} \neq i) \label{eqn:beta_update}.
+	\bm{m}_f^{(s+1)}|\gamma, \bm{Z}^{(s)} &\sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}^{(s)}), \ldots, \alpha_{fL_f}(\bm{Z}^{(s)})), \label{eqn:m_update}  
 \end{align}
-\end{subequations}
+and	
+\begin{align}
+	\bm{u}_f^{(s+1)}|\gamma, \bm{Z}^{(s)} &\sim \text{Dirichlet}(\beta_{f1}(\bm{Z}^{(s)}), \ldots, \beta_{fL_f}(\bm{Z}^{(s)})), \label{eqn:u_update} 
+\end{align}	
+
+where
+
+\begin{align}
+\alpha_{fl}(\bm{Z}^{(s)})&= \alpha_{fl} + \sum_{i=1}^{n_A}\sum_{j=1}^{n_B} I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = l) I(Z_j^{(s)} = i), \label{eqn:alpha_update} \quad \text{and}\\
+\beta_{fl}(\bm{Z}^{(s)})&=  \beta_{fl} + \sum_{i=1}^{n_A}\sum_{j=1}^{n_B}  I_{obs}(\gamma_{ij}^f) I(\gamma_{ij}^f = l) I(Z_j^{(s)} \neq i) \label{eqn:beta_update}.
+\end{align}	
+
+
 Next, the full conditional for $\pi$ is given by
 \begin{align}
 	\pi^{(s+1)}|\bm{Z}^{(s)},  \alpha_{\pi}, \beta_{\pi}, \pi \sim  \text{Beta}(n_{AB}(\bm{Z}^{(s)}) + \alpha_{\pi}, n_B - n_{AB}(\bm{Z}^{(s)}) + \beta_{\pi}).
@@ -247,9 +284,22 @@ where, for all $i \in \{1, \ldots, n_A\}$ and $j \in \{1, \ldots, n_B\}$,
 	\label{eqn:fs_weight}
 	w_{ij}^{(s)} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}^{(s)}}{u_{fl}^{(s)}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.
 \end{align}
-Derivations for these full conditionals can be found in Appendix \ref{app:derivations}.
 
-\textcolor{teal}{To obtain an estimate $\hat{\bm{Z}}$ of the linkage structure, we use the loss functions and Bayes estimate from \cite{sadinle_bayesian_2017}. However, since (\ref{eqn:fast_beta_prior}) does not strictly enforce one-to-one matching, it is possible for this Bayes estimate to link multiple records in $B$ to one record in $A$. To obtain a Bayes estimate that fulfills the one-to-one matching requirement, we minimize the expected loss subject to the constraint that $\hat{Z}_j \neq \hat{Z}_{j'}$ for all $j \neq j'$. Details for the initial Bayes estimate and the post-processing procedure are provided in Appendix \ref{bayes-estimate}.}
+\textcolor{teal}{
+Observe that the full conditional in (\ref{eqn:z_full_conditional}) does not depend on $\bm{Z}^{(s)},$ implying that 
+\begin{align}
+p(\bm{Z}^{(s+1)} \mid \gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}) \propto \prod_q \left(\prod_j
+p\left(Z_j^{(s+1)}  = q \mid \gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)} \right)
+\right).
+\end{align}
+}
+
+\textcolor{teal}{This implies that we can make parallel updates to $\bm{Z}$ instead of the traditional sequential updates as in \cite{sadinle_bayesian_2017}.
+In fact, to our knowledge, our approach and that of \cite{wortman2019} are the only two Bayesian approaches that propose parallel updates to the matching label (or linkage structure), contrasting the Bayesian record linkage literature \citep{tancredi2011hierarchical, sadinle_detecting_2014, steorts_bayesian_2016, marchant_distributed_2019, zanella_flexible_2016, betancourt2022prior, aleshinguendel2021multifile}. See Appendix~\ref{app:derivations} for derivations of the full conditional distributions.}
+
+%Derivations for the full conditional distributions can be found in Appendix~\ref{app:derivations}.
+
+\textcolor{teal}{Finally, to obtain an estimate $\hat{\bm{Z}}$ of the linkage structure, we use the loss functions and Bayes estimate from \cite{sadinle_bayesian_2017}. However, since (\ref{eqn:fast_beta_prior}) does not strictly enforce one-to-one matching, it is possible for this Bayes estimate to link multiple records in $B$ to one record in $A$. To obtain a Bayes estimate that fulfills the one-to-one matching (or bipartite) requirement, we minimize the expected loss subject to the constraint that $\hat{Z}_j \neq \hat{Z}_{j'}$ for all $j \neq j'$. Details for the initial Bayes estimate and the post-processing procedure are provided in Appendix \ref{bayes-estimate}.}
 
 \section{Efficient and Scalable Implementation}
 \label{sec:efficiency}
@@ -366,7 +416,7 @@ These changes can greatly improve the speed of the sampler, and each can be para
 		N_{p_j}^{ab} &= |r_{p_j}^{ab}|. \label{N_{p_j}^{ab}}
 	\end{align}
 \end{subequations}
-These can computed serially or in parallel. Summary statistics from each pairwise chunk comparison can be synthesized to recover summary statistics for the full comparison matrix $\gamma$ through
+These can computed \textcolor{teal}{sequentially} or in parallel. Summary statistics from each pairwise chunk comparison can be synthesized to recover summary statistics for the full comparison matrix $\gamma$ through
 \begin{subequations}
 	\begin{align}
 		r_{p_j} &= (r_{p_j}^{11}, \ldots, r_{p_j}^{ t_A t_B}) \text{ for } a = 1, \ldots, t_A \text{ and } b = 1, \ldots, t_B, \label{r_{p_j}} \\
@@ -625,8 +675,11 @@ Although the figures suggest that $S=2$ is adequate for maintaining linkage perf
 	
 	\hypertarget{app:derivations}{%
 	\section{Derivations of Full Conditionals}\label{app:derivations}}
+\textcolor{red}{Note: Please use s, s+1 consistently throughout. Or supress the notation and tell the reader. It looks weird to go back and forth. I've tried to provide an intermediate solution. Perhaps Jerry can state if he would think this is okay as an Editor.}\\
 
-We provide detailed derivations of the full-conditionals provided in Section \ref{gibbs_sampling}. The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
+\textcolor{teal}{We provide detailed derivations of the full-conditionals provided in Section~\ref{sec:fast-beta-linkage}. In our derivations below, we assume that the new update to the Gibbs sampler is $s+1$ and the current state of the sampler is $s.$ As to not overload notation, we suppress the state of the sampler until presenting the final update of the full conditional that appears in Section~\ref{sec:fast-beta-linkage}.}
+
+The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
 \begin{align*}
 	\mathcal{L}(m_{fl}|\gamma, \alpha_{fl}, \bm{u}, \bm{Z}, \pi) &\propto \prod_{i=1}^{n_A} \prod_{j=1}^{n_B} m_{fl}^{I(Z_j = i) I(\gamma_{ij}^f = l) I_{obs}(\gamma_{ij}^f)}  m_{fl}^{\alpha_{fl} - 1} = m_{fl}^{\alpha_{fl}(\bm{Z}) - 1},
 \end{align*}
@@ -673,7 +726,7 @@ Lastly, we multiply the likelihood by the fast beta prior in (\ref{eqn:fast_beta
 	\end{cases}
 \end{align}
 
-\textcolor{blue}{Observe that the full conditional in (\ref{eqn:z_full_conditional2}) does not depend on $\bm{Z}^{(s)},$ implying that 
+\textcolor{teal}{Observe that the full conditional in (\ref{eqn:z_full_conditional2}) does not depend on $\bm{Z}^{(s)},$ implying that 
 \begin{align}
 p(\bm{Z}^{(s+1)} \mid \gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi) \propto \prod_q \left(\prod_j
 p\left(Z_j^{(s+1)}  = q \mid \gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi \right)
@@ -681,136 +734,6 @@ p\left(Z_j^{(s+1)}  = q \mid \gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi \right)
 \end{align}
 Therefore, we update the full conditional for $\bm{Z}^{(s+1)}$ in parallel. This contrasts the Gibbs sampler of  \cite{sadinle_bayesian_2017}, where the update to the matching matrix is sequential and accomplished using a partially collapsed Gibbs sampler, where one integrates out $\pi.$ We do not opt for this approach as it would lead to similar sequential updates, which are computationally slow.}
 
-%Let $\gamma_{.j}$ denote the set of $n_A$ comparison vectors with $B_j$. We have
-%\begin{align*}
-%	p(\gamma_{.j}|Z_j = q, \bm{m}, \bm{u}) &\propto \prod_{i=1}^{n_A}\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\\
-%	&\propto \prod_{i=1}^{n_A}\frac{\left[\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}}{\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}}\\
-%	&\propto \prod_{i=1}^{n_A}\left(\prod_{f=1}^{F}\prod_{l=1}^{L_f} \frac{m_{fl}}{u_{fl}}\right)^{I(q = i) I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
-%	&=
-%	\begin{cases} 
-%		w_{q, j}  & q \leq n_A; \\
-%		1 &  q  = n_A + j. \
-%	\end{cases}\\
-%\end{align*}
-%where
-%$$w_{ij} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.$$
-
-%With the likelihood in this form, we derive an expression for the posterior distribution of $\bm{Z}$. Because we sample each $Z_j$ independently of all other $Z_{j'}$, we use only the full conditional for an individual $Z_j$:
-%\newpage
-%\begin{align*}
-%	p&\left(Z_j^{(s+1)} = q|\gamma_{.j}, \bm{m}, \bm{u}, \bm{Z^{(s)}}, \pi\right) \\
-%	&\propto p(\gamma_{.j}| Z_j^{(s+1)}, \bm{m}, \bm{u}) p(Z_j^{(s+1)}|\pi) \\
-%	&\propto \left(\sum_{i=1}^{n_A}w_{q, j}I(q = i) + I(q = n_A + j) \right) \left (\pi\sum_{i=1}^{n_A}\frac{1}{n_A}I(q = i) + (1-\pi)I(q = n_A + j) \right) \\	
-%	&= \frac{\pi}{n_A}\sum_{i=1}^{n_A}w_{q, j}I(q = i) + (1-\pi)I(q = n_A + j). \\
-%	&= \begin{cases} 
-%		\frac{\pi}{n_A}w_{q, j}   & q \leq n_A; \\
-%		1-\pi &  q  = n_A + j. \\
-%	\end{cases}
-%\end{align*}
-%
-%For more direct comparability with the method from \cite{sadinle_bayesian_2017}, we avoid sampling $\pi$ directly, and instead integrate over it in the final full conditional for $Z_j$.
-%\begin{align*}
-%	p&\left(Z_j^{(s+1)}  = q| \gamma, \bm{m}, \bm{u}, \bm{Z^{(s)}}\right)\\
-%	&= \int_{\pi}p\left(Z_j^{(s+1)} | \gamma, \bm{m}, \bm{u}, \bm{Z^{(s)}}, \pi\right) p\left(\pi| \bm{Z^{(s)}}\right) d\pi \\
-%	&= \int_{\pi}\left[\frac{\pi}{n_A}w_{z_{j}, j} I(q\leq n_A) + (1-\pi)I(q = n_A + j)\right] p\left(\pi| \bm{Z^{(s)}}\right) d\pi \\
-%	&= \frac{\int_{\pi} \pi p\left(\pi| \bm{Z^{(s)}}\right) d\pi}{n_A}w_{z_{j}, j} I(q\leq n_A) + \left(1-\int_{\pi} \pi p\left(\pi| \bm{Z^{(s)}}\right) d\pi \right) I(q = n_A + j) \\
-%	&= \frac{n_{AB}(\bm{Z}) + \alpha_{\pi}}{n_A (n_B + \alpha_{\pi} + \beta_{\pi})}w_{z_{j}, j} I(q\leq n_A) + \frac{n_B - n_{AB}(\bm{Z}) + \beta_{\pi}}{n_B + \alpha_{\pi} + \beta_{\pi}}I(q = n_A + j) \\
-%	&\propto w_{q, j}I(q\leq n_A) + n_A \frac{n_B - n_{AB}(\bm{Z}) + \beta_{\pi}}{n_{AB}(\bm{Z}) + \alpha_{\pi}}I(q = n_A + j) \\
-%	&=
-%	\begin{cases} 
-%		w_{q, j}  & q \leq n_A; \\
-%		n_A \frac{n_B - n_{AB}(\bm{Z}) + \beta_{\pi}}{n_{AB}(\bm{Z}) + \alpha_{\pi}} & q   = n_A + j. \\
-%	\end{cases} \\
-%\end{align*}
-
-	\clearpage
-	
-%	\hypertarget{app:chunks}{%
-%	\subsection{SEI for Large Linkage Tasks}\label{app:chunks}}
-	
-%	For linkage tasks with large amounts of records, we can partition the two data files $A$ and $B$ into $t_A$ and $t_B$ smaller disjoint chunks $\{A^a | a = 1, \ldots, t_A \}$ and $\{B^b | b = 1, \ldots, t_B\}$ for more manageable computations. {\color{red}{For example, if $n_A = n_B = 500$ and $t_A = t_B = 10$, each chunk $A^a$ and $B^b$ would contain 50 records. (Jerry asked for more precision here. Does this example work?) }}For each data file $A^a$, we conduct all-to-all comparisons with each $B^b$ to construct the comparison matrix $\gamma^{ab}$. We then conduct hashing, obtain the compressed $\tilde{\gamma}^{ab}$ for later calculations, and delete the larger $\gamma^{ab}$ from memory before continuing with the next chunk of data. In detail, we calculate
-%	\begin{subequations}
-%		\begin{align}
-%			r_{p_j}^{ab} &= \{i \in  | \gamma_{ij} = h_p, j \in B^b\}, \label{r_{p_j}^{ab}} \\
-%			N_{p_j}^{ab} &= |r_{p_j}^{ab}|, \label{N_{p_j}^{ab}}
-%		\end{align}
-%	\end{subequations}
-%	These can computed serially or in parallel. We reduce memory costs through SEI on each $r_{p_j}$, while retaining counts of each agreement pattern through $N_{p_j}^{ab}$. Summary statistics from each pairwise chunk comparison can be easily synthesized to recover summary statistics for the full comparison matrix $\gamma$. Specifically, we combine information through
-%	\begin{subequations}
-%		\begin{align}
-%			r_{p_j}^{SEI} &= (r_{p_j}^{SEI, 11}, \ldots, r_{p_j}^{SEI, A^{*}B^{*}}) \text{ for } a = 1, \ldots, A^{*} \text{ and } b = 1, \ldots, B^{*},\label{r_{p_j}} \\
-%			N_{p_j} &= \sum_{a = 1}^{A^{*}} \sum_{b = 1}^{B^{*}} N_{p_j}^{ab},\label{N_{p_j}}	\end{align}
-%	\end{subequations}
-%	
-%	{\color{red}{Note that with this approach, each $r_{p_j}^{SEI}$ can contain up to $S  t_A  t_B$ indices, so we store at most  $n_B  P  S  t_A  t_B$ indices in total.}}
-	
-	
-%		For linkage tasks with large amounts of records, we can partition the two data files $A$ and $B$ into $t_A$ and $t_B$ smaller disjoint chunks $\{A^a | a = 1, \ldots, t_A \}$ and $\{B^b | b = 1, \ldots, t_B\}$ for more manageable computations. {\color{red}{For example, if $n_A = n_B = 50000$ and $t_A = t_B = 100$, each chunk $A^a$ and $B^b$ would contain 500 records. (Jerry asked for more precision here. Does this example work?) }}For each data file $A^a$, we conduct all-to-all comparisons with each $B^b$ to construct the comparison matrix $\gamma^{ab}$. We then conduct hashing, obtain the compressed $\tilde{\gamma}^{ab}$ for later calculations, and delete the larger $\gamma^{ab}$ from memory before continuing with the next chunk of data. In detail, we calculate
-%	\begin{subequations}
-%		\begin{align}
-%			r_{p_j}^{ab} &= \{i \in  | \gamma_{ij} = h_p, j \in B^b\}, \label{r_{p_j}^{ab}} \\
-%			N_{p_j}^{ab} &= |r_{p_j}^{ab}|, \label{N_{p_j}^{ab}}
-%		\end{align}
-%	\end{subequations}
-%	These can computed serially or in parallel. Summary statistics from each pairwise chunk comparison can be easily synthesized to recover summary statistics for the full comparison matrix $\gamma$. Specifically, we combine information through
-%	\begin{subequations}
-%		\begin{align}
-%			r_{p_j} &= (r_{p_j}^{11}, \ldots, r_{p_j}^{ t_A t_B}) \text{ for } a = 1, \ldots, t_A \text{ and } b = 1, \ldots, t_B,\label{r_{p_j}} \\
-%			N_{p_j} &= \sum_{a = 1}^{t-A} \sum_{b = 1}^{t_B} N_{p_j}^{ab},\label{N_{p_j}}	\end{align}
-%	\end{subequations}
-%	
-%	
-%	\hypertarget{app:fabl-psuedocode}{%
-%		\subsection{Summary of Fast Beta Linkage Method}\label{app:fabl-psuedocode}}
-%	
-%	\textcolor{red}{I am getting rid of the notation $h(Z_j)$ for the agreement pattern between $B_j$ and its potential match. Instead, I am keeping notation that already exists, saying $(Z_j, j) \in h_p$. With this change, I don't see a good way to write lines 15 and 17. For that reason, I think I should remove this pseudo-code; it doesn't seem necessary, and invites criticism.}
-%	
-%	\begin{algorithm}[h!]
-%		\begin{algorithmic}[1]
-%			
-%			\Procedure{Hashing and Preprocessing}{}
-%			\State Construct and enumerate set of unique patterns $\mathcal{P}$ from $F$ and $\{L_f\}$.
-%			\State Partition files $\bm{X_1}$ and $\bm{X_2}$ into chunks $\{\bm{X_{1n}}\}$, $\{\bm{X_{2m}}\}$.
-%			\For{each $n$, $\bm{m}$}
-%			\State Create comparison vectors between $\bm{X_{1n}}$ and $\bm{X_{2m}}$.
-%			\State Hash records to $\mathcal{R}_{nm}$ and calculate summary statistics $\mathcal{H}_{nm}$.
-%			\State Use SEI to reduce memory usage; $\mathcal{R}_{nm} \to \mathcal{R}_{nm}^{\text{SEI}}$.
-%			\EndFor
-%			\State Synthesize results across pairings to get $\tilde{\gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{H} \}$.
-%			\EndProcedure
-%			
-%			\Procedure{Gibbs Sampling}{}
-%			\State Initialize $\bm{m}$, $\bm{u}$, and $Z$ parameters.
-%			
-%			\For{$t \in \{1, \ldots, T\}$} 
-%			\State Sample $\bm{m}^{t+1}|Z^{t}, \tilde{\gamma}$ and  $\bm{u}^{t+1}|\bm{Z}^{t}, \tilde{\gamma}$
-%			\State Sample $h\left(\bm{Z}^{t+1}\right)|\bm{m}^{t+1}, \bm{u}^{t+1}, \tilde{\gamma}$.  \Comment{Sample agreement pattern, not record}
-%			\EndFor
-%			\State Sample $\bm{Z} | h(\bm{Z}), \tilde{\gamma}$. \Comment{Fills in record label based on agreement pattern}
-%			
-%			\EndProcedure
-%			
-%		\end{algorithmic}
-%	\end{algorithm}
-%	\clearpage
-	
-%	\hypertarget{app:ohe}{%
-%		\subsection{One Hot Encoding Transformation}\label{app:ohe}}
-%	
-%	As described in Section \ref{sec:efficiency}, \texttt{fabl} makes use of one-hot encodings to aid in vectorized computations. For $\gamma_{ij}^f$ with $L_f$ levels, define $e_{ij}^f$ to be an $L_f \times 1$ vector.  When $\gamma_{ij}^f = l$, we set the $l^{th}$ element of $e_{ij}^f$ to be 1, and set the other $L_f - 1$ elements of $e_{ij}^f$ to be 0. We then concatenate the $e_{ij}^f$ for all $f \in \{1, \ldots, F\}$, resulting in the one-hot encoded comparison vector $e_{ij}$ of length $\sum_{f=1}^F L_f$.
-%	
-%	For example, consider comparing the toy records shown in Table \ref{tab:ohe} with $L = (3, 3, 2, 2)$ levels of agreement for last name, first name, DOB, and city respectively. Since the first name differs by only one letter, a reasonable comparison vector for this pair would be $\gamma_{ij} = (1, 2, 1, 2)$. The one hot encoding representation of this vector is $e_{ij} = (1, 0, 0, 0, 1, 0, 1, 0, 0, 1)$. 
-%	\begin{table}[h!]
-%		\centering
-%		\begin{tabular}[h!]{llll}
-%			Last Name & First Name & DOB & City \\
-%			\hline
-%			Smith & Taylor & 01/01/2000 & Durham\\
-%			Smith & Tayler & 01/01/2000 & Raleigh\\
-%			\hline
-%		\end{tabular}
-%		\caption{Example records for one hot encoding.}\label{tab:ohe}
-%	\end{table}
 
 
 \hypertarget{bayes-estimate}{%
