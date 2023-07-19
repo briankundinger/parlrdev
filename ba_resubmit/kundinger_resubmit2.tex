@@ -94,7 +94,7 @@ Through simulations and two case studies, we show that \texttt{fabl} can have ma
 
 Before conducting data analysis, it is often necessary to identify duplicate records across two data files. This is an increasingly important task in ``data cleaning'' and is used for inferential and predictive analyses in fields such as statistics, computer science, machine learning, political science, economics, precision medicine, official statistics, and others \citep{christen_2012, gutman2013bayesian, DalzellReiter18, tang2020}. In this article, we consider bipartite record linkage, which merges two data files that contain duplications across, but not within, the respective data files. 
 
-Many probabilistic record linkage methods are rely on the seminal work of \cite{fellegi_theory_1969} and \cite{newcombe_automatic_1959}. In their approach, the data analyst first creates comparison vectors for each pair of records in the data files. These vectors indicate how similar the records are on a set of variables measured in both files, known as the linkage variables.  Using these comparison vectors, the analyst classifies each pair as a match or nonmatch using a likelihood ratio test. Crucially, these decisions are made independently for each pair. The \cite{fellegi_theory_1969} approach has been extended for a wide variety of applications \citep[e.g.,][]{Winkler1990, fair2004generalized, wagner2014person, gill2003english, enamorado2019using, aleshinguendel2021multifile}. An alternative paradigm is to model the linkage variables directly \citep[e.g.,][]{tancredi2011hierarchical, steorts_bayesian_2016, marchant_distributed_2019, betancourt2021prior}. In this article, we build on the contributions to the comparison vector approach. 
+Many probabilistic record linkage methods are rely on the seminal work of \cite{fellegi_theory_1969} and \cite{newcombe_automatic_1959}. In their approach, the data analyst first creates comparison vectors for each pair of records in the data files. These vectors indicate how similar the records are on a set of variables measured in both files, known as the linkage variables.  Using these comparison vectors, the analyst classifies each pair as a match or nonmatch using a likelihood ratio test. Crucially, these decisions are made independently for each pair. The \cite{fellegi_theory_1969} approach has been extended for a wide variety of applications \citep[e.g.,][]{Winkler1990, fair2004generalized, wagner2014person, gill2003english, enamorado2019using, aleshinguendel2021multifile}. An alternative paradigm is to model the linkage variables directly \citep[e.g.,][]{tancredi2011hierarchical, steorts_bayesian_2016, marchant_distributed_2019, betancourt2022prior}. In this article, we build on the contributions to the comparison vector approach. 
 
 
 
@@ -103,7 +103,7 @@ The independent pairwise matching assumption from \cite{fellegi_theory_1969} is 
 
 Alternatively, analysts can embed one-to-one matching requirements into the model specification, at an additional computational cost. \cite{Larsen05} employed a Metropolis-Hastings algorithm to only allow sampling matches that respected one-to-one assumptions, but such algorithms exhibit slow mixing due to the combinatorial nature of the constrained matching space. \cite{fortunato_2010} used simulated annealing to target the space of matches permitted under the one-to-one constraint, but the method is computationally intensive and, to our knowledge, has not been applied on data files with more than 100 records. \cite{sadinle_bayesian_2017} proposed the Beta Record Linkage model (\texttt{BRL}), using a prior distribution over the space of bipartite matchings to strictly enforce one-to-one requirements throughout a Gibbs sampler. Additionally, he introduced a class of loss functions that allows for a flexible estimation of the linkage structure, such that the modeler can weigh the relative importance of false positives and false negatives, and identify records pairings to be decided through clerical review. \texttt{BRL} has been shown to work on larger tasks than previous one-to-one methods, but in our experience, it becomes slow when applied to files with more than a few thousand records. 
 
-In this article, we propose fast beta linkage (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. {\color{red}{We use independent priors for the matching status of each record, inducing a dependency that is stronger than the record pair independence in the original \cite{fellegi_theory_1969} but weaker that the one-to-one requirement of \cite{sadinle_bayesian_2017}.}} \textcolor{teal}{This independence assumption allows for a scalable update of the Gibbs sampler, contrasting sequential updates of \cite{sadinle_bayesian_2017}. We employ the decision theoretic technique of \cite{sadinle_bayesian_2017} and \cite{steorts_bayesian_2016} in order to ensure our method after record linkage is bipartite.}
+In this article, we propose fast beta linkage (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. {\color{red}{We use independent priors for the matching status of each record, inducing a dependency that is stronger than the record pair independence in the original \cite{fellegi_theory_1969} but weaker that the one-to-one requirement of \cite{sadinle_bayesian_2017}.}} \textcolor{teal}{This independence assumption allows for a scalable update of the Gibbs sampler, contrasting sequential updates of \cite{sadinle_bayesian_2017}. We employ the decision theoretic technique of \cite{sadinle_bayesian_2017} in order to ensure our method after record linkage is bipartite.}
 This \textcolor{teal}{discovery} allows us to (1) employ hashing techniques that speed up calculations and reduce computational costs, (2) compute the pairwise record comparisons over large data files via parallel computing, and (3) reduce memory costs through what we call storage efficient indexing. These contributions allow \texttt{fabl} to perform record linkage on much larger data files than previous Bayesian Fellegi-Sunter models at significantly increased speed with similar levels of accuracy. In particular, computation time under \texttt{BRL} grows quadratically, with the size of each data file, while computation time under \texttt{fabl} grows linearly, only with the size of the smaller data file.
 
 
@@ -167,7 +167,7 @@ where $\text{B}(\cdot, \cdot)$ represents the Beta function. This prior strictly
 \label{sec:fast-beta-linkage}
 
 Instead of the prior over $\bm{Z}$ from \cite{sadinle_bayesian_2017}, we follow \cite{wortman2019} and use independent priors for each component $Z_j$. However, unlike \cite{wortman2019} who proposes a flat prior for $Z_j$, 
-\textcolor{teal}{we use propose an alternative, called the fast beta linkage prior (fabl).}
+\textcolor{teal}{we propose an alternative, called the fast beta linkage (fabl) prior.}
 %the fast Beta prior as follows. 
 For each $Z_j$, we have
 \begin{subequations}
@@ -194,8 +194,8 @@ We can interpret (\ref{eqn:fast_beta_prior}) as follows: record $B_j$ has some m
 \begin{subequations}
 \begin{align}
 	\mathcal{L}(\bm{Z}, \bm{m}, \bm{u} \mid \gamma) &= \prod_{i=1}^{n_A}  \prod_{j=1}^{n_B}\prod_{f=1}^{F}\prod_{l=1}^{L_f}\left[  m_{fl}^{I(Z_j = i)}u_{fl}^{I(Z_j \neq i)}\right]^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}, \label{eqn:likelihood}\\
-	\bm{m}_f &\sim \text{Dirichlet}(\alpha_{f1}, \ldots, \alpha_{f L_f}), \forall f = 1, \ldots, F, \label{eqn:m} \\
-	\bm{u}_f &\sim \text{Dirichlet}(\beta_{f1}, \ldots, \beta_{f L_f}),\forall f = 1, \ldots, F,  \label{eqn:u}\\
+	\bm{m}_f &\sim \text{Dirichlet}(\alpha_{f1}, \ldots, \alpha_{f L_f}),\quad  \forall  \; f = 1, \ldots, F, \label{eqn:m} \\
+	\bm{u}_f &\sim \text{Dirichlet}(\beta_{f1}, \ldots, \beta_{f L_f}), \quad \forall \; f = 1, \ldots, F,  \label{eqn:u}\\
 	p(Z_j = q| \pi)  &=
 	\begin{cases} 
 		\frac{1}{n_A}\pi,  & q \leq n_A; \\
@@ -204,7 +204,7 @@ We can interpret (\ref{eqn:fast_beta_prior}) as follows: record $B_j$ has some m
 	\pi &\sim \text{Beta}(\alpha_{\pi}, \beta_{\pi})\label{eqn:pi},
 \end{align}
 \end{subequations}
-\textcolor{teal}{where $\alpha_{\pi}, \beta_{\pi}$ are fixed hyper-parameters.} 
+\textcolor{teal}{where recall that $\alpha_{\pi}, \beta_{\pi}$ are fixed hyper-parameters.} 
 
 \begin{remark}
 In the \cite{wortman2019} flat prior, each value $\{1, \ldots, n_A, n_A +j\}$ is a priori equally likely for $Z_j$. This amounts to a prior probability of $n_A / (n_A + 1)$ that record $B_j$ has a match in $A$. In our preliminary studies, the this highly informative prior weighting on matching can result in overly optimistic match rates. Hence, we prefer (\ref{eqn:fast_beta_prior}). We also note that the flat prior is equivalent to a special case of the fast Beta prior with $\pi$ fixed at the mean of a $\text{Beta}\left(1, 1 / n_A \right)$ random variable.
@@ -223,10 +223,10 @@ Linkage with \texttt{fabl} is conducted at the record level, rather than at the 
 %We initialize $\bm{m}$ and $\bm{u}$ from random draws from their prior distributions, and initialize $\bm{Z}$ to reflect no matches across data files; that is, $\bm{Z} = (n_A + 1, \ldots, n_A + n_B)$. To take the $(s+1)$th sample of each $\bm{m}_f$ and $\bm{u}_f$ given $\bm{Z}^{(s)}$, we use the full conditionals,
 
 
-We \textcolor{teal}{approximate} the posterior distribution of the parameters in (\ref{eqn:likelihood} - \ref{eqn:pi}) using a Gibbs sampler. 
-We initialize $\bm{m}$ and $\bm{u}$ from random draws from their prior distributions, and initialize $\bm{Z}$ to reflect no matches across data files; that is, $\bm{Z} = (n_A + 1, \ldots, n_A + n_B)$. To take the $(s+1)$th sample of each $\bm{m}_f$ and $\bm{u}_f$ given $\bm{Z}^{(s)}$, we use the full conditionals,
+%We \textcolor{teal}{approximate} the posterior distribution of the parameters in (\ref{eqn:likelihood} - \ref{eqn:pi}) using a Gibbs sampler. 
+%We initialize $\bm{m}$ and $\bm{u}$ from random draws from their prior distributions, and initialize $\bm{Z}$ to reflect no matches across data files; that is, $\bm{Z} = (n_A + 1, \ldots, n_A + n_B)$. To take the $(s+1)$th sample of each $\bm{m}_f$ and $\bm{u}_f$ given $\bm{Z}^{(s)}$, we use the full conditionals,
 
-\textcolor{teal}{We present a Gibbs sampler to approximate the joint posterior distribution of $\bm{Z}, \bm{m}, \bm{u}$ given the observed comparison data from the likelihood and priors assumed in (\ref{eqn:likelihood} - \ref{eqn:pi}). While it is easy to marginalize over $\pi$ and derive a collapsed Gibbs sampler, the sampler is sequential in nature as is that of \cite{}. Thus, we proceed with a traditional Gibbs sampler, where we show in Appendix \ref{}, the updates are parallel, making our approach scalable.}
+\textcolor{teal}{We present a Gibbs sampler to approximate the joint posterior distribution of $\bm{Z}, \bm{m},$ and  $\bm{u}$ given the observed comparison data from the likelihood and priors assumed in (\ref{eqn:likelihood} - \ref{eqn:pi}). While we could marginalize over $\pi$ and derive a collapsed Gibbs sampler, in the spirit of \cite{sadinle_bayesian_2017}, this leads to sequential updates, which are computationally slow. Instead, we proceed with a traditional Gibbs sampler, where the updates to the matching label (or coreference matrix) are parallel, allowing for more efficient updates. Refer to Appendix~\ref{app:derivations} for derivations of the full conditional distributions.}
 
 We initialize $\bm{m}$ and $\bm{u}$ from random draws from their prior distributions, and initialize $\bm{Z}$ to reflect no matches across data files; that is, $\bm{Z} = (n_A + 1, \ldots, n_A + n_B)$. \textcolor{red}{Need to initialize all random variables, such as $\pi$.} \textcolor{teal}{Denote the current draw of the sampler by $s$ and the updated draw by $s+1$.} \textcolor{teal}{For all $f=1, \ldots, F$ sample}
 
@@ -295,11 +295,14 @@ p\left(Z_j^{(s+1)}  = q \mid \gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}
 }
 
 \textcolor{teal}{This implies that we can make parallel updates to $\bm{Z}$ instead of the traditional sequential updates as in \cite{sadinle_bayesian_2017}.
-In fact, to our knowledge, our approach and that of \cite{wortman2019} are the only two Bayesian approaches that propose parallel updates to the matching label (or linkage structure), contrasting the Bayesian record linkage literature \citep{tancredi2011hierarchical, sadinle_detecting_2014, steorts_bayesian_2016, marchant_distributed_2019, zanella_flexible_2016, betancourt2022prior, aleshinguendel2021multifile}. See Appendix~\ref{app:derivations} for derivations of the full conditional distributions.}
+In fact, to our knowledge, our approach and that of \cite{wortman2019} are the only two Bayesian approaches that propose parallel updates to the matching label (or linkage structure), contrasting the Bayesian record linkage literature \citep{tancredi2011hierarchical, sadinle_detecting_2014, steorts_bayesian_2016, marchant_distributed_2019, zanella_flexible_2016, betancourt2022prior, aleshinguendel2021multifile}. }
+%See Appendix~\ref{app:derivations} for derivations of the full conditional distributions.}
 
 %Derivations for the full conditional distributions can be found in Appendix~\ref{app:derivations}.
 
-\textcolor{teal}{Finally, to obtain an estimate $\hat{\bm{Z}}$ of the linkage structure, we use the loss functions and Bayes estimate from \cite{sadinle_bayesian_2017}. However, since (\ref{eqn:fast_beta_prior}) does not strictly enforce one-to-one matching, it is possible for this Bayes estimate to link multiple records in $B$ to one record in $A$. To obtain a Bayes estimate that fulfills the one-to-one matching (or bipartite) requirement, we minimize the expected loss subject to the constraint that $\hat{Z}_j \neq \hat{Z}_{j'}$ for all $j \neq j'$. Details for the initial Bayes estimate and the post-processing procedure are provided in Appendix \ref{bayes-estimate}.}
+\textcolor{teal}{Finally, to obtain an estimate $\hat{\bm{Z}}$ of the linkage structure, we use the loss functions and Bayes estimate from \cite{sadinle_bayesian_2017}. However, since (\ref{eqn:fast_beta_prior}) does not strictly enforce one-to-one matching, it is possible for this Bayes estimate to link multiple records in $B$ to one record in $A$. To obtain a Bayes estimate that fulfills the one-to-one matching (or bipartite) requirement, we minimize the expected loss subject to the constraint that $\hat{Z}_j \neq \hat{Z}_{j'}$ for all $j \neq j'$. See Appendix \ref{bayes-estimate} for details regarding the initial Bayes estimate and the post-processing procedure.}
+
+%Details for the initial Bayes estimate and the post-processing procedure are provided in Appendix \ref{bayes-estimate}.
 
 \section{Efficient and Scalable Implementation}
 \label{sec:efficiency}
