@@ -483,11 +483,9 @@ These changes can greatly improve the speed of the sampler, and each can be para
 	
 	\textcolor{red}{Suggestion: Chunk is award. Perhaps partition/block/batch/segment. I might like segment since partition/block have meanings in record linkage already. }
 
-		For linkage tasks with large amounts of records, we can partition $A$ and $B$ into $t_A$ and $t_B$ smaller disjoint chunks for more manageable computations. Let $\{A^1, \dots, A^{t_A}\}$ be a partition of $A$ such that $\cup_{a=1}^{t_A} A^a = A$ and $A^a \cap A^{a'}=\emptyset$ for all $a \neq a'$.  
+		For linkage tasks with large amounts of records, we can partition $A$ and $B$ into $t_A$ and $t_B$ smaller disjoint \textcolor{green}{chunks} for more manageable computations. Let $\{A^1, \dots, A^{t_A}\}$ be a partition of $A$ such that $\cup_{a=1}^{t_A} A^a = A$ and $A^a \cap A^{a'}=\emptyset$ for all $a \neq a'$.  Likewise, let $\{B^1, \dots, B^{t_b}\}$ be a partition of $B$ such that $\cup_{b=1}^{t_B} B^b = B$ and $B^b \cap B^{b'}=\emptyset$ for all $b \neq b'$.  For example, if $n_A = n_B = 50000$ and $t_A = t_B = 100$, each $A^a$ and $B^b$ would contain disjoint sets of 500 records. For \textcolor{red}{all $a$ and $b$}, we conduct all-to-all comparisons \textcolor{red}{of the pairs of records in each $(A^a, B^b)$} to construct the comparison matrix $\gamma^{ab}$. 
 		
-		Likewise, let $\{B^1, \dots, B^{t_b}\}$ be a partition of $B$ such that $\cup_{b=1}^{t_B} B^b = B$ and $B^b \cap B^{b'}=\emptyset$ for all $b \neq b'$.  For example, if $n_A = n_B = 50000$ and $t_A = t_B = 100$, each $A^a$ and $B^b$ would contain disjoint sets of 500 records. For each $A^a$, we conduct all-to-all comparisons with each $B^b$ to construct the comparison matrix $\gamma^{ab}$. 
-		
-		\textcolor{teal}{Then, we} conduct hashing, obtain the compressed \textcolor{teal}{comparison matrix} $\tilde{\gamma}^{ab}$, and \textcolor{teal}{remove}
+		We conduct hashing, obtain the compressed \textcolor{teal}{comparison matrix} $\tilde{\gamma}^{ab}$, and \textcolor{teal}{remove}
 		the 
 \textcolor{teal}{memory-intensive}
 		\textcolor{teal}{comparison matrix} $\gamma^{ab}$ 
@@ -513,7 +511,7 @@ As discussed in Section \ref{data-representation-hashing-and-storage}, storing t
 
 All records $A_i$ that share agreement pattern $p$ with record $B_j$ have the same $w_{p}$. These records have the same probability to be identified as the link for record $B_j$. Thus, we know that records $i \in r_{p_j}$ with large $N_{p_j}$ are unlikely to be sampled consistently enough to be deemed a match in the Bayes estimate. Rather than store all of these record labels, we store only a small number $S$. For each $r_{p_j}^{ab}$, we sample $S$ indices without replacement to form $\text{SEI}(r_{p_j}^{ab})$. We collect these memory reduced lists to form $\text{SEI}(r_{p_j})$ as in (\ref{r_{p_j}}), and collect these to form $\text{SEI}(\mathcal{R})$.
 
-Let $n_{A^a}$ and $n_{B^b}$ be the number of records in chunks $A^a$ and $B^b$ respectively. Instead of storing $n_A n_B$ record labels, with SEI we store at most $\sum_{a = 1}^{t_A}\sum_{b = b}^{t_A} n_{A^a}  n_{B^b}  P  S$ labels. As shown in the full conditionals in (\ref{efficient_alpha}),  (\ref{efficient_beta}), (\ref{eqn:gibbs1}), and (\ref{eqn:gibbs2}), all original record pairs are still accounted for through $\mathcal{N}$, and thus we can proceed with posterior inference with the memory reduced $\text{SEI}(\tilde{\gamma}) = \{\mathcal{P}, \text{SEI}(\mathcal{R}), \mathcal{N}\}$. We provide guidance on choice of $S$ through a simulation in Section~\ref{SEI-sensitivity}.
+Let $n_{A^a}$ and $n_{B^b}$ be the number of records in \textcolor{green}{chunks} $A^a$ and $B^b$ respectively. Instead of storing $n_A n_B$ record labels, with SEI we store at most $\sum_{a = 1}^{t_A}\sum_{b = b}^{t_A} n_{A^a}  n_{B^b}  P  S$ labels. As shown in the full conditionals in (\ref{efficient_alpha}),  (\ref{efficient_beta}), (\ref{eqn:gibbs1}), and (\ref{eqn:gibbs2}), all original record pairs are still accounted for through $\mathcal{N}$, and thus we can proceed with posterior inference with the memory reduced $\text{SEI}(\tilde{\gamma}) = \{\mathcal{P}, \text{SEI}(\mathcal{R}), \mathcal{N}\}$. We provide guidance on choice of $S$ through a simulation in Section~\ref{SEI-sensitivity}.
 
 	\section{Simulation Studies}
 	\label{sec:simulations}
