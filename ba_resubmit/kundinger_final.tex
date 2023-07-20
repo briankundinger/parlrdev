@@ -406,11 +406,11 @@ efficient \textcolor{teal}{approximate posterior inference of the Gibbs sampler 
 
 \textcolor{teal}{In our derivations below, we assume the new update to the Gibbs sampler is $s+1$ and the current state of the sampler is $s.$ As to not overload notation, we suppress the state of the sampler until presenting the updates to each full conditional distribution based upon our computational proposals using hashing.} 
 
-\begin{enumerate}	
-\item \textcolor{red}{Note that 	$\gamma_{Z_j, j}$ doesn't appear to be defined. Also, do you more formally mean something like as follows: Consider $\gamma_{q,q} = h_p \mid Z_j = q$. It seems that the conditioning may actually be important here. I mention this for two reasons, it appears a bit strange in equation (22). When I think through it, it's okay. I just wanted to bring it up as a conversation before submission.}
-\item \textcolor{red}{There appears to be no update for $\pi$ in this section, so I have added one in.}
-\item Make sure when you give the update for the new efficient full conditional, you give the s, s+1. Example, it's missing on the update for $m$ and $u$ so it's not immediately clear how one would draw this directly. Wouldn't it just be a vectorized Dirichlet, where the computational savings come from vectorizing the hyperparameters of the Dirichlet?
-\end{enumerate}
+%\begin{enumerate}	
+%\item \textcolor{red}{Note that 	$\gamma_{Z_j, j}$ doesn't appear to be defined. Also, do you more formally mean something like as follows: Consider $\gamma_{q,q} = h_p \mid Z_j = q$. It seems that the conditioning may actually be important here. I mention this for two reasons, it appears a bit strange in equation (22). When I think through it, it's okay. I just wanted to bring it up as a conversation before submission.}
+%\item \textcolor{red}{There appears to be no update for $\pi$ in this section, so I have added one in.}
+%\item Make sure when you give the update for the new efficient full conditional, you give the s, s+1. Example, it's missing on the update for $m$ and $u$ so it's not immediately clear how one would draw this directly. Wouldn't it just be a vectorized Dirichlet, where the computational savings come from vectorizing the hyperparameters of the Dirichlet?
+%\end{enumerate}
 
 Turning first to the \textcolor{teal}{full conditional updates}
 %posterior updates 
