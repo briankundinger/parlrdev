@@ -337,7 +337,7 @@ The scale of linkage tasks possible through \texttt{BRL} is limited by the memor
  undesirable %in some situations 
 \citep{steorts_comparison_2014}.
 
-After computing all comparison vectors within a block, the modeler can further reduce the number of comparison vectors used in the linkage algorithm through indexing. For example, one might only consider pairs with a certain similarity score on a field deemed to be important, like last name, or only pairs that exactly match on a specified number of fields. However, the impact of indexing on model parameters is not well understood; \citep{murray2016probabilistic} reviewed this issue in the context of the frequentist Fellegi-Sunter model, leaving the effect of indexing on Bayesian record linkage models to future work.
+After computing all comparison vectors within a block, the modeler can further reduce the number of comparison vectors used in the linkage algorithm through indexing. For example, one might only consider pairs with a certain similarity score on a field deemed to be important, like last name, or only pairs that exactly match on a specified number of fields. However, the impact of indexing on model parameters is not well understood; \cite{murray2016probabilistic} reviewed this issue in the context of the \textcolor{red}{classical} Fellegi-Sunter model, leaving the effect of indexing on Bayesian record linkage models to future work.
 
 With \texttt{fabl}, we introduce two techniques to expand the scalability of probabilistic record linkage. First, we propose hashing methods that allow us to compute summary statistics that reduce the computational complexity of the Gibbs sampler and the memory requirements of the storing the comparison vectors. Second, we introduce storage efficient indexing, which reduces the memory costs associated with unlikely matches. 
 
@@ -347,12 +347,11 @@ With \texttt{fabl}, we introduce two techniques to expand the scalability of pro
 		Storage}\label{data-representation-hashing-and-storage}}
 	
 Since each component $\gamma_{ij}^f$ is discrete, there are only finitely many possible realizations of the comparison vector $\gamma_{ij}$. Let $P$ be the number of patterns realized in $\gamma$. 
-%It is
-\textcolor{teal}{The comparison vector} is
- bounded above by $P^{*} =  \prod_{f=1}^F (L_f + 1).$
+\textcolor{red}{The quantity $P$ is
+ bounded above by $P^{*} =  \prod_{f=1}^F (L_f + 1),$ which clearly depends only on $F$ and $L_f.$ It does not depend (or scale with) with $n_A$ or $n_B.$}
 % This comment below seems obvious and not needed.  
 % where the addition of 1 to $L_f$ for each field accounts for the possibility of missing values. 
-\textcolor{teal}{The quantity $P^{*}$ clearly depends only on $F$ and $L_f.$ Observe it does not depend (or scale) with $n_A$ or $n_B.$}
+
 %is determined by $F$ and $L_f$, and does not scale with $n_A$ or $n_B$. 
 
 To obtain a memory efficient representation, we map the agreement pattern of each record pair to a unique integer. \cite{enamorado2019using} accomplished this through a hashing function, which we modify to explicitly handle missing values:
@@ -362,29 +361,32 @@ To obtain a memory efficient representation, we map the agreement pattern of eac
 \end{align}
 
 %\textcolor{red}{Do you mean what I have below or something else? This still is a bit hard to parse.}
-We then map \textcolor{teal}{these integers in (\ref{eqn:hashing})} to sequential integers $\{1, \ldots, P\}$. \textcolor{teal}{Denote} each unique agreement pattern as $h_p$, and the set of unique agreement patterns as $\mathcal{P} = \{h_1, \ldots, h_P\}$. When record pair, \textcolor{teal}{$(i,j)$,} exhibits agreement pattern $p$, \textcolor{teal}{let} $\gamma_{ij} = h_p$. 
+We then map \textcolor{teal}{the integers in (\ref{eqn:hashing})} to sequential integers $\{1, \ldots, P\}$. \textcolor{teal}{Denote} each unique agreement pattern as $h_p$, and the set of unique agreement patterns as $\mathcal{P} = \{h_1, \ldots, h_P\}$. When record pair, \textcolor{teal}{$(i,j)$,} exhibits agreement pattern $p$, \textcolor{teal}{let} $\gamma_{ij} = h_p$. 
 
 In calculations, we will at times use the one-hot encoding of agreement pattern $h_p$, denoted $e(h_p)$. This is a vector of length $\sum_{f=1}^F L_f$ in which the $l + \sum_{k=1}^{f-1} L_k$ component is 1 when $\gamma_{ij}^f = l$, and 0 otherwise. 
 
 
 \begin{example}
 \label{ex:one-hot}
-For example, with five fields with binary agreements and possible missingness (NA), the number of possible patterns is bounded above by $P^{*} = 3^5 = 243$. Records $A_5$ and $B_7$ may exhibit agreement pattern $\gamma_{5,7} = (1, 1, 1, \text{NA}, 2)$, indicating exact agreement on the first three fields, missing information in the fourth field, and disagreement in the fifth field. Then (\ref{eqn:hashing}) gives $h^{*}(\gamma_{5,7}) = 2^1 + 2^3 + 2^5 + 0 + 2^{10} = 1066$. We map the unique values of $h^{*}(\gamma)$ to sequential integers. \textcolor{teal}{Suppose that 1066 maps to 42. This implies $\gamma_{5,7} = h_{42}.$}
+%% Jerry propose with (want to avoid using with twice in the same sentence :)
+\textcolor{teal}{Consider} five fields with binary agreements and possible missingness (NA). The number of possible patterns is bounded above by $P^{*} = 3^5 = 243$. \textcolor{red}{Suppose that} records $A_5$ and $B_7$ exhibit agreement pattern $\gamma_{5,7} = (1, 1, 1, \text{NA}, 2)$, indicating exact agreement on the first three fields, missing information in the fourth field, and disagreement in the fifth field. Then (\ref{eqn:hashing}) gives $h^{*}(\gamma_{5,7}) = 2^1 + 2^3 + 2^5 + 0 + 2^{10} = 1066$. 
+\textcolor{red}{All records with a hashed value of 1066 map to the integer 42. Then, $\gamma_{5,7} = h_{42}.$}
+%We map the unique values of $h^{*}(\gamma)$ to sequential integers. \textcolor{teal}{Suppose that 1066 maps to 42. This implies $\gamma_{5,7} = h_{42}.$}
 %If 1066 is mapped to, for example, 42, then we would have $\gamma_{5,7} = h_{42}.$ 
 This agreement pattern has the one hot encoding $e(h_{42}) = (1, 0, 1, 0, 1, 0, 0, 0, 0, 1)$.
 \end{example}
 
-We then identify the records in $A$ with comparison vectors corresponding to each pattern $p$ for each record $B_j$. We denote this set $r_{p_j} = \{i \in 1, \dots, n_A | \gamma_{ij} = h_p\}$, and collect all such sets in the nested list $\mathcal{R} = \{r_{p_j} | p \in \{1, \ldots, P\}, j \in \{1, \ldots, n_B\} \}$. We compute the number of records in $A$ that share agreement pattern $p$ with record $B_j$, given by
+We then identify the records in $A$ with comparison vectors corresponding to each pattern $p$ for each record $B_j$. We denote this set $r_{p_j} = \{i \in 1, \dots, n_A | \gamma_{ij} = h_p\}$, and collect all such sets in the nested list $\mathcal{R} = \{r_{p_j} | p \in \{1, \ldots, P\}, j \in \{1, \ldots, n_B\} \}$. We compute the number of records in $A$ that share agreement pattern $p$ with record $B_j$, 
 \begin{align}\label{eqn:N}
 N_{p_j} = |r_{p_j}| = \sum_{i=1}^{n_A} I(\gamma_{ij} = h_p).
 \end{align}
 We collect these counts in $\mathcal{N} = \{N_{p_j} |p \in 1, \ldots, P, j \in 1, \ldots, n_B \}$. 
 
-Together, the set $\tilde{\gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N}\}$ fully characterizes the comparison matrix $\gamma$ for purposes of writing the likelihood function for \texttt{fabl}. To see this, we employ the condensed notation
+The set $\tilde{\gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N}\}$ fully characterizes the comparison matrix $\gamma$ for purposes of writing the likelihood function for \texttt{fabl}. To see this, we employ the condensed notation
 \begin{subequations}
 	\begin{align}
-		m_p =  p(\gamma_{ij} = h_p|Z_j = i) = \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\label{eqn:m_p} \\
-		u_p =  p(\gamma_{ij} = h_p|Z_j \neq i) = \prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\label{eqn:u_p}
+		m_p =  \textcolor{red}{p(\Gamma_{ij} = h_p|Z_j = i)} = \prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\label{eqn:m_p} \\
+		u_p =  \textcolor{red}{p(\Gamma_{ij} = h_p|Z_j \neq i)} = \prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}\label{eqn:u_p}
 	\end{align}
 \end{subequations}
 to express the probability that records $A_i$ and $B_j$ form agreement pattern $p$ given that they are a match, in (\ref{eqn:m_p}), and not a match, in (\ref{eqn:u_p}). Viewed through the perspective of agreement patterns, the likelihood in (\ref{eqn:likelihood}) \textcolor{teal}{can be expressed as}
@@ -412,7 +414,7 @@ efficient \textcolor{teal}{approximate posterior inference of the Gibbs sampler 
 
 Turning first to the \textcolor{teal}{full conditional updates}
 %posterior updates 
-for $\bm{m}$ and $\bm{u}$, we observe that these parameters only depend on the \textcolor{teal}{observed} data  through quantities that are calculated through $\mathcal{N}$ and $\mathcal{P}$. Let $n_p(\bm{Z}) = \sum_{j=1}^{n_B} I\left(\gamma_{Z_j, j} = h_p \right)$ be the number of matching record pairs with agreement pattern $p$, and $N_p = \sum_{j=1}^{n_B} N_{p_j}$ be the total occurrence of pattern $p$ in the data across all record pairs. Then, conditional on $Z$, we can express the contribution to the likelihood in the full conditional distribution for $\bm{m}$ and $\bm{u}$ as
+for $\bm{m}$ and $\bm{u}$, we observe that these parameters only depend on the \textcolor{teal}{observed} data  through quantities that are calculated through $\mathcal{N}$ and $\mathcal{P}$. Let $n_p(\bm{Z}) = \sum_{j=1}^{n_B} I\left(\gamma_{Z_j, j} = h_p \right)$ be the number of matching record pairs with agreement pattern $p$, and $N_p = \sum_{j=1}^{n_B} N_{p_j}$ be the total occurrence of pattern $p$ in the data across all record pairs. Conditional on $\bm{Z}$, we can express the contribution to the likelihood in the full conditional distribution for $\bm{m}$ and $\bm{u}$ as
 \begin{align}
 	\mathcal{L}(\bm{m}, \bm{u} \mid \tilde{\gamma}, \bm{Z}, \pi)  &=  \prod_{p=1}^P m_p^{n_p(\bm{Z})}u_p^{N_p - n_p(\bm{Z})}  \label{likelihood_efficient_m_u}.
 \end{align}
@@ -427,30 +429,37 @@ Additionally, let $\bm{\alpha_0} = (\alpha_{11}, \ldots, \alpha_{F L_F})$ and $\
 
 %Specifically, the $\ell + \sum_{k=1}^{f-1} L_k$ component of (\ref{efficient_alpha}) and (\ref{efficient_beta}) provides the the posterior updates for level $\ell$ and field $f$ in (\ref{eqn:alpha_update}) and (\ref{eqn:beta_update}). However, the vectorized summations in (\ref{efficient_alpha}) and (\ref{efficient_beta}) can be computed more efficiently than summing over $n_A n_B$ record pairs for each field and agreement level.
 
-\textcolor{teal}{Observe that we compute the vectorized summations in (\ref{efficient_alpha}) and (\ref{efficient_beta}) more efficiently than the previous updates in (\ref{eqn:alpha_update}) and (\ref{eqn:beta_update}), which require summing over $n_A n_B$ record pairs for each field and agreement level.}
+\textcolor{teal}{\textcolor{red}{We can} compute the vectorized summations in (\ref{efficient_alpha}) and (\ref{efficient_beta}) more efficiently than the previous updates in (\ref{eqn:alpha_update}) and (\ref{eqn:beta_update}), which require summing over $n_A n_B$ record pairs for each field and agreement level.}
 
-\textcolor{teal}{Turning to sampling for $\pi,$ it remains the same as in (\ref{eqn:pi}). }
+\textcolor{teal}{Turning to sampling for $\pi,$ it remains the same as in (\ref{eqn:pi}), \textcolor{red}{so we do not repeat it.} }
 
-We also use (\ref{likelihood_efficient}) to sample $\bm{Z}$ efficiently. For each pattern $p$, let $w_p =\frac{m_p}{u_p}$.  The contribution to the likelihood in the full conditional for $Z_j$ can be expressed as
+We also use (\ref{likelihood_efficient}) to sample $\bm{Z}$ efficiently. For each pattern $p$, let $w_p = m_p/u_p$.  The contribution to the likelihood in the full conditional for $Z_j$ can be expressed as
 \begin{align}
 	\mathcal{L}(Z_j\mid  \tilde{\gamma}, \bm{m}, \bm{u}, \pi) = \prod_{p=1}^P u_p^{N_{p_j}} \prod_{i \in r_{p_j}} w_p^{I(Z_j = i)}. \label{likelihood_efficient_z}
 \end{align}
-This likelihood lends itself to markedly faster posterior computations. Sampling $Z_j$ from the full conditional provided in (\ref{eqn:z_full_conditional}) can become computationally expensive when $n_A$ is large. This is because sampling a value from $n_A$ options with unequal weights requires normalizing the weights to probabilities, which has a computational cost that scales with $n_A$. \textcolor{teal}{We consider two sampling steps.}
+This likelihood lends itself to markedly faster posterior computations. Sampling $Z_j$ from the full conditional provided in (\ref{eqn:z_full_conditional}) can become computationally expensive when $n_A$ is large. This is because sampling a value from $n_A$ options with unequal weights requires normalizing the weights to probabilities, which has a computational cost that scales with $n_A$. \textcolor{red}{We use two steps in sampling each $Z_j$.}
 %To speed up computation, we break this sampling step into two. 
 
 We first sample among $P + 1$ options for the agreement pattern between $B_j$ and its potential link, according to
+
 \begin{align}
 	\label{eqn:gibbs1}
-	P\left( \gamma_{Z_j^{(s+1)}, j} = h_p \mid \tilde{\gamma}, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}\right) \propto
+	p\left( \Gamma_{Z_j^{(s+1)},j} = h_p \mid \tilde{\gamma}, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}\right) \propto
+%	p\left( \Gamma_{Z_j^{(s+1)}, j} = h_p \mid \tilde{\gamma}, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}\right) \propto
 	\begin{cases} 
-		\frac{\pi^{(s+1)}N_{p_j}}{n_A}  w_{p}^{(s+1)},  & \gamma_{Z_j^{(s+1)}, j} = h_p; \\
+%		\frac{\pi^{(s+1)}N_{p_j}}{n_A}  w_{p}^{(s+1)},  & \gamma_{Z_j^{(s+1)}, j} = h_p; \\
+                 \frac{\pi^{(s+1)}N_{p_j}}{n_A}  w_{p}^{(s+1)},  & h_p \in \mathcal{P}; \\
 		1- \pi^{(s+1)} , &   \text{otherwise}. \\
 	\end{cases}
 \end{align}
+
 Since all records in $A$ sharing the same agreement pattern with $B_j$ are equally likely, we then sample among candidate records uniformly using
 \begin{align}
 	\label{eqn:gibbs2}
-	P\left(Z_j^{(s+1)} = q \mid \gamma_{Z_j^{(s+1)}, j} = h_p, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)} \right) = \begin{cases} 
+%	P\left(Z_j^{(s+1)} = q \mid \gamma_{Z_j^{(s+1)}, j} = h_p, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)} \right) 
+P\left(Z_j^{(s+1)} = q \mid \Gamma_j=h_p, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)} \right) 
+	= 
+	\begin{cases} 
 		\frac{1}{N_{p_j}}, & q \in r_{p_j}; \\
 		0, & \text{otherwise.} \\
 	\end{cases}
