@@ -480,8 +480,6 @@ These changes can greatly improve the speed of the sampler, and each can be para
 
 \hypertarget{scaling}{%
 	\subsection{Scaling to Large Linkage Tasks}\label{scaling}}
-	
-	\textcolor{red}{Suggestion: Chunk is award. Perhaps partition/block/batch/segment. I might like segment since partition/block have meanings in record linkage already. }
 
 		For linkage tasks with large amounts of records, we can partition $A$ and $B$ into $t_A$ and $t_B$ smaller disjoint \textcolor{green}{chunks} for more manageable computations. Let $\{A^1, \dots, A^{t_A}\}$ be a partition of $A$ such that $\cup_{a=1}^{t_A} A^a = A$ and $A^a \cap A^{a'}=\emptyset$ for all $a \neq a'$.  Likewise, let $\{B^1, \dots, B^{t_b}\}$ be a partition of $B$ such that $\cup_{b=1}^{t_B} B^b = B$ and $B^b \cap B^{b'}=\emptyset$ for all $b \neq b'$.  For example, if $n_A = n_B = 50000$ and $t_A = t_B = 100$, each $A^a$ and $B^b$ would contain disjoint sets of 500 records. For \textcolor{red}{all $a$ and $b$}, we conduct all-to-all comparisons \textcolor{red}{of the pairs of records in each $(A^a, B^b)$} to construct the comparison matrix $\gamma^{ab}$. 
 		
