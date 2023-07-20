@@ -78,25 +78,25 @@
 	\title{Response to Reviewer Comments}
 	\maketitle
 	
-
+\textcolor{teal}{We thank the Editor and reviewers for their assessment and constructive feedback.}
 	
-Thank you for the thoughtful feedback. We have made several broad changes to address the Editor's and Associate Editor's overall critiques, and have addressed each specific comment from the reviewer.
+%Thank you for the thoughtful feedback. We have made several broad changes to address the Editor's and Associate Editor's overall critiques, and have addressed each specific comment from the reviewer.
 
 \section{AE Comments}
 
 \pointRaised{AE}{I must add that reading the paper still feels like a chore, in part because the notation is so heavy, which may be hard to avoid, but also, in part, because some wording choices make certain sentences hard to parse, which can certainly be improved.}
 
-%% RCS: Suggestion: Write a strong paragraph to the Editor after the paper is finalized. Come back to this. Explain that we have tried to simplify the notation when possible, however, in some places, the heavy notation is not possible. Thus, we have worked on improving more precise wording and removing sections or wording that is distracting or not needed. Thank the Editor and Associate Editor for helping us improve upon what we believe to be an important paper and breakthrough in the literature.
-
-%% I would not make a large list of all the notation we have changed as it may cause the Editor to go picking over the paper more.
-
 \reply{
-\textcolor{teal}{We thank the Editor for the opportunity to revise our paper and for the suggestions. We have improved notation, when possible, however, as noted by the Editor in certain places, such as in the computational speeds ups of Section 4, this is difficult to avoid. We have done our utmost to simplify notation (when possible) and improve the parsing of sentences. Finally, we have attempted to clarify our overall contributions to the literature, which we highlight below. In addition, we provide responses to all the Editor's and Associate Editor's comments below.}
-
-
-We propose fast beta linkage (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. We use independent priors for the matching status of each record, inducing a dependency that is stronger than the record pair independence in the original \cite{fellegi_theory_1969} but weaker that the one-to-one requirement of \cite{sadinle_bayesian_2017}. This independence assumption allows for a scalable update of the Gibbs sampler, contrasting sequential updates of \cite{sadinle_bayesian_2017}. We employ the decision theoretic  technique of \cite{sadinle_bayesian_2017} in order to ensure our method after record linkage is bipartite. This discovery allows us to (1) employ hashing techniques that speed up calculations and reduce computational costs, (2) compute the pairwise record comparisons over large data files via parallel computing, and (3) reduce memory costs via a novel method, storage efficient indexing. These contributions allow \texttt{fabl} to perform record linkage on much larger data files than previous Bayesian Fellegi-Sunter models at significantly increased speed with similar levels of accuracy. In particular, computation time under \texttt{BRL} grows quadratically, with the size of each data file, while computation time under \texttt{fabl} grows linearly, only with the size of the smaller data file. Finally, we provide two real illustrations of our methodology and simulation studies with reproducible software.
-
+\textcolor{teal}{Thank you for the opportunity to submit a revision. 
+We have provided detailed responses to the reviewers' comments below, 
+which prompted significant changes in our article. Specifically, we have attempted to improve notation and wording choices, at the reviewers' suggestion. 
 }
+}
+
+
+%We propose fast beta linkage (\texttt{fabl}), which extends the \texttt{BRL} model for increased efficiency and scalability. We use independent priors for the matching status of each record, inducing a dependency that is stronger than the record pair independence in the original \cite{fellegi_theory_1969} but weaker that the one-to-one requirement of \cite{sadinle_bayesian_2017}. This independence assumption allows for a scalable update of the Gibbs sampler, contrasting sequential updates of \cite{sadinle_bayesian_2017}. We employ the decision theoretic  technique of \cite{sadinle_bayesian_2017} in order to ensure our method after record linkage is bipartite. This discovery allows us to (1) employ hashing techniques that speed up calculations and reduce computational costs, (2) compute the pairwise record comparisons over large data files via parallel computing, and (3) reduce memory costs via a novel method, storage efficient indexing. These contributions allow \texttt{fabl} to perform record linkage on much larger data files than previous Bayesian Fellegi-Sunter models at significantly increased speed with similar levels of accuracy. In particular, computation time under \texttt{BRL} grows quadratically, with the size of each data file, while computation time under \texttt{fabl} grows linearly, only with the size of the smaller data file. Finally, we provide two real illustrations of our methodology and simulation studies with reproducible software.
+
+%}
 
 %\reply{We have made several efforts to simplify notation in this revision.
 %
@@ -119,7 +119,7 @@ We propose fast beta linkage (\texttt{fabl}), which extends the \texttt{BRL} mod
 %%% RCS: Thank the Editor, explain the change. I have removed repetition and shortened this bit. 
 
 \reply{
-We thank the Editor for bringing up this point. In order to simplify notation, we refer to the two data files as
+Thank you for the suggestion. We now refer to the two data files as
  $A$ and $B$, where the updated material reads:
 	
 	``Consider a data files $A$ and $B$, consisting of records $A_i$ and $B_j$ respectively, where $i \in \{1, \ldots n_A\}$ and $j \in \{1, \ldots n_B\}$". See Section 2, page 3. 
@@ -134,29 +134,12 @@ We thank the Editor for bringing up this point. In order to simplify notation, w
 	
 	\reply{\textcolor{teal}{The distinction does not matter due to assuming that the comparison vectors are conditionally independent given the coreference matrix (or matching label). We now state the following in Section 3, page 5:}
 	
-	\textcolor{teal}{``Assume the comparison vectors are conditionally independent given the coreference matrix (or matching label) and that missing comparisons are  missing at random (MAR) or missing completely at random (MCAR). Due the the conditional independence assumption, we can marginalize over the missing data in (6a) and do all computation simply using the observed data. For details, refer to \cite[Section 6.2]{LittleRubin2002}, \cite[Section 3.1]{sadinle_detecting_2014}, and \citep[Section 4.2]{sadinle_bayesian_2017}.}
-	
-%	Furthermore, both MAR and MCAR lead to assuming the missing data is ignorable in this situation, which implies that the marginalized likelihood under all three assumptions is the same."
-	
-%	``Assume the comparison vectors are conditionally independent given the coreference matrix (or matching label) and that missing comparisons are ignorable or missing at random (MAR, per \cite{LittleRubin2002}). With either the ignorability or MAR assumption, we can marginalize over the missing data in (6a) and do all computation simply using the observed data. For details, refer to \cite[Section 6.2]{LittleRubin2002} and \cite[Section 3.1]{sadinle_detecting_2014}, and \citep[Section 4.2]{sadinle_bayesian_2017}. Due to the conditional independence assumption, the missingness mechanism is equivalent to being missing completely at random (MCAR, per \cite[p. 12]{LittleRubin2002}). To summarize, we can assume the missingness is ignorable, MAR, or MCAR in this situation."
-%	
-	
-	
-%	(MAR, per \cite{LittleRubin2002}). With either the ignorability or MAR assumption, we can marginalize over the missing data in (6a) and do all computation simply using the observed data. For details, refer to \cite[Section 6.2]{LittleRubin2002} and \cite[Section 3.1]{sadinle_detecting_2014}, and \citep[Section 4.2]{sadinle_bayesian_2017}. Due to the conditional independence assumption, the missingness mechanism is equivalent to being missing completely at random (MCAR, per \cite[p. 12]{LittleRubin2002}). To summarize, we can assume the missingness is ignorable, MAR, or MCAR in this situation."
-	}
-	
-	%% RCS: See two comments below regarding MAR versus MCAR. I have an alternative response for the one regarding miss at random. 
-	
-%	\textcolor{teal}{Answer for MAR: Yes, the assumption is truly missing at random. This distinction between truly missing at random and missing completely at random does not matter due to two assumptions. Following Sadinle (2017), we assume that the fields in the comparison vectors are conditionally independent given the coreference matrix and we assume that the missing comparisons are ignorable (Sadinle (2017). Therefore, our likelihood is the same as in Sadinle (2017) (see equations (3) and (4) of his paper). As stated by Sadinle (2017), ``we work under the assumption of ignorability of the missingness mechanism for the comparisons so that we can base our inferences on the marginal distribution of the observed comparisons (Little and Rubin, p. 90)."  We refer to Sadinle (2017), Section 4.2, page 604 for further details.}
-	
-%	\reply{The assumption is missing completely at random (MCAR) due to fact that we assume the fields in the comparison vectors are conditionally independent given the coreference matrix (or matching label). The assumption is not missing at random (MAR) as we do not assume that the missing comparisons are also ignorable. See Section 3, page 5 regarding clarification of this point \citep{LittleRubin2002}.}
-%	\textcolor{red}{Still checking on this and looking at Little and Rubin.}
-	
+	\textcolor{teal}{``Assume the comparison vectors are conditionally independent given the coreference matrix (or matching label) and that missing comparisons are  missing at random (MAR) or missing completely at random (MCAR). Due the the conditional independence assumption, we can marginalize over the missing data in (6a) and perform all computation using the observed data. For details, refer to \cite[Section 6.2]{LittleRubin2002}, \cite[Section 3.1]{sadinle_detecting_2014}, and \citep[Section 4.2]{sadinle_bayesian_2017}.}
 	
 
-%	\reply{% 
-%		The assumption is missing completely at random. You are correct that this is a result of the independence assumed across elements of the comparison vector. This has been clarified. 
-%	}
+	}
+	
+
 
 	\pointRaised{R}{%
 	Appendix 8.2: I appreciate the streamlining of the discussion of the proposed algorithms and think it was a good choice to move the full derivation to an appendix. However, I do not follow the re-expression of the pmf for $\Gamma_{.j}$. First, the opening square brackets are still misplaced
@@ -167,7 +150,7 @@ We thank the Editor for bringing up this point. In order to simplify notation, w
 %\textcolor{teal}{Don't apologize!}
 
 \reply{%
-	The square brackets have been corrected. We have clarified the derivation of the full conditional distribution of $Z_j$, separately handling the case when $B_j$ has a match and when it does not. Refer to Appendix B, page 26 -- 27 regarding this extended derivation.
+	The square brackets have been corrected. We have revised the derivation of the full conditional distribution of $Z_j$, separately handling the case when $B_j$ has a match and when it does not. Refer to Appendix A, pages 26 -- 27 regarding this extended derivation.
 	}
 
 
@@ -180,11 +163,13 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 
 
 
-\reply{No, we do not integrate out $\pi$ as done in \cite{sadinle_bayesian_2017} as this would result in a sequential sampler as opposed to the parallel one that we propose. This is one of our contributions to our paper. 
+\reply{No, in \text{fabl}, we do not integrate out $\pi$ as done in \cite{sadinle_bayesian_2017} because this leads to a sequential sampler. 
 
-(1) Yes, our alternative approach is different than directly integrating over the prior distribution $\pi.$ We have attempted to make this more clear in our revised version. In short, our prior distribution over $Z$ leads to a Gibbs sampler that leads to parallel updates, which contrasts that of Sadinle (2018). Of course, we could integrate out $\pi$ in our approach, however, this would lead to sequential updates, which would be slow in practice. See Appendix B, page 27. 
+(1) Yes, our alternative approach is different than directly integrating over the prior distribution $\pi.$ 
+%We have attempted to make this more clear in our revised version. 
+In short, our prior distribution over $Z$ leads to a Gibbs sampler that leads to parallel updates, which contrasts that of \cite{sadinle_bayesian_2017}. Of course, we could integrate out $\pi$ in our approach, however, this leads to sequential updates, which would be slow in practice. See Appendix A, page 27. 
 
-(2) Yes, our alternative approach is justified. We provide a justification in Appendix B, page 27 regarding why the updates are independent and not sequential. Thank you for the excellent questions, which have greatly improved our paper. 
+(2) Yes, our alternative approach is justified. We provide a justification in Appendix A, page 27 regarding why the updates are independent and not sequential. Thank you for the excellent questions, which have greatly improved our paper. 
 
 }
 
@@ -208,7 +193,7 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 	
 
 	
-	\reply{Yes, in the original manuscript, the comparison vectors are created and therefore, patterns are assigned) without regard to $Z$. Given the confusion caused to the Associate Editor, we removed the sentence.	}
+	\reply{\textcolor{teal}{Yes, in the original manuscript, the comparison vectors are created and therefore, patterns are assigned) without regard to $Z$. Given the confusion, we have removed the sentence.	}}
 
 %	\reply{%
 %	You are correct that the comparison vectors are created (and therefore, patterns are assigned) without regard to $Z$. This notation was created purely to be able to denote when a record was left unlinked during the Gibbs Sampler as in Equation 16 in the submitted draft. 
@@ -322,14 +307,14 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 	Generally, the authors seem to arbitrarily use upper and lower case z interchangeably in function definitions.}
 
 \reply{%
-	We use $Z$ when discussing a random quantity, and $z$ to reference a realized value. We have revised all instances of inconsistency. 
+	We use $Z$ when discussing a random quantity, and $z$ to reference a realized value. We have revised all instances of the inconsistency. 
 }
 
 \pointRaised{R}{%
 Equations (8) and (9): Should the weights have superscript (s) (as the Zs do)?}
 
 \reply{%
-	This has been fixed. 
+	This has been fixed. \textcolor{teal}{Refer to equations (12) and (13), page 7.}
 }
 
 \pointRaised{R}{%
@@ -344,7 +329,7 @@ Equations (8) and (9): Should the weights have superscript (s) (as the Zs do)?}
 	Section 4.3, second paragraph, the definitions of the concatenated vectors $\alpha_0$ and $\beta_0$ should have final elements subscripted by $L_f$, where the sub-subscript is capitalized.}
 
 \reply{%
-	This has been revised; thank you.
+	This has been revised; thank you. \textcolor{teal}{Refer to Section 4.2, page 10.}
 }
 
 
