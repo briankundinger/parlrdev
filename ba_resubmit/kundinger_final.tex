@@ -166,7 +166,7 @@ Here, $\mathcal{M}$ and $\mathcal{U}$ are the distributions for matching and non
 %
 %As the prior distribution for  $\bm{Z}$, he proposes the ``beta distribution for bipartite matching."  
 This assigns a Bernoulli distribution for the indicator that a record in $B$ has a match in $A$, that is, $I(Z_j \leq n_A) \sim \text{Bernoulli}(\pi)$.  Additionally, $\pi \sim \text{Beta}(\alpha_{\pi}, \beta_{\pi})$, \textcolor{teal}{where  $\alpha_{\pi}, \beta_{\pi}$ are known hyper-parameters.}
-
+%
 It follows that the number of records in $B$ that have matches, denoted $n_{AB}(\bm{Z}) = \sum_{j=1}^{n_B} I(Z_j \leq n_A)$, is distributed according to a $\text{Beta-Binomial}(n_B, \alpha_{\pi}, \beta_{\pi})$. Conditioning on the set of records in $B$ that have matches, formally denoted $\{I(Z_j \leq n_A)\}_{j=1}^{n_B}$, all $n_A ! / (n_A - n_{AB}(\bm{Z}))!$ bipartite matchings are taken to be equally likely. Thus, the prior distribution used by \cite{sadinle_bayesian_2017} is given by
 \begin{align}
 \label{eqn:sadinle_prior}
