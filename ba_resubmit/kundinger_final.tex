@@ -177,7 +177,9 @@ where $\text{B}(\cdot, \cdot)$ represents the Beta function. This prior strictly
 \section{Fast Beta Linkage}
 \label{sec:fast-beta-linkage}
 
-Instead of the prior over $\bm{Z}$ from \cite{sadinle_bayesian_2017}, we follow \cite{wortman2019} and use independent priors for each component $Z_j$. However, unlike \cite{wortman2019} who proposes a flat prior for $Z_j$, 
+\textcolor{red}{For \text{fabl}, we also use (\ref{eqn:fs_model}) and (\ref{eqn:m_dist}), along with Dirichlet prior distributions for the $\mathbf{m}$ and $\mathbf{u}$ parameters.  However, instead of the prior over $\bm{Z}$}
+%Instead of the prior over $\bm{Z}$ 
+from \cite{sadinle_bayesian_2017}, we follow \cite{wortman2019} and use independent priors for each component $Z_j$. However, unlike \cite{wortman2019} who proposes a flat prior for $Z_j$, 
 \textcolor{teal}{we propose an alternative, called the fast beta linkage (fabl) prior.}
 %the fast Beta prior as follows. 
 For each $Z_j$, we have
@@ -192,25 +194,16 @@ For each $Z_j$, we have
 \end{subequations}
 We can interpret (\ref{eqn:fast_beta_prior}) as follows: record $B_j$ has some match in $A$ with probability $\pi$, and each record $A_i$ is equally likely to be that match. The hyperparameters $\alpha_{\pi}$ and $\beta_{\pi}$ encode prior beliefs about  the proportion of records in $B$ that have matches in $A.$ 
 
-%\textcolor{red}{In the construction of comparison vectors, it is common to encounter missing information in record $A_i$ or $B_j$. As a result, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. 
-%We assume that this missingness occurs completely at random (MCAR, per \cite{LittleRubin2002}). To notate a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. With the MCAR assumption, we can marginalize over the missing data, and do all computation simply using the observed data.}
 
-\textcolor{red}{Jerry: could you read through this carefully please regarding the missing data part? Note: we only give the marginalized likelihood and not the likelihood without the missing data.} 
+\textcolor{red}{In many record linkage tasks, the records in $A$ or $B$ have missing fields, so that some $\gamma_{ij}^f$ could be missing.  To handle this, we follow the approach described in \cite{sadinle_bayesian_2017}.  Let $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. We assume that any missing comparisons are missing at random (MAR) or missing completely at random (MCAR). For likelihood based inference, both MAR and MCAR lead to ignorability, or rather, being able to consider the likelihood for the observed data \citep[Section 6.2]{LittleRubin2002}, so that we can marginalize over the missing data and perform all computation using the observed data \citep{sadinle_detecting_2014, sadinle_bayesian_2017}.}
 
-\textcolor{teal}{We now explain how we accommodate missing fields, which leads to missing comparison vectors. To denote a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. Assume the comparison vectors are conditionally independent given the coreference matrix (or matching label) and that missing comparisons are missing at random (MAR) or missing completely at random (MCAR). It is important to note that for likelihood based inference, both MAR and MCAR lead to ignorability, or rather, being able to consider the likelihood for the observed data \citep[Section 6.2]{LittleRubin2002}. Therefore, we can marginalize over the missing data and perform all computation using the observed data, leading to (\ref{eqn:likelihood}). For further details on these connections, refer to \cite[Section 6.2]{LittleRubin2002}, \cite[Section 3.1]{sadinle_detecting_2014}, and \citep[Section 4.2]{sadinle_bayesian_2017}.
-}
+%\textcolor{teal}{We now explain how we accommodate missing fields, which leads to missing comparison vectors. To denote a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. Assume the comparison vectors are conditionally independent given the coreference matrix (or matching label) and that missing comparisons are missing at random (MAR) or missing completely at random (MCAR). It is important to note that for likelihood based inference, both MAR and MCAR lead to ignorability, or rather, being able to consider the likelihood for the observed data \citep[Section 6.2]{LittleRubin2002}. Therefore, we can marginalize over the missing data and perform all computation using the observed data, leading to (\ref{eqn:likelihood}). For further details on these connections, refer to \cite[Section 6.2]{LittleRubin2002}, \cite[Section 3.1]{sadinle_detecting_2014}, and \citep[Section 4.2]{sadinle_bayesian_2017}.
+%}
 
 
-%Due the the conditional independence assumption, MAR or MCAR lead to the same treatment of the missing data. That is, for likelihood based inference both MAR and MCAR lead to ignorability, or rather, both lead to being able to consider just the likelihood for the observed data \citep[Section 6.2]{LittleRubin2002}.
 
-%we can marginalize over the missing data in (\ref{eqn:likelihood}) and perform all computation using the observed data. For details, refer to \cite[Section 6.2]{LittleRubin2002}, \cite[Section 3.1]{sadinle_detecting_2014}, and \citep[Section 4.2]{sadinle_bayesian_2017}.}
 
-%Assume the comparison vectors are conditionally independent given the coreference matrix (or matching label) and that missing comparisons are ignorable or missing at random (MAR, per \cite{LittleRubin2002}). With either the ignorability or MAR assumption, we can marginalize over the missing data in (\ref{eqn:likelihood}), and do all computation simply using the observed data. For details, refer to \cite[Section 6.2]{LittleRubin2002} and \cite[Section 3.1]{sadinle_detecting_2014}, and \citep[Section 4.2]{sadinle_bayesian_2017}. Due to the conditional independence assumption, the missingness mechanism is equivalent to being missing completely at random (MCAR, per \cite[p. 12]{LittleRubin2002}). To summarize, we can assume the missingness is ignorable, MAR, or MCAR in this situation.}
-
-%are ignorable (or random) \citep{LittleRubin2002}. The likelihood becomes that in (\ref{eqn:likelihood}), following directly from \cite{sadinle_bayesian_2017}. Note that both assumptions used here are for computational convenience. Missing completely at random (MCAR) applies when the probability that a value of a variable is missing does not depend on the observed or unobserved variables. Missing at random (MAR) is present when the probability of missingness depends only on (the values of other) observed variables.}
-%\textcolor{red}{In Sadinle (2017), he assumes MAR and in the JASA paper he assumes ignorability.}
-
-\textcolor{teal}{We summarize our proposed approach as follows:} 
+\textcolor{teal}{We summarize \textcolor{red}{the model for \text{fabl}} as follows:} 
 
 \begin{subequations}
 \begin{align}
