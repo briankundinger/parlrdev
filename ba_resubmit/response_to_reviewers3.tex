@@ -1,0 +1,298 @@
+\documentclass[letterpaper, parskip]{scrartcl}
+
+\usepackage{amsmath,amssymb,bm}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage[margin=1.4in]{geometry}
+\usepackage{natbib}
+\usepackage{xcolor}
+\usepackage{tcolorbox}            % provides shaded box for reviewer comments
+\usepackage{enumitem}             % use more compact lists
+%\usepackage[parfill]{parskip}     % use skips between paragraphs and no indents
+\usepackage{bibentry}             % provides \nobibliography command
+\usepackage{xspace}
+
+% Make itemize and enumerate environments more compact
+\setlist[itemize]{noitemsep, topsep=0pt, parsep=0pt}
+\setlist[enumerate]{noitemsep, topsep=0pt, parsep=0pt}
+
+% -------- Define point raised command --------- %
+
+\definecolor{darkpurple}{HTML}{500050}
+\tcbuselibrary{breakable}       % allow tcolorbox to break across pages
+\tcbuselibrary{skins}
+\tcbset{%
+	enhanced,%
+	frame hidden,%
+	sharp corners,%
+	breakable,%
+	parbox=false,%
+	colback=lightgray!30,%
+	enlarge left by=6pt,%
+	width=\linewidth-6pt,%
+	colback=gray!0,
+	left=4pt,%
+	right=0pt,%
+	top=0pt,%
+	bottom=0pt,%
+	borderline west={2pt}{0pt}{lightgray},%
+	%coltext=darkpurple,%
+	before skip=14pt plus 2pt,%
+	after skip=14pt plus 2pt}
+
+%\newcommand{\pointRaised}[1]{%
+%	\begin{tcolorbox}
+%		\itshape #1
+%	\end{tcolorbox}
+%}
+%
+%\newcounter{responsectr}[section]     % counter for response resets at each section
+%\newcommand{\reply}[2]{%
+%	\refstepcounter{responsectr}%
+%	\textbf{#1.\theresponsectr:} #2
+%}
+
+\newcommand{\pointRaised}[2]{%
+	\textbf{#1.\theresponsectr:} #2
+}
+
+\newcounter{responsectr}[section]     % counter for response resets at each section
+\newcommand{\reply}[1]{%
+	\refstepcounter{responsectr}%
+		\begin{tcolorbox}
+			\itshape #1
+		\end{tcolorbox}
+}
+
+
+\newcommand{\todo}{\textcolor{red}{[TODO]}\xspace}
+
+
+\newcommand{\beka}[1]{{\color{teal}}}
+
+
+\begin{document}
+
+	% ****************** TITLE ****************************************
+
+	\title{Response to Reviewer Comments}
+	\maketitle
+	
+\textcolor{teal}{We thank the Editor and reviewers for their assessment and constructive feedback.}
+	
+%Thank you for the thoughtful feedback. We have made several broad changes to address the Editor's and Associate Editor's overall critiques, and have addressed each specific comment from the reviewer.
+
+\section{AE Comments}
+
+\pointRaised{AE}{I must add that reading the paper still feels like a chore, in part because the notation is so heavy, which may be hard to avoid, but also, in part, because some wording choices make certain sentences hard to parse, which can certainly be improved.}
+
+\reply{We have made several revisions to make the paper easier to read, as described in our responses below. 
+}
+
+%}
+
+%\reply{We have made several efforts to simplify notation in this revision.
+%
+%\begin{itemize}
+%	\item Instead of referring to files as $\mathbf{X}_1$ and $\mathbf{X}_2$, we are now using $A$ and $B$. This particularly simplifies the notation in Section 4.2.
+%	
+%	\item At the end of Section 4.1, we have rewritten the likelihood function in terms of the agreement patterns and the summary statistics.
+%	This likelihood is then used throughout Section 4.2 in the discussion of efficient posterior inference. We hope this expression clarifies the meaning of "preservation of weight (Comment 5), and strengthens the argument for $\tilde{\Gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N} \}$ being summary statistics for $\bm{m}$, $\bm{u}$, and $\bm{Z}$ (Comment 4). 
+%	
+%	\item To denote when the $(i,j)$ record pair exhibits agreement pattern $p$, we have removed the $(i, j) \in h_p$ notation for $\gamma_{ij} = h_p$.
+%	
+%	\item In Section 4.1, we have provided a specific example of a comparison vector and how the hashing procedure works. 
+%	
+%	\item Section 4.1 introduces the summary statistic $N_{j_p}$. After careful review, we realized that by changing the order of subscripts and instead using $N_{p_j}$, we can replace the sum of counts across all records (previously denoted $H_p$), with the more intuitive $N_p$. Thus, we have removed all of the ''$H$" quantities throughout Section 4. 
+%\end{itemize}
+%}
+
+\pointRaised{AE}{Line 80 on p. 3 says: “For ease of readability, we follow the convention established by \cite{sadinle_bayesian_2017} and say “record $i \in X_1$” rather than the more compact $x_{1i}$.” Taking this at face value implies that, in any sentence, one could swap “record $i \in X_1$” for “$x_{1i}$,” which clearly is not true.  So, as it stands, the sentence does little to improve ease of readability.  In fact, if the point is that “$x_{1i}$” will never be used again, why is the notation introduced in the first place?}
+
+%%% RCS: Thank the Editor, explain the change. I have removed repetition and shortened this bit. 
+
+\reply{
+To lighten the notation and allow for greater precision, we now refer to the two data files as $A$ and $B$. The updated material now reads:
+	
+``Consider two data files $A$ and $B$ comprising $n_A$ and $n_B$ records, respectively, and including $F$ linkage variables measured in both files. For $i=1, \dots, n_A$, let record $i$ be given by $A_i = (A_{i1}, \dots, A_{iF})$, so that $A = (A_i : i = 1, \dots, n_A)$.  Similarly, for $j=1, \dots, n_B$, let record $j$ be given by $B_j = (B_{j1}, \dots, B_{jF})$, so that $B = (B_j : j = 1, \dots, n_B)$.  Without loss of generality, denote files such that $n_A \geq n_B$.". See Section 2. 
+}
+
+\setcounter{responsectr}{0}
+\section{Reviewer Comments}
+
+	\pointRaised{R}{%
+	For the missing data treatment now included just before Section 2.1, is the assumption truly missing at random, or missing completely at random? Or, does this distinction not matter because of the independence assumed across elements of the comparison vector?}
+	
+	
+	\reply{Because we assume that the agreement level for each field is conditionally independent given the matching status, MAR and MCAR are equivalent here. For simplicity, we have chosen to use MCAR in the article. We have included the following explanation of missingness in Section 2. 
+		
+	``In the construction of comparison vectors, it is common to encounter missing information in record $A_i$ or $B_j$. As a result, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. We assume that this missingness occurs completely at random (MCAR, per \cite{LittleRubin2002}). To notate a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. With the MCAR assumption, we can marginalize over the missing data, and do all computation simply using the observed data."
+	}
+	
+	
+
+	
+	
+
+
+	\pointRaised{R}{%
+	Appendix 8.2: I appreciate the streamlining of the discussion of the proposed algorithms and think it was a good choice to move the full derivation to an appendix. However, I do not follow the re-expression of the pmf for $\Gamma_{.j}$. First, the opening square brackets are still misplaced throughout. In the second line of this derivation, the authors divide the expression by a product of the element-wise conditional probabilities of a match in the comparison vector (u), raised by an indicator that the element of the comparison vector equals a particular value. Perhaps I misunderstand, but I believe this product is not constant in $\Gamma_{.j}$ or $u$, and so the total expression is not proportional to the line above, as interpreted as a pmf. I think that the end effect is that the last line of the newly expressed pmf is missing a factor of $\prod_i \prod_f \prod_l u_{fl}^{I(\gamma_{ij}^f = l) I_{obs}(\gamma_{ij}^f)}$ regardless of the value of $z_j$.}
+
+\reply{%
+	The square brackets have been corrected. 
+	
+	We have revised the derivation of the full conditional distribution of $Z_j$, separately handling the case when $B_j$ has a match and when it does not. Refer to Appendix A for this extended derivation.
+	}
+
+	\pointRaised{R}{%
+Appendix 8.2: Thank you for including the details on integrating out pi from the full conditionals. They surprised me. I had assumed that the authors had integrated out pi in the prior for Z, as this is what Sadinle (2017) had done to form the “beta prior for bipartite matchings”. (1) Does the alternate approach presented in this paper provide a different algorithm than directly integrating the prior distribution? (2) Is the presented alternative approach justified?}
+
+\reply{%
+		We realize that the integration of $\pi$ out of the full conditionals is not necessary for our sampler. Therefore, we have updated the paper with full conditionals for the standard Gibbs sampler. 
+		
+		We have redone all simulations and case studies using a Gibbs sampler that samples $\pi$ from its full conditional, and then samples $\bm{Z}$ from its full conditionals. We obtained equivalent results.
+	}
+
+%\reply{No, in \text{fabl}, we do not integrate out $\pi$ as done in \cite{sadinle_bayesian_2017} because this leads to a sequential sampler. 
+%
+%(1) Yes, our alternative approach is different than directly integrating over the prior distribution $\pi.$ 
+%%We have attempted to make this more clear in our revised version. 
+%In short, our prior distribution over $\bm{Z}$ leads to a Gibbs sampler that leads to parallel updates, which contrasts that of \cite{sadinle_bayesian_2017}. Of course, we could integrate out $\pi$ in our approach, however, this leads to sequential updates, which would be slow in practice. See Appendix A, page 27. 
+%
+%(2) Yes, our alternative approach is justified. We provide a justification in Appendix A, page 27 regarding why the updates are independent and not sequential. Thank you for the excellent questions, which have greatly improved our paper. 
+%
+%}
+
+
+\pointRaised{R}{%
+	I do not understand the statement just below Equation (10): “When j has no match in $X_1$, we write $(n_1 +j, j) \in h_{P+1}$” My understanding of these patterns is that they are based on observed comparison vectors without consideration of Z (matches). In the second paragraph of Section 4.3, the H notation includes the matches (Z), in notation and definition that seems to conflict with the statement just below Equation (10). This also comes into play in Equation (16)}
+	
+	
+	%% RCS: Tried to answer this from the original paper and the updated paper. Tried to make it shorter and close it out very quickly. 
+	
+
+	
+	\reply{Yes, the comparison vectors are created (and therefore, patterns are assigned) without regard to $\bm{Z}$. We have removed that sentence, and updated the equations in the Section 4.3 to avoid confusion}
+
+
+\pointRaised{R}{%
+	Third paragraph of Section 4.1: The authors claim they are computing “sufficient statistics”. What exactly are these statistics sufficient for?
+	}
+	
+	\reply{We show in the revised Section 4.2 that we can write conditional likelihoods  and posterior updates for $\bm{m}$, $\bm{u}$, and $\bm{Z}$ using the statistics in $\tilde{\gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N} \}$. However, we cannot express the full likelihood in (14) through these statistics. Therefore, we have revised to text to say ``summary statistics" instead of  ``sufficient statistics."
+	
+	%Thank for pointing out our typo. We have revised the text to state ``summary statistics" instead of ``sufficient statistics."
+	}
+
+\pointRaised{R}{%
+	First paragraph of Section 4.2: The authors state: “Posterior calculations still attribute the appropriate weight to all records through the summary statistics…” What is meant by the term “weight”? Which records are appropriately weighted – those in X2?}
+	
+		%% Comment: Brian, you have not answered the reviewer's question regarding what is meant by weight and what records are appropriately weighted. \textcolor{red}{Please revise to directly answer the question in the revised text with equation numbers. To my understanding, the weights have been removed and section 4 has been rewritten }}
+%	\reply{
+%	\textcolor{teal}{In the original manuscript, we consider all records in the first file ($X_{1}$) that share an agreement pattern with the second data file ($X_{2}$). In this situation, all these records have the same Fellegi-Sunter likelihood ratio weight, $w_{ij}$. Given this result, we denoted the weight $w_p$ since these records map to the same agreement pattern.} 
+%	
+%	\textcolor{teal}{In the revised manuscript, we define $m_p$ and $u_p,$ which are the 
+%	 probabilities that records $A_i$ and $B_j$ form agreement pattern $p$ given that
+% they are a match and non-match, respectively. For each pattern $p,$ we define $w_p = m_p/u_p.$ We hope that this will be more clear than our previous presentation of the material. See Section 4.1, pages 8--9.}
+% }
+% 
+	\reply{Our intended meaning was ``All record pairs contribute to the likelihood through the summary statistics." 
+		
+	In our revised submission, we have reexpressed the likelihood from (6a) through the perspective of agreement patterns in (14). This form of the likelihood is then used to express contributions to the likelihood for the $\bm{m}$ and $\bm{u}$ parameters in (15) and for $\bm{Z}$ in (17), both of which use the summary statistics. We hope that this revision makes this point more clear.}
+
+%\reply{%
+%	
+%	We have switched the order of Sections 4.2 and 4.3, so that we first discuss hashing, then posterior inference, then chunkwise computation of the comparison matrix, and then SEI. With this new ordering, and with the newly provided equations (15 -19) it is clearer that the contribution of \emph{all} record pairs is recorded through the summary statistics in $\mathcal{N}$.
+%}
+
+\pointRaised{R}{%
+	Second paragraph of Section 4.2: “and delete those comparison vectors”. Which are “those” vectors?}
+	
+	\reply{
+	
+%	In the revised paper, ``vector" is replaced with ``matrix" when referring to $\gamma.$ (See R.13 regarding making the paper consistent below).
+	
+	In the original manuscript, ``those comparison vectors" refer to removing the larger (and expensive) $\Gamma^{ab}$ from memory and continuing our calculations with the compressed comparison vectors $\tilde{\Gamma}^{ab}.$
+	
+	The revised text states: ``Then, we conduct hashing, obtain the compressed comparison matrix, $\tilde{\gamma}^{ab}$, and remove the memory-intensive comparison matrix, $\gamma^{ab}$, before continuing with the next chunk of data. See Section 4.3}
+	
+%	 \textcolor{red}{Question for Brian: is lowercase $\gamma$ always a matrix? Let's make sure we're not swapping between vectors and matrices. In the previous version this was a vector and now its listed as a matrix. I would argue that a matrix should use capital notation, such as $\Gamma.$}
+
+%\reply{%
+%	We have revised that sentence to read ''We then conduct hashing, obtain the compressed $\tilde{\Gamma}^{ab}$ for later calculations, and delete the larger $\Gamma^{ab}$ from memory before continuing with the next chunk of data."
+%}
+
+
+
+\pointRaised{R}{%
+	Where does $R^{SEI, cd}$ come into play in the partitioned algorithm presented in Equations (13) and (14)? I recommend that the authors either refrain from suppressing the SEI notation or further explain how the SEI algorithm has changed the quantities in these equations.}
+	
+\reply{To make the SEI algorithm more clear, we have revised the ordering of Sections 4, so that we have 1) hashing, 2) posterior inference, 3) chunkwise computation of the comparison matrix, and 4) SEI. With this new ordering, and with the newly provided equations (15) through (19), we hope it clearer that that the contribution of \emph{all} record pairs is recorded through the summary statistics in $\mathcal{N}$. In particular, (16a), (16b), and (18) depend only $\mathcal{N}$. The SEI algorithm only affects the step shown in (19). 
+	}
+	
+	
+
+
+%\reply{%
+%	We have reordered Section 4 so that all posterior inference is presented before SEI. This makes it clear that the posterior updates in (16a), (16b), and (18) depend only on $\mathcal{N}$. SEI only affects the step shown in (19).
+%}
+
+\pointRaised{R}{%
+	Section 4.2: I appreciate the practical advice about choosing S for the SEI method. However, this choice seems arbitrary in the absence of further discussion/evidence. Given that the primary novelty of the manuscript is in methods to speed and otherwise improve computation, I am surprised that this aspect of computational innovation is presented with virtually no theoretical or empirical exploration. Presumably the SEI method has some sort of accuracy trade-off, as the authors warn that linkage results may be “distorted” if S is low. However, this trade-off is not quantified or even discussed in practical terms beyond the terse recommendation to choose S=10.
+}
+
+\reply{% 
+	We have included an additional simulation in Section 5.3, which explores the trade-offs regarding different choices of $S$. 
+}
+\pointRaised{R}{%
+	Page 5, 2 sentences before equation (4): I believe the sum should be of $I(Z_j \leq n_1)$, not $I(Z_j \leq n_1 +1)$.}
+
+\reply{%
+	This has been corrected.
+}
+
+\pointRaised{R}{%
+	Equation (6a): The indices do not match the subscripts in the indicator function in each summand, or their standard meaning in table 1.}
+
+\reply{%
+	The typo has been fixed.
+}
+
+\pointRaised{R}{%
+	Generally, the authors seem to arbitrarily use upper and lower case z interchangeably in function definitions.}
+
+\reply{%
+	We use $\bm{Z}$ when discussing a random quantity. In all instances where we discuss $Z_j$ taking on a particular value, we now use $q$ to avoid confusion and to follow notation used by \cite{sadinle_bayesian_2017}.
+}
+
+\pointRaised{R}{%
+Equations (8) and (9): Should the weights have superscript (s) (as the Zs do)?}
+
+\reply{%
+	This has been fixed. See Equations (9) and (10).
+}
+
+\pointRaised{R}{%
+	Gamma is in some places described as a set and in others as a matrix (particularly in sections 4.2 and 5.1).
+}
+
+\reply{%
+	$\gamma$ is a comparison matrix comprised by comparison vectors. All references to $\gamma$ as a set have been removed. See Section 2, where we define both the comparison vector and comparison matrix.
+}
+
+\pointRaised{R}{% 
+	Section 4.3, second paragraph, the definitions of the concatenated vectors $\alpha_0$ and $\beta_0$ should have final elements subscripted by $L_f$, where the sub-subscript is capitalized.}
+
+\reply{%
+	This has been revised; thank you. See Section 4.2
+}
+
+
+	\clearpage
+	
+	\bigskip
+	
+	\bibliographystyle{jasa}
+	\bibliography{biblio}
+
+\end{document}

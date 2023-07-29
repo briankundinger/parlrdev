@@ -66,6 +66,7 @@ GetUniquePatterns2 <- function(cd,
     rowSums() + 1
 
   if(all_patterns == TRUE){
+    ptm <- proc.time()
 
     unique_patterns <- GetPossiblePatternsSad_missing(levels)
     unique_hashed <- sweep(unique_patterns, 2, hash_vals, "*") %>%
@@ -76,16 +77,24 @@ GetUniquePatterns2 <- function(cd,
       as.integer() %>%
       factor(levels = 1:P)
 
+    elapsed <- proc.time() - ptm
+    elapsed
+
 } else {
 
-  unique_hash <- unique(hash)
-  P <- length(unique_hash)
+  unique_hashed <- unique(hash)
+  P <- length(unique_hashed)
 
-  hash_id <- vector(length = N)
-  for(i in seq_along(unique_hash)){
-    hash_id[hash == unique_hash[i]] <- i
-  }
-  hash_id <- factor(hash_id)
+  # hash_id <- vector(length = N)
+  # for(i in seq_along(unique_hash)){
+  #   hash_id[hash == unique_hash[i]] <- i
+  # }
+  # hash_id <- factor(hash_id)
+
+  hash_id <- hash %>%
+    factor(levels = unique_hashed) %>%
+    as.integer() %>%
+    factor(levels = 1:P)
   unique_patterns <- indicators[!duplicated(hash_id),]
 }
   # hash_id <- (hash_id + 1) %>%

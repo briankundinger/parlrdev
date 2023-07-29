@@ -37,10 +37,11 @@ cd <- readRDS("../data/comparison_elsalvador.rds")
 nA <- cd$n1
 nB <- cd$n2
 levels <- cd[[4]]
-P <- prod(levels) 
+P <- prod(levels + 1) 
 var_names <- cd$compFields[,1]
 ptm <- proc.time()
-Zchain_fabl <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE)
+#Zchain_fabl <- BKSimple_hash2(cd, S = S, R = R, show_progress = T, all_patterns = FALSE)
+Zchain_fabl <- fabl_gibbs(cd, S = S, R = R, show_progress = T, all_patterns = F)
 elapsed_fabl <- proc.time() - ptm
 Zchain_fabl[[4]]
 Zhat_fabl <- LinkRecordsBK(Zchain_fabl[[1]], nA, 1, 1, 2, Inf)
@@ -84,7 +85,7 @@ results_image <- results_table %>%
 
 results_image
 
-as_image(results_image, file = "../notes/figures/el_salvador/time_table_big_P2.png")
+#as_image(results_image, file = "../notes/figures/el_salvador/time_table_big_P2.png")
 
 
 

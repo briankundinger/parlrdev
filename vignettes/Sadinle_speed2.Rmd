@@ -48,9 +48,9 @@ levels <- c(3, 3, 3, 3)
 S <- 1000; burn <- S * .1
 m_prior <- u_prior <- rep(1, length(m))
 alpha <- beta <- 1
-results_bk_samps <- matrix(NA, nrow = length(n1_vals), ncol = 5)
-results_sad_samps <- matrix(NA, nrow = length(n1_vals), ncol = 5)
-results_bk_samps_resolved <- matrix(NA, nrow = length(n1_vals), ncol = 5)
+results_bk_samps <- matrix(NA, nrow = length(n1_vals), ncol = 4)
+results_sad_samps <- matrix(NA, nrow = length(n1_vals), ncol = 4)
+results_bk_samps_resolved <- matrix(NA, nrow = length(n1_vals), ncol = 4)
 double_matches <- numeric(length(n1_vals))
 
 for(i in seq_along(n1_vals)){
@@ -66,20 +66,19 @@ for(i in seq_along(n1_vals)){
   #parlr method
   ptm <- proc.time()
   #Zchain <- BKSimple_hash2_pat(cd, R = R)
-  Zchain <- BKSimple_hash2(cd, all_patterns = all_patterns)
-  hash_time <- Zchain[[4]]
+  Zchain <- fabl_gibbs(cd, all_patterns = all_patterns)
   #Zchain <- FellegiSunter(cd)
   Zchain <- Zchain[[1]]
   elapsed <- proc.time() - ptm
   #Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   Zhat <- LinkRecordsBK(Zchain, n1, 1, 1, 2, Inf)
   eval_simple <- GetEvaluations(Zhat[[1]], Ztrue, n1)
-  results_bk_samps[i, ] <- c(eval_simple, elapsed[3], hash_time)
-  #double_matches[i] <- sum(duplicated(Zhat[[1]]))
+  results_bk_samps[i, ] <- c(eval_simple, elapsed[3])
+  double_matches[i] <- sum(duplicated(Zhat[[1]]))
   
   Zhat_resolved <- ResolveConflicts(Zhat)
   eval_resolved <- GetEvaluations(Zhat_resolved, Ztrue, n1)
-  results_bk_samps_resolved[i, ] <- c(eval_resolved, elapsed[3], hash_time)
+  results_bk_samps_resolved[i, ] <- c(eval_resolved, elapsed[3])
   
   
   #Sadinle 2017 Method
@@ -88,7 +87,7 @@ for(i in seq_along(n1_vals)){
   elapsed <- proc.time() - ptm
   Zhat <- BRL::linkRecords(Zchain[[1]], n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
-  results_sad_samps[i,] <- c(eval, elapsed[3], hash_time)
+  results_sad_samps[i,] <- c(eval, elapsed[3])
   gc()
   print(i)
 }
@@ -105,46 +104,50 @@ for(i in seq_along(n1_vals)){
 
 
 parlr_df <- data.frame(results_bk_samps, n2_vals, "fabl")
-names(parlr_df) <- c("Recall", "Precision", "Fmeasure", "time", "hash_time",  "n", "method")
+names(parlr_df) <- c("Recall", "Precision", "Fmeasure", "time", "n", "method")
 
 parlr_resolved_df <- data.frame(results_bk_samps_resolved, n2_vals, "fabl_resolved")
-names(parlr_resolved_df) <- c("Recall", "Precision", "Fmeasure", "time", "hash_time", "n", "method")
+names(parlr_resolved_df) <- c("Recall", "Precision", "Fmeasure", "time", "n", "method")
 
 sadinle_df <- data.frame(results_sad_samps, n2_vals, "BRL")
-names(sadinle_df) <- c("Recall", "Precision", "Fmeasure", "time", "hash_time", "n",  "method")
+names(sadinle_df) <- c("Recall", "Precision", "Fmeasure", "time", "n",  "method")
 
 df<- rbind(parlr_df, parlr_resolved_df, sadinle_df)
+
+saveRDS(df, "../data/speed_sim2")
+#df <- readRDS("../data/speed_sim2")
 
 speed_plot <- df %>% 
   filter(method != "fabl_resolved") %>% 
   ggplot(aes(x = n, y = time, color = method)) +
-  geom_line(size = 1) +
-  labs(x = expression(n[1] *","* n[2]),
+  geom_line(size = .8) +
+  geom_point(size = 1.4) + 
+  labs(x = expression(n[A] *", "* n[B]),
        y = "Time (seconds)",
        color = "Method") + 
   theme_bw(base_size = 14) +
-  theme(legend.position = "bottom") +
+  theme(legend.position = "hide") +
   scale_color_brewer(palette="Set1")
 
 speed_plot
 
-ggsave(filename = "../notes/figures/sadinle_speed_plot_slides2.png",
+ggsave(filename = "../notes/figures/sadinle_speed_plot2_new.png",
        plot = speed_plot)
 
-results_df <- df %>%
-  pivot_longer(cols = 1:4, names_to = "metric") %>%
-  group_by(method, metric) %>%
-  summarize(avg = mean(value),
-            lower = quantile(value, .2),
-            upper = quantile(value, .8),
-            .groups = "drop")
-results_df
-simple_dist_table <- results_df %>%
-  kable(digits = 3,
-        caption = "Results for Simpler Distributions (Full)") %>%
-  kable_classic() %>%
-  kable_styling(full_width = F)
-as_image(file = "../notes/figures/simple_dist_table2.png")
+# results_df <- df %>% 
+#   pivot_longer(cols = 1:4, names_to = "metric") %>% 
+#   group_by(method, metric) %>% 
+#   summarize(avg = mean(value),
+#             lower = quantile(value, .2),
+#             upper = quantile(value, .8),
+#             .groups = "drop")
+#results_df
+# simple_dist_table <- results_df %>%
+#   kable(digits = 3,
+#         caption = "Results for Simpler Distributions (Full)") %>%
+#   kable_classic() %>%
+#   kable_styling(full_width = F)
+  #as_image(file = "../notes/figures/simple_dist_table.png")
 ```
 
 ```{r accuracy_and_time}
