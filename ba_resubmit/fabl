@@ -1,0 +1,421 @@
+@article{sadinle_bayesian_2017,
+	title = {Bayesian {Estimation} of {Bipartite} {Matchings} for {Record} {Linkage}},
+	volume = {112},
+	issn = {0162-1459},
+	doi = {10.1080/01621459.2016.1148612},
+	abstract = {The bipartite record linkage task consists of merging two disparate datafiles containing information on two overlapping sets of entities. This is nontrivial in the absence of unique identifiers and it is important for a wide variety of applications given that it needs to be solved whenever we have to combine information from different sources. Most statistical techniques currently used for record linkage are derived from a seminal article by Fellegi and Sunter in 1969. These techniques usually assume independence in the matching statuses of record pairs to derive estimation procedures and optimal point estimators. We argue that this independence assumption is unreasonable and instead target a bipartite matching between the two datafiles as our parameter of interest. Bayesian implementations allow us to quantify uncertainty on the matching decisions and derive a variety of point estimators using different loss functions. We propose partial Bayes estimates that allow uncertain parts of the bipartite matching to be left unresolved. We evaluate our approach to record linkage using a variety of challenging scenarios and show that it outperforms the traditional methodology. We illustrate the advantages of our methods merging two datafiles on casualties from the civil war of El Salvador. Supplementary materials for this article are available online.},
+	number = {518},
+	urldate = {2018-06-13},
+	journal = {Journal of the American Statistical Association},
+	author = {Sadinle, Mauricio},
+	year = {2017},
+	keywords = {Assignment problem, Bayes estimate, Data matching, Fellegi–Sunter decision rule, Mixture model, Reject option},
+	pages = {600--612}
+}
+
+@article{christen_2012,
+  title={A Survey of Indexing Techniques for Scalable Record Linkage and Deduplication},
+  author={Christen, Peter},
+  journal={IEEE Transactions on Knowledge and Data Engineering},
+  volume={24},
+  number={9},
+  pages={1537--1555},
+  year={2012},
+  publisher={IEEE}
+}
+
+@article{gutman2013bayesian,
+	Author = {Gutman, Roee and Afendulis, Christopher C and Zaslavsky, Alan M},
+	Journal = {Journal of the American Statistical Association},
+	Number = {501},
+	Pages = {34--47},
+	Publisher = {Taylor \& Francis Group},
+	Title = {A Bayesian Procedure for File Linking to Analyze End-of-Life Medical Costs},
+	Volume = {108},
+	Year = {2013}}
+
+@article{DalzellReiter18,
+	author = {Nicole M. Dalzell and Jerome P. Reiter},
+	title = {Regression Modeling and File Matching Using Possibly Erroneous Matching Variables},
+	journal = {Journal of Computational and Graphical Statistics},
+	volume = {27},
+	number = {4},
+	pages = {728-738},
+	year  = {2018},
+	publisher = {Taylor & Francis},
+	doi = {10.1080/10618600.2018.1458624},
+
+}
+
+@InProceedings{tang2020,
+author="Tang, Jiurui
+and Reiter, Jerome P.
+and Steorts, Rebecca C.",
+editor="Domingo-Ferrer, Josep
+and Muralidhar, Krishnamurty",
+title="Bayesian Modeling for Simultaneous Regression and Record Linkage",
+booktitle="Privacy in Statistical Databases",
+year="2020",
+publisher="Springer International Publishing",
+address="Cham",
+pages="209--223",
+isbn="978-3-030-57521-2"
+}
+
+@article{fellegi_theory_1969,
+	title = {A {Theory} for {Record} {Linkage}},
+	volume = {64},
+	issn = {0162-1459},
+	doi = {10.1080/01621459.1969.10501049},
+	abstract = {A mathematical model is developed to provide a theoretical framework for a computer-oriented solution to the problem of recognizing those records in two files which represent identical persons, objects or events (said to be matched). A comparison is to be made between the recorded characteristics and values in two records (one from each file) and a decision made as to whether or not the members of the comparison-pair represent the same person or event, or whether there is insufficient evidence to justify either of these decisions at stipulated levels of error. These three decisions are referred to as link (A 1), a non-link (A 3), and a possible link (A 2). The first two decisions are called positive dispositions. The two types of error are defined as the error of the decision A 1 when the members of the comparison pair are in fact unmatched, and the error of the decision A 3 when the members of the comparison pair are, in fact matched. The probabilities of these errors are defined as and respectively where u(γ), m(γ) are the probabilities of realizing γ (a comparison vector whose components are the coded agreements and disagreements on each characteristic) for unmatched and matched record pairs respectively. The summation is over the whole comparison space r of possible realizations. A linkage rule assigns probabilities P(A 1{\textbar}γ), and P(A 2{\textbar}γ), and P(A 3{\textbar}γ) to each possible realization of γ ε Γ. An optimal linkage rule L (μ, λ, Γ) is defined for each value of (μ, λ) as the rule that minimizes P(A 2) at those error levels. In other words, for fixed levels of error, the rule minimizes the probability of failing to make positive dispositions. A theorem describing the construction and properties of the optimal linkage rule and two corollaries to the theorem which make it a practical working tool are given.},
+	number = {328},
+	urldate = {2018-06-26},
+	journal = {Journal of the American Statistical Association},
+	author = {Fellegi, Ivan P. and Sunter, Alan B.},
+	year = {1969},
+	pages = {1183--1210}
+}
+
+@article{newcombe_automatic_1959,
+	title = {Automatic {Linkage} of {Vital} {Records}},
+	volume = {130},
+	issn = {0036-8075, 1095-9203},
+	shorttitle = {Automatic {Linkage} of {Vital} {Records}},
+	doi = {10.1126/science.130.3381.954},
+	language = {en},
+	number = {3381},
+	urldate = {2018-06-26},
+	journal = {Science},
+	author = {Newcombe, H. B. and Kennedy, J. M. and Axford, S. J. and James, A. P.},
+	year = {1959},
+	pmid = {14426783},
+	pages = {954--959}
+}
+
+@article{Winkler1990,
+    author = {Winkler, William and Thibaudeau, Yves},
+    journal = {U.S. Census Research Report},
+    number = {April 2015},
+    pages = {1--22},
+    title = {An Application of the Fellegi-Sunter Model of Record Linkage to the 1990 US Decennial Census},
+    url = {https://www.census.gov/srd/papers/pdf/rr91-9.pdf},
+    year = {1990}
+}
+
+@article{fair2004generalized,
+  title={Generalized Record Linkage System--Statistics Canada’s Record Linkage Software},
+  author={Fair, Martha},
+  journal={Austrian Journal of Statistics},
+  volume={33},
+  number={1\&2},
+  pages={37--53},
+  year={2004}
+}
+
+@techreport{wagner2014person,
+  title={The Person Identification Validation System (PVS): Applying the Center for Administrative Records Research and Applications’ (CARRA) Record Linkage Software},
+  author={Wagner, Deborah and Lane, Mary and others},
+  year={2014},
+  institution={Center for Economic Studies, U.S. Census Bureau}
+}
+	
+@article{gill2003english,
+  title={English National Record Linkage of Hospital Episode Statistics and Death Registration Records},
+  author={Gill, L and Goldacre, M},
+  journal={Report to the Department of Health},
+  year={2003}
+}
+
+@article{enamorado2019using,
+  title={Using a Probabilistic Model to Assist Merging of Large-Scale Administrative Records},
+  author={Ted Enamorado and Benjamin Fifield and Kosuke Imai},
+  journal={American Political Science Review},
+  year={2019},
+  volume={113},
+  pages={353-371}
+}
+
+@article{aleshinguendel2021multifile,
+author = {Serge Aleshin-Guendel and Mauricio Sadinle},
+title = {Multifile Partitioning for Record Linkage and Duplicate Detection},
+journal = {Journal of the American Statistical Association},
+volume = {0},
+number = {0},
+pages = {1-10},
+year  = {2023},
+publisher = {Taylor & Francis},
+doi = {10.1080/01621459.2021.2013242},
+URL = {https://doi.org/10.1080/01621459.2021.2013242},
+eprint = {https://doi.org/10.1080/01621459.2021.2013242}
+}
+
+@article{tancredi2011hierarchical,
+  title={A Hierarchical Bayesian Approach to Record Linkage and Population Size Problems},
+  author={Tancredi, Andrea and Liseo, Brunero and others},
+  journal={The Annals of Applied Statistics},
+  volume={5},
+  number={2B},
+  pages={1553--1585},
+  year={2011},
+  publisher={Institute of Mathematical Statistics}
+}
+
+@article{steorts_bayesian_2016,
+	title = {A {Bayesian} {Approach} to {Graphical} {Record} {Linkage} and {Deduplication}},
+	volume = {111},
+	issn = {0162-1459},
+	doi = {10.1080/01621459.2015.1105807},
+	abstract = {We propose an unsupervised approach for linking records across arbitrarily many files, while simultaneously detecting duplicate records within files. Our key innovation involves the representation of the pattern of links between records as a bipartite graph, in which records are directly linked to latent true individuals, and only indirectly linked to other records. This flexible representation of the linkage structure naturally allows us to estimate the attributes of the unique observable people in the population, calculate transitive linkage probabilities across records (and represent this visually), and propagate the uncertainty of record linkage into later analyses. Our method makes it particularly easy to integrate record linkage with post-processing procedures such as logistic regression, capture–recapture, etc. Our linkage structure lends itself to an efficient, linear-time, hybrid Markov chain Monte Carlo algorithm, which overcomes many obstacles encountered by previously record linkage approaches, despite the high-dimensional parameter space. We illustrate our method using longitudinal data from the National Long Term Care Survey and with data from the Italian Survey on Household and Wealth, where we assess the accuracy of our method and show it to be better in terms of error rates and empirical scalability than other approaches in the literature. Supplementary materials for this article are available online.},
+	language = {en},
+	number = {516},
+	urldate = {2017-06-08},
+	journal = {Journal of the American Statistical Association},
+	author = {Steorts, Rebecca C. and Hall, Rob and Fienberg, Stephen E.},
+	year = {2016},
+	pages = {1660--1672}
+}
+
+
+@article{marchant_distributed_2019,
+author = {Neil G. Marchant and Andee Kaplan and Daniel N. Elazar and Benjamin I. P. Rubinstein and Rebecca C. Steorts},
+title = {d-blink: Distributed End-to-End Bayesian Entity Resolution},
+journal = {Journal of Computational and Graphical Statistics},
+volume = {30},
+number = {2},
+pages = {406-421},
+year  = {2021},
+publisher = {Taylor & Francis},
+doi = {10.1080/10618600.2020.1825451},
+
+URL = { 
+        https://doi.org/10.1080/10618600.2020.1825451
+    
+},
+eprint = { 
+        https://doi.org/10.1080/10618600.2020.1825451
+    
+}
+
+}
+
+
+@article{betancourt2022prior,
+  title={A prior for record linkage based on allelic partitions},
+  author={Betancourt, Brenda and Sosa, Juan and Rodr{\'\i}guez, Abel},
+  journal={Computational Statistics \& Data Analysis},
+  volume={172},
+  pages={107 - 474},
+  year={2022},
+  publisher={Elsevier}
+}
+
+@article{jaro1989,
+    author = {Jaro, Matthew A.},
+    journal = {Journal of the American Statistical Association},
+    number = {406},
+    pages = {414--420},
+    title = {Advances in Record-Linkage Methodology as Applied to Matching the 1985 Census of Tampa, Florida},
+    volume = {84},
+    year = {1989}
+}
+
+@INPROCEEDINGS{Larsen05,
+  AUTHOR =       {Larsen, Michael D.},
+  TITLE =        {{Advances in Record Linkage Theory: Hierarchical Bayesian Record Linkage Theory}},
+  BOOKTITLE =    {Proceedings of the Joint Statistical Meetings, Section on Survey Research Methods},
+  YEAR =         {2005},
+  ORGANIZATION = {The American Statistical Association},
+  PAGES =	 {3277--3284}
+} 
+
+@article{murray2016probabilistic,
+  title={Probabilistic Record Linkage and Deduplication after Indexing, Blocking, and Filtering},
+  author={Murray, Jared S.},
+  journal={Journal of Privacy and Confidentiality},
+  volume={7},
+  number={1},
+  pages={3--24},
+  year={2016}
+}	
+
+@inproceedings{cohen2003comparison,
+    author = {Cohen, William W. and Ravikumar, Pradeep and Fienberg, Stephen E.},
+    title = {A Comparison of String Distance Metrics for Name-Matching Tasks},
+    year = {2003},
+    publisher = {AAAI Press},
+    booktitle = {Proceedings of the 2003 International Conference on Information Integration on the Web},
+    pages = {73–78},
+    numpages = {6},
+    location = {Acapulco, Mexico},
+}
+
+@misc{bilenko2006riddle,
+  title={Riddle: Repository of Information on Duplicate Detection, Record Linkage, and Identity Uncertainty},
+  author={Bilenko, Misha and Mooney, R},
+  year={2006},
+  note={Online; retrieved July 29, 2020},
+  howpublished= \url{http://www.cs.utexas.edu/users/ml/riddle/}
+}
+
+@article{elmagarmid_duplicate_2007,
+	title = {Duplicate {Record} {Detection}: {A} {Survey}},
+	volume = {19},
+	issn = {1041-4347},
+	shorttitle = {Duplicate {Record} {Detection}},
+	doi = {10.1109/TKDE.2007.250581},
+	abstract = {Often, in the real world, entities have two or more representations in databases. Duplicate records do not share a common key and/or they contain errors that make duplicate matching a difficult task. Errors are introduced as the result of transcription errors, incomplete information, lack of standard formats, or any combination of these factors. In this paper, we present a thorough analysis of the literature on duplicate record detection. We cover similarity metrics that are commonly used to detect similar field entries, and we present an extensive set of duplicate detection algorithms that can detect approximately duplicate records in a database. We also cover multiple techniques for improving the efficiency and scalability of approximate duplicate detection algorithms. We conclude with coverage of existing tools and with a brief discussion of the big open problems in the area},
+	number = {1},
+	journal = {IEEE Transactions on Knowledge and Data Engineering},
+	author = {Elmagarmid, Ahmed K. and Ipeirotis, Panagiotis G. and Verykios, Vassilios S.},
+	year = {2007},
+	keywords = {Cleaning, Computer errors, Computer Society, Cost function, Couplings, data cleaning, data deduplication, data integration, data integrity, data mining, database hardening, database management system, database management systems, Detection algorithms, Duplicate detection, duplicate detection algorithm, duplicate record detection, entity matching., entity resolution, fuzzy duplicate detection, identity uncertainty, instance identification, Mirrors, name matching, record linkage, Relational databases, Scalability, transcription error, Uncertainty},
+	pages = {1--16}
+}
+
+@techreport{winkler_state_1999,
+	title = {The {State} of {Record} {Linkage} and {Current} {Research} {Problems}},
+	abstract = {This paper provides an overview of methods and systems developed for record linkage. Modern record linkage begins with the pioneering work of Newcombe and is especially based on the formal mathematical model of Fellegi and Sunter. In their seminal work, Fellegi and Sunter introduced many powerful ideas for estimating record linkage parameters and other ideas that still influence record linkage today. Record linkage research is characterized by its synergism of statistics, computer science, and operations research. Many difficult algorithms have been developed and put in software systems. Record linkage practice is still very limited. Some limits are due to existing software. Other limits are due to the difficulty in automatically estimating matching parameters and error rates, with current research highlighted by the work of Larsen and Rubin.},
+	institution = {Statistical Research Division, U.S. Bureau of the Census},
+	author = {Winkler, William E.},
+	year = {1999}
+}
+
+@article{larsen_2001,
+	title = {Iterative {Automated} {Record} {Linkage} {Using} {Mixture} {Models}},
+	volume = {96},
+	issn = {0162-1459},
+	doi = {10.1198/016214501750332956},
+	abstract = {The goal of record linkage is to link quickly and accurately records that correspond to the same person or entity. Whereas certain patterns of agreements and disagreements on variables are more likely among records pertaining to a single person than among records for different people, the observed patterns for pairs of records can be viewed as arising from a mixture of matches and nonmatches. Mixture model estimates can be used to partition record pairs into two or more groups that can be labeled as probable matches (links) and probable nonmatches (nonlinks). A method is proposed and illustrated that uses marginal information in the database to select mixture models, identifies sets of records for clerks to review based on the models and marginal information, incorporates clerically reviewed data, as they become available, into estimates of model parameters, and classifies pairs as links, nonlinks, or in need of further clerical review. The procedure is illustrated with five datasets from the U.S. Bureau of the Census. It appears to be robust to variations in record-linkage sites. The clerical review corrects classifications of some pairs directly and leads to changes in classification of others through reestimation of mixture models.},
+	number = {453},
+	urldate = {2018-07-19},
+	journal = {Journal of the American Statistical Association},
+	author = {Larsen, Michael D. and Rubin, Donald B.},
+	year = {2001},
+	pages = {32--41}
+}
+
+@book{LittleRubin2002,
+    author = {Little, Roderick and Rubin, Donald},
+    publisher = {Wiley, Hoboken, New Jersey},
+    title = {Statistical Analysis with Missing Data},
+    year = {2002}
+}
+
+@article{sadinle_detecting_2014,
+	title = {Detecting Duplicates in a Homicide Registry Using a {Bayesian} Partitioning Approach},
+	volume = {8},
+	issn = {1932-6157, 1941-7330},
+	doi = {10.1214/14-AOAS779},
+	language = {EN},
+	number = {4},
+	urldate = {2018-06-26},
+	journal = {The Annals of Applied Statistics},
+	author = {Sadinle, Mauricio},
+	year = {2014},
+	mrnumber = {MR3292503},
+	zmnumber = {06408784},
+	keywords = {Deduplication, distribution on partitions, duplicate detection, entity resolution, Hispanic names, homicide records, human rights, record linkage, string similarity, United Nations Truth Commission for El Salvador},
+	pages = {2404--2434}
+}
+
+@inproceedings{zanella_flexible_2016,
+	address = {NY, USA},
+	series = {{NIPS}'16},
+	title = {Flexible {Models} for {Microclustering} with {Application} to {Entity} {Resolution}},
+	isbn = {978-1-5108-3881-9},
+	booktitle = {Proceedings of the 30th {International} {Conference} on {Neural} {Information} {Processing} {Systems}},
+	publisher = {Curran Associates Inc.},
+	author = {Zanella, Giacomo and Betancourt, Brenda and Wallach, Hanna and Miller, Jeffrey and Zaidi, Abbas and Steorts, Rebecca C.},
+	year = {2016},
+	pages = {1425--1433}
+}
+
+@article{christen2019data,
+	author = {Christen, Peter},
+	journal = {Harvard Data Science Review},
+	number = {2},
+	year = {2019},
+	month = {nov 1},
+	note = {https://hdsr.mitpress.mit.edu/pub/8fm8lo1e},
+	publisher = {},
+	title = {Data {Linkage}: The {Big} {Picture}},
+	volume = {1},
+}
+
+@InProceedings{steorts_comparison_2014,
+	author="Steorts, Rebecca C.
+	and Ventura, Samuel L.
+	and Sadinle, Mauricio
+	and Fienberg, Stephen E.",
+	editor="Domingo-Ferrer, Josep",
+	title="A Comparison of Blocking Methods for Record Linkage",
+	booktitle="Privacy in Statistical Databases",
+	year="2014",
+	publisher="Springer International Publishing",
+	address="Cham",
+	pages="253--268",
+	}
+
+
+@inproceedings{christen_pudjijono2009,
+author="Christen, Peter
+and Pudjijono, Agus",
+editor="Theeramunkong, Thanaruk
+and Kijsirikul, Boonserm
+and Cercone, Nick
+and Ho, Tu-Bao",
+title="Accurate Synthetic Generation of Realistic Personal Information",
+booktitle="Advances in Knowledge Discovery and Data Mining",
+year="2009",
+publisher="Springer Berlin Heidelberg",
+address="Berlin, Heidelberg",
+pages="507--514",
+abstract="A large portion of data collected by many organisations today is about people, and often contains personal identifying information, such as names and addresses. Privacy and confidentiality are of great concern when such data is being shared between organisations or made publicly available. Research in (privacy-preserving) data mining and data linkage is suffering from a lack of publicly available real-world data sets that contain personal information, and therefore experimental evaluations can be difficult to conduct. In order to overcome this problem, we have developed a data generator that allows flexible creation of synthetic data containing personal information with realistic characteristics, such as frequency distributions, attribute dependencies, and error probabilities. Our generator significantly improves earlier approaches, and allows the generation of data for individuals, families and households.",
+isbn="978-3-642-01307-2"
+}
+
+@inproceedings{christen_vatsalan2013,
+author = {Christen, Peter and Vatsalan, Dinusha},
+title = {Flexible and Extensible Generation and Corruption of Personal Data},
+year = {2013},
+isbn = {9781450322638},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+booktitle = {Proceedings of the 22nd ACM International Conference on Information and Knowledge Management},
+pages = {1165–1168},
+numpages = {4},
+keywords = {deduplication, data generator, synthetic data, data matching},
+location = {San Francisco, California, USA},
+series = {CIKM '13}
+}
+
+@article{guha:reiter:BA,
+author = {Guha, Sharmistha and Reiter, Jerome and Mercatanti, Andrea},
+year = {2022},
+month = {12},
+pages = {},
+title = {Bayesian Causal Inference with Bipartite Record Linkage},
+volume = {-1},
+journal = {Bayesian Analysis},
+doi = {10.1214/21-BA1297}
+}
+
+
+@article{lum2013applications,
+  title={Applications of Multiple Systems Estimation in Human Rights Research},
+  author={Lum, Kristian and Price, Megan Emily and Banks, David},
+  journal={The American Statistician},
+  volume={67},
+  number={4},
+  pages={191--200},
+  year={2013},
+  publisher={Taylor \& Francis}
+}
+
+@phdthesis{wortman2019,
+  title={Record linkage methods with applications to causal inference and election voting data},
+  author={Wortman, Joan Pearson Heck},
+  year={2019},
+  school={Duke University}
+}
+
