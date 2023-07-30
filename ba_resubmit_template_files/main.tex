@@ -1,9 +1,9 @@
 \documentclass[ba]{imsart}
 %
-\pubyear{0000}
-\volume{00}
-\issue{0}
-\doi{0000}
+\pubyear{2023}
+\volume{TBA}
+\issue{TBA}
+% \doi{0000}
 %\arxiv{}
 \firstpage{1}
 \lastpage{1}
@@ -85,15 +85,16 @@ Duke University,
 P.O.\ Box 90251,
 Durham, NC 27708, USA
 \printead{e1}, % print email address of "e1"
-\printead*{e2}
+\printead*{e2},
+\printead*{e3}
 }
 
-\address[addr2]{Departments of Statistical Science and Computer Science,
-Duke University,
-P.O.\ Box 90251,
-Durham, NC 27708, USA
-\printead{e3}
-}
+%\address[addr2]{Departments of Statistical Science and Computer Science,
+%Duke University,
+%P.O.\ Box 90251,
+%Durham, NC 27708, USA
+%\printead{e3}
+%}
 
 %\thankstext{<id>}{<text>}
 \end{aug}
@@ -135,7 +136,7 @@ Before conducting data analysis, it is often necessary to identify duplicate rec
 
 Many probabilistic record linkage methods are rely on the seminal work of \cite{fellegi_theory_1969} and \cite{newcombe_automatic_1959}. In their approach, the data analyst first creates comparison vectors for each pair of records in the data files. These vectors indicate how similar the records are on a set of variables measured in both files, known as the linkage variables.  Using these comparison vectors, the analyst classifies each pair as a match or nonmatch using a likelihood ratio test. Crucially, these decisions are made independently for each pair. The \cite{fellegi_theory_1969} approach has been extended for a wide variety of applications \citep[e.g.,][]{Winkler1990, fair2004generalized, wagner2014person, gill2003english, enamorado2019using, aleshinguendel2021multifile}. An alternative paradigm is to model the linkage variables directly \citep[e.g.,][]{tancredi2011hierarchical, steorts_bayesian_2016, marchant_distributed_2019, betancourt2022prior}. In this article, we build on the contributions to the comparison vector approach. 
 
-
+\newpage
 
 The independent pairwise matching assumption from \cite{fellegi_theory_1969} is popular mainly for its mathematical simplicity. However, in many situations, there are no duplications within a data file, meaning that each record in one file should be linked with at most one other record in the other file. Thus, when the procedure results in many-to-one matches, some of these links must be false. To address this potential problem, data analysts typically use an additional post-processing step, for example, applying an optimization routine that turns the list of linked records into a bipartite matching \citep{jaro1989} \textcolor{teal}{or using decision theoretic procedures, such as those of \cite{sadinle_bayesian_2017} and \cite{steorts_bayesian_2016}, which both ensure  bipartite (or rather transitive) matches.}
 
