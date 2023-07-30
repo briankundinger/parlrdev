@@ -9,7 +9,7 @@ library(BRL)
 taskID <- as.integer(Sys.getenv("SLURM_ARRAY_TASK_ID"))
 i = taskID
 set.seed(41)
-files <- list.files(path = "../data/SimulationDataFiles", full.names = T)
+files <- list.files(path = "data/SimulationDataFiles", full.names = T)
 
 m_prior = 1
 u_prior = 1
@@ -25,13 +25,13 @@ all_patterns = TRUE
 
 overlap_vals <- c(50, 250, 450)
 
-fabl_acc_samps <- matrix(NA, nrow = 5, ncol = 3)
-fabl_acc_samps_resolved <- matrix(NA, nrow = 5, ncol = 3)
-sad_acc_samps <- matrix(NA, nrow = 5, ncol = 3)
+fabl_acc_samps <- matrix(NA, nrow = 3, ncol = 6)
+fabl_acc_samps_resolved <- matrix(NA, nrow = 3, ncol = 6)
+sad_acc_samps <- matrix(NA, nrow = 3, ncol = 6)
 
-fabl_acc_samps2 <- matrix(NA, nrow = 6, ncol = 3)
-fabl_acc_samps_resolved2 <- matrix(NA, nrow = 6, ncol = 3)
-sad_acc_samps2 <- matrix(NA, nrow = 6, ncol = 3)
+fabl_acc_samps2 <- matrix(NA, nrow = 3, ncol = 6)
+fabl_acc_samps_resolved2 <- matrix(NA, nrow = 3, ncol = 6)
+sad_acc_samps2 <- matrix(NA, nrow = 3, ncol = 6)
 
 for(j in seq_along(overlap_vals)){
 
@@ -87,8 +87,8 @@ for(j in seq_along(overlap_vals)){
   # Resolution Step
   Zhat_resolved <- ResolveConflicts(Zhat)
   eval_resolved <- GetEvaluations(Zhat_resolved, Ztrue, n1)
-  fabl_acc_samps_resolved[, j] <- c(eval_resolved, elapsed[3], overlap)
-  fabl_acc_samps[, j] <- c(eval, elapsed[3], overlap)
+  fabl_acc_samps_resolved[j, ] <- c(eval_resolved, NA, elapsed[3], overlap)
+  fabl_acc_samps[j, ] <- c(eval, NA, elapsed[3], overlap)
 
   #Partial Estimate
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, .1)
@@ -96,7 +96,7 @@ for(j in seq_along(overlap_vals)){
   eval <- GetEvaluations(Zhat, Ztrue, n1)
   RR <- sum(Zhat == -1)/n2
   eval[1] <- sum(Zhat == Ztrue & Ztrue > n1) / (sum(Zhat > n1))
-  fabl_acc_samps2[, j] <- c(eval, RR, elapsed[3], overlap)
+  fabl_acc_samps2[j, ] <- c(eval, RR, elapsed[3], overlap)
 
   #Sadinle 2017 Method
   ptm <- proc.time()
@@ -105,25 +105,57 @@ for(j in seq_along(overlap_vals)){
   elapsed <- proc.time() - ptm
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
-  sad_acc_samps[, j] <- c(eval, elapsed[3], overlap)
+  sad_acc_samps[j, ] <- c(eval, NA, elapsed[3], overlap)
 
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, .1)
   RR <- sum(Zhat == -1)/n2
   eval <- GetEvaluations(Zhat, Ztrue, n1)
   eval[1] <- sum(Zhat == Ztrue & Ztrue > n1) / (sum(Zhat > n1))
-  sad_acc_samps2[, j] <- c(eval, RR, elapsed[3], overlap)
+  sad_acc_samps2[j, ] <- c(eval, RR, elapsed[3], overlap)
 
   #  print(i)
   #}
 }
 
-saveRDS(Zs, file = paste0("out/fabl_acc/fabl_acc_",
-                          str_pad(fabl_acc_samps, 3, pad = "0")))
-saveRDS(Zs, file = paste0("out/fabl_acc_res/fabl_acc_res_",
-                          str_pad(fabl_acc_samps_resolved, 3, pad = "0")))
-saveRDS(Zs, file = paste0("out/sad_acc/sad_acc_",
-                          str_pad(sad_acc_samps, 3, pad = "0")))
-saveRDS(Zs, file = paste0("out/fabl_acc2/fabl_acc2_",
-                          str_pad(fabl_acc_samps2, 3, pad = "0")))
-saveRDS(Zs, file = paste0("out/sad_acc2/sad_acc2_",
-                          str_pad(sad_acc_samps2, 3, pad = "0")))
+fabl_acc_samps <- data.frame(fabl_acc_samps, "fabl") %>%
+  unname() %>%
+  data.frame()
+fabl_acc_samps_resolved <- data.frame(fabl_acc_samps_resolved, "fabl_resolved") %>%
+  unname() %>%
+  data.frame()
+fabl_acc_samps2 <- data.frame(fabl_acc_samps2, "fabl_partial") %>%
+  unname() %>%
+  data.frame()
+sad_acc_samps <- data.frame(sad_acc_samps, "BRL") %>%
+  unname() %>%
+  data.frame()
+sad_acc_samps2 <- data.frame(sad_acc_samps2, "BRL_partial") %>%
+  unname() %>%
+  data.frame()
+
+result_df <- rbind(fabl_acc_samps, fabl_acc_samps_resolved, fabl_acc_samps2,
+                   sad_acc_samps, sad_acc_samps2)
+
+if(i < 100){
+  error <- "One Error"
+} else if (i < 200) {
+  error <- "Two Errors"
+} else {
+  error <- "Three Errors"
+}
+names(result_df) <- c("recall", "precision", "f-Measure", "RR", "time", "overlap", "method")
+result_df$Error <- error
+
+saveRDS(result_df, file = paste0("out/sim_acc/sim_acc_",
+                                      str_pad(i, 3, pad = "0")))
+
+# saveRDS(fabl_acc_samps, file = paste0("out/fabl_acc/fabl_acc_",
+#                           str_pad(i, 3, pad = "0")))
+# saveRDS(fabl_acc_samps_resolved, file = paste0("out/fabl_acc_res/fabl_acc_res_",
+#                           str_pad(i, 3, pad = "0")))
+# saveRDS(sad_acc_samps, file = paste0("out/sad_acc/sad_acc_",
+#                           str_pad(i, 3, pad = "0")))
+# saveRDS(fabl_acc_samps2, file = paste0("out/fabl_acc2/fabl_acc2_",
+#                           str_pad(i, 3, pad = "0")))
+# saveRDS(sad_acc_samps2, file = paste0("out/sad_acc2/sad_acc2_",
+#                           str_pad(i, 3, pad = "0")))

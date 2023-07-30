@@ -100,6 +100,9 @@ Durham, NC 27708, USA
 \end{aug}
 
 \begin{abstract} 
+<<<<<<< HEAD:ba_resubmit/kundinger_resubmit2.tex
+Within the field of record linkage, Bayesian methods have the crucial advantage of quantifying uncertainty from imperfect linkages. However, current implementations of Bayesian Fellegi-Sunter models are computationally intensive, making them challenging to use on larger-scale record linkage tasks. To address these computational considerations, we propose fast beta linkage (\texttt{fabl}), an extension to the Beta Record Linkage (\texttt{BRL}) method of \cite{sadinle_bayesian_2017}. Specifically, we use independent prior distributions over the matching space, allowing us to use hashing techniques that reduce computational overhead. This also allows us to complete pairwise record comparisons over large data files through parallel computing and to reduce memory costs through a new technique called storage efficient indexing. Through simulations and two case studies, we show that \texttt{fabl} can have markedly increased speed with minimal loss of accuracy when compared to \texttt{BRL}.
+=======
 Within the field of record linkage, Bayesian methods have the crucial advantage of quantifying uncertainty from imperfect linkages. However, current implementations of Bayesian Fellegi-Sunter models are computationally intensive, making them challenging to use on larger-scale record linkage tasks. To address these computational considerations, we propose fast beta linkage (\texttt{fabl}), an extension to the Beta Record Linkage (\texttt{BRL}) method of \cite{sadinle_bayesian_2017}. Specifically, we use independent prior distributions over the matching space, \textcolor{teal}{which allows for parallel updates to the Gibbs sampler, \textcolor{red}{unlike} the sequential updates of \texttt{BRL}.}
 \textcolor{teal}{We ensure \textcolor{red}{\text{fabl} results in a bipartite matching} using decision theoretic post-processing techniques from the existing literature.}
 \textcolor{red}{To reduce computational overhead and memory costs, we use hashing and a new technique that we call storage efficient indexing. }
@@ -108,8 +111,13 @@ Within the field of record linkage, Bayesian methods have the crucial advantage 
 %This allows
 %us to use hashing techniques that reduce computational overhead. This also allows us to complete pairwise record comparisons over large data files through parallel computing and to reduce memory costs through a new technique called storage efficient indexing. 
 Through simulations and two case studies, we show that \texttt{fabl} can have markedly increased speed with minimal loss of accuracy when compared to \texttt{BRL}.
+>>>>>>> 298ea515f9e6544370ddd60237cbede7e6116104:ba_resubmit_template_files/main.tex
 \end{abstract}
 
+%\textcolor{teal}{which allows for parallel updates to the Gibbs sampler, contrasting the sequential updates of \texttt{BRL}.}
+%\textcolor{teal}{We ensure our method is bipartite using decision theoretic post-processing techniques from the existing literature.}
+%\textcolor{teal}{Next, we use hashing techniques that reduce computational overhead. Furthermore, we complete pairwise record comparisons over large data files through parallel computing and reduce memory costs through a new technique called storage efficient indexing. 
+%}
 
 %% ** Keywords **
 \begin{keyword}
@@ -138,7 +146,8 @@ Many probabilistic record linkage methods are rely on the seminal work of \cite{
 
 \newpage
 
-The independent pairwise matching assumption from \cite{fellegi_theory_1969} is popular mainly for its mathematical simplicity. However, in many situations, there are no duplications within a data file, meaning that each record in one file should be linked with at most one other record in the other file. Thus, when the procedure results in many-to-one matches, some of these links must be false. To address this potential problem, data analysts typically use an additional post-processing step, for example, applying an optimization routine that turns the list of linked records into a bipartite matching \citep{jaro1989} \textcolor{teal}{or using decision theoretic procedures, such as those of \cite{sadinle_bayesian_2017} and \cite{steorts_bayesian_2016}, which both ensure  bipartite (or rather transitive) matches.}
+The independent pairwise matching assumption from \cite{fellegi_theory_1969} is popular mainly for its mathematical simplicity. However, in many situations, there are no duplications within a data file, meaning that each record in one file should be linked with at most one other record in the other file. Thus, when the procedure results in many-to-one matches, some of these links must be false. To address this potential problem, data analysts typically use an additional post-processing step, for example, applying an optimization routine that turns the list of linked records into a bipartite matching \citep{jaro1989}.
+%\textcolor{teal}{or using decision theoretic procedures, such as those of \cite{sadinle_bayesian_2017} and \cite{steorts_bayesian_2016}, which both ensure  bipartite (or rather transitive) matches.}
 
 
 Alternatively, analysts can embed one-to-one matching requirements into the model specification, at an additional computational cost. \cite{Larsen05} employed a Metropolis-Hastings algorithm to only allow sampling matches that respected one-to-one assumptions, but such algorithms exhibit slow mixing due to the combinatorial nature of the constrained matching space. \cite{fortunato_2010} used simulated annealing to target the space of matches permitted under the one-to-one constraint, but the method is computationally intensive and, to our knowledge, has not been applied on data files with more than 100 records. \cite{sadinle_bayesian_2017} proposed the Beta Record Linkage model (\texttt{BRL}), using a prior distribution over the space of bipartite matchings to strictly enforce one-to-one requirements throughout a Gibbs sampler. Additionally, he introduced a class of loss functions that allows for a flexible estimation of the linkage structure, such that the modeler can weigh the relative importance of false positives and false negatives, and identify records pairings to be decided through clerical review. \texttt{BRL} has been shown to work on larger tasks than previous one-to-one methods, but in our experience, it becomes slow when applied to files with more than a few thousand records. 

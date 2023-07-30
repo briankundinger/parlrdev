@@ -59,7 +59,7 @@ for(i in seq_along(n1_vals)){
   
   #parlr method
   ptm <- proc.time()
-  Zchain <- BKSimple_hash2(cd, all_patterns = F)
+  Zchain <- fabl_gibbs(cd, all_patterns = F)
   elapsed <- proc.time() - ptm
   hash_time <- Zchain[[4]]
   Zchain <- Zchain[[1]]
@@ -93,23 +93,24 @@ names(sadinle_df) <- c("recall", "precision", "fmeasure", "time", "hash_time", "
 
 df<- rbind(parlr_df, sadinle_df)
 
+saveRDS(df, "../data/speed_sim_fixed_nB2")
+#df <- readRDS("../data/speed_sim_fixed_nB2")
+
 speed_plot_fixed_nB <- df %>% 
   ggplot(aes(x = nA, y = time, color = method)) +
-  geom_line(size = 1) +
-  geom_point(size = 2) + 
-  labs(x = expression(n[1]),
-       y = "Time (seconds)",
+  geom_line(size = .8) +
+  geom_point(size = 1.4) + 
+  labs(x = expression(n[A]),
+       y = NULL,
+       #y = "Time (seconds)",
        color = "Method") +
-  # labs(x = NULL, 
-  #      y = NULL,
-  #      color = "Method") +
-  theme_bw(base_size = 22) + 
-  theme(legend.position = "bottom") +
+  theme_bw(base_size = 14) + 
+  #theme(legend.position = "bottom") +
   scale_color_brewer(palette="Set1")
 
 speed_plot_fixed_nB
 
-ggsave(filename = "../notes/figures/speed_plot_fixed_nB_slides2.png", plot = speed_plot_fixed_nB)
+ggsave(filename = "../notes/figures/speed_plot_fixed_nB2_new.png", plot = speed_plot_fixed_nB)
 
 
 # results_df <- df %>% 
@@ -127,3 +128,7 @@ ggsave(filename = "../notes/figures/speed_plot_fixed_nB_slides2.png", plot = spe
 #   kable_styling(full_width = F)
   #as_image(file = "../notes/figures/simple_dist_table.png")
 ```
+```{r}
+Zchain$pi
+```
+

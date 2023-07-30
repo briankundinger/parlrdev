@@ -123,7 +123,8 @@ alpha <- beta <- 1
 
   #parlr method
   ptm <- proc.time()
-  Zchain <- BKSimple_hash2(cd)
+  #Zchain <- BKSimple_hash2(cd)
+  Zchain <- fabl_gibbs(cd)
   elapsed <- proc.time() - ptm
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)

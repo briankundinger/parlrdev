@@ -24,7 +24,7 @@ fabl_gibbs <- function(comparisons, m_prior = 1, u_prior = 1,
   }
 
   ptm <- proc.time()
-  patterns <- GetUniquePatterns2(comparisons, R = R)
+  patterns <- GetUniquePatterns2(comparisons, R = R, all_patterns = all_patterns)
   elapsed_hash <- proc.time() - ptm
 
   parameter_split <- as.vector(unlist(sapply(1:fields, function(x){
@@ -110,7 +110,7 @@ fabl_gibbs <- function(comparisons, m_prior = 1, u_prior = 1,
     M.SAMPS[,s] <- m
     U.SAMPS[,s] <- u
     L.SAMPS[s] <- L
-    PI.SAMPS[S] <- pi
+    PI.SAMPS[s] <- pi
 
     if(show_progress){
       if (s %% (S / 100) == 0) {

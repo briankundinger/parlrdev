@@ -43,13 +43,13 @@ all_patterns = TRUE
 
 overlap_vals <- c(50, 250, 450)
 
-fabl_acc_samps <- matrix(NA, nrow = 5, ncol = 3)
-fabl_acc_samps_resolved <- matrix(NA, nrow = 5, ncol = 3)
-sad_acc_samps <- matrix(NA, nrow = 5, ncol = 3)
+fabl_acc_samps <- matrix(NA, nrow = 3, ncol = 6)
+fabl_acc_samps_resolved <- matrix(NA, nrow = 3, ncol = 6)
+sad_acc_samps <- matrix(NA, nrow = 3, ncol = 6)
 
-fabl_acc_samps2 <- matrix(NA, nrow = 6, ncol = 3)
-fabl_acc_samps_resolved2 <- matrix(NA, nrow = 6, ncol = 3)
-sad_acc_samps2 <- matrix(NA, nrow = 6, ncol = 3)
+fabl_acc_samps2 <- matrix(NA, nrow = 3, ncol = 6)
+fabl_acc_samps_resolved2 <- matrix(NA, nrow = 3, ncol = 6)
+sad_acc_samps2 <- matrix(NA, nrow = 3, ncol = 6)
 
 for(j in seq_along(overlap_vals)){
   
@@ -105,8 +105,8 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   # Resolution Step
   Zhat_resolved <- ResolveConflicts(Zhat)
   eval_resolved <- GetEvaluations(Zhat_resolved, Ztrue, n1)
-  fabl_acc_samps_resolved[, j] <- c(eval_resolved, elapsed[3], overlap)
-  fabl_acc_samps[, j] <- c(eval, elapsed[3], overlap)
+  fabl_acc_samps_resolved[j, ] <- c(eval_resolved, NA, elapsed[3], overlap)
+  fabl_acc_samps[j, ] <- c(eval, NA, elapsed[3], overlap)
   
   #Partial Estimate
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, .1)
@@ -114,7 +114,7 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
   RR <- sum(Zhat == -1)/n2
   eval[1] <- sum(Zhat == Ztrue & Ztrue > n1) / (sum(Zhat > n1))
-  fabl_acc_samps2[, j] <- c(eval, RR, elapsed[3], overlap)
+  fabl_acc_samps2[j, ] <- c(eval, RR, elapsed[3], overlap)
   
   #Sadinle 2017 Method
   ptm <- proc.time()
@@ -123,17 +123,36 @@ cd[[1]] <- apply(cd[[1]], 2, as.numeric)
   elapsed <- proc.time() - ptm
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
-  sad_acc_samps[, j] <- c(eval, elapsed[3], overlap)
+  sad_acc_samps[j, ] <- c(eval, NA, elapsed[3], overlap)
   
   Zhat <- BRL::linkRecords(Zchain, n1, 1, 1, 2, .1)
   RR <- sum(Zhat == -1)/n2
   eval <- GetEvaluations(Zhat, Ztrue, n1)
   eval[1] <- sum(Zhat == Ztrue & Ztrue > n1) / (sum(Zhat > n1))
-  sad_acc_samps2[, j] <- c(eval, RR, elapsed[3], overlap)
+  sad_acc_samps2[j, ] <- c(eval, RR, elapsed[3], overlap)
   
 #  print(i)
 #}
 }
+
+fabl_acc_samps <- data.frame(fabl_acc_samps, "fabl") %>% 
+  unname() %>% 
+  data.frame()
+fabl_acc_samps_resolved <- data.frame(fabl_acc_samps_resolved, "fabl_resolved") %>% 
+  unname() %>% 
+  data.frame()
+fabl_acc_samps2 <- data.frame(fabl_acc_samps2, "fabl_partial") %>% 
+  unname() %>% 
+  data.frame()
+sad_acc_samps <- data.frame(sad_acc_samps, "BRL") %>% 
+  unname() %>% 
+  data.frame()
+sad_acc_samps2 <- data.frame(sad_acc_samps2, "BRL_partial") %>% 
+  unname() %>% 
+  data.frame()
+
+result_df <- rbind(fabl_acc_samps, fabl_acc_samps_resolved, fabl_acc_samps2,
+                   sad_acc_samps, sad_acc_samps2)
 
 saveRDS(Zs, file = paste0("out/fabl_acc/fabl_acc_", 
                           str_pad(fabl_acc_samps, 3, pad = "0")))
