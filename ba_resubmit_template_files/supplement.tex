@@ -123,7 +123,7 @@ Durham, NC 27708, USA
 	\hypertarget{app:derivations}{%
 		\section{Derivations of Full Conditionals}\label{app:derivations}}
 	
-	We provide detailed derivations of the full-conditionals provided in Section \ref{sec:fast-beta-linkage}. The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
+	We provide detailed derivations of the full conditionals provided in Section \ref{sec:fast-beta-linkage}. The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
 	\begin{align}
 		\mathcal{L}(m_{fl}|\gamma, \bm{u}, \bm{Z}, \pi) &\propto \prod_{i=1}^{n_A} \prod_{j=1}^{n_B} m_{fl}^{I(Z_j = i) I(\gamma_{ij}^f = l) I_{obs}(\gamma_{ij}^f)}  m_{fl}^{\alpha_{fl} - 1} = m_{fl}^{\alpha_{fl}(\bm{Z}) - 1},
 	\end{align}
@@ -246,7 +246,7 @@ When we seek a partial estimate of the linkage structure, leaving a portion of r
 	\begin{figure}[h]
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_overlap_trace} 
-			\caption{Representative traceplot of overlap between files from simulation study in Section \ref{accuracy}.}\label{fig:sim_overlap_trace}
+			\caption{Representative traceplot of overlap between files from simulation study in Section~\ref{accuracy}.}\label{fig:sim_overlap_trace}
 		\end{center}
 	\end{figure}
 	
@@ -254,7 +254,7 @@ When we seek a partial estimate of the linkage structure, leaving a portion of r
 	\begin{figure}
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_m_trace} 
-			\caption{Representative traceplot of $\bm{m}$ parameter from simulation study in Section \ref{accuracy}.}\label{fig:sim_m_trace}
+			\caption{Representative traceplot of $\bm{m}$ parameters from simulation study in Section~\ref{accuracy}.}\label{fig:sim_m_trace}
 		\end{center}
 
 		\begin{center}
@@ -301,7 +301,7 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 			Feature 4 & $\frac{9}{10}$ & $\frac{9}{100}$  & $\frac{1}{100}$ & $\frac{1}{100}$ &  $\frac{3}{100}$ & $\frac{96}{100}$ \\ 
 			\hline
 		\end{tabular}
-		\caption{Probabilities used for $\bm{m}$ and $\bm{u}$ distributions in simulation study in Supplement \ref{app:appendix-speed}.}\label{Tab:distributions_2}
+		\caption{Probabilities used for $\bm{m}$ and $\bm{u}$ distributions in simulation study in Supplement~\ref{app:appendix-speed}.}\label{Tab:distributions_2}
 	\end{table}
 	
 
