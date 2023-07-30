@@ -259,7 +259,7 @@ For clarity, we present the full model for \texttt{fabl} below:
 %	\subsection{Gibbs Sampler}
 %	\label{gibbs_sampling}}
 
-We estimate the posterior distribution of the parameters in (\ref{eqn:likelihood} - \ref{eqn:pi}) using a Gibbs sampler. Appendix \ref{app:derivations} presents derivations for the full conditional distributions. We initialize $\bm{m}$, $\bm{u}$ and $\pi$ from random draws from their prior distributions, and initialize $\bm{Z}$ to reflect no matches across data files; that is, $\bm{Z} = (n_A + 1, \ldots, n_A + n_B)$. Denote the current draw of the sampler by $(s)$ and the updated draw by $(s+1)$. To update $\bm{m}_f$ and $\bm{u}_f$ for all $f = 1, \ldots, F$, we sample
+We estimate the posterior distribution of the parameters in (\ref{eqn:likelihood} - \ref{eqn:pi}) using a Gibbs sampler. Supplement \ref{app:derivations} presents derivations for the full conditional distributions. We initialize $\bm{m}$, $\bm{u}$ and $\pi$ from random draws from their prior distributions, and initialize $\bm{Z}$ to reflect no matches across data files; that is, $\bm{Z} = (n_A + 1, \ldots, n_A + n_B)$. Denote the current draw of the sampler by $(s)$ and the updated draw by $(s+1)$. To update $\bm{m}_f$ and $\bm{u}_f$ for all $f = 1, \ldots, F$, we sample
 \begin{subequations}
 \begin{align}
 	\bm{m}_f^{(s+1)}|\gamma, \bm{Z}^{(s)}, \bm{u}^{(s)}, \pi^{(s)} &\sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}^{(s)}), \ldots, \alpha_{fL_f}(\bm{Z}^{(s)})), \label{eqn:m_update} \\
@@ -298,7 +298,7 @@ where, for all $i \in \{1, \ldots, n_A\}$ and $j \in \{1, \ldots, n_B\}$,
 	w_{ij}^{(s)} = \prod_{f=1}^{F}\prod_{l = 1}^{L_f} \left(\frac{m_{fl}^{(s)}}{u_{fl}^{(s)}}\right)^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.
 \end{align}
 
-Finally, to obtain an estimate $\hat{\bm{Z}}$ of the linkage structure, we use the loss functions and Bayes estimate from \cite{sadinle_bayesian_2017}. Since (\ref{eqn:fast_beta_prior}) does not strictly enforce one-to-one matching, it is possible for this Bayes estimate to link multiple records in $B$ to one record in $A$. To obtain a Bayes estimate that fulfills the bipartite requirement, we minimize the expected loss subject to the constraint that $\hat{Z}_j \neq \hat{Z}_{j'}$ for all $j \neq j'$. See Appendix \ref{bayes-estimate} for details redarding the initial Bayes estimate and this post-processing procedure.
+Finally, to obtain an estimate $\hat{\bm{Z}}$ of the linkage structure, we use the loss functions and Bayes estimate from \cite{sadinle_bayesian_2017}. Since (\ref{eqn:fast_beta_prior}) does not strictly enforce one-to-one matching, it is possible for this Bayes estimate to link multiple records in $B$ to one record in $A$. To obtain a Bayes estimate that fulfills the bipartite requirement, we minimize the expected loss subject to the constraint that $\hat{Z}_j \neq \hat{Z}_{j'}$ for all $j \neq j'$. See Supplement \ref{bayes-estimate} for details redarding the initial Bayes estimate and this post-processing procedure.
 
 
 \section{Efficient and Scalable Implementation}
@@ -342,7 +342,7 @@ To obtain a memory efficient representation, we map the agreement pattern of eac
 \end{align}
 
 We then map the integers in \eqref{eqn:hashing} to sequential integers $\{1, \ldots, P\}$. Denote each unique agreement pattern as $h_p = (h_p^1, \ldots, h_p^F)$, and the set of unique agreement patterns as $\mathcal{P} = \{h_1, \ldots, h_P\}$. When the $(i,j)$ record pair exhibits agreement pattern $p$, we say $\gamma_{ij} = h_p$. In calculations, we will at times use the one-hot encoding of agreement pattern $h_p$, denoted $e(h_p)$. This is a vector of length $\sum_{f=1}^F L_f$ in which the $l + \sum_{k=1}^{f-1} L_k$ component is 1 when $\gamma_{ij}^f = l$, and 0 otherwise. 
-%A more complete example of the one-hot encoding is provided in Appendix \ref{app:ohe}.
+%A more complete example of the one-hot encoding is provided in Supplement \ref{app:ohe}.
 
 For example, consider five fields with binary agreements and possible missingness, denoted $NA$. The number of possible patterns is bounded above by $P^{*} = 3^5 = 243$. Suppose that records $A_5$ and $B_7$ exhibit agreement pattern $\gamma_{5,7} = (1, 1, 1, NA, 2)$, indicating exact agreement on the first three fields, missing information in the fourth field, and disagreement in the fifth field. The expression in  (\ref{eqn:hashing}) gives $h^{*}(\gamma_{5,7}) = 2^1 + 2^3 + 2^5 + 0 + 2^{10} = 1066$. All records with a hashed value of $1066$ map to the integer $42$. Thus, $\gamma_{5,7} = h_{42},$ and this agreement pattern has the one hot encoding $e(h_{42}) = (1, 0, 1, 0, 1, 0, 0, 0, 0, 1)$.
 
@@ -516,7 +516,7 @@ As shown in the full conditionals in (\ref{efficient_alpha}),  (\ref{efficient_b
 %	\end{center}
 %\end{figure}
 	
-	In Figure \ref{fig:speed2}, where we fix $n_B = 500$, we see near linear growth for the run-time under \texttt{BRL} as $n_A$ increases, and much more static run-time under \texttt{fabl}. The slight increases in run-time for \texttt{fabl} are due primarily to the hashing step, which again can be run in parallel for large data. To illustrate that these trends are generalizeable to other specifications of the comparison vectors, we have included the run-time results for an additional simulation study, under different comparison vector settings, in Appendix \ref{app:appendix-speed}.
+	In Figure \ref{fig:speed2}, where we fix $n_B = 500$, we see near linear growth for the run-time under \texttt{BRL} as $n_A$ increases, and much more static run-time under \texttt{fabl}. The slight increases in run-time for \texttt{fabl} are due primarily to the hashing step, which again can be run in parallel for large data. To illustrate that these trends are generalizeable to other specifications of the comparison vectors, we have included the run-time results for an additional simulation study, under different comparison vector settings, in Supplement \ref{app:appendix-speed}.
 	
 	Importantly, \texttt{BRL} implements a Gibbs sampler that is coded C \citep{sadinle_bayesian_2017}, while \texttt{fabl} currently uses non-optimized code written only in \texttt{R}.  While this complicates comparisons, and indeed disfavors \texttt{fabl}, the computational speed gains for \texttt{fabl} are still evident, especially for larger sample sizes.  Additionally, although \texttt{fabl} is amenable to parallelization, this simulation is run on a single core. Implementing \texttt{fabl} in C++ with parallelization for the hashing step and sampling the matching status of the record pairs should lead to even more computational gains.
 
@@ -543,7 +543,7 @@ As shown in the full conditionals in (\ref{efficient_alpha}),  (\ref{efficient_b
 	
 	Computational speed-ups are only worthwhile if not accompanied by a notable loss of record linkage accuracy. Therefore, we examine the accuracy of \texttt{fabl} relative to \texttt{BRL} by replicating a simulation study from \cite{sadinle_bayesian_2017}. The simulations employ a collection of synthetic data files with varying amounts of error and overlap (the number of records in common across files). Following methods proposed by \cite{christen_pudjijono2009} and \cite{christen_vatsalan2013}, clean records are first simulated from frequency tables for first name, last name, age, and occupation in Australia. Fields are then chosen for distortion uniformly at random. Names are subject to string insertions, deletions and substitutions, as well as common keyboard, phonetic, and optical recognition errors. Age and occupation are distorted through keyboard errors and missingness. These synthetic data files are available in the supplement to \cite{sadinle_bayesian_2017}.
 	
-	We create comparison vectors according to the default settings of the \texttt{compareRecords} function from the \texttt{BRL} package, shown in Table \ref{Tab:sadinle_simulation_cutoffs}. Each simulation identifies matched individuals between two data files, each with 500 records. We conduct linkage when matching records exhibit 1, 2, and 3 errors across the four fields, and when there are 50, 250, and 450 individuals in common across data files. Under each of these settings, we use 100 pairs of simulated data files in order to obtain uncertainty quantification on our performance metrics. We use uniform priors for the $\bm{m}$, $\bm{u}$, and $\pi$ parameters, with $\alpha_{fl} = \beta_{fl} = 1$ for all $f$ and $l$. We run the Gibbs sampler for 1000 iterations, and discard the first 100 as burn-in. We calculate Bayes estimates $\hat{\bm{Z}}$ of the linkage structure using the  loss function and post-processing procedure described in Appendix \ref{bayes-estimate}. Traceplots for parameters of interest for one example simulation are provided in Appendix \ref{app:appendix-sim}; they show no obvious concern over MCMC convergence. We also replicate this simulation allowing \texttt{fabl} to leave some components of the linkage structure undetermined and left for clerical review; those results are in Appendix \ref{partial}.
+	We create comparison vectors according to the default settings of the \texttt{compareRecords} function from the \texttt{BRL} package, shown in Table \ref{Tab:sadinle_simulation_cutoffs}. Each simulation identifies matched individuals between two data files, each with 500 records. We conduct linkage when matching records exhibit 1, 2, and 3 errors across the four fields, and when there are 50, 250, and 450 individuals in common across data files. Under each of these settings, we use 100 pairs of simulated data files in order to obtain uncertainty quantification on our performance metrics. We use uniform priors for the $\bm{m}$, $\bm{u}$, and $\pi$ parameters, with $\alpha_{fl} = \beta_{fl} = 1$ for all $f$ and $l$. We run the Gibbs sampler for 1000 iterations, and discard the first 100 as burn-in. We calculate Bayes estimates $\hat{\bm{Z}}$ of the linkage structure using the  loss function and post-processing procedure described in Supplement \ref{bayes-estimate}. Traceplots for parameters of interest for one example simulation are provided in Supplement \ref{app:appendix-sim}; they show no obvious concern over MCMC convergence. We also replicate this simulation allowing \texttt{fabl} to leave some components of the linkage structure undetermined and left for clerical review; those results are in Supplement \ref{partial}.
 	
 
 	
@@ -671,13 +671,13 @@ There are several challenges with these data. First, the ERTL data file was auto
 	
 	We initially followed the comparison vector constructions set by \cite{sadinle_bayesian_2017}, using four levels of agreement for each field, according to the thresholds provided in Table \ref{Tab:el_salvador_cutoffs_1}. This results in 1875 possible agreement patterns, with 1173 patterns realized in the data. However, we noticed that the posterior distributions of several levels of the $\bm{m}$ and $\bm{u}$ parameters were nearly identical in an initial run of \texttt{BRL}, suggesting that these levels were unnecessary.
 	
-	Therefore, we perform our analysis with the agreement levels for each field according to Table \ref{Tab:el_salvador_cutoffs_2}. Among the 432 possible agreement patterns, 159 are realized in the data. With this revised comparison specification, \texttt{fabl} runs in 109 seconds, approximately 3 times faster than the \texttt{BRL} run time of 313 seconds.  The estimates of the $\bm{m}$ parameters under each method are similar, as shown in Figure \ref{fig:m-and-u}. Estimates of the $\bm{u}$ parameters are indistinguishable, and thus omitted. Traceplots for parameters of interest are provided in Appendix \ref{app:appendix-es}.
+	Therefore, we perform our analysis with the agreement levels for each field according to Table \ref{Tab:el_salvador_cutoffs_2}. Among the 432 possible agreement patterns, 159 are realized in the data. With this revised comparison specification, \texttt{fabl} runs in 109 seconds, approximately 3 times faster than the \texttt{BRL} run time of 313 seconds.  The estimates of the $\bm{m}$ parameters under each method are similar, as shown in Figure \ref{fig:m-and-u}. Estimates of the $\bm{u}$ parameters are indistinguishable, and thus omitted. Traceplots for parameters of interest are provided in Supplement \ref{app:appendix-es}.
 	
 	For completeness, we note that linkage with the more detailed comparison vectors requires 945 seconds for \texttt{BRL}, and 1093 seconds for \texttt{fabl}.  Apparently, the number of patterns is sufficiently many that the computational savings from \texttt{fabl} does not overcome the inherent speed differences of C as opposed to \texttt{R}.
 	
 	Through \texttt{fabl}, we arrive at a Bayes estimate of 178 individuals recorded in both data files. We calculate posterior samples of the size of the overlap across files by finding the number of links in each iteration of the Gibbs sampler, and subtracting the number of matches that violate one-to-one matching. The posterior 95\% credible interval for the overlap across files is (205, 236), indicating that the Bayes estimate identifies fewer matches than the Gibbs sampler identifies on average. This is because a large number of records in ERTL have multiple plausible matches in CDHES; \texttt{fabl} recognizes that a match exists among the several options, but is unable to definitely declare a specific pair as a match in the Bayes estimate. We see similar results under \texttt{BRL}, with a Bayes estimate of 181 individuals recorded in both data files, and a posterior 95\% credible interval of (211, 244). See Figure \ref{fig:overlap-plot} for a visual comparison of the Bayes estimates and posterior credible intervals for the two methods. We note that Bayes estimates falling outside of posterior credible intervals has been observed previously in the record linkage literature \citep{sadinle_bayesian_2017, steorts_bayesian_2016}, and remains a topic for future research.
 	
-	%We also compute a partial estimate of the linkage structure, using $\theta_{10} = \theta_{01} = 1$, $\theta_{11} = 2$, and $\theta_R = 0.1$ as in the simulation study in Appendix \ref{partial}. Here, the Bayes estimate provides 136 matches of which the model is quite confident, and 175 records to verify manually. This means that after clerical review, the number of individuals replicated across data files would fall in the interval (136, 311), encapsulating the posterior credible interval. More or fewer records could be identified for clerical review by decreasing or increasing $\theta_R$. 
+	%We also compute a partial estimate of the linkage structure, using $\theta_{10} = \theta_{01} = 1$, $\theta_{11} = 2$, and $\theta_R = 0.1$ as in the simulation study in Supplement \ref{partial}. Here, the Bayes estimate provides 136 matches of which the model is quite confident, and 175 records to verify manually. This means that after clerical review, the number of individuals replicated across data files would fall in the interval (136, 311), encapsulating the posterior credible interval. More or fewer records could be identified for clerical review by decreasing or increasing $\theta_R$. 
 	
 	%and a range of (140, 294) after the partial estimate and clerical review. 
 	
@@ -709,7 +709,7 @@ There are several challenges with these data. First, the ERTL data file was auto
 	
 	We link records using sex, location, and day, month, and year of birth using the criteria shown in Table \ref{Tab:nltcs-comparisons}. Storing $\gamma$ constructed through three comparison scores for each of $20485 (17466) \approx$ 400 million record pairs would require approximately 8GB of memory. Standard settings on a 16GB personal computer do not allow storage of an object of this size, and thus \texttt{BRL} is unable to perform this linkage task on such a machine. However, through the method described in Section \ref{scaling},  we perform 30 smaller comparison tasks, using $t_A = 1$ and $t_B = 30$. We conduct linkage with all record indices recorded and also with SEI using $S=10$, and obtain identical results. The hashed $\tilde{\gamma}$ without SEI is about 2.2 GB, and with SEI, it is about 760 MB. Constructing the comparisons sequentially took approximately 40 minutes, which could be reduced considerably through parallel computing.
 	
-	We run a Gibbs sampler for 1000 iterations, taking about 235 seconds. Traceplots do not suggest convergence issues, and are similar to those seen in Appendix \ref{app:appendix-sim} and \ref{app:appendix-es}. As shown in Figure \ref{fig:nltcs-overlap-plot}, the Bayes estimate of the linkage structure has of 9634 matches, with a 95\% credible interval of (9581, 9740). Since we have access to the true linkage structure, we can calculate recall to be 0.89 and precision to be 0.98, resulting in an F-measure of 0.94. 
+	We run a Gibbs sampler for 1000 iterations, taking about 235 seconds. Traceplots do not suggest convergence issues, and are similar to those seen in Supplement \ref{app:appendix-sim} and \ref{app:appendix-es}. As shown in Figure \ref{fig:nltcs-overlap-plot}, the Bayes estimate of the linkage structure has of 9634 matches, with a 95\% credible interval of (9581, 9740). Since we have access to the true linkage structure, we can calculate recall to be 0.89 and precision to be 0.98, resulting in an F-measure of 0.94. 
 	
 	\begin{figure}
 		\begin{center}
@@ -774,7 +774,7 @@ There are several challenges with these data. First, the ERTL data file was auto
 		\hypertarget{app:derivations}{%
 		\section{Derivations of Full Conditionals}\label{app:derivations}}
 	
-	We provide detailed derivations of the full-conditionals provided in Section 3 of the main text. The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
+	We provide detailed derivations of the full-conditionals provided in Section \ref{sec:fast-beta-linkage}. The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
 	\begin{align}
 		\mathcal{L}(m_{fl}|\gamma, \bm{u}, \bm{Z}, \pi) &\propto \prod_{i=1}^{n_A} \prod_{j=1}^{n_B} m_{fl}^{I(Z_j = i) I(\gamma_{ij}^f = l) I_{obs}(\gamma_{ij}^f)}  m_{fl}^{\alpha_{fl} - 1} = m_{fl}^{\alpha_{fl}(\bm{Z}) - 1},
 	\end{align}
@@ -889,12 +889,12 @@ When we seek a partial estimate of the linkage structure, leaving a portion of r
 	
 	\hypertarget{appendix-sim}{%
 		\section{Traceplots for Simulation Study}\label{app:appendix-sim}}
-	Figures \ref{fig:sim_overlap_trace}, \ref{fig:sim_m_trace}, and \ref{fig:sim_u_trace} are traceplots for one of the 900 linkage tasks that comprise the simulation in Section 5.2 of the main text. It is set up with one error across the linkage fields and 50 duplicates across files. Traceplots across other settings exhibit similar behavior. Note that traceplots for $\bm{u}$ parameters show very little variation because the overwhelming majority of record pairs are nonmatching.  
+	Figures \ref{fig:sim_overlap_trace}, \ref{fig:sim_m_trace}, and \ref{fig:sim_u_trace} are traceplots for one of the 900 linkage tasks that comprise the simulation in Section \ref{accuracy}. It is set up with one error across the linkage fields and 50 duplicates across files. Traceplots across other settings exhibit similar behavior. Note that traceplots for $\bm{u}$ parameters show very little variation because the overwhelming majority of record pairs are nonmatching.  
 	
 	\begin{figure}[h]
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_overlap_trace} 
-			\caption{Representative traceplot of overlap between files from simulation study in Section 5.2 of the main text.}\label{fig:sim_overlap_trace}
+			\caption{Representative traceplot of overlap between files from simulation study in Section \ref{accuracy}.}\label{fig:sim_overlap_trace}
 		\end{center}
 	\end{figure}
 	
@@ -902,14 +902,14 @@ When we seek a partial estimate of the linkage structure, leaving a portion of r
 	\begin{figure}
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_m_trace} 
-			\caption{Representative traceplot of $\bm{m}$ parameter from simulation study in Section 5.2 of the main text.}\label{fig:sim_m_trace}
+			\caption{Representative traceplot of $\bm{m}$ parameter from simulation study in Section \ref{accuracy}.}\label{fig:sim_m_trace}
 		\end{center}
 %	\end{figure}
 	
 %	\begin{figure}[!h]
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_u_trace} 
-			\caption{Representative traceplot of $\bm{u}$ parameters from simulation study in Section 5.2 of the main text.}\label{fig:sim_u_trace}
+			\caption{Representative traceplot of $\bm{u}$ parameters from simulation study in Section \ref{accuracy}.}\label{fig:sim_u_trace}
 		\end{center}
 	\end{figure}
 
@@ -918,7 +918,7 @@ When we seek a partial estimate of the linkage structure, leaving a portion of r
 	\hypertarget{partial}{%
 	\section{Accuracy under Partial Estimates}\label{partial}}
 
-In this section, we repeat the simulation study in Section 5.2 of the of the main text, allowing for clerical review rather than forcing all records to have or not have links.  Specifically, by leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the negative predictive value (NPV), defined as the proportion of non-links that are actual nonmatches. Mathematically, $\text{NPV} = \sum_{j=1}^{n_B} I(\hat{Z}_j = Z_j = n_A + j)$/$\sum_{j=1}^{n_B} I(\hat{Z}_j = n_A + j)$. We continue to use the precision, which is renamed the positive predictive value (PPV) in this context. Lastly, we also examine the rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_B} I(\hat{Z}_j = R)/n_B$. To convey this information alongside NPV and PPV, for which values close to 1 indicate strong performance, we report the decision rate (DR), defined as DR = $1 - RR$.
+In this section, we repeat the simulation study in Section \ref{accuracy}, allowing for clerical review rather than forcing all records to have or not have links.  Specifically, by leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the negative predictive value (NPV), defined as the proportion of non-links that are actual nonmatches. Mathematically, $\text{NPV} = \sum_{j=1}^{n_B} I(\hat{Z}_j = Z_j = n_A + j)$/$\sum_{j=1}^{n_B} I(\hat{Z}_j = n_A + j)$. We continue to use the precision, which is renamed the positive predictive value (PPV) in this context. Lastly, we also examine the rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_B} I(\hat{Z}_j = R)/n_B$. To convey this information alongside NPV and PPV, for which values close to 1 indicate strong performance, we report the decision rate (DR), defined as DR = $1 - RR$.
 
 In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} maintains equivalently strong PPV as \texttt{BRL} across all linkage settings. However, with high amounts of error, and thus fewer accurate and discerning fields of information, the rejection rate under \texttt{fabl} rises, leading to a decrease in NPV. Since \texttt{fabl} does not remove previously matched records from consideration for a new record, posterior probabilities of matches at times can be split across more records; in contrast, \texttt{BRL} is able to maintain higher confidence in matches in this setting. If one wishes to use partial estimates, \texttt{fabl} will possibly leave more linkages for the modeler to match by hand than would be left under \texttt{BRL}, but the decisions made by each method should have nearly equal accuracy. 
 
@@ -929,7 +929,7 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 \begin{figure}
 	\begin{center}
 		\includegraphics[width=0.99\textwidth]{../notes/figures/sadinle_sim_plot_partial2} 
-		\caption{Negative predictive value (NPV), positive predictive value (PPV), and decision rate (DR) on data files in the simulation in Appendix \ref{partial}. We see poorer performance for \texttt{fabl} only in situations with high overlap.}
+		\caption{Negative predictive value (NPV), positive predictive value (PPV), and decision rate (DR) on data files in the simulation in Supplement \ref{partial}. We see poorer performance for \texttt{fabl} only in situations with high overlap.}
 		\label{fig:sadinle_simulation_partial}
 	\end{center}
 \end{figure}
@@ -938,7 +938,7 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 
 	\hypertarget{appendix-speed}{%
 	\section{Additional Speed Simulation Study}\label{app:appendix-speed}}
-	Figures \ref{fig:app-speed1} and \ref{fig:app-speed2} illustrate that different constructions of the comparison vectors lead to similar speed gains. We replicate the speed study of Section 5.1 of the main text under different settings. Here, we use four fields of comparison, each with three possible levels of agreement, resulting in $3^4 = 81$ possible patterns. The $\bm{m}$ and $\bm{u}$ parameters for this simulation are shown in Table \ref{Tab:distributions_2}.
+	Figures \ref{fig:app-speed1} and \ref{fig:app-speed2} illustrate that different constructions of the comparison vectors lead to similar speed gains. We replicate the speed study of Section \ref{speed} under different settings. Here, we use four fields of comparison, each with three possible levels of agreement, resulting in $3^4 = 81$ possible patterns. The $\bm{m}$ and $\bm{u}$ parameters for this simulation are shown in Table \ref{Tab:distributions_2}.
 	
 		\begin{table}[h]
 		\centering
@@ -953,18 +953,18 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 			Feature 4 & $\frac{9}{10}$ & $\frac{9}{100}$  & $\frac{1}{100}$ & $\frac{1}{100}$ &  $\frac{3}{100}$ & $\frac{96}{100}$ \\ 
 			\hline
 		\end{tabular}
-		\caption{Probabilities used for $\bm{m}$ and $\bm{u}$ distributions in simulation study in Appendix \ref{app:appendix-speed}.}\label{Tab:distributions_2}
+		\caption{Probabilities used for $\bm{m}$ and $\bm{u}$ distributions in simulation study in Supplement \ref{app:appendix-speed}.}\label{Tab:distributions_2}
 	\end{table}
 	
 %	\begin{figure}[h!]
 %		\begin{center} \includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_speed_plot2_new} 
-%			\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations in simulation study in Appendix \ref{app:appendix-speed}, including hashing step for \texttt{fabl}, for increasing values of both $n_A$ and $n_B$. We see near quadratic growth in run-time for \texttt{BRL}, and near linear growth for \texttt{fabl}.}\label{fig:app-speed1}
+%			\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations in simulation study in Supplement \ref{app:appendix-speed}, including hashing step for \texttt{fabl}, for increasing values of both $n_A$ and $n_B$. We see near quadratic growth in run-time for \texttt{BRL}, and near linear growth for \texttt{fabl}.}\label{fig:app-speed1}
 %		\end{center}
 %	\end{figure}
 %	
 %	\begin{figure}[h!]
 %		\begin{center} \includegraphics[width=0.6\textwidth]{../notes/figures/speed_plot_fixed_nB2_new} 
-%			\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations in simulation study in Appendix \ref{app:appendix-speed}, including hashing step for \texttt{fabl}, with increasing $n_A$ and $n_B$ fixed at 500. We see linear growth in run-time for \texttt{BRL}, and near constant run-time for \texttt{fabl}.}\label{fig:app-speed2}
+%			\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations in simulation study in Supplement \ref{app:appendix-speed}, including hashing step for \texttt{fabl}, with increasing $n_A$ and $n_B$ fixed at 500. We see linear growth in run-time for \texttt{BRL}, and near constant run-time for \texttt{fabl}.}\label{fig:app-speed2}
 %		\end{center}
 %	\end{figure}
 
@@ -982,7 +982,7 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 		\caption{}
 		\label{fig:app-speed2}
 	\end{subfigure}
-	\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations in simulations described in Appendix \ref{app:appendix-speed}. In (\ref{fig:app-speed1}), both $n_A$ and $n_B$ are increasing. We see quadratic growth in \texttt{BRL} and linear growth in \texttt{fabl}. In (\ref{fig:app-speed2}), only $n_A$ only is increasing. We see linear growth in \texttt{BRL} and approximately constant run-time in \texttt{fabl}.}
+	\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations in simulations described in Supplement \ref{app:appendix-speed}. In (\ref{fig:app-speed1}), both $n_A$ and $n_B$ are increasing. We see quadratic growth in \texttt{BRL} and linear growth in \texttt{fabl}. In (\ref{fig:app-speed2}), only $n_A$ only is increasing. We see linear growth in \texttt{BRL} and approximately constant run-time in \texttt{fabl}.}
 	\label{fig:app-speed_sims}
 \end{figure}
 
@@ -1048,8 +1048,8 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 		\caption{Traceplot for $\bm{u}$ parameters.}
 		\label{fig:u_trace}
 	\end{subfigure}
-	\caption{Traceplots for parameters of interest in El Salvador case study in Section 5.1 of the main text.}
-	\label{fig:mean and std of nets}
+	\caption{Traceplots for parameters of interest in El Salvador case study in Section \ref{el_salvador}.}
+	\label{fig:el_salvador_trace}
 \end{figure}
 \end{document}
 

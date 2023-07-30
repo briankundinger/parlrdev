@@ -1,0 +1,277 @@
+\documentclass{beamer}
+\usetheme{Rochester}
+\addtobeamertemplate{navigation symbols}{}{ \hspace{1em}    \usebeamerfont{footline}%
+	\insertframenumber / \inserttotalframenumber }
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue,
+	filecolor=magenta,      
+	urlcolor=cyan,
+	pdftitle={Overleaf Example},
+	pdfpagemode=FullScreen,
+}
+
+\begin{document}
+	\title{Coarse Probabilistic Matching for Causal Inference through Bayesian Fellegi Sunter}
+	%\subtitle{Using Beamer}
+	\author{Brian Kundinger}
+	\institute{Duke University}
+	\date{\today}
+	
+%	\AtBeginSection[]{
+%		\begin{frame}
+%			\vfill
+%			\centering
+%			\begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+%				\usebeamerfont{title}\insertsectionhead\par%
+%			\end{beamercolorbox}
+%			\vfill
+%		\end{frame}
+%	}
+
+\AtBeginSection[]
+{
+	\begin{frame}
+		\frametitle{Table of Contents}
+		\tableofcontents[currentsection]
+	\end{frame}
+}
+	
+	\begin{frame}
+		\titlepage
+	\end{frame}
+
+\section{Stuff I've Been Thinking About}
+
+\begin{frame}{Fellegi Sunter}
+	\begin{itemize}
+		\item Let datasets $A$ and $B$ have records indexed $i \in \{1, \ldots, n_A\}$ and $j \in \{1, \ldots, n_B\}$
+		\item For each record pair, compute comparison vector $\gamma_{ij}$, where
+		each component $\gamma_{ij}^f$ takes on value $\ell \in \{1, \ldots, L_f\}$ according to predefined distance function
+		\begin{itemize}
+			\item Categorical: $\gamma_{ij}^f  = 1$ if $(i, j)$ agree on $f$, $\gamma_{ij}^f  = 2$ otherwise
+			\item Names: 1 for exact agreement, 2 for close agreement, 3 for no agreement
+		\end{itemize}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Fellegi Sunter}
+	\begin{itemize}
+		\item Every time I've presented this model, I'm embarassed by this coarsening of data.
+		\item Still, I think it might be interesting to see if it could be useful for matching in causal inference
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Mahalonobis Distance and Propensity Matching}
+	\begin{itemize}
+		\item One approach to matching is to use the Mahalonobis distance, which measures distance between units purely in the covariate space, without regard to which features are related to the outcome of interest. It is defined by
+		\begin{align*}
+			d(X_1, X_2) = \sqrt{|X_1 - X_2| S^{-1} |X_1 - X_2|}
+		\end{align*}
+		\item Another method is to estimate propensity scores $p(Z_n = 1 |X_n)$ for each unit in the data, and match units based on this score.
+		\item Most matching methods in causal inference then use deterministic algorithms to match treated units to their nearest control unit based on the chosen metric
+		\item David King publishes a strong critique of PS matching In any given matching, no guarantee of reducing covariate imbalance
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Coarse Exact Matching}
+	\begin{itemize}
+		\item Coarsen each variable to integer values based on reasonable knowledge (or using automated recommendations)
+		\item Each data unit has effectively been transformed to a set of integer values. 
+		\item Call treated and control units a match if they match at the coarsened level for \emph{all} variables
+		\item This coarsening allows CEM to be Monotonic Imbalance Bounding (MIB). Shown to have have better covariate balance, at expense of sample size
+		<2>\item THOUGHT: If coarsening was good in CEM, perhaps it can be good in Fellegi Sunter
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Review of Fellegi Sunter}
+	Let $\Delta_{ij} \sim \text{Bernoulli}(\lambda)$ be the indicator that  $(A_i, B_j)$ is a match. Let $m_{fl} = p(\gamma_{ij}^f = l | \Delta_{ij} = 1)$, and $u_{fl} = p(\gamma_{ij}^f = l | \Delta_{ij} = 0)$. \linebreak
+	
+	The Fellegi Sunter Model is:
+	\begin{align*}
+		p(\Gamma| m, u, \Delta) = \prod_{i}^{n_A} \prod_j^{n_B} \lambda\left[\prod_{f=1}^F \prod_{l = 1}^{L_f}m_{fl}^{\gamma_{ij}^f = l}\right]  + (1 - \lambda) \left[\prod_{f=1}^F \prod_{l = 1}^{L_f}u_{fl}^{\gamma_{ij}^f = l}\right] 
+	\end{align*}
+\end{frame}
+
+\section{Fellegi Sunter as Monotone Imbalance Bounding}
+
+%\begin{frame}{EPBR and MIB}
+%	A matching method is Equal Percent Bias Reducing (EPBR) if
+%	$$E(\bar{X}_{m_T} - \bar{X}_{m_C}) = \gamma(\mu_T - \mu_C)$$
+%	Most texts restrict $0 < \gamma < 1$, so I do not think Fellegi-Sunter is EPBR. \linebreak
+%	
+%	Part of the definition for Monotone Imbalance Bounding (MIB) is
+%	$$|\bar{X}_{m_T, f} - \bar{X}_{m_C, f}| \leq \gamma_f|\bar{X}_{T, f} - \bar{X}_{C, f}|$$
+%	for $0 \leq \gamma_f \leq 1$ for each feature $f$ separately. I believe that Fellegi-Sunter matching is MIB. 
+%\end{frame}
+
+\begin{frame}{MIB for Binary Covariates}
+	As defined by \href{https://gking.harvard.edu/files/gking/files/cem_jasa.pdf}{Iacus, King, Porro (2012)}, a matching method is \emph{Monotonic Imbalance Bounding} on a function $f$ with respect to a distance $D(\cdot, \cdot)$, if for a monotonically increasing function $\gamma_{f, D}(\cdot)$ and any $\pi \in \mathbb{R}_{+}^K$, we have
+	\begin{align*}
+		D(f(\mathcal{X}_{m_T(\pi)}), f(\mathcal{X}_{m_C(\pi)})) \leq \gamma_{f, D}(\pi)
+	\end{align*}
+
+Here, $\pi$ is a vector of scalar parameters relating the coarsening of each feature. Also ${m_T(\pi)}$ and ${m_C(\pi)}$ are the sizes of the matched sets, importantly determined by $\pi$, and not determined by the modeller. Lastly, $\mathcal{X}_{m_T}$ and $\mathcal{X}_{m_C}$ are the matched subsets of $T$ and $C$.
+\end{frame}
+
+\begin{frame}{MIB for Binary Covariates}
+	I've been struggling with the exact best way to interpret this definition, so I've editted my proof a couple times, and I don't have a finished version. But for now, I can show you that they have this flavor: \linebreak
+	
+	Let $X_{m_T}$ and $X_{m_C}$ be vectors of binary covariates for units matched through Fellegi-Sunter (and with matchings encoded in $\Delta$)
+	
+	\begin{align*}
+		|\bar{X}_{m_T} - \bar{X}_{m_C}| &= E[|\bar{X}_{m_T} - \bar{X}_{m_C}|| \Delta] \\
+		&\leq E[|X_i - X_j| | \Delta_{ij} = 1] \\
+		&= 0 \dot m_{1} + 1 \dot m_{2} \\
+		&=m_{2}
+	\end{align*}
+\end{frame}
+
+\begin{frame}{MIB for Continuous Covariates}
+	I can prove this for continuous covariates as well. Suppose $X$ has range $R = X_{\max} - X_{\min}$, and bin the data according to $\epsilon = \frac{R}{K}$, where $\pi_j = K$ is our coarsening parameter. Then the upper bound becomes $\epsilon \sum_{k=1}^K k m_k$. Note that this is increasing in $K$. \linebreak
+	
+	Note that we can directly compute this bound, and check that it holds on actual matched samples.
+\end{frame}
+
+%\begin{frame}
+%	We aim to show Fellegi Sunter is $MIB(f, D)$ for $f$, the sample mean, and $D$, absolute distance. Supposed $X$ has range $R = X_{\max} - X_{\min}$, and bin the data according to $\epsilon = \frac{R}{K}$, where $\pi_j = K$ is our coarsening parameter. 
+%\end{frame}
+
+%\begin{frame}{Expected Imbalance Bounding}
+%	Tentatively, lets called a matching method \emph{Expected Imbalance Bounding} (EIB) if there exist scalars $0 \leq \gamma_f \leq 1$ for each feature such that
+%	$$E(\bar{X}_{m_T, f} - \bar{X}_{m_C, f}) = \gamma_f(\mu_{T, f} - \mu_{C, f})$$
+%\end{frame}
+
+%\begin{frame}{FS as Monotone Imbalance Bounding}
+%	For clarity, we're dropping the $f$ subscripts. Let $X_T$ and $X_C$ be vectors of binary covariates for treated and control groups. Let $X_{m_T}$ and $X_{m_C}$ be similar vectors for units matched through Fellegi-Sunter (and with matchings encoded in $\Delta$)\linebreak
+%	\begin{align*}
+%		|\bar{X}_{m_T} - \bar{X}_{m_C}| &= E[|\bar{X}_{m_T} - \bar{X}_{m_C}|| \Delta] \\
+%		&\leq E[|X_i - X_j| | \Delta_{ij} = 1] \\
+%		&= 0 \dot m_{1} + 1 \dot m_{2} \\
+%		&=m_{2}
+%	\end{align*}
+%\end{frame}
+%(The second line is perhaps not an equality. There may be some assumption I can make to smooth it over.)
+
+%
+%	For clarity, we're dropping the $f$ subscripts. Let $X_T$ and $X_C$ be vectors of binary covariates of lengths $n_T$ and $n_C$ for treated and control groups. Let $X_{m_T}$ and $X_{m_C}$ be similar vectors units of lengths $n_{m_T}$, and $n_{m_C}$ matched through Fellegi-Sunter (and with matchings encoded in $\Delta$)\linebreak
+%\begin{align*}
+%	|\bar{X}_{m_T} - \bar{X}_{m_C}| &= E[|\bar{X}_{m_T} - \bar{X}_{m_C}|| \Delta] \\
+%	&= \frac{1}{n_{m_T}} E\left[\sum_{i, j= 1}^{n_{m_T}}  |X_i - X_j|| \Delta = 1\right] \\
+%	&= E[|X_i - X_j| | \Delta_{ij} = 1] \\
+%	&= 0 \dot m_{1} + 1 \dot m_{2} \\
+%	&=m_{2}
+%\end{align*}
+
+
+%\begin{frame}{MIB for Binary Covariates}
+%	Now the RHS
+%	\begin{align*}
+%		|\bar{X}_{T} - \bar{X}_{C}| &= E[|\bar{X}_{T} - \bar{X}_{C}||\Delta] \\
+%		&=E\left[ E[|X_i - X_j || \Delta_{ij}] \right] \\
+%		&= \lambda E[|X_i - X_j| | \Delta_{ij} = 1] + (1 - \lambda) E[|X_i - X_j || \Delta_{ij} = 0] \\
+%		&= \lambda m_{2} + (1 - \lambda)(0 \dot u_{1} + 1 \dot u_{2}) \\
+%		&= \lambda m_{2} + (1 - \lambda)u_{2}
+%	\end{align*}
+%
+%(Again, the second line is not quite right. But I can maybe argue that there is a constant there that I can end up just dividing out.)
+%\end{frame}
+%
+%\begin{frame}{MIB for Binary Covariates}
+%	\begin{align*}
+%		|\bar{X}_{m_T} - \bar{X}_{m_C}| - |\bar{X}_{T, f} - \bar{X}_{C, f}| &=
+%		m_{2} -\lambda m_2 - (1 - \lambda)u_{2} \\
+%		&= (1 - \lambda)m_{2} - (1 - \lambda)u_{2}  \\
+%		&= (1 - \lambda)(m_2 - u_{2}) < 0 
+%	\end{align*}
+%
+%Under certain assumptions, trust me that $m_{2} < u_{2}$. \linebreak
+%
+%Thus $E(\bar{X}_{m_T} - \bar{X}_{m_C}) \leq \gamma	|\bar{X}_{T, f} - \bar{X}_{C, f}|$ for $\gamma = 1$, and Fellegi Sunter is MIB for binary variables.
+%\end{frame}
+
+%\begin{frame}{EIB for Binary Covariates}
+%	For clarity, we're dropping the $f$ subscripts. Let $X_T$ and $X_C$ be vectors of binary covariates for treated and control groups, and let $X_{m_T}$ and $X_{m_C}$ be such vectors among matched units. \linebreak
+%	
+%	We start with the LHS:
+%	\begin{align*}
+%		E(\bar{X}_{m_T} - \bar{X}_{m_C}) &= E(X_i - X_j| \Delta = 1] \\
+%		&= 0 \dot m_{1} + 1 \dot m_{2} = m_{2}
+%	\end{align*}
+%\end{frame}
+%
+%\begin{frame}{EIB for Binary Covariates}
+%	Now the RHS
+%	\begin{align*}
+%		\mu_T - \mu_C &= E[|X_i - X_j] \\
+%		&=E\left[ E[X_i - X_j | \Delta] \right] \\
+%		&= \lambda E[X_i - X_j | \Delta = 1] + (1 - \lambda) E[X_i - X_j | \Delta = 0] \\
+%		&= \lambda m_{2} + (1 - \lambda)(0 \dot u_{1} + 1 \dot u_{2}) \\
+%		&= \lambda m_{2} + (1 - \lambda)u_{2}
+%	\end{align*}
+%\end{frame}
+%
+%\begin{frame}{EIB for Binary Covariates}
+%\begin{align*}
+%	(\mu_T - \mu_C) - E(\bar{X}_{m_T} - \bar{X}_{m_C}) &= \lambda m_{2} + (1 - \lambda)u_{2} - m_{2} \\
+%	&= (1 - \lambda)u_{2} + (1 - \lambda)m_{2} \\
+%	&= (1 - \lambda)(u_{2} - m_{2}) > 0 
+%\end{align*}
+%
+%Under certain assumptions, trust me that $u_{2} - m_{2} > 0$ holds. \linebreak
+%
+%Thus $E(\bar{X}_{m_T} - \bar{X}_{m_C}) \leq \gamma(\mu_T - \mu_C)$ for $\gamma = 1$, and Fellegi Sunter is EID for binary variables.
+%\end{frame}
+
+%\begin{frame}{MIB for Continuous Covariates}
+%	I can prove this for continuous covariates as well, but it requires many more steps and (minor) assumptions \linebreak
+%	
+%	There are also more parts of the definition of MIB that I don't fully understand yet, but it really feels like Fellegi-Sunter satisfies all of them.
+%\end{frame}
+
+\section{Fellegi Sunter as Course Probabilistic Matching}
+
+\begin{frame}{Course Probabilistic Matching}
+	In this context, I'd like to propose Course Probabilistic Matching (CPM). Instead coarsening the\emph{distance} between covariates, we will calculate the distance between coarsened covariates. For example, we would have $\gamma_{ij}^f = |C(X_{i, f}) - C(X_{j, f})|$, where $C(\cdot)$ is a coarsening function mapping bins in the covariate space to integer values. \linebreak
+	
+	We calculate probabilities exactly as we would under FS:
+	\begin{align*}
+		P(\Delta_{ij} = 1 | \gamma_{ij}) &= p(\Delta_{ij} = 1)\prod_f p(\gamma_{ij}^f|\Delta_{ij}= 1) \\
+		P(\Delta_{ij} = 0 | \gamma_{ij}) &= p(\Delta_{ij} = 0)\prod_f p(\gamma_{ij}^f|\Delta_{ij}= 0)
+	\end{align*}
+These are just products of relevant $m$ and $u$ probabilities.
+\end{frame}
+
+\begin{frame}{CEM}
+	Then, CEM can be viewed as a special case of CPM, where comparison vectors are constructed through $\gamma_{ij}^f = I(C(X_{i, f}) = C(X_{j, f}))$, and probabilities are assigned deterministically through \linebreak
+\begin{align*}
+	P(\Delta_{ij} = 1 | C(X_i) = C(X_j)) &= P(\Delta_{ij} = 1 |\gamma_{ij}^f = 1 , \forall f) = 1 \\
+	P(\Delta_{ij} = 1 | C(X_i) \neq C(X_j)) &= 0 \\
+\end{align*}
+Additionally, if the $m$ parameter gives all its probability mass to exact agreement, then the MIB bound for FS,  $\epsilon \sum_{k=1}^K k m_k$,  reduces down to just $\epsilon$, as provided in the paper.
+\end{frame}
+
+\section{Conclusion}
+\begin{frame}{Concluding Thoughts}
+	\begin{itemize}
+		\item Last week, I thought that FS would perform about the same as Mahalanobis distance, and that we would need to modify it a bunch to make it useful for causal inference
+		\item Now I suspect the Coarse Probabilistic Matching would outperform Course Exact Matching, right out of the box. It would find all of the coarsened "exact" matches, plus additional near matches, resulting in mild increases in covariate imbalance with substantial increases in sample size after matching
+		\item We can measure match quality through posterior probabilities, and discard matches we think are too weak
+		\item Since this matching method is fully Bayesian and probabilistic, we can create joint models for the matching and treatment effect estimation, propagating uncertainty between the steps, and averaging over many plausible matchings.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Tons of Ways Forward}
+	\begin{itemize}
+		\item Establish theory for CPM in the context of other matching methods, compare out of box performance
+		\item Incorporate propensity scores in the CPM method (estimate PS through draws of $\beta$, construct a comparison feature based on that score)
+		\begin{itemize}
+			\item More sophisticated, use scores in a dual latent class model. 
+		\end{itemize}
+		\item Variable selection prior for propensity score, feeding into a record linkage model on the selected covariates
+		\item Empirical Process for deriving bounds on covariate imbalance
+	\end{itemize}
+\end{frame}
+
+\end{document}
