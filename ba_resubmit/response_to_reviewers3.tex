@@ -78,7 +78,7 @@
 	\title{Response to Reviewer Comments}
 	\maketitle
 	
-\textcolor{teal}{We thank the Editor and reviewers for their assessment and constructive feedback.}
+We thank the Editor and Associate Editor for their assessment and constructive feedback.
 	
 %Thank you for the thoughtful feedback. We have made several broad changes to address the Editor's and Associate Editor's overall critiques, and have addressed each specific comment from the reviewer.
 
@@ -86,7 +86,7 @@
 
 \pointRaised{AE}{I must add that reading the paper still feels like a chore, in part because the notation is so heavy, which may be hard to avoid, but also, in part, because some wording choices make certain sentences hard to parse, which can certainly be improved.}
 
-\reply{We have made several revisions to make the paper easier to read, as described in our responses below. 
+\reply{We have made several revisions to the paper, as described in our responses below. 
 }
 
 %}
@@ -112,19 +112,21 @@
 %%% RCS: Thank the Editor, explain the change. I have removed repetition and shortened this bit. 
 
 \reply{
-To lighten the notation and allow for greater precision, we now refer to the two data files as $A$ and $B$. The updated material now reads:
+We now refer to the two data files as $A$ and $B$. The updated material now reads:
 	
 ``Consider two data files $A$ and $B$ comprising $n_A$ and $n_B$ records, respectively, and including $F$ linkage variables measured in both files. For $i=1, \dots, n_A$, let record $i$ be given by $A_i = (A_{i1}, \dots, A_{iF})$, so that $A = (A_i : i = 1, \dots, n_A)$.  Similarly, for $j=1, \dots, n_B$, let record $j$ be given by $B_j = (B_{j1}, \dots, B_{jF})$, so that $B = (B_j : j = 1, \dots, n_B)$.  Without loss of generality, denote files such that $n_A \geq n_B$.". See Section 2. 
 }
 
 \setcounter{responsectr}{0}
-\section{Reviewer Comments}
+\section{Associate Editor Comments}
 
 	\pointRaised{R}{%
 	For the missing data treatment now included just before Section 2.1, is the assumption truly missing at random, or missing completely at random? Or, does this distinction not matter because of the independence assumed across elements of the comparison vector?}
 	
 	
-	\reply{Because we assume that the agreement level for each field is conditionally independent given the matching status, MAR and MCAR are equivalent here. For simplicity, we have chosen to use MCAR in the article. We have included the following explanation of missingness in Section 2. 
+	\reply{
+		%Because we assume that the agreement level for each field is conditionally independent given the matching status, MAR and MCAR are equivalent here. For simplicity, we have chosen to use MCAR in the article. 
+		We have included the following explanation of missingness in Section 2. 
 		
 	``In the construction of comparison vectors, it is common to encounter missing information in record $A_i$ or $B_j$. As a result, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. We assume that this missingness occurs completely at random (MCAR, per \cite{LittleRubin2002}). To notate a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. With the MCAR assumption, we can marginalize over the missing data, and do all computation simply using the observed data."
 	}
@@ -165,21 +167,23 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 
 
 \pointRaised{R}{%
-	I do not understand the statement just below Equation (10): “When j has no match in $X_1$, we write $(n_1 +j, j) \in h_{P+1}$” My understanding of these patterns is that they are based on observed comparison vectors without consideration of Z (matches). In the second paragraph of Section 4.3, the H notation includes the matches (Z), in notation and definition that seems to conflict with the statement just below Equation (10). This also comes into play in Equation (16)}
+	I do not understand the statement just below Equation (10): “When j has no match in $X_1$, we write $(n_1 +j, j) \in h_{P+1}$” My understanding of these patterns is that they are based on observed comparison vectors without consideration of Z (matches). In the second paragraph of Section 4.3, the H notation includes the matches (Z), in notation and definition that seems to conflict with the statement just below Equation (10). This also comes into play in Equation (16).}
 	
 	
 	%% RCS: Tried to answer this from the original paper and the updated paper. Tried to make it shorter and close it out very quickly. 
 	
 
 	
-	\reply{Yes, the comparison vectors are created (and therefore, patterns are assigned) without regard to $\bm{Z}$. We have removed that sentence, and updated the equations in the Section 4.3 to avoid confusion}
+	\reply{Yes, the comparison vectors are created (and therefore, patterns are assigned) without regard to $\bm{Z}$. We have removed that sentence, and updated the equations in the Section 4.3 to avoid confusion.}
 
 
 \pointRaised{R}{%
 	Third paragraph of Section 4.1: The authors claim they are computing “sufficient statistics”. What exactly are these statistics sufficient for?
 	}
 	
-	\reply{We show in the revised Section 4.2 that we can write conditional likelihoods  and posterior updates for $\bm{m}$, $\bm{u}$, and $\bm{Z}$ using the statistics in $\tilde{\gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N} \}$. However, we cannot express the full likelihood in (14) through these statistics. Therefore, we have revised to text to say ``summary statistics" instead of  ``sufficient statistics."
+	\reply{We have revised the text to state ``summary statistics" instead of ``sufficient statistics."
+		
+		%We show in the revised Section 4.2 that we can write conditional likelihoods  and posterior updates for $\bm{m}$, $\bm{u}$, and $\bm{Z}$ using the statistics in $\tilde{\gamma} = \{\mathcal{P}, \mathcal{R}, \mathcal{N} \}$. However, we cannot express the full likelihood in (14) through these statistics. Therefore, we have revised to text to say ``summary statistics" instead of  ``sufficient statistics."
 	
 	%Thank for pointing out our typo. We have revised the text to state ``summary statistics" instead of ``sufficient statistics."
 	}
@@ -198,7 +202,7 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 % 
 	\reply{Our intended meaning was ``All record pairs contribute to the likelihood through the summary statistics." 
 		
-	In our revised submission, we have reexpressed the likelihood from (6a) through the perspective of agreement patterns in (14). This form of the likelihood is then used to express contributions to the likelihood for the $\bm{m}$ and $\bm{u}$ parameters in (15) and for $\bm{Z}$ in (17), both of which use the summary statistics. We hope that this revision makes this point more clear.}
+	In our revised submission, we have re-expressed the likelihood from (6a) through the perspective of agreement patterns in (14). This form of the likelihood is then used to express contributions to the likelihood for the $\bm{m}$ and $\bm{u}$ parameters in (15) and for $\bm{Z}$ in (17), both of which use the summary statistics. We hope that this revision makes this point more clear.}
 
 %\reply{%
 %	
@@ -214,7 +218,7 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 	
 	In the original manuscript, ``those comparison vectors" refer to removing the larger (and expensive) $\Gamma^{ab}$ from memory and continuing our calculations with the compressed comparison vectors $\tilde{\Gamma}^{ab}.$
 	
-	The revised text states: ``Then, we conduct hashing, obtain the compressed comparison matrix, $\tilde{\gamma}^{ab}$, and remove the memory-intensive comparison matrix, $\gamma^{ab}$, before continuing with the next chunk of data. See Section 4.3}
+	The revised text states: ``Then, we conduct hashing, obtain the compressed comparison matrix, $\tilde{\gamma}^{ab}$, and remove the memory-intensive comparison matrix, $\gamma^{ab}$, before continuing with the next batch of data. See Section 4.3.}
 	
 %	 \textcolor{red}{Question for Brian: is lowercase $\gamma$ always a matrix? Let's make sure we're not swapping between vectors and matrices. In the previous version this was a vector and now its listed as a matrix. I would argue that a matrix should use capital notation, such as $\Gamma.$}
 
@@ -227,7 +231,7 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 \pointRaised{R}{%
 	Where does $R^{SEI, cd}$ come into play in the partitioned algorithm presented in Equations (13) and (14)? I recommend that the authors either refrain from suppressing the SEI notation or further explain how the SEI algorithm has changed the quantities in these equations.}
 	
-\reply{To make the SEI algorithm more clear, we have revised the ordering of Sections 4, so that we have 1) hashing, 2) posterior inference, 3) chunkwise computation of the comparison matrix, and 4) SEI. With this new ordering, and with the newly provided equations (15) through (19), we hope it clearer that that the contribution of \emph{all} record pairs is recorded through the summary statistics in $\mathcal{N}$. In particular, (16a), (16b), and (18) depend only $\mathcal{N}$. The SEI algorithm only affects the step shown in (19). 
+\reply{To make the SEI algorithm more clear, we have revised the ordering of Sections 4, so that we have 1) hashing, 2) posterior inference, 3) chunkwise computation of the comparison matrix, and 4) SEI. With this new ordering, and with the newly provided equations (15) through (19), we hope it is clearer that that the contribution of \emph{all} record pairs is recorded through the summary statistics in $\mathcal{N}$. In particular, (16a), (16b), and (18) depend only $\mathcal{N}$. The SEI algorithm only affects the step shown in (19). 
 	}
 	
 	
@@ -262,7 +266,7 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 	Generally, the authors seem to arbitrarily use upper and lower case z interchangeably in function definitions.}
 
 \reply{%
-	We use $\bm{Z}$ when discussing a random quantity. In all instances where we discuss $Z_j$ taking on a particular value, we now use $q$ to avoid confusion and to follow notation used by \cite{sadinle_bayesian_2017}.
+	We use $\bm{Z}$ when discussing a random quantity. In all instances where we discuss the random variable $Z_j$ taking on a particular value, we now use $q$ to avoid confusion and to follow notation used by \cite{sadinle_bayesian_2017}.
 }
 
 \pointRaised{R}{%
@@ -277,14 +281,14 @@ Equations (8) and (9): Should the weights have superscript (s) (as the Zs do)?}
 }
 
 \reply{%
-	$\gamma$ is a comparison matrix comprised by comparison vectors. All references to $\gamma$ as a set have been removed. See Section 2, where we define both the comparison vector and comparison matrix.
+	The comparison matrix $\gamma$ is comprised of the comparison vectors for all record pairs in $A \times B$. All references to $\gamma$ as a set have been removed. See Section 2, where we define both the comparison vector and comparison matrix.
 }
 
 \pointRaised{R}{% 
 	Section 4.3, second paragraph, the definitions of the concatenated vectors $\alpha_0$ and $\beta_0$ should have final elements subscripted by $L_f$, where the sub-subscript is capitalized.}
 
 \reply{%
-	This has been revised; thank you. See Section 4.2
+	This has been revised; thank you. See Section 4.2,
 }
 
 

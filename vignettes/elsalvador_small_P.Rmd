@@ -121,7 +121,7 @@ overlap <- c(overlap_samples_fabl_resolved, overlap_samples_sadinle)
 #iteration <- c(iter_count, iter_count)
 df <- data.frame(overlap, method)
 #saveRDS(df, "../data/sadinle_smallp_df")
-
+df <- readRDS( "../data/sadinle_smallp_df")
 df <- df %>% 
   group_by(method) %>% 
   mutate(iteration = row_number())
@@ -167,10 +167,10 @@ overlap_trace <- df %>%
   geom_line() + 
   labs(x = NULL, 
        y = NULL) +
-  theme_bw(base_size = 14)
+  theme_bw(base_size = 16)
 
 overlap_trace
-ggsave("../notes/figures/el_salvador/overlap_trace.png")
+ggsave("../notes/figures/el_salvador/overlap_trace.png", plot = overlap_trace, width = 7, height = 7)
 
 # bayes_df$bayes <- nA + nB - bayes_df$bayes
 # df$overlap <- nA + nB - df$overlap
@@ -247,7 +247,7 @@ m_trace <- m_tidy %>%
   geom_line() +
   labs(x = NULL, y = NULL) +
   scale_x_continuous(labels = NULL, breaks = NULL) +
-  theme_bw(base_size = 14)
+  theme_bw(base_size = 16)
 
 ggsave("../notes/figures/el_salvador/m_trace.png", plot = m_trace)
 
@@ -272,7 +272,7 @@ u_trace <- u_tidy %>%
   geom_line() +
   labs(x = NULL, y = NULL) +
   scale_x_continuous(labels = NULL, breaks = NULL) +
-  theme_bw(base_size = 14)
+  theme_bw(base_size = 16)
 
 ggsave("../notes/figures/el_salvador/u_trace.png", plot = u_trace)
 
@@ -283,7 +283,7 @@ pi_trace <- Zchain_fabl$pi %>%
   geom_line() + 
   labs(x = NULL, 
        y = NULL) +
-  theme_bw(base_size = 14)
+  theme_bw(base_size = 16)
 
 ggsave("../notes/figures/el_salvador/pi_trace.png", plot = pi_trace)
 ```
