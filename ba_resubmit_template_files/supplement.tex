@@ -84,7 +84,7 @@
 \author{\fnms{Brian} \snm{Kundinger}\thanksref{addr1}\ead[label=e1]{brian.kundinger@duke.edu}},
 \author{\fnms{Jerome P.} \snm{Reiter}\thanksref{addr1}\ead[label=e2]{jreiter@duke.edu}}
 \and
-\author{\fnms{Rebecca C.} \snm{Steorts}\thanksref{addr2}\ead[label=e3]{beka@stat.duke.edu}}
+\author{\fnms{Rebecca C.} \snm{Steorts}\thanksref{addr1}\ead[label=e3]{beka@stat.duke.edu}}
 
 \runauthor{Kundinger et al.}
 
@@ -93,15 +93,16 @@ Duke University,
 P.O.\ Box 90251,
 Durham, NC 27708, USA
 \printead{e1}, % print email address of "e1"
-\printead*{e2}
+\printead*{e2},
+\printead*{e3}
 }
 
-\address[addr2]{Departments of Statistical Science and Computer Science,
-Duke University,
-P.O.\ Box 90251,
-Durham, NC 27708, USA
-\printead{e3}
-}
+%\address[addr2]{Departments of Statistical Science and Computer Science,
+%Duke University,
+%P.O.\ Box 90251,
+%Durham, NC 27708, USA
+%\printead{e3}
+%}
 
 %\thankstext{<id>}{<text>}
 \end{aug}
@@ -119,32 +120,38 @@ Durham, NC 27708, USA
 \appendix
 	
 		
-	
 	\hypertarget{app:derivations}{%
-	\section{Derivations of Full Conditionals}
-	\label{app:derivations}}
-%\textcolor{red}{Note: Please use s, s+1 consistently throughout. Or surpress the notation and tell the reader. It looks weird to go back and forth. I've tried to provide an intermediate solution. Perhaps Jerry can state if he would think this is okay as an Editor.}\\
+		\section{Derivations of Full Conditionals}\label{app:derivations}}
+	
+	We provide detailed derivations of the full-conditionals provided in Section \ref{sec:fast-beta-linkage}. The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
+	\begin{align}
+		\mathcal{L}(m_{fl}|\gamma, \bm{u}, \bm{Z}, \pi) &\propto \prod_{i=1}^{n_A} \prod_{j=1}^{n_B} m_{fl}^{I(Z_j = i) I(\gamma_{ij}^f = l) I_{obs}(\gamma_{ij}^f)}  m_{fl}^{\alpha_{fl} - 1} = m_{fl}^{\alpha_{fl}(\bm{Z}) - 1},
+	\end{align}
+	where $\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i=1}^{n_A}  \sum_{j=1}^{n_B} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(Z_j = i)$. Analogous procedures lead to $\mathcal{L}(u_{fl}| \gamma, \bm{m}, \bm{Z}, \pi)$  $\propto u_{fl}^{\beta_{fl}(\bm{Z}) - 1}$, where $\beta_{fl}(\bm{Z})= \beta_{fl} + \sum_{i=1}^{n_A}  \sum_{j=1}^{n_B} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(Z_j \neq i)$. Thus, for the vectors of parameters $\bm{m}_f$ and $\bm{u}_f$, we have
+	\begin{align}
+	\bm{m}_f^{(s+1)} |
+	\gamma, 
+	\bm{Z}^{(s)}, \bm{u}^{(s)}, \pi^{(s)} &\sim 
+	\text{Dirichlet}(\alpha_{f1}(\bm{Z}^{(s)}), \ldots, \alpha_{fL_f}(\bm{Z}^{(s)})), \\
+	\bm{u}_f^{(s+1)} | \gamma, \bm{Z}^{(s)}, \bm{m}^{(s)}, \pi^{(s)} &\sim \text{Dirichlet}(\beta_{f1}(\bm{Z}^{(s)}), \ldots, \beta_{fL_f}(\bm{Z}^{(s)})).
+	\end{align}
 
-\textcolor{teal}{We provide detailed derivations of the full-conditionals provided in Section~\ref{sec:fast-beta-linkage}. In our derivations below, we assume that the new update to the Gibbs sampler is $s+1$ and the current state of the sampler is $s.$ As to not overload notation, we suppress the state of the sampler until presenting the final update of the full conditional that appears in Section~\ref{sec:fast-beta-linkage}.}
+	Since $\pi$ encodes the rate of matching across the two data files, the full conditional $p(\pi|\gamma, \bm{Z}, \bm{m}, \bm{u}, \alpha_{\pi}, \beta_{\pi})$ depends only on the number of links $n_{AB}(\bm{Z}) = \sum_{i=1}^{n_B}I(Z_j \leq n_A)$ encoded by $\bm{Z}$ and hyperparameters. We have the full conditional
+	\begin{align}
+		p(\pi |\gamma, \bm{Z}, \bm{m}, \bm{u}) &\propto p(\bm{Z}|\pi)p(\pi) \\
+		&\propto \pi^{n_{AB}(\bm{Z})} (1-\pi)^{n_B - n_{AB}(\bm{Z})} \pi^{\alpha_{\pi} -1} (1-\pi)^{\beta_{\pi} -1} \\
+		&\propto \pi^{n_{AB}(\bm{Z}) + \alpha_{\pi} - 1} (1-\pi)^{n_A - n_{AB}(\bm{Z}) + \beta_{\pi} -1}.
+	\end{align}
+	Thus, $\pi^{(s+1)}|\gamma, \bm{Z}^{(s)}, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}$ has a $\text{Beta}(n_{AB}(\bm{Z}^{(s)}) + \alpha_{\pi}, n_B - n_{AB}(\bm{Z}^{(s)}) + \beta_{\pi})$ distribution.
+	
+	Due to the independence in the fast beta prior in \eqref{eqn:fast_beta_prior}, we can obtain the full conditional for $\bm{Z}$ through the full conditionals for each individual $Z_j$. Let $\Gamma_{.j}$ denote the random matrix of $n_A$ comparison vectors relating to an arbitrary record $B_j$, and let $\gamma_{.j}$ be a realization of $\Gamma_{.j}$. We have
+	\begin{align}
+		p(\bm{Z} | \gamma, \bm{m}, \bm{u}, \pi) &= \prod_{j=1}^{n_B} p(Z_j | \gamma_{.j}, \bm{m}, \bm{u}, \pi).
+		%&\propto p(\Gamma| \bm{Z}, \bm{m}, \bm{u}) p(\bm{Z} | \pi) \\
+		%&=\prod_{j=1}^{n_B} p(\Gamma_{.j}| Z_j, \bm{m}, \bm{u}) p(Z_j | \pi) \\
+	\end{align}
 
-The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
-\begin{align*}
-	\mathcal{L}(m_{fl}|\gamma, \alpha_{fl}, \bm{u}, \bm{Z}, \pi) &\propto \prod_{i=1}^{n_A} \prod_{j=1}^{n_B} m_{fl}^{I(Z_j = i) I(\gamma_{ij}^f = l) I_{obs}(\gamma_{ij}^f)}  m_{fl}^{\alpha_{fl} - 1} = m_{fl}^{\alpha_{fl}(\bm{Z}) - 1},
-\end{align*}
-where $\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(Z_j = i)$. Analogous procedures lead to the posterior distribution $\mathcal{L}(u_{fl}| \gamma, \beta_{fl}, \bm{m}, \bm{Z}, \pi)$  $\propto u_{fl}^{\beta_{fl}(\bm{Z}) - 1}$, where $\beta_{fl}(\bm{Z})= \beta_{fl} + \sum_{i,j} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(Z_j \neq i)$. Thus for the vectors of parameters $\bm{m}_f$ and $\bm{u}_f$, we have
-
-$$\bm{m}_f^{(s+1)}|\bm{Z}^{(s)}, \gamma \sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}^{(s)}), \ldots, \alpha_{fL_f}(\bm{Z}^{(s)})),$$
-$$\bm{u}_f^{(s+1)}|\bm{Z}^{(s)}, \gamma \sim \text{Dirichlet}(\beta_{f1}(\bm{Z}^{(s)}), \ldots, \beta_{fL_f}(\bm{Z}^{(s)})).$$
-
-Since $\pi$ encodes the rate of matching across the two data files, the full conditional $p(\pi|\gamma, \bm{Z}, \bm{m}, \bm{u}, \alpha_{\pi}, \beta_{\pi})$ depends only on the number of links $n_{AB}(\bm{Z}) = \sum_{i=1}^{n_B}I(Z_j < n_A + j)$ encoded by $\bm{Z}$ and hyperparameters. We have the full conditional
-\begin{align*}
-	p(\pi | \bm{Z}, \alpha_{\pi}, \beta_{\pi}) &\propto p(\bm{Z}|\pi)p(\pi) \\
-	&\propto \pi^{n_{AB}(\bm{Z})} (1-\pi)^{n_B - n_{AB}(\bm{Z})} \pi^{\alpha_{\pi} -1} (1-\pi)^{\beta_{\pi} -1} \\
-	&\propto \pi^{n_{AB}(\bm{Z}) + \alpha_{\pi} - 1} (1-\pi)^{n_A - n_{AB}(\bm{Z}) + \beta_{\pi} -1}.
-\end{align*}
-Thus, $\pi^{(s+1)}|\bm{Z}^{(s+1)},  \alpha_{\pi}, \beta_{\pi}$ has a $\text{Beta}(n_{AB}(\bm{Z}^{(s)}) + \alpha_{\pi}, n_B - n_{AB}(\bm{Z}^{(s)}) + \beta_{\pi})$ distribution.
-
-To express the full conditional for $\bm{Z}$, we consider the cases where $Z_j$ does not have a link in $A$ and where $Z_j$ does have a link in $A$. Because we sample each $Z_j$ independently of all other $Z_{j'}$ (for $j \neq j'$), we need only the full conditional for each individual $Z_j$. {\color{red}{Let $\Gamma_{.j}$ denote the matrix of $n_A$ comparison vectors relating to record $B_j$.}} Following the observation of \cite{wortman2019}, when $B_j$ does not link to any record in $A$, the contribution to the likelihood is simply a product of $u$ parameters, which we will call $c_j$:
+Following the observation of \cite{wortman2019}, when $B_j$ does not link to any record in $A$, the contribution to the likelihood is simply a product of $u$ parameters, which we will call $c_j$:
 \begin{align}
 	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j = n_A + j) = \prod_{i=1}^{n_A}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} = c_j.
 \end{align}
@@ -154,14 +161,14 @@ When $Z_j = q$ for some $q\leq n_A$, we have
 \end{align}
 We multiply and divide by the $u$ parameters for the matching record pair to obtain
 \begin{align}
-	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j = q) &\propto \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{qj}^f = l)I_{obs}(\gamma_{qj}^f)}  \prod_{i = 1}^{n_A}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
+	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j = q) &= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{qj}^f = l)I_{obs}(\gamma_{qj}^f)}  \prod_{i = 1}^{n_A}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
 	&= w_{qj}  c_j.
 \end{align}
 We can divide the result of each case by $c_j$ to get
 \begin{align}
 	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j) \propto \begin{cases} 
 		w_{qj}, & q \leq n_A; \\
-		1, &  q  = n_A + j. \
+		1, &  q  = n_A + j.
 	\end{cases}
 \end{align}
 Lastly, we multiply the likelihood by the fast beta prior in (\ref{eqn:fast_beta_prior}) to obtain the full conditional
@@ -170,101 +177,118 @@ Lastly, we multiply the likelihood by the fast beta prior in (\ref{eqn:fast_beta
 	p\left(Z_j^{(s+1)}  = q|\gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}\right) \propto
 	\begin{cases} 
 		\frac{\pi^{(s+1)}}{n_A} w_{qj}^{(s+1)},  & q \leq n_A; \\
-		1 - \pi^{(s+1)}, & q  = n_A + j. \
+		1 - \pi^{(s+1)}, & q  = n_A + j.
 	\end{cases}
 \end{align}
 
-\textcolor{teal}{Observe that the full conditional in (\ref{eqn:z_full_conditional2}) does not depend on $\bm{Z}^{(s)},$ implying that 
-\begin{align}
-p(\bm{Z}^{(s+1)} \mid \gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi) \propto \prod_q \left(\prod_j
-p\left(Z_j^{(s+1)}  = q \mid \gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi \right)
-\right).
-\end{align}
-Therefore, we update the full conditional for $\bm{Z}^{(s+1)}$ in parallel. This contrasts the Gibbs sampler of  \cite{sadinle_bayesian_2017}, where the update to the matching matrix is sequential and accomplished using a partially collapsed Gibbs sampler, where one integrates out $\pi.$ We do not opt for this approach as it would lead to similar sequential updates, which are computationally slow.}
-
-
-
-\hypertarget{bayes-estimate}{%
+	
+%	To express the full conditional for $\bm{Z}$, we consider the cases where $Z_j$ does not have a link in $A$ and where $Z_j$ does have a link in $A$. Because we sample each $Z_j$ independently of all other $Z_{j'}$ (for $j \neq j'$), we need only the full conditional for each individual $Z_j$. Let $\Gamma_{.j}$ denote the matrix of $n_A$ comparison vectors relating to record $B_j$. Following the observation of \cite{wortman2019}, when $B_j$ does not link to any record in $A$, the contribution to the likelihood is simply a product of $u$ parameters, which we will call $c_j$:
+%	\begin{align}
+%		p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j = n_A + j) = \prod_{i=1}^{n_A}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} = c_j.
+%	\end{align}
+%	When $Z_j = q$ for some $q\leq n_A$, we have
+%	\begin{align}
+%		p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi,  Z_j = q) =\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(\gamma_{qj}^f = l)I_{obs}(\gamma_{qj}^f)}  \prod_{i \neq q}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.
+%	\end{align}
+%	We multiply and divide by the $u$ parameters for the matching record pair to obtain
+%	\begin{align}
+%		p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j = q) &= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{qj}^f = l)I_{obs}(\gamma_{qj}^f)}  \prod_{i = 1}^{n_A}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
+%		&= w_{qj}  c_j.
+%	\end{align}
+%	We can divide the result of each case by $c_j$ to get
+%	\begin{align}
+%		p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j) \propto \begin{cases} 
+%			w_{qj}, & q \leq n_A; \\
+%			1, &  q  = n_A + j. \
+%		\end{cases}
+%	\end{align}
+%	Lastly, we multiply the likelihood by the fast beta prior in (\ref{eqn:fast_beta_prior}) to obtain the full conditional
+%	\begin{align}
+%		\label{eqn:z_full_conditional2}
+%		p\left(Z_j^{(s+1)}  = q|\gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}\right) \propto
+%		\begin{cases} 
+%			\frac{\pi^{(s+1)}}{n_A} w_{qj}^{(s+1)},  & q \leq n_A; \\
+%			1 - \pi^{(s+1)}, & q  = n_A + j. \
+%		\end{cases}
+%	\end{align}
+	
+	\hypertarget{bayes-estimate}{%
 		\section{Bayes Estimate}
 		\label{bayes-estimate}}
 	
 We calculate a Bayes estimate $\hat{\bm{Z}}$ for the linkage parameter $\bm{Z}$ by assigning different positive losses to different types of errors, and minimizing posterior expected loss. We adopt the loss function proposed in \cite{sadinle_bayesian_2017} in which $\hat{Z}_j \in \{1, \ldots, n_A, n_A + j, R\}$, with $R$ representing the option to leave the matching undetermined by the model. Specifically, we have
-	\[L(\hat{Z_j}, Z_j)=\begin{cases} 
+\begin{align}
+	L(\hat{Z_j}, Z_j)=\begin{cases} 
 		0,  & \text{if } Z_j = \hat{Z_j}; \\
 		\theta_R,  & \text{if } \hat{Z_j} = R; \\
 		\theta_{10},  & \text{if } Z_j \leq 1,\hat{Z_j} = n_A + j ; \\
 		\theta_{01},  & \text{if } Z_j = n_A + j,\hat{Z_j} \leq n_A ; \\
 		\theta_{11},  & \text{if } Z_j \leq n_A, \hat{Z}_j \leq n_A, Z_j \neq \hat{Z_j}. \\
-	\end{cases}\] 
+	\end{cases}
+\end{align}
 Here, $\theta_R$ is the loss from not making a decision on the linkage status, $\theta_{10}$ is the loss from a false nonmatch, $\theta_{01}$ is the loss from a false match, and $\theta_{11}$ is the loss from the special case of a false match in which the record has a true match other than the one estimated by the model. 
 
-In general, we set $(\theta_{10}, \theta_{01}, \theta_{11}, \theta_R) = (1, 1, 2, \infty)$ inducing the decision rule
-	$$\hat{Z}_j =\begin{cases} 
+In general, we follow \cite{sadinle_bayesian_2017} and set $(\theta_{10}, \theta_{01}, \theta_{11}, \theta_R) = (1, 1, 2, \infty)$ inducing the decision rule
+	\begin{align}
+		\hat{Z}_j =\begin{cases} 
 		i,  & \text{if } p(Z_j = i |\gamma) > \frac{1}{2}; \\
 		0,  & \text{otherwise}. \\
-	\end{cases}$$
+	\end{cases}
+\end{align}
 Since \texttt{fabl} does not strictly enforce one-to-one matching, it is possible for this Bayes estimate to link multiple records in $B$ to one record in $A$. In the event that we have two records $B_j$ and $B_{j'}$ such that both $p(\hat{Z}_j = i |\gamma) > \frac{1}{2}$ and $ p(\hat{Z}_{j'} = i |\gamma) > \frac{1}{2}$, we accept the match with the higher posterior probability, and declare the other to have no match. Since each $Z_j$ is independent, this is equivalent to minimizing the expected loss subject to the constraint that $\hat{Z}_j \neq \hat{Z}_{j'}$ for all $j \neq j'$.  A similar approach appears in the most probable maximal matching sets used by \cite{steorts_bayesian_2016} to match records to latent entities.
 
 When we seek a partial estimate of the linkage structure, leaving a portion of record pairs to be classified manually in clerical review, we adopt losses $(\theta_{10}, \theta_{01}, \theta_{11}, \theta_R) = (1, 1, 2, .1)$. For a more in-depth explanation of this function and the induced Bayes estimate, see \cite{sadinle_bayesian_2017}.
-
-
-	\hypertarget{partial}{%
-	\section{Accuracy under Partial Estimates}\label{partial}}
-
-In this section, we repeat the simulation study in Section \ref{accuracy} of the main text, allowing for clerical review rather than forcing all records to have or not have links.  Specifically, by leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the negative predictive value (NPV), defined as the proportion of non-links that are actual nonmatches. Mathematically, $\text{NPV} = \sum_{j=1}^{n_B} I(\hat{Z}_j = Z_j = n_A + j)$/$\sum_{j=1}^{n_B} I(\hat{Z}_j = n_A + j)$. We continue to use the precision, which is renamed the positive predictive value (PPV) in this context. Lastly, we also examine the rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_B} I(\hat{Z}_j = R)/n_B$. To convey this information alongside NPV and PPV, for which values close to 1 indicate strong performance, we report the decision rate (DR), defined as DR = $1 - RR$.
-
-In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} maintains equivalently strong PPV as \texttt{BRL} across all linkage settings. However, with high amounts of error, and thus fewer accurate and discerning fields of information, the rejection rate under \texttt{fabl} rises, leading to a decrease in NPV. Since \texttt{fabl} does not remove previously matched records from consideration for a new record, posterior probabilities of matches at times can be split across more records; in contrast, \texttt{BRL} is able to maintain higher confidence in matches in this setting. If one wishes to use partial estimates, \texttt{fabl} will possibly leave more linkages for the modeler to match by hand than would be left under \texttt{BRL}, but the decisions made by each method should have nearly equal accuracy. 
-
-%In practice, it is rare to encounter linkage tasks with 90\% overlap, so we remain confident in \texttt{fabl}'s performance. If one wishes to use partial estimates, \texttt{fabl} will possibly leave more linkages for the modeler to match by hand that would be left under \texttt{BRL}, but the decisions made by each method will have nearly equal accuracy. 
-
-%This is reasonable because large numbers of errors blur the distinction between matched and nonmatched pairs, leading to situations where one record in $\bm{X}_2$ has multiple plausible matches in $\bm{X}_1$, so that posterior match probability is split across more records.
-
-\begin{figure}[t]
-	\begin{center}
-%	        \includegraphics[width=0.6\textwidth]{finalFigures/figures/sadinle_sim_plot_partial_DR} 
-		\includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_sim_plot_partial_DR} 
-		\caption{Negative predictive value (NPV), positive predictive value (PPV), and decision rate (DR) on data files in the simulation in Appendix \ref{partial}. We see poorer performance for \texttt{fabl} only in situations with high overlap.}
-		\label{fig:sadinle_simulation_partial}
-	\end{center}
-\end{figure}
-	
 	
 	\hypertarget{appendix-sim}{%
 		\section{Traceplots for Simulation Study}\label{app:appendix-sim}}
 	Figures \ref{fig:sim_overlap_trace}, \ref{fig:sim_m_trace}, and \ref{fig:sim_u_trace} are traceplots for one of the 900 linkage tasks that comprise the simulation in Section \ref{accuracy}. It is set up with one error across the linkage fields and 50 duplicates across files. Traceplots across other settings exhibit similar behavior. Note that traceplots for $\bm{u}$ parameters show very little variation because the overwhelming majority of record pairs are nonmatching.  
 	
-	\begin{figure}[!h]
+	\begin{figure}[h]
 		\begin{center}
-%		        \includegraphics[width=0.6\textwidth]{finalFigures/figures/sim_overlap_trace} 
 			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_overlap_trace} 
 			\caption{Representative traceplot of overlap between files from simulation study in Section \ref{accuracy}.}\label{fig:sim_overlap_trace}
 		\end{center}
 	\end{figure}
 	
 	
-	\begin{figure}[!h]
+	\begin{figure}
 		\begin{center}
-%		         \includegraphics[width=0.6\textwidth]{finalFigures/figures/sim_m_trace} 
-		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_m_trace} 
+			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_m_trace} 
 			\caption{Representative traceplot of $\bm{m}$ parameter from simulation study in Section \ref{accuracy}.}\label{fig:sim_m_trace}
 		\end{center}
-	\end{figure}
-	
-	\begin{figure}[!h]
+
 		\begin{center}
-%		        \includegraphics[width=0.6\textwidth]{finalFigures/figures/sim_u_trace} 
-		\includegraphics[width=0.6\textwidth]{../notes/figures/sim_u_trace} 
+			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_u_trace} 
 			\caption{Representative traceplot of $\bm{u}$ parameters from simulation study in Section \ref{accuracy}.}\label{fig:sim_u_trace}
 		\end{center}
 	\end{figure}
 
 \clearpage
 
+	\hypertarget{partial}{%
+	\section{Accuracy under Partial Estimates}\label{partial}}
+
+In this section, we repeat the simulation study in Section \ref{accuracy}, allowing for clerical review rather than forcing all records to have or not have links.  Specifically, by leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the negative predictive value (NPV), defined as the proportion of non-links that are actual nonmatches. Mathematically, $\text{NPV} = \sum_{j=1}^{n_B} I(\hat{Z}_j = Z_j = n_A + j)$/$\sum_{j=1}^{n_B} I(\hat{Z}_j = n_A + j)$. We continue to use the precision, which is renamed the positive predictive value (PPV) in this context. Lastly, we also examine the rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_B} I(\hat{Z}_j = R)/n_B$. To convey this information alongside NPV and PPV, for which values close to 1 indicate strong performance, we report the decision rate (DR), defined as DR = $1 - RR$.
+
+In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} maintains equivalently strong PPV as \texttt{BRL} across all linkage settings. However, with high amounts of error, and thus fewer accurate and discerning fields of information, the rejection rate under \texttt{fabl} rises, leading to a decrease in NPV. Since \texttt{fabl} does not remove previously matched records from consideration for a new record, posterior probabilities of matches at times can be split across more records; in contrast, \texttt{BRL} is able to maintain higher confidence in matches in this setting. If one wishes to use partial estimates, \texttt{fabl} will possibly leave more linkages for the modeler to match by hand than would be left under \texttt{BRL}, but the decisions made by each method should have nearly equal accuracy. 
+
+
+
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=0.99\textwidth]{../notes/figures/sadinle_sim_plot_partial2} 
+		\caption{Negative predictive value (NPV), positive predictive value (PPV), and decision rate (DR) on data files in the simulation in Supplement \ref{partial}. We see poorer performance for \texttt{fabl} only in situations with high overlap.}
+		\label{fig:sadinle_simulation_partial}
+	\end{center}
+\end{figure}
+
+\clearpage
+
 	\hypertarget{appendix-speed}{%
 	\section{Additional Speed Simulation Study}\label{app:appendix-speed}}
-	Figures \ref{fig:app-speed1} and \ref{fig:app-speed2} illustrate that different constructions of the comparison vectors lead to similar speed gains. We replicate the speed study of Section \ref{speed} under different settings. Here, we use four fields of comparison, each with three possible levels of agreement, resulting in $3^4 = 81$ possible patterns. The $\bm{m}$ and $\bm{u}$ parameters for this simulation are shown Table \ref{Tab:distributions_2}.
+	Figures \ref{fig:app-speed1} and \ref{fig:app-speed2} illustrate that different constructions of the comparison vectors lead to similar speed gains. We replicate the speed study of Section \ref{speed} under different settings. Here, we use four fields of comparison, each with three possible levels of agreement, resulting in $3^4 = 81$ possible patterns. The $\bm{m}$ and $\bm{u}$ parameters for this simulation are shown in Table \ref{Tab:distributions_2}.
 	
-		\begin{table}[t]
+		\begin{table}[h]
 		\centering
 		\begin{tabular}{llll|lll}
 			\multicolumn{1}{c}{ } & \multicolumn{3}{c}{$\bm{m}$} & \multicolumn{3}{c}{$\bm{u}$} \\
@@ -277,56 +301,72 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 			Feature 4 & $\frac{9}{10}$ & $\frac{9}{100}$  & $\frac{1}{100}$ & $\frac{1}{100}$ &  $\frac{3}{100}$ & $\frac{96}{100}$ \\ 
 			\hline
 		\end{tabular}
-		\caption{Probabilities used for $\bm{m}$ and $\bm{u}$ distributions in simulation study in Appendix \ref{app:appendix-speed}.}\label{Tab:distributions_2}
+		\caption{Probabilities used for $\bm{m}$ and $\bm{u}$ distributions in simulation study in Supplement \ref{app:appendix-speed}.}\label{Tab:distributions_2}
 	\end{table}
 	
-	\begin{figure}[h!]
-		\begin{center} 
-%		\includegraphics[width=0.6\textwidth]{finalFigures/figures/sadinle_speed_plot_slides2} 
-		\includegraphics[width=0.6\textwidth]{../notes/figures/sadinle_speed_plot_slides2} 
-			\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations in simulation study in Appendix \ref{app:appendix-speed}, including hashing step for \texttt{fabl}, for increasing values of both $n_A$ and $n_B$. We see near quadratic growth in run-time for \texttt{BRL}, and near linear growth for \texttt{fabl}.}\label{fig:app-speed1}
-		\end{center}
-	\end{figure}
-	
-	\begin{figure}[h!]
-		\begin{center}
-%		 \includegraphics[width=0.6\textwidth]{finalFigures/figures/speed_plot_fixed_nB_slides2} 
-		 \includegraphics[width=0.6\textwidth]{../notes/figures/speed_plot_fixed_nB_slides2} 
-			\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations in simulation study in Appendix \ref{app:appendix-speed}, including hashing step for \texttt{fabl}, with increasing $n_A$ and $n_B$ fixed at 500. We see linear growth in run-time for \texttt{BRL}, and near constant run-time for \texttt{fabl}.}\label{fig:app-speed2}
-		\end{center}
-	\end{figure}
+
+
+	\begin{figure}[h]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=0.95\textwidth]{../notes/figures/sadinle_speed_plot2_new}
+		\caption{}
+		\label{fig:app-speed1}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=0.95\textwidth]{../notes/figures/speed_plot_fixed_nB2_new} 
+		\caption{}
+		\label{fig:app-speed2}
+	\end{subfigure}
+	\caption{Run-time for \texttt{BRL} and \texttt{fabl} to run 1000 Gibbs iterations in simulations described in Supplement \ref{app:appendix-speed}. In (\ref{fig:app-speed1}), both $n_A$ and $n_B$ are increasing. We see quadratic growth in \texttt{BRL} and linear growth in \texttt{fabl}. In (\ref{fig:app-speed2}), only $n_A$ only is increasing. We see linear growth in \texttt{BRL} and approximately constant run-time in \texttt{fabl}.}
+	\label{fig:app-speed_sims}
+\end{figure}
 
 \clearpage
-	
+
 	\hypertarget{appendix-es}{%
 		\section{Traceplots for El Salvador Case Study}\label{app:appendix-es}}
 	
-	\begin{figure}[!h]
-		\begin{center}
-%		         \includegraphics[width=0.6\textwidth]{finalFigures/el_salvador/overlap_trace} 
-		\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/overlap_trace} 
-			\caption{Traceplot for number of matches found across data files in El Salvador case study.} \label{fig:overlap_trace}
-		\end{center}
-	\end{figure}
-	
-	\begin{figure}[!h]
-		\begin{center}
-%		         \includegraphics[width=0.6\textwidth]{finalFigures/el_salvador/m_trace} 
-			\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/m_trace} 
-			\caption{Traceplot for $\bm{m}$ parameter in El Salvador case study.} 
-			\label{fig:m_trace}
-		\end{center}
-	\end{figure}
-	
-	\begin{figure}[!h]
-		\begin{center}
-%		        \includegraphics[width=0.6\textwidth]{finalFigures/el_salvador/u_trace} 
-		\includegraphics[width=0.6\textwidth]{../notes/figures/el_salvador/u_trace} 
-			\caption{Traceplot for $\bm{u}$ parameter in El Salvador case study.} 
-			\label{fig:u_trace}
-		\end{center}
-	\end{figure}
+
+
+    \begin{figure}[h!]
+	\centering
+	\begin{subfigure}[b]{0.475\textwidth}
+		\centering
+		\includegraphics[width=0.975\textwidth]{../notes/figures/el_salvador/overlap_trace} 
+		\caption{Traceplot for overlap between files.}    
+		\label{fig:overlap_trace}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.475\textwidth}  
+		\centering 
+		\includegraphics[width=0.975\textwidth]{../notes/figures/el_salvador/pi_trace} 
+		\caption{Traceplot for $\pi$.}  
+		\label{fig:pi_trace}
+	\end{subfigure}
+	\vskip\baselineskip
+	\begin{subfigure}[b]{0.475\textwidth}   
+		\centering 
+		\includegraphics[width=0.975\textwidth]{../notes/figures/el_salvador/m_trace} 
+		\caption{Traceplot for $\bm{m}$ parameters.}   
+		\label{fig:m_trace}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}[b]{0.475\textwidth}   
+		\centering 
+		\includegraphics[width=0.975\textwidth]{../notes/figures/el_salvador/u_trace} 
+		\caption{Traceplot for $\bm{u}$ parameters.}
+		\label{fig:u_trace}
+	\end{subfigure}
+	\caption{Traceplots for parameters of interest in El Salvador case study in Section \ref{el_salvador}.}
+	\label{fig:el_salvador_trace}
+\end{figure}
 \end{document}
 
+\end{document}
+
+
 	\bibliographystyle{jasa}
-	\bibliography{biblio}
+	\bibliography{fabl}
