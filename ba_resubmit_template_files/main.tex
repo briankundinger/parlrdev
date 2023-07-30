@@ -613,6 +613,12 @@ There are several challenges with these data. First, the ERTL data file was auto
 	In this paper, we have proposed \texttt{fabl}, a Bayesian record linkage method that extends the work of \cite{sadinle_bayesian_2017} to scale to large data sets. We have proven that the proposed hashing method and model assumptions allow for a linkage procedure whose computational complexity does not scale with the size of the larger data file. This makes \texttt{fabl} computationally advantageous in many linkage scenarios, particularly when one data file is substantially smaller than the other. We have also shown that storage efficient indexing, in tandem with hashing, greatly reduces the memory costs required for all-to-all comparisons, giving practitioners an option for larger record linkage tasks potentially even without the use of blocking or indexing. We have demonstrated the speed and accuracy of \texttt{fabl} by replicating a simulation study and a case study in \cite{sadinle_bayesian_2017}, and through an additional case study that is computationally impractical under \texttt{BRL}. 
 	
 	Although the \texttt{fabl} method greatly reduces the memory costs for all-to-all comparisons, computing the comparisons for all $n_A  n_B$ record pairs still can be prohibitive for larger linkage tasks. Indeed, constructing the comparison vectors for the NLTCS linkage task involving around 40,000 records in Section \ref{nltcs} took around 40 minutes. Due to the quadratic nature of the comparison space, this computation time would grow quickly with the size of the linkage task, and would be infeasibly slow when dealing with millions of records. Although it is common to use deterministic blocking to reduce the comparison space and then apply probabilistic record linkage within each block, issues arise when sizes of blocks vary across the linkage task. In future work, we seek to extend \texttt{fabl} to account for such deterministic blocking, making the framework amenable to even larger linkage tasks.
+	
+\begin{supplement}
+\stitle{Supplementary Material of ``Efficient and Scalable Bipartite Matching with
+Fast Beta Linkage (fabl)." See the .pdf document}
+\sdescription{}
+\end{supplement}	
 
 	
 	\clearpage
