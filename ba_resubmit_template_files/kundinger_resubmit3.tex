@@ -778,10 +778,13 @@ There are several challenges with these data. First, the ERTL data file was auto
 	\begin{align}
 		\mathcal{L}(m_{fl}|\gamma, \bm{u}, \bm{Z}, \pi) &\propto \prod_{i=1}^{n_A} \prod_{j=1}^{n_B} m_{fl}^{I(Z_j = i) I(\gamma_{ij}^f = l) I_{obs}(\gamma_{ij}^f)}  m_{fl}^{\alpha_{fl} - 1} = m_{fl}^{\alpha_{fl}(\bm{Z}) - 1},
 	\end{align}
-	where $\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i=1}^{n_A}  \sum_{j=1}^{n_B} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(Z_j = i)$. Analogous procedures lead to $\mathcal{L}(u_{fl}| \gamma, \bm{m}, \bm{Z}, \pi)$  $\propto u_{fl}^{\beta_{fl}(\bm{Z}) - 1}$, where $\beta_{fl}(\bm{Z})= \beta_{fl} + \sum_{i=1}^{n_A}  \sum_{j=1}^{n_B} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(Z_j \neq i)$. Thus for the vectors of parameters $\bm{m}_f$ and $\bm{u}_f$, we have
+	where $\alpha_{fl}(\bm{Z})= \alpha_{fl} + \sum_{i=1}^{n_A}  \sum_{j=1}^{n_B} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(Z_j = i)$. Analogous procedures lead to $\mathcal{L}(u_{fl}| \gamma, \bm{m}, \bm{Z}, \pi)$  $\propto u_{fl}^{\beta_{fl}(\bm{Z}) - 1}$, where $\beta_{fl}(\bm{Z})= \beta_{fl} + \sum_{i=1}^{n_A}  \sum_{j=1}^{n_B} I_{obs}(\gamma_{ij}^f)I(\gamma_{ij}^f = l) I(Z_j \neq i)$. Thus, for the vectors of parameters $\bm{m}_f$ and $\bm{u}_f$, we have
 	\begin{align}
-	\bm{m}_f^{(s+1)}|\gamma, \bm{Z}^{(s)}, \bm{u}^{(s)}, \pi^{(s) &\sim \text{Dirichlet}(\alpha_{f1}(\bm{Z}^{(s)}), \ldots, \alpha_{fL_f}(\bm{Z}^{(s)})), \\
-	\bm{u}_f^{(s+1)}|\gamma, \bm{Z}^{(s)}, \bm{m}^{(s)}, \pi^{(s) &\sim \text{Dirichlet}(\beta_{f1}(\bm{Z}^{(s)}), \ldots, \beta_{fL_f}(\bm{Z}^{(s)})).
+	\bm{m}_f^{(s+1)} \mid
+	\gamma, 
+	\bm{Z}^{(s)}, \bm{u}^{(s)}, \pi^{(s)} &\sim 
+	\text{Dirichlet}(\alpha_{f1}(\bm{Z}^{(s)}), \ldots, \alpha_{fL_f}(\bm{Z}^{(s)})), \\
+	\bm{u}_f^{(s+1)} \mid \gamma, \bm{Z}^{(s)}, \bm{m}^{(s)}, \pi^{(s)} &\sim \text{Dirichlet}(\beta_{f1}(\bm{Z}^{(s)}), \ldots, \beta_{fL_f}(\bm{Z}^{(s)})).
 	\end{align}
 
 	Since $\pi$ encodes the rate of matching across the two data files, the full conditional $p(\pi|\gamma, \bm{Z}, \bm{m}, \bm{u}, \alpha_{\pi}, \beta_{\pi})$ depends only on the number of links $n_{AB}(\bm{Z}) = \sum_{i=1}^{n_B}I(Z_j \leq n_A)$ encoded by $\bm{Z}$ and hyperparameters. We have the full conditional
