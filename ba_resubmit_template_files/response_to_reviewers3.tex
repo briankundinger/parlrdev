@@ -125,7 +125,8 @@ We now refer to the two data files as $A$ and $B$. The updated material now read
 	
 	
 	\reply{
-	The reviewer is correct that the distinction does not matter between MCAR and MAR. We have included the following explanation of missingness in Section 2.
+	%% Brian: I think it is important to tell the AE he is correct above and we are happy to add a note in later if he/she wants this. In this way, we can close out this question and avoid future ones. 
+	\textcolor{teal}{The reviewer is correct that the distinction does not matter between MCAR and MAR; we opt for using MCAR. We have included the following explanation of missingness in Section 2. We are happy to add a clarification regarding this point if the AE believes it would be helpful for the general readership.}
 %		Because we assume that the agreement level for each field is conditionally independent given the matching status, MAR and MCAR are equivalent here. For simplicity, we have chosen to use MCAR in the article. 
 %		We have included the following explanation of missingness in Section 2. 
 		
@@ -148,10 +149,10 @@ We now refer to the two data files as $A$ and $B$. The updated material now read
 	}
 
 	\pointRaised{R}{%
-Appendix 8.2: Thank you for including the details on integrating out pi from the full conditionals. They surprised me. I had assumed that the authors had integrated out pi in the prior for Z, as this is what Sadinle (2017) had done to form the “beta prior for bipartite matchings”. (1) Does the alternate approach presented in this paper provide a different algorithm than directly integrating the prior distribution? (2) Is the presented alternative approach justified?}
+Appendix 8.2: Thank you for including the details on integrating out pi from the full conditionals. They surprised me. I had assumed that the authors had integrated out pi in the prior for Z, as this is what Sadinle (2017) had done to form the “beta prior for bipartite matchings”.  Does the alternate approach presented in this paper provide a different algorithm than directly integrating the prior distribution? Is the presented alternative approach justified?}
 
 \reply{%
-		We realize that the integration of $\pi$ out of the full conditionals is not necessary for our sampler. Therefore, we have updated the paper with full conditionals for the standard Gibbs sampler. 
+		We realize that the integration of $\pi$ out of the full conditionals is not necessary for our proposed sampler. Therefore, we have updated the paper with the full conditional distributions for a standard Gibbs sampler. See Section 3 and Supplement A. 
 		
 		We have redone all simulations and case studies using a Gibbs sampler that samples $\pi$ from its full conditional, and then samples $\bm{Z}$ from its full conditionals. We obtained equivalent results.
 	}
@@ -232,7 +233,7 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 \pointRaised{R}{%
 	Where does $R^{SEI, cd}$ come into play in the partitioned algorithm presented in Equations (13) and (14)? I recommend that the authors either refrain from suppressing the SEI notation or further explain how the SEI algorithm has changed the quantities in these equations.}
 	
-\reply{To make the SEI algorithm more clear, we have revised the ordering of Sections 4, so that we have 1) hashing, 2) posterior inference, 3) chunkwise computation of the comparison matrix, and 4) SEI. With this new ordering, and with the newly provided equations (15) through (19), we hope it is clearer that that the contribution of \emph{all} record pairs is recorded through the summary statistics in $\mathcal{N}$. In particular, (16a), (16b), and (18) depend only $\mathcal{N}$. The SEI algorithm only affects the step shown in (19). 
+\reply{To make the SEI algorithm more clear, we have revised the ordering of Sections 4, so that we have 1) hashing, 2) posterior inference, 3) batchwise computation of the comparison matrix, and 4) SEI. With this new ordering, and with the newly provided equations (15) through (19), we hope it is clearer that that the contribution of \emph{all} record pairs is recorded through the summary statistics in $\mathcal{N}$. In particular, (16a), (16b), and (18) depend only $\mathcal{N}$. The SEI algorithm only affects the step shown in (19). 
 	}
 	
 	
