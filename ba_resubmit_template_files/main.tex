@@ -508,7 +508,7 @@ Although the figures suggest that $S=2$ is adequate for maintaining linkage perf
 	
 	In our first case study, we revisit data from the El Salvadoran Civil War analyzed by \cite{sadinle_bayesian_2017}. Though the data files used in this case study are small, it shows how the computational complexity of \texttt{fabl} depends on the number of unique agreement patterns found in the data, and how significant computational gains can be achieved by simplifying the construction of the comparison vectors. In the second case study, we apply \texttt{fabl} to link records from the National Long Term Care Study, a larger linkage task that is not feasible in reasonable time under \texttt{BRL} with typical computing setups. 
 	
-	\subsection{Civilian Casualties from the El Salvadoran Civil War}
+	\subsection{Civilian Killings from the El Salvadoran Civil War}
 	\label{el_salvador}
 	
 	The country of El Salvador was immersed in civil war from 1980 to 1991. We are interested in estimating the total number of individuals killed in the war. We utilize lists of documented deaths from the war, one collected by El Rescate - Tutela Regal (ERTL) and another from the Salvadoran Human Rights Commission (CDHES, by its acronym in Spanish).\footnote{We thank the Human Rights Data Analysis Group (HRDAG) for granting access to these data.} The ERTL data set comprises digitized denunciations published throughout the conflict, and the CDHES data set comprises killings reported directly to the organization \citep{howland2008rescate, ball2000salvadoran, green2019civilian}. The ERTL required additional investigation before recording denunciations as human rights abuses, and reports to the CDHES were made shortly after the events occurred; thus, both data files are thought to be fairly reliable. When estimating the total number of individuals killed, one cannot simply sum the numbers recorded by each organization, as it is likely that the same individuals are recorded in multiple casualty lists. Instead, record linkage techniques must be used to merge data files before analyzing the data \citep{lum2013applications}. 
@@ -624,7 +624,7 @@ There are several challenges with these data. First, the ERTL data file was auto
 	
 \begin{supplement}
 \stitle{Supplementary Material of ``Efficient and Scalable Bipartite Matching with
-Fast Beta Linkage (fabl)." See the .pdf document}
+Fast Beta Linkage (fabl).'' See the .pdf document}
 \sdescription{}
 \end{supplement}	
 
