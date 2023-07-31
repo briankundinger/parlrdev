@@ -151,7 +151,7 @@ More generally, let $\mathcal{S}_f(i,j)$ denote a similarity measure for linking
 
 In the construction of comparison vectors, it is common to encounter missing information in record $A_i$ or $B_j$. As a result, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. We assume that this missingness occurs completely at random (MCAR, per \cite{LittleRubin2002}). To notate a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. With the MCAR assumption, we can marginalize over the missing data, and do all computation simply using the observed data.
 
-Having defined comparison vectors, we now turn to the \cite{fellegi_theory_1969} model for record linkage.  We begin with notation for defining linkages. Under bipartite matching, the set of matches across $A$ and $B$ can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_An_B}$, where
+Having defined comparison vectors, we now turn to the \cite{fellegi_theory_1969} model for record linkage.  We begin with notation for defining linkages. Under bipartite matching, the set of matches across $A$ and $B$ can be represented in two equivalent ways. First, we may use a matrix $\Delta \in \{0, 1\}^{n_A \times n_B}$, where
 \begin{align}
 \Delta_{ij} =
 \begin{cases}
@@ -172,8 +172,8 @@ We can go back and forth between the two using $\Delta_{ij} = I(Z_j = i),$ where
 Let $\Gamma_{ij}$ represent a random variable for the comparison vector for arbitrary $A_i$ and $B_j$.  Thus, $\gamma_{ij}$ is a realization of $\Gamma_{ij}$. For modeling the collection of $n_An_B$ random variables $\Gamma_{ij}$, \cite{fellegi_theory_1969} employ two independence assumptions: first, that comparison vectors are independent given the matching status of the record pair, and second, that the matching status of each record pair is independent of the matching status of other pairs. Using these independence assumptions, one specifies a mixture model for each $\Gamma_{ij}$ \citep[e.g., as in ][]{winkler_state_1999,jaro1989,larsen_2001,enamorado2019using}.  We have
 \begin{subequations}
 \begin{align}
-&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 1 \stackrel{iid}{\sim} \mathcal{M}(\bm{m}), \label{eqn:fs_model} \\
-&\Gamma_{ij} = \gamma_{ij} \mid \Delta_{ij} = 0  \stackrel{iid}{\sim} \mathcal{U}(\bm{u}), \label{eqn:m_dist}\\
+&\Gamma_{ij} \mid \Delta_{ij} = 1 \stackrel{iid}{\sim} \mathcal{M}(\bm{m}), \label{eqn:fs_model} \\
+&\Gamma_{ij} \mid \Delta_{ij} = 0  \stackrel{iid}{\sim} \mathcal{U}(\bm{u}), \label{eqn:m_dist}\\
 &\Delta_{ij}   \stackrel{iid}{\sim} \text{Bernoulli}(\lambda). \label{eqn:lambda_dist}
 \end{align}
 \end{subequations}
@@ -231,7 +231,7 @@ We estimate the posterior distribution of the parameters in (\ref{eqn:likelihood
 \end{subequations}
 Next, we sample $\pi$ from its full conditional, given by
 \begin{align}
-	\pi^{(s+1)}|\gamma, \bm{Z}^{(s)}, \bm{m}^{(s+1)}, \bm{u}^{(s+1)} \sim  \text{Beta}(n_{AB}(\bm{Z}^{(s)}) + \alpha_{\pi}, n_B - n_{AB}(\bm{Z}^{(s)}) + \beta_{\pi}).
+	\pi^{(s+1)}|\gamma, \bm{Z}^{(s)}, \bm{m}^{(s+1)}, \bm{u}^{(s+1)} \sim  \text{Beta}(n_{AB}(\bm{Z}^{(s)}) + \alpha_{\pi}, n_B - n_{AB}(\bm{Z}^{(s)}) + \beta_{\pi}),
 \end{align}
 where $n_{AB}(\bm{Z}^{(s)}) = \sum_{j=1}^{n_B} I(Z_j^{(s)} \leq n_A)$.
 

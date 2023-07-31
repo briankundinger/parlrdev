@@ -123,7 +123,7 @@ Durham, NC 27708, USA
 	\hypertarget{app:derivations}{%
 		\section{Derivations of Full Conditionals}\label{app:derivations}}
 	
-	We provide detailed derivations of the full conditionals provided in Section \ref{sec:fast-beta-linkage}. The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
+	We provide detailed derivations of the full conditionals provided in Section \ref{sec:fast-beta-linkage} in the main text. The $\bm{m}$ and $\bm{u}$ parameters are updated through standard multinomial-Dirichlet distributions. For a particular $m_{fl}$, we have
 	\begin{align}
 		\mathcal{L}(m_{fl}|\gamma, \bm{u}, \bm{Z}, \pi) &\propto \prod_{i=1}^{n_A} \prod_{j=1}^{n_B} m_{fl}^{I(Z_j = i) I(\gamma_{ij}^f = l) I_{obs}(\gamma_{ij}^f)}  m_{fl}^{\alpha_{fl} - 1} = m_{fl}^{\alpha_{fl}(\bm{Z}) - 1},
 	\end{align}
@@ -241,12 +241,12 @@ When we seek a partial estimate of the linkage structure, leaving a portion of r
 	
 	\hypertarget{appendix-sim}{%
 		\section{Traceplots for Simulation Study}\label{app:appendix-sim}}
-	Figures \ref{fig:sim_overlap_trace}, \ref{fig:sim_m_trace}, and \ref{fig:sim_u_trace} are traceplots for one of the 900 linkage tasks that comprise the simulation in Section \ref{accuracy}. It is set up with one error across the linkage fields and 50 duplicates across files. Traceplots across other settings exhibit similar behavior. Note that traceplots for $\bm{u}$ parameters show very little variation because the overwhelming majority of record pairs are nonmatching.  
+	Figures \ref{fig:sim_overlap_trace}, \ref{fig:sim_m_trace}, and \ref{fig:sim_u_trace} are traceplots for one of the 900 linkage tasks that comprise the simulation in Section \ref{accuracy} in the main text. It is set up with one error across the linkage fields and 50 duplicates across files. Traceplots across other settings exhibit similar behavior. Note that traceplots for $\bm{u}$ parameters show very little variation because the overwhelming majority of record pairs are nonmatching.  
 	
 	\begin{figure}[h]
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_overlap_trace} 
-			\caption{Representative traceplot of overlap between files from simulation study in Section~\ref{accuracy}.}\label{fig:sim_overlap_trace}
+			\caption{Representative traceplot of overlap between files from simulation study in Section~\ref{accuracy} in the main text.} \label{fig:sim_overlap_trace}
 		\end{center}
 	\end{figure}
 	
@@ -254,12 +254,12 @@ When we seek a partial estimate of the linkage structure, leaving a portion of r
 	\begin{figure}
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_m_trace} 
-			\caption{Representative traceplot of $\bm{m}$ parameters from simulation study in Section~\ref{accuracy}.}\label{fig:sim_m_trace}
+			\caption{Representative traceplot of $\bm{m}$ parameters from simulation study in Section~\ref{accuracy} in the main text.}\label{fig:sim_m_trace}
 		\end{center}
 
 		\begin{center}
 			\includegraphics[width=0.6\textwidth]{../notes/figures/sim_u_trace} 
-			\caption{Representative traceplot of $\bm{u}$ parameters from simulation study in Section \ref{accuracy}.}\label{fig:sim_u_trace}
+			\caption{Representative traceplot of $\bm{u}$ parameters from simulation study in Section \ref{accuracy} in the main text.}\label{fig:sim_u_trace}
 		\end{center}
 	\end{figure}
 
@@ -268,7 +268,7 @@ When we seek a partial estimate of the linkage structure, leaving a portion of r
 	\hypertarget{partial}{%
 	\section{Accuracy under Partial Estimates}\label{partial}}
 
-In this section, we repeat the simulation study in Section \ref{accuracy}, allowing for clerical review rather than forcing all records to have or not have links.  Specifically, by leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the negative predictive value (NPV), defined as the proportion of non-links that are actual nonmatches. Mathematically, $\text{NPV} = \sum_{j=1}^{n_B} I(\hat{Z}_j = Z_j = n_A + j)$/$\sum_{j=1}^{n_B} I(\hat{Z}_j = n_A + j)$. We continue to use the precision, which is renamed the positive predictive value (PPV) in this context. Lastly, we also examine the rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_B} I(\hat{Z}_j = R)/n_B$. To convey this information alongside NPV and PPV, for which values close to 1 indicate strong performance, we report the decision rate (DR), defined as DR = $1 - RR$.
+In this section, we repeat the simulation study in Section \ref{accuracy} in the main text, allowing for clerical review rather than forcing all records to have or not have links.  Specifically, by leaving $\theta_{10} = \theta_{01} = 1$ and $\theta_{11} = 2$, but setting $\theta_R = 0.1$, we allow the model to decline to decide a match for certain records, with nonassignment being 10\% as costly as a false match. In this context, we are no longer focused on finding all true matches, but rather protecting against false matches. Thus, instead of recall, we use the negative predictive value (NPV), defined as the proportion of non-links that are actual nonmatches. Mathematically, $\text{NPV} = \sum_{j=1}^{n_B} I(\hat{Z}_j = Z_j = n_A + j)$/$\sum_{j=1}^{n_B} I(\hat{Z}_j = n_A + j)$. We continue to use the precision, which is renamed the positive predictive value (PPV) in this context. Lastly, we also examine the rejection rate (RR), or how often the model declines to make a linkage decision, defined as RR = $\sum_{j=1}^{n_B} I(\hat{Z}_j = R)/n_B$. To convey this information alongside NPV and PPV, for which values close to 1 indicate strong performance, we report the decision rate (DR), defined as DR = $1 - RR$.
 
 In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} maintains equivalently strong PPV as \texttt{BRL} across all linkage settings. However, with high amounts of error, and thus fewer accurate and discerning fields of information, the rejection rate under \texttt{fabl} rises, leading to a decrease in NPV. Since \texttt{fabl} does not remove previously matched records from consideration for a new record, posterior probabilities of matches at times can be split across more records; in contrast, \texttt{BRL} is able to maintain higher confidence in matches in this setting. If one wishes to use partial estimates, \texttt{fabl} will possibly leave more linkages for the modeler to match by hand than would be left under \texttt{BRL}, but the decisions made by each method should have nearly equal accuracy. 
 
@@ -286,7 +286,7 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 
 	\hypertarget{appendix-speed}{%
 	\section{Additional Speed Simulation Study}\label{app:appendix-speed}}
-	Figures \ref{fig:app-speed1} and \ref{fig:app-speed2} illustrate that different constructions of the comparison vectors lead to similar speed gains. We replicate the speed study of Section \ref{speed} under different settings. Here, we use four fields of comparison, each with three possible levels of agreement, resulting in $3^4 = 81$ possible patterns. The $\bm{m}$ and $\bm{u}$ parameters for this simulation are shown in Table \ref{Tab:distributions_2}.
+	Figures \ref{fig:app-speed1} and \ref{fig:app-speed2} illustrate that different constructions of the comparison vectors lead to similar speed gains. We replicate the speed study of Section \ref{speed} in the main text under different settings. Here, we use four fields of comparison, each with three possible levels of agreement, resulting in $3^4 = 81$ possible patterns. The $\bm{m}$ and $\bm{u}$ parameters for this simulation are shown in Table \ref{Tab:distributions_2}.
 	
 		\begin{table}[h]
 		\centering
@@ -360,7 +360,7 @@ In Figure \ref{fig:sadinle_simulation_partial}, we see that \texttt{fabl} mainta
 		\caption{Traceplot for $\bm{u}$ parameters.}
 		\label{fig:u_trace}
 	\end{subfigure}
-	\caption{Traceplots for parameters of interest in El Salvador case study in Section \ref{el_salvador}.}
+	\caption{Traceplots for parameters of interest in El Salvador case study in Section \ref{el_salvador} in the main text.}
 	\label{fig:el_salvador_trace}
 \end{figure}
 \end{document}
