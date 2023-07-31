@@ -114,7 +114,7 @@ We thank the Editor and Associate Editor for their assessment and constructive f
 \reply{
 We now refer to the two data files as $A$ and $B$. The updated material now reads:
 	
-``Consider two data files $A$ and $B$ comprising $n_A$ and $n_B$ records, respectively, and including $F$ linkage variables measured in both files. For $i=1, \dots, n_A$, let record $i$ be given by $A_i = (A_{i1}, \dots, A_{iF})$, so that $A = (A_i : i = 1, \dots, n_A)$.  Similarly, for $j=1, \dots, n_B$, let record $j$ be given by $B_j = (B_{j1}, \dots, B_{jF})$, so that $B = (B_j : j = 1, \dots, n_B)$.  Without loss of generality, denote files such that $n_A \geq n_B$.". See Section 2. 
+``Consider two data files $A$ and $B$ comprising $n_A$ and $n_B$ records, respectively, and including $F$ linkage variables measured in both files. For $i=1, \dots, n_A$, let record $i$ be given by $A_i = (A_{i1}, \dots, A_{iF})$, so that $A = (A_i : i = 1, \dots, n_A)$.  Similarly, for $j=1, \dots, n_B$, let record $j$ be given by $B_j = (B_{j1}, \dots, B_{jF})$, so that $B = (B_j : j = 1, \dots, n_B)$.  Without loss of generality, denote files such that $n_A \geq n_B$". See Section 2. 
 }
 
 \setcounter{responsectr}{0}
@@ -125,8 +125,9 @@ We now refer to the two data files as $A$ and $B$. The updated material now read
 	
 	
 	\reply{
-		%Because we assume that the agreement level for each field is conditionally independent given the matching status, MAR and MCAR are equivalent here. For simplicity, we have chosen to use MCAR in the article. 
-		We have included the following explanation of missingness in Section 2. 
+	\textcolor{teal}{The reviewer is correct that the distinction does not matter between MCAR and MAR. We have included the following explanation of missingness in Section 2.}
+%		Because we assume that the agreement level for each field is conditionally independent given the matching status, MAR and MCAR are equivalent here. For simplicity, we have chosen to use MCAR in the article. 
+%		We have included the following explanation of missingness in Section 2. 
 		
 	``In the construction of comparison vectors, it is common to encounter missing information in record $A_i$ or $B_j$. As a result, the comparison vector $\mathbf{\gamma}_{ij}$ will have missing values. We assume that this missingness occurs completely at random (MCAR, per \cite{LittleRubin2002}). To notate a missing value in any $\gamma_{ij}^f$, we use $I_{obs}(\gamma_{ij}^f)=1$ when $\gamma_{ij}^f$ is observed and $I_{obs}(\gamma_{ij}^f)=0$ otherwise. With the MCAR assumption, we can marginalize over the missing data, and do all computation simply using the observed data."
 	}
@@ -143,7 +144,7 @@ We now refer to the two data files as $A$ and $B$. The updated material now read
 \reply{%
 	The square brackets have been corrected. 
 	
-	We have revised the derivation of the full conditional distribution of $Z_j$, separately handling the case when $B_j$ has a match and when it does not. Refer to Appendix A for this extended derivation.
+	We have revised the derivation of the full conditional distribution of $Z_j$, separately handling the case when $B_j$ has a match and when it does not. Refer to \textcolor{teal}{Supplement}~A for this extended derivation.
 	}
 
 	\pointRaised{R}{%
@@ -174,7 +175,7 @@ Appendix 8.2: Thank you for including the details on integrating out pi from the
 	
 
 	
-	\reply{Yes, the comparison vectors are created (and therefore, patterns are assigned) without regard to $\bm{Z}$. We have removed that sentence, and updated the equations in the Section 4.3 to avoid confusion.}
+	\reply{Yes, the comparison vectors are created (and therefore, patterns are assigned) without regard to $\bm{Z}$. We have removed that sentence, and updated the equations in Section 4.3 to avoid confusion.}
 
 
 \pointRaised{R}{%
