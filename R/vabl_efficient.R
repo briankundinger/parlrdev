@@ -31,7 +31,7 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
     a_sum <- a %>%
       split(., field_marker) %>%
       sapply(., sum) %>%
-      digamma() %>%
+      digamma(.) %>%
       .[field_marker]
 
     a_chunk <- digamma(a) - a_sum
@@ -39,7 +39,7 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
     b_sum <- b %>%
       split(., field_marker) %>%
       sapply(., sum) %>%
-      digamma() %>%
+      digamma(.) %>%
       .[field_marker]
     b_chunk <- digamma(b) - b_sum
 
