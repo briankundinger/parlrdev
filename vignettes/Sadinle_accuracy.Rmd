@@ -19,7 +19,6 @@ library(devtools)
 load_all()
 library(parlrdev)
 library(tidyverse)
-rm(list = c("hash_field"))
 ```
 
 
@@ -89,7 +88,7 @@ file2 <- records %>%
 cd <- suppressMessages(BRL::compareRecords(file1, file2, c(2, 3, 5, 6), 
                           types = c("lv", "lv", "bi", "bi")))
 cd[[1]] <- apply(cd[[1]], 2, as.numeric)
-
+comparisons <- cd
 
   #parlr method
   ptm <- proc.time()

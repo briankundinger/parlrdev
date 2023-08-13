@@ -1,0 +1,92 @@
+---
+title: "Sadinle_accuracy"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Sadinle_accuracy}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(devtools)
+load_all()
+library(parlrdev)
+library(tidyverse)
+```
+
+
+```{r}
+
+files <- list.files(path = "../data/SimulationDataFiles", full.names = T)
+i = 1
+j = 1
+R= NULL
+all_patterns = F
+
+overlap_vals <- c(50, 250, 450)
+
+overlap <- overlap_vals[j]
+records <- read_csv(files[i], col_types = cols())
+records$file <- rep(2:1, length.out = dim(records)[1])
+
+records <- records %>% 
+  janitor::clean_names() %>% 
+  mutate(rec_id = as.numeric(str_extract(rec_id, "\\d{3}")) + 1)
+
+n1 <- 500
+n2 <- 500
+
+Ztrue <- n1 + 1:n2
+Ztrue[1:overlap] <- 1:overlap
+
+file1 <- records %>% 
+  filter(file ==1,
+         rec_id <= n1) %>% 
+  select(-rec_id) %>% 
+  as.matrix(.) %>% 
+  data.frame(.) %>% 
+  mutate(occup = as.numeric(occup))
+
+file2 <- records %>% 
+  filter(file == 2,
+         rec_id %in% c(1:overlap, (n1 +1):(1000 - overlap))) %>% 
+  select(-rec_id) %>% 
+  as.matrix() %>% 
+  data.frame(.) %>% 
+  mutate(occup = as.numeric(occup))
+
+
+comparisons <- BRL::compareRecords(file1, file2, c(2, 3, 5, 6),
+                                   types = c("lv", "lv", "bi", "bi"))
+comparisons[[1]] <- apply(comparisons[[1]], 2, as.numeric)
+
+threshold <-  1e-8
+tmax <- 200
+
+hash <- vabl_hash(comparisons, all_patterns)
+ptm <- proc.time()
+out <- vabl_efficient(comparisons, threshold, tmax)
+elapsed <- proc.time() - ptm
+elapsed[3]
+elapsed/out$t
+result <- vabl_estimate_links(out, hash, resolve = T)
+eval <- GetEvaluations(result$Zhat, Ztrue, n1)
+eval
+
+ptm <- proc.time()
+Zchain <- fabl_gibbs(comparisons, R = R, all_patterns = F, S = 200)
+elapsed <- proc.time() - ptm
+elapsed[3] - Zchain$hash_time
+(elapsed[3] - Zchain$hash_time)/S
+Zhat_fabl <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
+eval <- GetEvaluations(Zhat_fabl[[1]], Ztrue, n1)
+eval
+
+```

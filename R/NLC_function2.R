@@ -13,6 +13,7 @@ BKSimple2 <- function(comparisons, m_prior, u_prior,
   # show_progress = set to false to show simulation progress
 
   fields <- length(comparisons[[4]])
+  levels <-
   n1 <- comparisons[[2]]; n2 <- comparisons[[3]]
   indicators_raw <-comparisons[[1]]
 
