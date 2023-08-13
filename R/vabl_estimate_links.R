@@ -1,6 +1,6 @@
 vabl_estimate_links <- function(out, hash, resolve = TRUE){
 
-  n2 <- length(out$C)
+  n2 <- hash$n2
   pattern_probs <- lapply(1:n2, function(j){
     out$pattern_weights/out$C[j]
   })

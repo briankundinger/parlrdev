@@ -21,6 +21,7 @@ show_progress = F
 fast = F
 R = NULL
 all_patterns = TRUE
+tmax= 200
 threshold = 1e-8
 resolve = T
 

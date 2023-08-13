@@ -103,7 +103,9 @@ vabl_hash <- function(comparisons, all_patterns = FALSE){
                    pattern_counts_by_record = pattern_counts_by_record,
                    record_counts_by_pattern = record_counts_by_pattern,
                    flags = flags,
-                   field_marker = field_marker)
+                   field_marker = field_marker,
+                   n1 = n1,
+                   n2 = n2)
   patterns
 
 }

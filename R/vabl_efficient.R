@@ -7,12 +7,13 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
   total_counts <- hash$total_counts #N_p
   pattern_counts_by_record <- hash$pattern_counts_by_record #N_p_j
   record_counts_by_pattern <- hash$record_counts_by_pattern
-  flags <- hash$flags
   field_marker <- hash$field_marker
+  n1 <- hash$n1
+  n2 <- hash$n2
 
   # Priors
   alpha <- rep(1, length(field_marker))
-  beta <- rep(1, length(field_marker))
+  Beta <- rep(1, length(field_marker))
   alpha_pi <- 1
   beta_pi <- 1
 
@@ -30,7 +31,7 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
     a_sum <- a %>%
       split(., field_marker) %>%
       sapply(., sum) %>%
-      digamma(.) %>%
+      digamma() %>%
       .[field_marker]
 
     a_chunk <- digamma(a) - a_sum
@@ -38,7 +39,7 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
     b_sum <- b %>%
       split(., field_marker) %>%
       sapply(., sum) %>%
-      digamma(.) %>%
+      digamma() %>%
       .[field_marker]
     b_chunk <- digamma(b) - b_sum
 
@@ -79,7 +80,7 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
       colSums()
 
     a <- alpha + AZ
-    b <- beta+ BZ
+    b <- Beta+ BZ
 
     a_pi <- alpha_pi + n2 - total_nonmatch
     b_pi <- beta_pi + total_nonmatch
@@ -107,7 +108,7 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
     }) %>%
       sum(.)
 
-    elbo_pieces[5] <- -sapply(list(alpha, beta), function(y){
+    elbo_pieces[5] <- -sapply(list(alpha, Beta), function(y){
       split(y, field_marker) %>%
         sapply(., function(x){
           sum(lgamma(x)) - lgamma(sum(x))
@@ -116,7 +117,7 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
     }) %>%
       sum(.)
 
-    elbo_pieces[6] <- sum((alpha - a) * a_chunk + (beta - b) * b_chunk)
+    elbo_pieces[6] <- sum((alpha - a) * a_chunk + (Beta - b) * b_chunk)
     elbo <- sum(elbo_pieces)
     elbo_seq <- c(elbo_seq, elbo)
 
