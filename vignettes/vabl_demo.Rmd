@@ -28,6 +28,7 @@ files <- list.files(path = "../data/SimulationDataFiles", full.names = T)
 i = 1
 j = 1
 R= NULL
+S= 500
 all_patterns = F
 
 overlap_vals <- c(50, 250, 450)
@@ -72,16 +73,16 @@ tmax <- 200
 
 hash <- vabl_hash(comparisons, all_patterns)
 ptm <- proc.time()
-out <- vabl_efficient(comparisons, threshold, tmax)
+out <- vabl_efficient(hash, threshold, tmax)
 elapsed <- proc.time() - ptm
 elapsed[3]
-elapsed/out$t
+elapsed[3]/out$t
 result <- vabl_estimate_links(out, hash, resolve = T)
 eval <- GetEvaluations(result$Zhat, Ztrue, n1)
 eval
 
 ptm <- proc.time()
-Zchain <- fabl_gibbs(comparisons, R = R, all_patterns = F, S = 200)
+Zchain <- fabl_gibbs(comparisons, R = R, all_patterns = F, S = S)
 elapsed <- proc.time() - ptm
 elapsed[3] - Zchain$hash_time
 (elapsed[3] - Zchain$hash_time)/S

@@ -77,7 +77,6 @@ for(j in seq_along(overlap_vals)){
 
   #parlr method
   ptm <- proc.time()
-  Zchain <- BKSimple_hash2(cd, R = R)
   Zchain <- fabl_gibbs(cd, R = R)
   elapsed <- proc.time() - ptm
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)

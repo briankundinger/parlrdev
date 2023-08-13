@@ -1,4 +1,4 @@
-vabl_efficient <- function(comparisons, threshold = 1e-8, tmax = 200){
+vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
 
   check_every <- 10
 

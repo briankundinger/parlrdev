@@ -77,13 +77,21 @@ for(j in seq_along(overlap_vals)){
   cd[[1]] <- apply(cd[[1]], 2, as.numeric)
 
 
-  hash <- vabl_hash(comparisons, all_patterns)
+  hash <- vabl_hash(cd, all_patterns)
   ptm <- proc.time()
-  out <- vabl_efficient(comparisons, threshold, tmax)
+  out <- vabl_efficient(cd, threshold, tmax)
   elapsed <- proc.time() - ptm
   result <- vabl_estimate_links(out, hash, resolve = T)
   eval <- GetEvaluations(result$Zhat, Ztrue, n1)
   vabl_acc_samps[j, ] <- c(eval, NA, elapsed[3], overlap)
+
+  #parlr method
+  ptm <- proc.time()
+  Zchain <- fabl_gibbs(cd, R = R)
+  elapsed <- proc.time() - ptm
+  Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
+  eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
+  eval
 
   # Resolution Step
   Zhat_resolved <- ResolveConflicts(Zhat)
