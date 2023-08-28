@@ -29,6 +29,7 @@ resolve = T
 overlap_vals <- c(50, 250, 450)
 
 vabl_acc_samps <- matrix(NA, nrow = 3, ncol = 6)
+vabl_acc_samps2 <- matrix(NA, nrow = 3, ncol = 6)
 
 fabl_acc_samps <- matrix(NA, nrow = 3, ncol = 6)
 fabl_acc_samps_resolved <- matrix(NA, nrow = 3, ncol = 6)
@@ -80,19 +81,23 @@ for(j in seq_along(overlap_vals)){
 
   hash <- vabl_hash(cd, all_patterns)
   ptm <- proc.time()
-  out <- vabl_efficient(cd, threshold, tmax)
+  out <- vabl_efficient(hash, threshold, tmax)
   elapsed <- proc.time() - ptm
-  result <- vabl_estimate_links(out, hash, resolve = T)
+  result <- vabl_estimate_links(out, hash)
+
   eval <- GetEvaluations(result$Zhat, Ztrue, n1)
   vabl_acc_samps[j, ] <- c(eval, NA, elapsed[3], overlap)
 
-  #parlr method
+  result <- vabl_estimate_links(out, hash, lR = .1)
+  eval <- GetEvaluations(result$Zhat, Ztrue, n1)
+  vabl_acc_samps2[j, ] <- c(eval, NA, elapsed[3], overlap)
+
+  # fabl
   ptm <- proc.time()
   Zchain <- fabl_gibbs(cd, R = R)
   elapsed <- proc.time() - ptm
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
   eval <- GetEvaluations(Zhat[[1]], Ztrue, n1)
-  eval
 
   # Resolution Step
   Zhat_resolved <- ResolveConflicts(Zhat)
@@ -131,6 +136,10 @@ vabl_acc_samps <- data.frame(vabl_acc_samps, "vabl") %>%
   unname() %>%
   data.frame()
 
+vabl_acc_samps2 <- data.frame(vabl_acc_samps2, "vabl_partial") %>%
+  unname() %>%
+  data.frame()
+
 fabl_acc_samps <- data.frame(fabl_acc_samps, "fabl") %>%
   unname() %>%
   data.frame()
@@ -147,7 +156,8 @@ sad_acc_samps2 <- data.frame(sad_acc_samps2, "BRL_partial") %>%
   unname() %>%
   data.frame()
 
-result_df <- rbind(vabl_acc_samp, fabl_acc_samps,
+result_df <- rbind(vabl_acc_samps, vabl_acc_samps2,
+                   fabl_acc_samps,
                    fabl_acc_samps_resolved, fabl_acc_samps2,
                    sad_acc_samps, sad_acc_samps2)
 
@@ -158,19 +168,9 @@ if(i < 100){
 } else {
   error <- "Three Errors"
 }
-names(result_df) <- c("recall", "precision", "f-Measure", "RR", "time", "overlap", "method")
-result_df$Error <- error
+names(result_df) <- c("recall", "precision", "f-measure", "RR",
+                      "time", "overlap", "method")
+result_df$error <- error
 
 saveRDS(result_df, file = paste0("out/sim_acc/sim_acc_",
                                       str_pad(i, 3, pad = "0")))
-
-# saveRDS(fabl_acc_samps, file = paste0("out/fabl_acc/fabl_acc_",
-#                           str_pad(i, 3, pad = "0")))
-# saveRDS(fabl_acc_samps_resolved, file = paste0("out/fabl_acc_res/fabl_acc_res_",
-#                           str_pad(i, 3, pad = "0")))
-# saveRDS(sad_acc_samps, file = paste0("out/sad_acc/sad_acc_",
-#                           str_pad(i, 3, pad = "0")))
-# saveRDS(fabl_acc_samps2, file = paste0("out/fabl_acc2/fabl_acc2_",
-#                           str_pad(i, 3, pad = "0")))
-# saveRDS(sad_acc_samps2, file = paste0("out/sad_acc2/sad_acc2_",
-#                           str_pad(i, 3, pad = "0")))

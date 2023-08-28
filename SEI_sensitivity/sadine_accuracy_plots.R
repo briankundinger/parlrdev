@@ -6,33 +6,34 @@ results <- lapply(result_files, readRDS) %>%
   as.data.frame()
 
 results_df <- results %>%
-  select(-RR, -Time_Elapsed) %>%
-  filter(Method %in% c("fabl_resolved", "BRL")) %>%
-  pivot_longer(cols = 1:3, names_to = "Metric") %>%
-  group_by(Method, Metric, Error, Overlap) %>%
+  select(-RR, -time) %>%
+  filter(method %in% c("vabl", "fabl_resolved", "BRL")) %>%
+  pivot_longer(cols = 1:3, names_to = "metric") %>%
+  group_by(method, metric, Error, overlap) %>%
   summarize(avg = mean(value),
             lower = quantile(value, .025),
             upper = quantile(value, .975),
             .groups = "drop") %>%
-  mutate(Metric = factor(Metric, c("Recall", "Precision", "F-Measure")),
+  mutate(metric = factor(metric, c("recall", "precision", "f-Measure")),
          Error = factor(Error, c("One Error", "Two Errors", "Three Errors")),
-         Overlap = case_when(
-           Overlap == 50 ~ "10% Overlap",
-           Overlap == 250 ~ "50% Overlap",
-           Overlap == 450 ~ "90% Overlap"
+         overlap = case_when(
+           overlap == 50 ~ "10% Overlap",
+           overlap == 250 ~ "50% Overlap",
+           overlap == 450 ~ "90% Overlap"
          ),
-         Method = case_when(
-           Method == "BRL" ~ "BRL",
-           Method == "fabl_resolved" ~ "fabl"
+         method = case_when(
+           method == "vabl" ~ "vabl",
+           method == "BRL" ~ "BRL",
+           method == "fabl_resolved" ~ "fabl"
          ))
 
 acc_plot <- results_df %>%
-  ggplot(aes(x = Metric, y = avg,
+  ggplot(aes(x = metric, y = avg,
              ymin  = lower, ymax = upper,
-             color = Method)) +
+             color = method)) +
   geom_pointrange(position = position_dodge2(width = .5),
                   size = .3) +
-  facet_grid(Overlap ~ Error) +
+  facet_grid(overlap ~ Error) +
   labs(x = NULL,
        y = NULL,
        color = "Method") +
@@ -43,8 +44,11 @@ acc_plot <- results_df %>%
 
 acc_plot
 
-ggsave(filename = "notes/figures/sadinle_sim_plot3.png",
-       plot = acc_plot)
+# ggsave(filename = "notes/figures/vabl_accuracy.png",
+#        plot = acc_plot)
+
+# ggsave(filename = "notes/figures/sadinle_sim_plot3.png",
+#        plot = acc_plot)
 
 results_partial_df <- results %>%
   mutate(DR = 1 - RR) %>%

@@ -91,7 +91,7 @@ for(j in seq_along(overlap_vals)){
 
   #Partial Estimate
   Zhat <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, .1)
-  Zhat <- ResolveConflicts(Zhat)
+  Zhat <- ResolveConflicts(Zhat, .1)
   eval <- GetEvaluations(Zhat, Ztrue, n1)
   RR <- sum(Zhat == -1)/n2
   eval[1] <- sum(Zhat == Ztrue & Ztrue > n1) / (sum(Zhat > n1))
