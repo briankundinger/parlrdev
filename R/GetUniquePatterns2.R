@@ -17,17 +17,18 @@ GetUniquePatterns2 <- function(cd,
   n1 <- cd[[2]]
   n2 <- cd[[3]]
 
-  if(is.null(df1_index)){
-    chunkA_index <- 1:n1
-  }else{
-    chunkA_index <-  df1_index
-  }
-  if(is.null(df2_index)){
-    chunkB_index <- 1:n2
-  }else{
-    chunkB_index <-  df2_index
-  }
-  ids <- expand.grid(chunkA_index, chunkB_index)
+  # if(is.null(df1_index)){
+  #   chunkA_index <- 1:n1
+  # }else{
+  #   chunkA_index <-  df1_index
+  # }
+  # if(is.null(df2_index)){
+  #   chunkB_index <- 1:n2
+  # }else{
+  #   chunkB_index <-  df2_index
+  # }
+  #ids <- expand.grid(chunkA_index, chunkB_index)
+  ids <- expand.grid(n1, n2)
   rec1 <- ids[,1]
   rec2 <- ids[,2]
   levels <- cd[[4]]
@@ -134,11 +135,10 @@ GetUniquePatterns2 <- function(cd,
   }
 
 
-  patterns <- list(#hash_id,
-                   unique_patterns,
-                   pattern_counts,
-                   counts_by_rec,
-                   hash_to_rec1)
+  patterns <- list(ohe = unique_patterns,
+                   total_counts = pattern_counts,
+                   pattern_counts_by_record = counts_by_rec,
+                   hash_to_file_1 = hash_to_rec1)
   patterns
 
 }
