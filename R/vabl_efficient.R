@@ -1,4 +1,5 @@
-vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
+vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200, fixed_iterations = NULL,
+                           a = NULL, b = NULL, a_pi = NULL, b_pi = NULL){
 
   check_every <- 10
 
@@ -18,10 +19,19 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
   beta_pi <- 1
 
   # Initialize
-  a <- rep(1, length(field_marker))
+  if(is.null(a)){
+    a <- rep(1, length(field_marker))
+  }
+  if(is.null(b)){
   b <- rep(1, length(field_marker))
+  }
+  if(is.null(a_pi)){
   a_pi <- 1
+  }
+  if(is.null(b_pi)){
   b_pi <- 1
+  }
+
   t <- 1
   ratio <- 1
   elbo_seq <- vector()
@@ -121,6 +131,8 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
     elbo <- sum(elbo_pieces)
     elbo_seq <- c(elbo_seq, elbo)
 
+
+    if(is.null(fixed_iterations)){
     if(t %% check_every == 0){
       ratio <- abs((elbo_seq[t] - elbo_seq[t - check_every +1])/
                      elbo_seq[t - check_every +1])
@@ -128,12 +140,20 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200){
     if(ratio < threshold){
       break
     }
+    }
 
     t <- t + 1
     if(t > tmax){
       print("Max iterations have passed before convergence")
       break
     }
+
+    if(!is.null(fixed_iterations)){
+      if(t == fixed_iterations){
+        break
+      }
+    }
+
 
   }
 
