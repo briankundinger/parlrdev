@@ -106,7 +106,7 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200, fixed_iterations 
     elbo_pieces[2] <- -sum(single/C *log(single/C)) + total_nonmatch * log(n1) -log(n1)*n2
 
 
-    elbo_pieces[3] <- log(beta(a_pi, b_pi)) - log(beta(alpha_pi, beta_pi))
+    elbo_pieces[3] <- lbeta(a_pi, b_pi) - lbeta(alpha_pi, beta_pi)
 
 
     elbo_pieces[4] <- sapply(list(a, b), function(y){
