@@ -28,7 +28,7 @@ GetUniquePatterns2 <- function(cd,
   #   chunkB_index <-  df2_index
   # }
   #ids <- expand.grid(chunkA_index, chunkB_index)
-  ids <- expand.grid(n1, n2)
+  ids <- expand.grid(1:n1, 1:n2)
   rec1 <- ids[,1]
   rec2 <- ids[,2]
   levels <- cd[[4]]
@@ -108,21 +108,21 @@ GetUniquePatterns2 <- function(cd,
   # counts_by_rec <- split(counts_by_rec$n, counts_by_rec$rec2)
 
   thing <- split(temp, rec2)
-  hash_to_rec1 <- map(thing, ~ lapply(1:P, function(y){
+  hash_to_file_1 <- map(thing, ~ lapply(1:P, function(y){
     which(.x$hash_id == y)
     })
     )
 
-  counts_by_rec <-  map(hash_to_rec1, ~lapply(.x, length)) %>%
+  counts_by_rec <-  map(hash_to_file_1, ~lapply(.x, length)) %>%
     map(unlist)
 
-  hash_to_rec1 <- lapply(hash_to_rec1, function(x){
+  hash_to_file_1 <- lapply(hash_to_file_1, function(x){
     append(x, list(n1 +1))
   })
 
 
   if(!is.null(R)){
-    hash_to_rec1 <- lapply(hash_to_rec1, function(z){
+    hash_to_file_1 <- lapply(hash_to_file_1, function(z){
     map(z, ~RandomIndexing(.x, R))
   })
   }
@@ -131,7 +131,7 @@ GetUniquePatterns2 <- function(cd,
   patterns <- list(ohe = unique_patterns,
                    total_counts = pattern_counts,
                    pattern_counts_by_record = counts_by_rec,
-                   hash_to_file_1 = hash_to_rec1)
+                   hash_to_file_1 = hash_to_file_1)
   patterns
 
 }
@@ -171,16 +171,16 @@ ProcessHash <- function(cd, fast = F, R = NULL){
   counts_by_rec <- split(counts_by_rec$n, counts_by_rec$rec2)
 
   thing <- split(temp, rec2) #change to groupby
-  hash_to_rec1 <- map(thing, ~ lapply(1:P, function(y){
+  hash_to_file_1 <- map(thing, ~ lapply(1:P, function(y){
     which(.x$hash_id == y)
   })
   )
-  hash_to_rec1 <- lapply(hash_to_rec1, function(x){
+  hash_to_file_1 <- lapply(hash_to_file_1, function(x){
     append(x, list(n1 +1))
   })
 
   if(!is.null(R)){
-    hash_to_rec1 <- lapply(hash_to_rec1, function(z){
+    hash_to_file_1 <- lapply(hash_to_file_1, function(z){
       map(z, ~RandomIndexing(.x, R))
     })
   }
@@ -190,7 +190,7 @@ ProcessHash <- function(cd, fast = F, R = NULL){
     unique_patterns,
     pattern_counts,
     counts_by_rec,
-    hash_to_rec1)
+    hash_to_file_1)
 
 }
 
@@ -228,16 +228,16 @@ ProcessHashBig <- function(cd, fast = F, R = NULL, Ztrue){
   counts_by_rec <- split(counts_by_rec$n, counts_by_rec$rec2)
 
   thing <- split(temp, rec2) #change to groupby
-  hash_to_rec1 <- map(thing, ~ lapply(1:P, function(y){
+  hash_to_file_1 <- map(thing, ~ lapply(1:P, function(y){
     which(.x$hash_id == y)
   })
   )
-  hash_to_rec1 <- lapply(hash_to_rec1, function(x){
+  hash_to_file_1 <- lapply(hash_to_file_1, function(x){
     append(x, list(n1 +1))
   })
 
   if(!is.null(R)){
-    hash_to_rec1 <- lapply(hash_to_rec1, function(z){
+    hash_to_file_1 <- lapply(hash_to_file_1, function(z){
       map(z, ~RandomIndexing(.x, R))
     })
   }
@@ -247,7 +247,7 @@ ProcessHashBig <- function(cd, fast = F, R = NULL, Ztrue){
     unique_patterns,
     pattern_counts,
     counts_by_rec,
-    hash_to_rec1, Ztrue)
+    hash_to_file_1, Ztrue)
 
 }
 
