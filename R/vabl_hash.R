@@ -268,7 +268,8 @@ vabl_hash <- function(comparisons,
     #   factor(levels = unique_hashed) %>%
     #   as.integer() %>%
     #   factor(levels = 1:P)
-    hash_id <- match(hash, unique_hashed)
+    hash_id <- match(hash, unique_hashed) %>%
+      factor(levels = 1:P)
 
   } else {
 
@@ -280,7 +281,8 @@ vabl_hash <- function(comparisons,
     #   as.integer() %>%
     #   factor(levels = 1:P)
 
-    hash_id <- match(hash, unique_hashed)
+    hash_id <- match(hash, unique_hashed) %>%
+      factor(levels = 1:P)
     unique_patterns <- indicators[!duplicated(hash_id), ]
   }
 
