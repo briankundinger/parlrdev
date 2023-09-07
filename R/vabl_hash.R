@@ -340,6 +340,7 @@ vabl_hash <- function(comparisons,
     setNames(c("rec2", "eligible_patterns", "eligible_records")) %>%
     group_split(rec2, .keep = F)
 
+
 #   thing2 <- thing %>%
 #     filter(is.na(N))
 #
@@ -402,3 +403,4 @@ vabl_hash <- function(comparisons,
 
 }
 
+# Just a comment
