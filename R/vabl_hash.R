@@ -290,7 +290,7 @@ vabl_hash <- function(comparisons,
     count() %>%
     pull()
 
-  pattern_lookup <- expand.grid(1:P, 1:n1) %>%
+  pattern_lookup <- expand.grid(1:P, 1:n2) %>%
     data.frame() %>%
     setNames(., c("hash_id", "rec2"))
 
