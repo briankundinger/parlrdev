@@ -1,0 +1,70 @@
+---
+title: "lalonde"
+output: html_document
+date: "2023-08-14"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+devtools::load_all()
+library(RecordLinkage)
+library(dplyr)
+library(stringr)
+library(parlrdev)
+library(purrr)
+library(readr)
+library(BRL)
+```
+
+```{r}
+getwd()
+treated <- readRDS("../../cpm_dev/data/nsw_treated") %>% 
+  as.data.frame()
+control <- readRDS("../../cpm_dev/data/nsw_control") %>% 
+  as.data.frame()
+
+for_linkage <- 2:8
+
+cd <- BRL::compareRecords(control, treated, flds = names(control)[for_linkage], types = rep("bi", 7))
+m_prior <- rep(c(1, 100000), length(for_linkage))
+
+cd[[1]] <- apply(cd[[1]], 2, as.numeric)
+out_BRL <- BRL::bipartiteGibbs(cd)
+hash <- parlrdev::GetUniquePatterns2(cd, all_patterns = T)
+out_fabl <- parlrdev::fabl_gibbs(cd, all_patterns = F, show_progress = T, m_prior = m_prior, alpha = 50000)
+Zhat <- LinkRecordsBK(out_fabl$Z, nrow(control), 1, 1, 2, Inf)
+
+plot(out_fabl$pi)
+plot(out_fabl$overlap)
+rowMeans(out_fabl$m)
+rowMeans(out_fabl$u)
+rowMeans(out_fabl$m)/ rowMeans(out_fabl$u)
+
+plot(out_fabl$u[1, ])
+
+
+plot(out_fabl$pi)
+View(out_fabl$Z)
+
+thing <- sapply(control[2:8], function(x){
+  length(unique(x))
+})
+  
+1  -  (1/thing)
+
+
+```
+```{r}
+treated_coarse <- treated %>% 
+  select(-treated, -RE78) %>% 
+  unite(., col = "string") %>% 
+  pull()
+
+control_coarse <- control %>% 
+  select(-treated, -RE78) %>% 
+  unite(., col = "string") %>% 
+  pull()
+
+sum(treated_coarse %in% control_coarse)
+```
+

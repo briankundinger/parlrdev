@@ -256,7 +256,7 @@ docs/
 # translation temp files
 po/*~
 
-
+SEI_sensitivity/out/sim_acc/
 
 
 inst/doc

@@ -1,0 +1,65 @@
+---
+title: "Sadinle_vabl"
+output: html_document
+date: "2023-08-28"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+devtools::load_all()
+library(parlrdev)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(RColorBrewer)
+```
+
+```{r}
+```{r}
+rm(list=ls())
+set.seed(2)
+R <- NULL
+show_progress <- T
+fast <- F
+all_patterns <- F
+S <- 1000
+burn <- S * .1
+iter_count <- seq_len(S)
+
+cd <- readRDS("../data/comparison_elsalvador_smallP.rds")
+nA <- cd$n1
+nB <- cd$n2
+levels <- cd[[4]]
+P <- prod(levels + 1) 
+var_names <- cd$compFields[,1]
+
+Zchain_fabl <- fabl_gibbs(cd, S = S, R = R, show_progress = T, all_patterns = FALSE)
+saveRDS(Zchain_fabl, "../data/el_salvador/chain_fabl")
+Zhat_fabl <- LinkRecordsBK(Zchain_fabl[[1]], nA, 1, 1, 2, Inf)
+Zhat_fabl <- ResolveConflicts(Zhat_fabl)
+Zhat_fabl_partial <- LinkRecordsBK(Zchain_fabl[[1]], nA, 1, 1, 2, .1)
+Zhat_fabl_partial <- ResolveConflicts(Zhat_fabl_partial, lR = .1)
+
+Zchain_sadinle <- BRL::bipartiteGibbs(cd)
+saveRDS(Zchain_fabl, "../data/el_salvador/chain_brl")
+Zhat_sadinle <- LinkRecordsBK(Zchain_sadinle[[1]], nA, 1, 1, 2, Inf)
+Zhat_sadinle_partial <- LinkRecordsBK(Zchain_sadinle[[1]], nA, 1, 1, 2, .1)
+
+hash <- vabl_hash(cd, all_patterns)
+ptm <- proc.time()
+out <- vabl_efficient(hash, threshold, tmax)
+elapsed <- proc.time() - ptm
+result <- vabl_estimate_links(out, hash)
+Zhat_vabl <- ResolveConflicts(result)
+eval <- GetEvaluations(result$Zhat, Ztrue, n1)
+vabl_acc_samps[j, ] <- c(eval, NA, elapsed[3], overlap)
+
+
+
+```
+```
+

@@ -450,10 +450,9 @@ As shown in the full conditionals in (\ref{efficient_alpha}),  (\ref{efficient_b
 	
 	We compare \texttt{fabl} to \texttt{BRL} in terms of recall, precision and F-measure, as defined in \cite{christen_2012}. Recall is the proportion of true matches found by the model, that is, $\sum_{j=1}^{n_B} I(\hat{Z}_j = Z_j, Z_j \leq n_A) / \sum_{j=1}^{n_B} I(Z_j \leq n_A)$. Precision is the proportion of links found by the model that are true matches, that is, $\sum_{j=1}^{n_B} I(\hat{Z}_j = Z_j, Z_j \leq n_A) / \sum_{j=1}^{n_B} I(\hat{Z}_j \leq n_A)$. The F-measure balances the two metrics to provide an overall measure of accuracy, and is defined as $2  (\text{Recall } + \text{ Precision}) / (\text{Recall } \times \text{ Precision})$. In Figure \ref{fig:sadinle_simulation}, we see that the two methods have comparable performance at all levels of error and overlap. 
 	
-		\begin{table}
+	\begin{table}
 		\centering
 		\begin{tabular}{llllll}
-			
 			\multicolumn{2}{c}{ } & \multicolumn{4}{c}{Level of Disagreement} \\
 			\cline{3-6}
 			Fields & Similarity & 1 & 2 & 3 & 4\\

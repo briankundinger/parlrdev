@@ -1,4 +1,4 @@
-vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200, fixed_iterations = NULL,
+vabl_efficient <- function(hash, threshold = 1e-10, tmax = 200, fixed_iterations = NULL,
                            a = NULL, b = NULL, a_pi = NULL, b_pi = NULL){
 
   check_every <- 10
@@ -23,13 +23,13 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200, fixed_iterations 
     a <- rep(1, length(field_marker))
   }
   if(is.null(b)){
-  b <- rep(1, length(field_marker))
+    b <- rep(1, length(field_marker))
   }
   if(is.null(a_pi)){
-  a_pi <- 1
+    a_pi <- 1
   }
   if(is.null(b_pi)){
-  b_pi <- 1
+    b_pi <- 1
   }
 
   t <- 1
@@ -133,13 +133,13 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200, fixed_iterations 
 
 
     if(is.null(fixed_iterations)){
-    if(t %% check_every == 0){
-      ratio <- abs((elbo_seq[t] - elbo_seq[t - check_every +1])/
-                     elbo_seq[t - check_every +1])
-    }
-    if(ratio < threshold){
-      break
-    }
+      if(t %% check_every == 0){
+        ratio <- abs((elbo_seq[t] - elbo_seq[t - check_every +1])/
+                       elbo_seq[t - check_every +1])
+      }
+      if(ratio < threshold){
+        break
+      }
     }
 
     t <- t + 1
@@ -168,14 +168,3 @@ vabl_efficient <- function(hash, threshold = 1e-8, tmax = 200, fixed_iterations 
 
 }
 
-# exp_log_ratio <- a_chunk - b_chunk
-# weights <- ohe %>%
-#   sweep(., 2, exp_log_ratio, "*") %>%
-#   rowSums()
-
-#elbo[2] <- single * sum((1/C) * log(C))
-#elbo[3] <- total_nonmatch * (log(n1) - log(single)) -log(n1)*n2
-# elbo[4] <- (alpha_pi - a_pi + n2 - total_nonmatch) *
-#   (digamma(a_pi) - digamma(a_pi + b_pi))
-# elbo[5] <- (beta_pi - b_pi + total_nonmatch) *
-#   (digamma(b_pi) - digamma(a_pi + b_pi))

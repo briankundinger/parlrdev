@@ -9,13 +9,13 @@ results_df <- results %>%
   select(-RR, -time) %>%
   filter(method %in% c("vabl", "fabl_resolved", "BRL")) %>%
   pivot_longer(cols = 1:3, names_to = "metric") %>%
-  group_by(method, metric, Error, overlap) %>%
+  group_by(method, metric, error, overlap) %>%
   summarize(avg = mean(value),
             lower = quantile(value, .025),
             upper = quantile(value, .975),
             .groups = "drop") %>%
   mutate(metric = factor(metric, c("recall", "precision", "f-Measure")),
-         Error = factor(Error, c("One Error", "Two Errors", "Three Errors")),
+         error = factor(error, c("One Error", "Two Errors", "Three Errors")),
          overlap = case_when(
            overlap == 50 ~ "10% Overlap",
            overlap == 250 ~ "50% Overlap",
@@ -33,7 +33,7 @@ acc_plot <- results_df %>%
              color = method)) +
   geom_pointrange(position = position_dodge2(width = .5),
                   size = .3) +
-  facet_grid(overlap ~ Error) +
+  facet_grid(overlap ~ error) +
   labs(x = NULL,
        y = NULL,
        color = "Method") +
@@ -52,42 +52,43 @@ acc_plot
 
 results_partial_df <- results %>%
   mutate(DR = 1 - RR) %>%
-  select(-RR, -Time_Elapsed) %>%
-  filter(Method %in% c("fabl_partial", "BRL_partial")) %>%
-  pivot_longer(cols = c(1, 2, 3, 7), names_to = "Metric") %>%
-  group_by(Method, Metric, Error, Overlap) %>%
+  select(-RR, -time) %>%
+  filter(method %in% c("fabl_partial", "BRL_partial", "vabl_partial")) %>%
+  pivot_longer(cols = c(1, 2, 3, 7), names_to = "metric") %>%
+  group_by(method, metric, error, overlap) %>%
   summarize(avg = mean(value),
             lower = quantile(value, .025),
             upper = quantile(value, .975),
             .groups = "drop") %>%
-  filter(Metric != "F-Measure") %>%
-  mutate(Error = factor(Error, c("One Error", "Two Errors", "Three Errors")),
-         Overlap = case_when(
-           Overlap == 50 ~ "10% Overlap",
-           Overlap == 250 ~ "50% Overlap",
-           Overlap == 450 ~ "90% Overlap"
+  filter(metric != "f-measure") %>%
+  mutate(error = factor(error, c("One Error", "Two Errors", "Three Errors")),
+         overlap = case_when(
+           overlap == 50 ~ "10% Overlap",
+           overlap == 250 ~ "50% Overlap",
+           overlap == 450 ~ "90% Overlap"
          ),
-         Method = case_when(
-           Method == "BRL_partial" ~ "BRL",
-           Method == "fabl_partial" ~ "fabl"
+         method = case_when(
+           method == "BRL_partial" ~ "BRL",
+           method == "fabl_partial" ~ "fabl",
+           method == "vabl_partial" ~ "vabl"
          ),
-         Metric = case_when(
-           Metric == "Recall" ~ "NPV",
-           Metric == "Precision" ~ "PPV",
-           Metric == "DR" ~ "DR"
+         metric = case_when(
+           metric == "recall" ~ "NPV",
+           metric == "precision" ~ "PPV",
+           metric == "DR" ~ "DR"
          ),
-         Metric = factor(Metric, c("NPV", "PPV", "DR")))
+         metric = factor(metric, c("NPV", "PPV", "DR")))
 
 acc_plot_partial <- results_partial_df %>%
-  ggplot(aes(x = Metric, y = avg,
+  ggplot(aes(x = metric, y = avg,
              ymin  = lower, ymax = upper,
-             color = Method)) +
+             color = method)) +
   geom_pointrange(position = position_dodge2(width = .5),
                   size = .3) +
-  facet_grid(Overlap ~ Error) +
+  facet_grid(overlap ~ error) +
   labs(x = NULL,
        y = NULL,
-       color = "Method") +
+       color = "method") +
   theme_bw(base_size = 8) +
   theme(plot.title = element_text(hjust = .5),
         plot.subtitle = element_text(hjust = .5)) +
@@ -95,5 +96,5 @@ acc_plot_partial <- results_partial_df %>%
 
 acc_plot_partial
 
-ggsave(filename = "notes/figures/sadinle_sim_plot_partial2.png",
+ggsave(filename = "notes/figures/sadinle_sim_plot_partial_vabl.png",
        plot = acc_plot_partial)

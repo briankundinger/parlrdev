@@ -1,0 +1,133 @@
+---
+title: "Sadinle_accuracy"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Sadinle_accuracy}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(devtools)
+load_all()
+library(parlrdev)
+library(tidyverse)
+library(glue)
+```
+
+
+```{r}
+
+files <- list.files(path = "../../data/SimulationDataFiles", full.names = T)
+i = 250
+j = 1
+R= NULL
+S= 1000
+all_patterns = F
+lFNM=1
+lFM1=1
+lFM2=2
+lR=Inf
+
+overlap_vals <- c(50, 250, 450)
+
+overlap <- overlap_vals[j]
+records <- read_csv(files[i], col_types = cols())
+records$file <- rep(2:1, length.out = dim(records)[1])
+
+records <- records %>% 
+  janitor::clean_names() %>% 
+  mutate(rec_id = as.numeric(str_extract(rec_id, "\\d{3}")) + 1)
+
+n1 <- 500
+n2 <- 500
+
+Ztrue <- n1 + 1:n2
+Ztrue[1:overlap] <- 1:overlap
+
+file1 <- records %>% 
+  filter(file ==1,
+         rec_id <= n1) %>% 
+  select(-rec_id) %>% 
+  as.matrix(.) %>% 
+  data.frame(.) %>% 
+  mutate(occup = as.numeric(occup))
+
+file2 <- records %>% 
+  filter(file == 2,
+         rec_id %in% c(1:overlap, (n1 +1):(1000 - overlap))) %>% 
+  select(-rec_id) %>% 
+  as.matrix() %>% 
+  data.frame(.) %>% 
+  mutate(occup = as.numeric(occup))
+
+
+comparisons <- BRL::compareRecords(file1, file2, c(2, 3, 5, 6),
+                                   types = c("lv", "lv", "bi", "bi"))
+comparisons[[1]] <- apply(comparisons[[1]], 2, as.numeric)
+hash <- vabl_hash(comparisons, all_patterns)
+
+threshold <-  1e-8
+tmax <- 200
+trials <- 5
+iterations = 150
+
+V_vals <- c(.5, 1, 10, 25)
+
+for(k in seq_along(V_vals)){
+M <- 1
+V <- V_vals[k]
+c <- M/V
+d <- M * c
+
+out_list <- list()
+eval_list <- list()
+
+
+for(h in 1:trials){
+  a <- rgamma(ncol(comparisons[[1]]), c, d) + 1/2
+  b <- rgamma(ncol(comparisons[[1]]), c, d) + 1/2
+  a_pi <- rgamma(1, c, d) + 1/2
+  b_pi <- rgamma(1, c, d) + 1/2
+  
+
+  out <- vabl_efficient(hash, threshold, tmax, 
+                        fixed_iterations = iterations,
+                        a = a, b = b, a_pi = a_pi, b_pi = b_pi)
+  out_list[[h]] <- data.frame(elbo = out$elbo,
+                              trial = h, 
+                              iter = 1:(iterations - 1))
+  result <- vabl_estimate_links(out, hash, resolve = T)
+  eval <- GetEvaluations(result$Zhat, Ztrue, n1)
+  eval_list[[h]] <- eval
+}
+
+elbo_df <- out_list %>% 
+  do.call(rbind, .) %>% 
+  mutate(trial = factor(trial))
+
+elbo_df %>% 
+  ggplot() +
+  aes(x = iter, y = elbo, color = trial) +
+  geom_line(size = 1) +
+  theme_bw() +
+  labs(title = glue("ELBO Convergence for Variance = {V}")) +
+  scale_color_brewer(palette="Set1")
+
+ggsave(glue("../../figures/vabl/initialization_var_{V}.png"))
+
+eval_df <- eval_list %>% 
+  do.call(rbind, .) %>% 
+  data.frame(.) %>% 
+  mutate(trial = row_number())
+}
+
+```
+

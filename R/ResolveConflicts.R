@@ -2,7 +2,7 @@ ResolveConflicts <- function(Zhat, lR = Inf){
 
   post_probs <- Zhat[[2]]
   Zhat <- Zhat[[1]]
-  double_matches <- Zhat[duplicated(Zhat) & Zhat != -1]
+  double_matches <- Zhat[duplicated(Zhat) & Zhat > -1]
   if (lR == Inf){
     to_resolve <- unlist(lapply(double_matches, function(x){
       dfB_options <- which(Zhat == x)

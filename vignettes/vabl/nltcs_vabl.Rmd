@@ -1,0 +1,91 @@
+---
+title: "vabl_nltcs"
+output: html_document
+date: "2023-09-07"
+---
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(devtools)
+load_all()
+library(parlrdev)
+library(tidyverse)
+```
+
+
+```{r}
+nltcs <- read.csv("../../data/proc_nltcs.csv")
+df82 <- nltcs %>%
+  filter(FILE == 82) %>%
+  select(-FILE, -SEQ) %>%
+  mutate(unique_ID = str_sub(REC, start = 3L),
+         DOB_DAY = str_pad(DOB_DAY, 2, pad = "0"),
+         DOB_MONTH = str_pad(DOB_MONTH, 2, pad = "0"),
+         DOB_YEAR = str_pad(DOB_YEAR, 2, pad = "0"),
+         STATE = str_pad(STATE, 2, pad = "0"),
+         REGOFF = str_pad(REGOFF, 2, pad = "0")) %>%
+  unite(dob, 2:4, sep = "") %>%
+  unite(location, c(STATE, REGOFF), sep = "")
+
+
+df89 <- nltcs %>%
+  filter(FILE == 89) %>%
+  select(-FILE, -SEQ) %>%
+  mutate(unique_ID = str_sub(REC, start = 3L)) %>%
+  mutate(unique_ID = str_sub(REC, start = 3L),
+         DOB_DAY = str_pad(DOB_DAY, 2, pad = "0"),
+         DOB_MONTH = str_pad(DOB_MONTH, 2, pad = "0"),
+         DOB_YEAR = str_pad(DOB_YEAR, 2, pad = "0"),
+         STATE = str_pad(STATE, 2, pad = "0"),
+         REGOFF = str_pad(REGOFF, 2, pad = "0")) %>%
+  unite(dob, 2:4, sep = "") %>%
+  unite(location, c(STATE, REGOFF), sep = "")
+
+n2 <- nrow(df89)
+n1 <- nrow(df82)
+
+Ztrue <- sapply(df89$unique_ID, function(x){
+  match <- which(df82$unique_ID == x)
+  if (length(match) == 0){
+    match <- 0
+  }
+  match
+}) %>% 
+  unname()
+
+```
+
+```{r}
+
+result_files <- list.files(path = "../../data/vabl/hash_nltcs", full.names = T)
+hash_list <- lapply(result_files, readRDS)
+hash <- CombineHash(hash_list, df82, df89)
+
+```
+
+
+```{r}
+b_partial <- sweep(hash_list[[1]]$ohe, 1,
+                   hash_list[[1]]$total_counts, "*") %>% 
+  colSums()
+
+b_full <- sweep(hash$ohe, 1, hash$total_counts, "*") %>% 
+  colSums()
+
+out <- vabl_efficient(hash, b=NULL, b_pi = hash$n2)
+result <- vabl_estimate_links(out, hash)
+eval <- GetEvaluations(result$Zhat, Ztrue, n1)
+eval
+```
+```{r}
+out <- vabl_efficient(hash, b=NULL, b_pi = NULL)
+out_null <- data.frame(elbo = out$elbo_seq, 
+                       initialization = "default") %>% 
+  mutate(iter = row_number())
+```
+

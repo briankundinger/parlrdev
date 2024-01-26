@@ -28,8 +28,12 @@ files <- list.files(path = "../data/SimulationDataFiles", full.names = T)
 i = 1
 j = 1
 R= NULL
-S= 500
+S= 1000
 all_patterns = F
+lFNM=1
+lFM1=1
+lFM2=2
+lR=Inf
 
 overlap_vals <- c(50, 250, 450)
 
@@ -72,22 +76,45 @@ threshold <-  1e-8
 tmax <- 200
 
 hash <- vabl_hash(comparisons, all_patterns)
+#saveRDS(out, "../data/vabl/hash_sadinle_demo")
 ptm <- proc.time()
 out <- vabl_efficient(hash, threshold, tmax)
-elapsed <- proc.time() - ptm
-elapsed[3]
-elapsed[3]/out$t
+#saveRDS(out, "../data/vabl/vabl_sadinle_demo")
+elapsed_vabl <- proc.time() - ptm
+elapsed_vabl[3]
+elapsed_vabl[3]/out$t
 result <- vabl_estimate_links(out, hash, resolve = T)
-eval <- GetEvaluations(result$Zhat, Ztrue, n1)
-eval
+eval_vabl <- GetEvaluations(result$Zhat, Ztrue, n1)
+eval_vabl
 
 ptm <- proc.time()
 Zchain <- fabl_gibbs(comparisons, R = R, all_patterns = F, S = S)
-elapsed <- proc.time() - ptm
-elapsed[3] - Zchain$hash_time
-(elapsed[3] - Zchain$hash_time)/S
+saveRDS(Zchain, "../data/vabl/fabl_sadinle_demo")
+elapsed_fabl <- proc.time() - ptm
+elapsed_fabl[3] - Zchain$hash_time
+(elapsed_fabl[3] - Zchain$hash_time)/S
 Zhat_fabl <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
-eval <- GetEvaluations(Zhat_fabl[[1]], Ztrue, n1)
-eval
+eval_fabl<- GetEvaluations(Zhat_fabl[[1]], Ztrue, n1)
+eval_fabl
+
+ptm <- proc.time()
+Zchain <- BRL::bipartiteGibbs(comparisons)
+saveRDS(Zchain, "../data/vabl/brl_sadinle_demo")
+elapsed_BRL <- proc.time() - ptm
+(elapsed_BRL[3])/S
+Zhat_BRL <- LinkRecordsBK(Zchain[[1]], n1, 1, 1, 2, Inf)
+eval_BRL <- GetEvaluations(Zhat_BRL[[1]], Ztrue, n1)
+eval_BRL
 
 ```
+
+
+```{r}
+
+
+```
+
+```{r}
+
+```
+

@@ -336,53 +336,9 @@ vabl_hash <- function(comparisons,
     unnest(data) %>%
     complete(rec2 = unique(hash_to_file_1$rec2)) %>%
     select(-N) %>%
-    # pull(rec2) %>%
-    # unique() %>%
-    # length() %>%
     setNames(c("rec2", "eligible_patterns", "eligible_records")) %>%
     group_split(rec2, .keep = F)
 
-
-#   thing2 <- thing %>%
-#     filter(is.na(N))
-#
-#
-#   flags <- lapply(thing2, function(x){
-#
-#   eligible_marker <- x$N == 1
-#   eligible_records <- x$data[eligible_marker] %>%
-#     unlist() %>%
-#     unname()
-#
-#   data.frame(eligible_patterns = x$hash_id[eligible_marker],
-#              eligible_records = eligible_records)
-#
-#   })
-# #
-#   flags <- counts %>%
-#     filter(N == 1) %>%
-#     unnest(data) %>%
-#     select(-N) %>%
-#     setNames(c("eligible_patterns", "rec2", "eligible_records"))
-#
-#   flags <- flags %>%
-#    group_split(rec2, .keep = F)
-
-
-  # NOTE: Compare memory costs of hash_to_file_1 and flags
-  # flags <- lapply(hash_to_file_1, function(x){
-  #
-  #   eligible_patterns <- sapply(x, function(y){
-  #     length(y) == 1
-  #   }) %>%
-  #     which()
-  #   eligible_records <- sapply(eligible_patterns, function(y){
-  #     x[[y]]
-  #   })
-  #
-  #   data.frame(eligible_patterns, eligible_records)
-  #
-  # })
 
   if(method == "vabl"){
     hash_to_file_1 <- NULL

@@ -329,23 +329,15 @@ df_mixing %>%
   theme(legend.position="bottom") +
   guides(color=guide_legend(nrow=2,byrow=TRUE))
 
+
+
 #ggsave("../notes/figures/el_salvador/bad_mixing.png")
 ```
 
 ```{r}
-thing <- (Zhat_fabl[[2]] >nA ) &  (Zhat_sadinle[[1]] < nA  +1)
-match1_index <- which(thing)
-match2_index <- Zhat_sadinle[[1]][match1_index]
-
-ER <- readRDS("../data/ER.rds")
-CDHES <- readRDS("../data/CDHES.rds")
-
-ER[match1_index, ]
-
-
-cbind(Zhat_fabl[[2]][thing], Zhat_sadinle[[2]][thing])
-```
-```{r}
-CDHES[match2_index, ]
+hash <- parlrdev::vabl_hash(cd)
+out <- vabl_efficient(hash)
+result <- vabl_estimate_links(out, hash)
+sum(result$Zhat > 0)
 ```
 

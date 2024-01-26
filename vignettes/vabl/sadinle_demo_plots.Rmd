@@ -1,0 +1,156 @@
+---
+title: "Untitled"
+output: html_document
+date: "2023-08-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(SHELF)
+library(purrr)
+```
+
+
+```{r}
+
+vabl_out <- readRDS("../../data/vabl/vabl_sadinle_demo")
+fabl_out <- readRDS("../../data/vabl/fabl_sadinle_demo")
+brl_out <- readRDS("../../data/vabl/brl_sadinle_demo")
+```
+
+```{r}
+levels <- comparisons$nDisagLevs
+var_names <- c("first_name", "last_name", "zip", "occupation")
+field_marker <- hash$field_marker
+
+ProcessChain <- function(samps){
+  avg <- apply(samps, 1, mean)
+  upper <- apply(samps, 1, function(x){
+    quantile(x, .975)
+  })
+  lower <- apply(samps, 1, function(x){
+    quantile(x, .025)
+  })
+  level_marker <- factor(unlist(sapply(levels, seq_len)))
+  field <- factor(unlist(mapply(function(x, y) {
+    rep(x, y)
+  }, x = var_names, y = levels)), levels = var_names)
+  
+  data.frame(level_marker, field, avg, upper, lower)
+}
+m_fabl <- ProcessChain(fabl_out$m)
+m_fabl$method <- "fabl"
+m_fabl$parameter <- "m"
+m_brl <- ProcessChain(brl_out$m)
+m_brl$method <- "BRL"
+m_brl$parameter <- "m"
+
+m_vabl <- m_fabl
+
+m_vabl$avg <- vabl_out$a %>% 
+  split(., field_marker) %>% 
+  lapply(., function(x){
+    x/sum(x)
+  }) %>% 
+  unlist()
+
+m_vabl$lower <- vabl_out$a %>% 
+  split(., field_marker) %>% 
+  lapply(., function(x){
+    quants <- SHELF::feedbackDirichlet(x, .025, sf = 3)[, 2]
+  }) %>% 
+  unlist()
+
+m_vabl$upper <- vabl_out$a %>% 
+  split(., field_marker) %>% 
+  lapply(., function(x){
+    quants <- SHELF::feedbackDirichlet(x, .975, sf = 3)[, 2]
+  }) %>% 
+  unlist()
+
+m_vabl$method <- "vabl"
+
+
+df <- rbind(m_vabl, m_fabl, m_brl)
+
+df %>% 
+  ggplot(aes(x = level_marker, y = avg,
+             ymin = lower, ymax = upper, color = method)) +
+  geom_pointrange(position = position_dodge2(width = .5)) +
+  facet_wrap(~field, scales = "free_x") + 
+  labs(y = "Probability",
+       x = "Agreement Level",
+       color = "Method", 
+       title = "m parameter for Sadinle Simulated Dataset") + 
+  theme_bw(base_size = 8) +
+  scale_color_brewer(palette="Set1")
+
+ggsave("../../notes/figures/vabl_m.png")
+```
+
+```{r}
+u_fabl <- ProcessChain(fabl_out$u)
+u_fabl$method <- "fabl"
+u_fabl$parameter <- "u"
+u_brl <- ProcessChain(brl_out$u)
+u_brl$method <- "BRL"
+u_brl$parameter <- "u"
+
+u_vabl <- u_fabl
+
+u_vabl$avg <- vabl_out$b %>% 
+  split(., field_marker) %>% 
+  lapply(., function(x){
+    x/sum(x)
+  }) %>% 
+  unlist()
+
+u_vabl$lower <- vabl_out$b %>% 
+  split(., field_marker) %>% 
+  lapply(., function(x){
+    quants <- SHELF::feedbackDirichlet(x, .025, sf = 3)[, 2]
+  }) %>% 
+  unlist()
+
+u_vabl$upper <- vabl_out$b %>% 
+  split(., field_marker) %>% 
+  lapply(., function(x){
+    quants <- SHELF::feedbackDirichlet(x, .975, sf = 3)[, 2]
+  }) %>% 
+  unlist()
+
+u_vabl$method <- "vabl"
+
+
+df <- rbind(u_vabl, u_fabl, u_brl)
+
+df %>% 
+  ggplot(aes(x = level_marker, y = avg,
+             ymin = lower, ymax = upper, color = method)) +
+  geom_pointrange(position = position_dodge2(width = .5)) +
+  facet_wrap(~field, scales = "free_x") + 
+  labs(y = "Probability",
+       x = "Agreement Level",
+       color = "Method", 
+       title = "u parameter for Sadinle Simulated Dataset") + 
+  theme_bw(base_size = 8) +
+  scale_color_brewer(palette="Set1")
+
+ggsave("../../notes/figures/vabl_u.png")
+```
+```{r}
+out$elbo_seq %>% 
+  data.frame() %>% 
+  mutate(iter = row_number()) %>% 
+  ggplot() +
+  aes(x = iter,
+      y = .) +
+  geom_line() +
+  labs(x = "Iteration", 
+       y = "ELBO",
+       title = "ELBO Convergence for Sadinle Simulated Dataset") +
+  theme_bw(base_size = 12) 
+
+ggsave("../../notes/figures/vabl_elbo.png")
+```
+
