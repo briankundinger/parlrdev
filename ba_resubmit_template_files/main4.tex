@@ -319,48 +319,47 @@ Additionally, let $\bm{\alpha_0} = (\alpha_{11}, \ldots, \alpha_{F L_F})$ and $\
 	\end{align}
 \end{subequations}
 Specifically, the $l + \sum_{k=1}^{f-1} L_k$ components of (\ref{efficient_alpha}) and (\ref{efficient_beta}) provide the posterior updates for level $l$ and field $f$ in (\ref{eqn:alpha_update}) and (\ref{eqn:beta_update}). However, the vectorized summations can be computed more efficiently than summing over $n_A n_B$ record pairs for each field and agreement level.
-{
-\color{blue}{
+%{
+%\color{blue}{
+%Similarly, the posterior updates for $\bm{Z}$ depend on the data only through quantities calculated through $\mathcal{N}, \mathcal{P}$, and $\mathcal{R}$. For each pattern $p$, let $w_p =m_p/u_p$.  The contribution to the likelihood in the full conditional for $Z_j$ can be expressed as
+%\begin{align}
+%	\mathcal{L}(Z_j\mid  \tilde{\gamma}, \bm{m}, \bm{u}, \pi) = \prod_{p=1}^P u_p^{N_{p_j}} \prod_{i \in r_{p_j}} w_p^{I(Z_j = i)}. \label{likelihood_efficient_z}
+%\end{align}
+%Sampling $Z_j$ from the full conditional provided in (\ref{eqn:z_full_conditional}) can become computationally expensive when $n_A$ is large. This is because sampling a value from $n_A$ options with unequal weights requires normalizing the weights to probabilities, which has a computational cost that scales with $n_A$. To speed up computation, we use \eqref{likelihood_efficient_z} to break this sampling step into two. 
+%
+%We first sample among $P + 1$ options for the agreement pattern between $B_j$ and its potential link, according to
+%\begin{align}
+%	%\label{eqn:gibbs1}
+%	p\left( \Gamma_{Z_j^{(s+1)}, j} = h_p \mid \tilde{\gamma}, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}\right) \propto
+%	\begin{cases} 
+%		\frac{\pi^{(s+1)}N_{p_j}}{n_A}  w_{p}^{(s+1)},  & h_p \in \mathcal{P}; \\
+%		1- \pi^{(s+1)} , &   \text{otherwise}. \\
+%	\end{cases}
+%\end{align}
+%Since all records in $A$ sharing the same agreement pattern with $B_j$ are equally likely, we then sample among candidate records uniformly using
+%\begin{align}
+%	%\label{eqn:gibbs2}
+%	p\left(Z_j^{(s+1)} = q \mid \gamma_{Z_j^{(s+1)}, j} = h_p, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)} \right) = \begin{cases} 
+%		\frac{1}{N_{p_j}}, & q \in r_{p_j}; \\
+%		0, & \text{otherwise.} \\
+%	\end{cases}
+%\end{align} 
+%
+%These changes can greatly improve the speed of the sampler, and each can be parallelized if desired for additional computational speed-ups. We emphasize the computational gains of this split sampler through Lemma \ref{lemma:fabl}.
+%}
+%}
+
 Similarly, the posterior updates for $\bm{Z}$ depend on the data only through quantities calculated through $\mathcal{N}, \mathcal{P}$, and $\mathcal{R}$. For each pattern $p$, let $w_p =m_p/u_p$.  The contribution to the likelihood in the full conditional for $Z_j$ can be expressed as
 \begin{align}
 	\mathcal{L}(Z_j\mid  \tilde{\gamma}, \bm{m}, \bm{u}, \pi) = \prod_{p=1}^P u_p^{N_{p_j}} \prod_{i \in r_{p_j}} w_p^{I(Z_j = i)}. \label{likelihood_efficient_z}
 \end{align}
-Sampling $Z_j$ from the full conditional provided in (\ref{eqn:z_full_conditional}) can become computationally expensive when $n_A$ is large. This is because sampling a value from $n_A$ options with unequal weights requires normalizing the weights to probabilities, which has a computational cost that scales with $n_A$. To speed up computation, we use \eqref{likelihood_efficient_z} to break this sampling step into two. 
-
-We first sample among $P + 1$ options for the agreement pattern between $B_j$ and its potential link, according to
-\begin{align}
-	%\label{eqn:gibbs1}
-	p\left( \Gamma_{Z_j^{(s+1)}, j} = h_p \mid \tilde{\gamma}, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}\right) \propto
-	\begin{cases} 
-		\frac{\pi^{(s+1)}N_{p_j}}{n_A}  w_{p}^{(s+1)},  & h_p \in \mathcal{P}; \\
-		1- \pi^{(s+1)} , &   \text{otherwise}. \\
-	\end{cases}
-\end{align}
-Since all records in $A$ sharing the same agreement pattern with $B_j$ are equally likely, we then sample among candidate records uniformly using
-\begin{align}
-	%\label{eqn:gibbs2}
-	p\left(Z_j^{(s+1)} = q \mid \gamma_{Z_j^{(s+1)}, j} = h_p, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)} \right) = \begin{cases} 
-		\frac{1}{N_{p_j}}, & q \in r_{p_j}; \\
-		0, & \text{otherwise.} \\
-	\end{cases}
-\end{align} 
-
-These changes can greatly improve the speed of the sampler, and each can be parallelized if desired for additional computational speed-ups. We emphasize the computational gains of this split sampler through Lemma \ref{lemma:fabl}.
-}
-}
-
-{
-\color{red}{Similarly, the posterior updates for $\bm{Z}$ depend on the data only through quantities calculated through $\mathcal{N}, \mathcal{P}$, and $\mathcal{R}$. For each pattern $p$, let $w_p =m_p/u_p$.  The contribution to the likelihood in the full conditional for $Z_j$ can be expressed as
-\begin{align}
-	\mathcal{L}(Z_j\mid  \tilde{\gamma}, \bm{m}, \bm{u}, \pi) = \prod_{p=1}^P u_p^{N_{p_j}} \prod_{i \in r_{p_j}} w_p^{I(Z_j = i)}. \label{likelihood_efficient_z}
-\end{align}
-With this form, we break this sampling step into two. We first sample among $P + 1$ options for the agreement pattern between $B_j$ and its potential link, according to
+With this form, we break this sampling step into two. We first sample among $P + 1$ options for the agreement pattern between $B_j$ and its potential link. Define $r$ as an arbitrary set of records. We have
 \begin{align}
 	\label{eqn:gibbs1}
 	p\left( Z_j^{(s+1)} \in r \mid \tilde{\gamma}, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}\right) \propto
 	\begin{cases} 
 		\frac{\pi^{(s+1)}N_{p_j}}{n_A}  w_{p}^{(s+1)},  & r = r_{p_j}; \\
-		1- \pi^{(s+1)} , &   r = n_A + j. \\
+		1- \pi^{(s+1)} , &  r = \{n_A + j\}. \\
 	\end{cases}
 \end{align}
 Since all records in $A$ sharing the same agreement pattern with $B_j$ are equally likely, we then sample among candidate records uniformly using
@@ -368,13 +367,14 @@ Since all records in $A$ sharing the same agreement pattern with $B_j$ are equal
 	\label{eqn:gibbs2}
 	p\left(Z_j^{(s+1)} = q \mid Z_j^{(s+1)} \in r, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)} \right) = \begin{cases} 
 		\frac{1}{N_{p_j}}, & r = r_{p_j} \text{ and } q \in r; \\
-		1, & r = n_A + j. \\
+		1, & r = \{n_A + j\} \text{ and} \\
+		& q = n_A + j. \\
 	\end{cases}
 \end{align} 
 Note that sampling from (\ref{eqn:gibbs1}) has complexity $O(P+1)$ and sampling (uniformly) from (\ref{eqn:gibbs2}) has complexity $O(1)$, regardless of the size of $r_{p_j}$. In contrast, sampling $Z_j$ from the full conditional provided in (\ref{eqn:z_full_conditional}) has complexity $O(n_A)$, because sampling a value from $n_A$ options with unequal weights requires normalizing the weights to probabilities. 
 
-These changes can greatly improve the speed of the sampler, and each can be parallelized if desired for additional computational speed-ups. We emphasize the computational gains of this split sampler through Lemma \ref{lemma:fabl}.}
-}
+These changes can greatly improve the speed of the sampler, and each can be parallelized if desired for additional computational speed-ups. We emphasize the computational gains of this split sampler through Lemma \ref{lemma:fabl}.
+
 \begin{lemma}
 	Let $n_A$ and $n_B$ be the number of records in files $A$ and $B$, respectively. Let $F$ be the number of fields used for comparisons across records, and $P$ be the number of patterns that comparison vectors exhibit in $A \times B$. We assume $C$ cores available for parallelization and a Gibbs sampler with $T$ iterations. Then, the overall computational complexity of \texttt{fabl} with hashing is $O(F n_A n_B /C) + O(T n_B P / C)$.
 	\label{lemma:fabl}
@@ -401,7 +401,7 @@ These changes can greatly improve the speed of the sampler, and each can be para
 These can be computed sequentially or in parallel. Summary statistics from each pairwise batch comparison can be synthesized to recover summary statistics for the full comparison matrix $\gamma$ through
 \begin{subequations}
 	\begin{align}
-		r_{p_j} &= (r_{p_j}^{11}, \ldots, r_{p_j}^{ t_A t_B}) \text{ for } a = 1, \ldots, t_A \text{ and } b = 1, \ldots, t_B, \label{r_{p_j}} \\
+		r_{p_j} &= \{r_{p_j}^{11}, \ldots, r_{p_j}^{ t_A t_B} \}\text{ for } a = 1, \ldots, t_A \text{ and } b = 1, \ldots, t_B, \label{r_{p_j}} \\
 		N_{p_j} &= \sum_{a = 1}^{t_A} \sum_{b = 1}^{t_B} N_{p_j}^{ab}.\label{N_{p_j}}	\end{align}
 \end{subequations} 
 
@@ -411,24 +411,24 @@ These can be computed sequentially or in parallel. Summary statistics from each 
 As discussed in Section \ref{data-representation-hashing-and-storage}, storing the indices, patterns, and counts in $\tilde{\gamma}$ uses less memory than storing the full comparison matrix $\gamma$. However, recording the indices for all record pairs in $\mathcal{R}$ can become computationally burdensome for very large linkage tasks. We next introduce storage efficient indexing (SEI), which, when used with the methods in Section \ref{scaling}, allows us to compute $\mathcal{N}$ for all $n_A n_B$ record pairs while greatly reducing the memory costs of $\mathcal{R}$ associated with unlikely matches. This allows all-to-all comparisons for substantially larger linkage tasks.
 
 All records $A_i$ that share agreement pattern $p$ with record $B_j$ have the same $w_{p}$. These records have the same probability to be identified as the link for record $B_j$. Thus, records $i \in r_{p_j}$ with large $N_{p_j}$ are unlikely to be sampled consistently enough to be deemed a match in the Bayes estimate. Rather than store all of these record labels, we store only a small number $S$. For each $r_{p_j}^{ab}$, we sample $S$ indices without replacement to form SEI$(r_{p_j}^{ab})$. We collect these memory-reduced lists to form SEI$(r_{p_j})$ as in (\ref{r_{p_j}}), and collect these to form SEI$(\mathcal{R})$. 
-{
-\color{blue}{
-As shown in the full conditionals in (\ref{efficient_alpha}),  (\ref{efficient_beta}), (\ref{eqn:gibbs1}), and (\ref{eqn:gibbs2}), all original record pairs are still accounted for through $\mathcal{N}$, and thus we can proceed with posterior inference with the memory reduced SEI$(\tilde{\gamma}) = \{\mathcal{P}, \text{SEI}(\mathcal{R}), \mathcal{N}\}$. We provide guidance on choice of $S$ through a simulation in Section~\ref{SEI-sensitivity}.
-}
-}
-{
-\color{red}{As shown in the full conditionals in (\ref{efficient_alpha}),  (\ref{efficient_beta}), and (\ref{eqn:gibbs1}), all original record pairs are still accounted for through $\mathcal{N}$. We must revise (\ref{eqn:gibbs2}) to account for the reduced number of labels, so instead use
+%{
+%\color{blue}{
+%As shown in the full conditionals in (\ref{efficient_alpha}),  (\ref{efficient_beta}), (\ref{eqn:gibbs1}), and (\ref{eqn:gibbs2}), all original record pairs are still accounted for through $\mathcal{N}$, and thus we can proceed with posterior inference with the memory reduced SEI$(\tilde{\gamma}) = \{\mathcal{P}, \text{SEI}(\mathcal{R}), \mathcal{N}\}$. We provide guidance on choice of $S$ through a simulation in Section~\ref{SEI-sensitivity}.
+%}
+%}
+
+As shown in the full conditionals in (\ref{efficient_alpha}),  (\ref{efficient_beta}), and (\ref{eqn:gibbs1}), all original record pairs are still accounted for through $\mathcal{N}$. We must revise (\ref{eqn:gibbs2}) to account for the reduced number of labels, so instead use
 \begin{align}
 	\label{eqn:gibbs2-SEI}
 	p\left(Z_j^{(s+1)} = q \mid Z_j^{(s+1)} \in r, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)} \right) = \begin{cases} 
 		\frac{1}{|r|}, & r = \text{SEI}(r_{p_j}) \text{ and} \\
 		& q \in r; \\
-		1, & r = n_A + j \\
+		1, & r = \{n_A + j\} \text{ and} \\
+		& q = n_A + j \\
 	\end{cases}
 \end{align}
 in the second step of the split sampler. In this way, we can conduct all posterior inference with the memory reduced SEI$(\tilde{\gamma}) = \{\mathcal{P}, \text{SEI}(\mathcal{R}), \mathcal{N}\}$. We provide guidance on choice of $S$ through a simulation in Section~\ref{SEI-sensitivity}.
-}
-}
+
 
 	\section{Simulation Studies}
 	\label{sec:simulations}

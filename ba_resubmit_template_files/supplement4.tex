@@ -150,42 +150,41 @@ Durham, NC 27708, USA
 		%&\propto p(\Gamma| \bm{Z}, \bm{m}, \bm{u}) p(\bm{Z} | \pi) \\
 		%&=\prod_{j=1}^{n_B} p(\Gamma_{.j}| Z_j, \bm{m}, \bm{u}) p(Z_j | \pi) \\
 	\end{align}
-{
-\color{blue}{
-Following the observation of \cite{wortman2019}, when $B_j$ does not link to any record in $A$, the contribution to the likelihood is simply a product of $u$ parameters, which we will call $c_j$:
-\begin{align}
-	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j = n_A + j) = \prod_{i=1}^{n_A}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} = c_j.
-\end{align}
-When $Z_j = q$ for some $q\leq n_A$, we have
-\begin{align}
-	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi,  Z_j = q) =\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(\gamma_{qj}^f = l)I_{obs}(\gamma_{qj}^f)}  \prod_{i \neq q}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.
-\end{align}
-We multiply and divide by the $u$ parameters for the matching record pair to obtain
-\begin{align}
-	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j = q) &= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{qj}^f = l)I_{obs}(\gamma_{qj}^f)}  \prod_{i = 1}^{n_A}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
-	&= w_{qj}  c_j.
-\end{align}
-We can divide the result of each case by $c_j$ to get
-\begin{align}
-	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j) \propto \begin{cases} 
-		w_{qj}, & q \leq n_A; \\
-		1, &  q  = n_A + j.
-	\end{cases}
-\end{align}
-Lastly, we multiply the likelihood by the fast beta prior in (\ref{eqn:fast_beta_prior}) to obtain the full conditional
-\begin{align}
-	\label{eqn:z_full_conditional2}
-	p\left(Z_j^{(s+1)}  = q|\gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}\right) \propto
-	\begin{cases} 
-		\frac{\pi^{(s+1)}}{n_A} w_{qj}^{(s+1)},  & q \leq n_A; \\
-		1 - \pi^{(s+1)}, & q  = n_A + j.
-	\end{cases}
-\end{align}
-}
-}
+%{
+%\color{blue}{
+%Following the observation of \cite{wortman2019}, when $B_j$ does not link to any record in $A$, the contribution to the likelihood is simply a product of $u$ parameters, which we will call $c_j$:
+%\begin{align}
+%	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j = n_A + j) = \prod_{i=1}^{n_A}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} = c_j.
+%\end{align}
+%When $Z_j = q$ for some $q\leq n_A$, we have
+%\begin{align}
+%	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi,  Z_j = q) =\prod_{f=1}^{F}\prod_{l=1}^{L_f} m_{fl}^{I(\gamma_{qj}^f = l)I_{obs}(\gamma_{qj}^f)}  \prod_{i \neq q}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)}.
+%\end{align}
+%We multiply and divide by the $u$ parameters for the matching record pair to obtain
+%\begin{align}
+%	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j = q) &= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{qj}^f = l)I_{obs}(\gamma_{qj}^f)}  \prod_{i = 1}^{n_A}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
+%	&= w_{qj}  c_j.
+%\end{align}
+%We can divide the result of each case by $c_j$ to get
+%\begin{align}
+%	p(\Gamma_{.j}| \bm{m}, \bm{u}, \pi, Z_j) \propto \begin{cases} 
+%		w_{qj}, & q \leq n_A; \\
+%		1, &  q  = n_A + j.
+%	\end{cases}
+%\end{align}
+%Lastly, we multiply the likelihood by the fast beta prior in (\ref{eqn:fast_beta_prior}) to obtain the full conditional
+%\begin{align}
+%	\label{eqn:z_full_conditional2}
+%	p\left(Z_j^{(s+1)}  = q|\gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}\right) \propto
+%	\begin{cases} 
+%		\frac{\pi^{(s+1)}}{n_A} w_{qj}^{(s+1)},  & q \leq n_A; \\
+%		1 - \pi^{(s+1)}, & q  = n_A + j.
+%	\end{cases}
+%\end{align}
+%}
+%}
 
-{
-\color{red}{Following the observation of \cite{wortman2019}, when $B_j$ does not link to any record in $A$, the contribution to the likelihood is simply a product of $u$ parameters, which we will call $c_j$:
+Following the observation of \cite{wortman2019}, when $B_j$ does not link to any record in $A$, the contribution to the likelihood is simply a product of $u$ parameters, which we will call $c_j$:
 	\begin{align}
 		\mathcal{L}(Z_j = n_A + j| \bm{m}, \bm{u}, \pi, \Gamma_{.j}) = \prod_{i=1}^{n_A}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} = c_j.
 	\end{align}
@@ -198,14 +197,14 @@ Lastly, we multiply the likelihood by the fast beta prior in (\ref{eqn:fast_beta
 		\mathcal{L}(Z_j = q| \bm{m}, \bm{u}, \pi, \Gamma_{.j}) &= \prod_{f=1}^{F}\prod_{l=1}^{L_f} \left(\frac{m_{fl}}{u_{fl}}\right)^{I(\gamma_{qj}^f = l)I_{obs}(\gamma_{qj}^f)}  \prod_{i = 1}^{n_A}\prod_{f=1}^{F}\prod_{l=1}^{L_f} u_{fl}^{I(\gamma_{ij}^f = l)I_{obs}(\gamma_{ij}^f)} \\
 		&= w_{qj}  c_j.
 	\end{align}
-	We can divide the result of each case by $c_j$ to get
-	\begin{align}
-		\mathcal{L}(Z_j | \bm{m}, \bm{u}, \pi, \Gamma_{.j}) \propto \begin{cases} 
-			w_{qj}, & q \leq n_A; \\
-			1, &  q  = n_A + j.
-		\end{cases}
-	\end{align}
-	Lastly, we multiply the likelihood by the fast beta prior in (\ref{eqn:fast_beta_prior}) to obtain the full conditional
+%	We can divide the result of each case by $c_j$ to get
+%	\begin{align}
+%		\mathcal{L}(Z_j | \bm{m}, \bm{u}, \pi, \Gamma_{.j}) \propto \begin{cases} 
+%			w_{qj}, & q \leq n_A; \\
+%			1, &  q  = n_A + j.
+%		\end{cases}
+%	\end{align}
+	Lastly, we multiply the likelihood by the fast beta prior in (\ref{eqn:fast_beta_prior}) and divide by $c_j$ to obtain the full conditional
 	\begin{align}
 		\label{eqn:z_full_conditional2}
 		p\left(Z_j^{(s+1)}  = q|\gamma, \bm{m}^{(s+1)}, \bm{u}^{(s+1)}, \pi^{(s+1)}\right) \propto
@@ -214,8 +213,6 @@ Lastly, we multiply the likelihood by the fast beta prior in (\ref{eqn:fast_beta
 			1 - \pi^{(s+1)}, & q  = n_A + j.
 		\end{cases}
 	\end{align}
-}
-}
 
 	
 %	To express the full conditional for $\bm{Z}$, we consider the cases where $Z_j$ does not have a link in $A$ and where $Z_j$ does have a link in $A$. Because we sample each $Z_j$ independently of all other $Z_{j'}$ (for $j \neq j'$), we need only the full conditional for each individual $Z_j$. Let $\Gamma_{.j}$ denote the matrix of $n_A$ comparison vectors relating to record $B_j$. Following the observation of \cite{wortman2019}, when $B_j$ does not link to any record in $A$, the contribution to the likelihood is simply a product of $u$ parameters, which we will call $c_j$:
